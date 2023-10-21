@@ -1,5 +1,3 @@
-# black-flag
-
 <p align="center" width="100%">
   <img width="300" src="./black-flag.png">
 </p>
@@ -68,3 +66,7 @@
 [x-repo-package-json]: package.json
 [x-repo-pr-compare]: https://github.com/xunnamius/black-flag/compare
 [x-repo-support]: /.github/SUPPORT.md
+
+# black-flag
+
+(oooh, it's already written, I just have to publish it!)
