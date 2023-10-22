@@ -6,17 +6,24 @@
   <code>$ black-pearl hoist the colors --black-flag --no-skull</code>
 </p>
 
-<!-- badges-start -->
+<hr />
+
+<!-- badges-centerbalanced-start -->
+
+<div align="center">
 
 [![Black Lives Matter!][x-badge-blm-image]][x-badge-blm-link]
 [![Last commit timestamp][x-badge-lastcommit-image]][x-badge-repo-link]
 [![Codecov][x-badge-codecov-image]][x-badge-codecov-link]
 [![Source license][x-badge-license-image]][x-badge-license-link]
+
 [![Monthly Downloads][x-badge-downloads-image]][x-badge-npm-link]
 [![NPM version][x-badge-npm-image]][x-badge-npm-link]
 [![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
 
-<!-- badges-end -->
+</div>
+
+<!-- badges-centerbalanced-end -->
 
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
