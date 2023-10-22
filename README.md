@@ -2,6 +2,10 @@
   <img width="300" src="./black-flag.png">
 </p>
 
+<p align="center" width="100%">
+  <code>$ black-pearl hoist the colors --black-flag --no-skull</code>
+</p>
+
 <!-- badges-start -->
 
 [![Black Lives Matter!][x-badge-blm-image]][x-badge-blm-link]
