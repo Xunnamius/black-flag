@@ -8,7 +8,7 @@
 
 <hr />
 
-<!-- badges-centerbalanced-start -->
+<!-- badges-start -->
 
 <div align="center">
 
@@ -23,7 +23,150 @@
 
 </div>
 
-<!-- badges-centerbalanced-end -->
+<!-- badges-end -->
+
+<br />
+
+# Black Flag
+
+Though the code is already written (yay), the documentation is a work in
+progress!
+
+## Features 🏴
+
+- Built on top of the amazing [yargs](https://www.npmjs.com/package/yargs)
+  library.
+
+- First-class support for creating sprawling deeply nested tree-like
+  command/sub-command structures easily, consistently, and without incident.
+
+- Filesystem-based command auto-discovery decouples your commands'
+  implementations from Black Flag itself, which makes adding new commands as
+  easy as dropping in a new file. Commands can be written in CJS (`.js`/`.cjs`)
+  or ESM (`.js`/`.mjs`).
+
+- Built-in support for
+  [dynamic options](https://github.com/yargs/yargs/issues/793) (options that
+  rely on the value of other options) via a new `argv` parameter on the
+  [builder functions](https://github.com/yargs/yargs/blob/main/docs/api.md#commandmodule)
+  of auto-discovered command modules. The extended builder signature looks like
+  `builder(yargs: Yargs, helpOrVersionSet: boolean, argv: ParsedArguments | undefined)`.
+  `argv` will be `undefined` when the builder should add all possible options
+  and choices to `yargs`; otherwise, `argv` will be the same parsed arguments
+  object that yargs passes to handler functions, allowing options to be
+  configured/added to `yargs` conditionally.
+
+- Easily retrieve a mapping of all registered commands and their corresponding
+  yargs instances.
+
+- Built from the ground up with a pleasant unit/integration testing experience
+  in mind:
+
+  - Auto-discovered commands are provided via individual importable modules
+    entirely decoupled from yargs and Black Flag.
+  - Configuration hooks, if used, are thin simple testable/mockable functions.
+  - Black Flag provides a helper function for easily running commands:
+    `runProgram(...)`.
+  - See [`docs/`](#) and [`tests/`](#) for examples.
+
+- Simple comprehensive error handling and reporting, including suggesting an
+  exit code at the handler level without having to call `process.exit` (which is
+  a disaster for unit testing).
+
+- Consistent help text generation
+  [across runtimes and operating systems](https://stackoverflow.com/a/56926465/1367414)
+  (i.e. commands will appear alpha-sorted by full name rather than insertion
+  order,
+  [command groupings](https://github.com/yargs/yargs/blob/main/docs/api.md#user-content-groupkeys-groupname)
+  are still respected, options are still enumerated in insertion order).
+
+- Extensive [`debug`](https://www.npmjs.com/package/debug) integration allows
+  deep insight into your commands' runtime without significant overhead or code
+  changes. Simply set the `DEBUG` environment variable to the
+  [appropriate value](https://www.npmjs.com/package/debug#usage).
+
+- Easily stub out complex deeply-nested interfaces without having to provide
+  implementation details right away (running an "unimplemented" command as an
+  end-user will result in a `NotImplementedError`).
+
+- Bring your own mutations to a global context object shared between all
+  [command modules](https://github.com/yargs/yargs/blob/main/docs/api.md#commandmodule),
+  handlers, builder functions, and the Black Flag framework itself, allowing for
+  safe easy shared state and other advanced behavior.
+
+- Convention is favored over configuration (Black Flag is so-called "zero
+  config").
+
+- Optional configuration hooks still available.
+
+- You're still working with yargs instances, so there's no new interface to
+  learn, all the current
+  [yargs documentation](https://github.com/yargs/yargs/blob/main/docs/api.md)
+  still applies, and there should be few if any compatibility issues with the
+  existing yargs ecosystem.
+
+- Yargs instances are configured with useful defaults (easily overridden in a
+  configuration hook):
+
+  - `fail(...)` (Black Flag configures a custom failure handler)
+  - `showHelpOnFail(false)`
+  - `wrap(yargs.terminalWidth())`
+  - `strict(true)`
+  - `exitProcess(false)`
+  - `scriptName(fullName)`
+  - `usage(...)`
+  - `version(false)` (`version(pkgVersion || false)` for the root command)
+  - `help(false).option('help', { boolean: true })` (parent commands only)
+
+- Written in TypeScript with love.
+
+## Deviations From Upstream 🏴
+
+- The
+  [`argv`](https://github.com/yargs/yargs/blob/main/docs/api.md#user-content-argv)
+  magic property is soft-disabled (always returns `undefined`) so that deep
+  cloning a yargs instance doesn't result in `parse` (_and command handlers!_)
+  getting invoked several times, _even after an error occurred in an earlier
+  invocation_, all of which can lead to undefined or even dangerous behavior.
+  Who in their right mind is out here cloning yargs instances, you may ask?
+  [Jest does so whenever you use certain asymmetric matchers.](https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy)
+  Just use `parse()`/`parseAsync()` instead, it's only a few more characters 🙂
+
+- Arbitrary parameters cannot appear in the command until the final
+  command/sub-command is provided. For example:
+  `treasure-chest retrieve --name piece-of-8` is okay while
+  `treasure-chest --name piece-of-8 retrieve` will result in an error.
+  Similarly: `treasure-chest retrieve --help` will work while
+  `treasure-chest --help retrieve` will not.
+
+- Though it would be trivial, yargs
+  [middleware](https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation)
+  isn't supported since the functionality is essentially covered by
+  configuration hooks.
+
+- A bug in yargs prevents `showHelp()`/`--help` from printing anything when
+  using an async builder function (or promise-returning function) for a default
+  command. I'm not the only one that has encountered
+  [something like this](https://github.com/yargs/yargs/issues/793#issuecomment-704749472).
+  However, Black Flag supports an asynchronous function as the value of
+  `module.exports` in CJS code, and top-level await in ESM code, so if you
+  really need an async builder function, hoist the async logic to work around
+  this bug for now.
+
+- `process.exit(...)` is never called (`process.exitCode` is used instead).
+
+- Black Flag disables built-in `--help` handling for parent commands, replacing
+  it with a custom functionally-identical solution where necessary.
+  End-developers and their users will not notice the difference. The built-in
+  functionality was disabled because it was interfering with the handoff between
+  parent and child commands.
+
+## Notes 🏴
+
+- The types shipped with Yargs have a few small inconsistencies with the
+  documentation, such as `BuilderCallback` not showing that vanilla yargs
+  [builder functions](https://github.com/yargs/yargs/blob/main/docs/api.md#commandmodule)
+  are invoked with a second parameter `helpOrVersionSet`.
 
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
@@ -77,7 +220,3 @@
 [x-repo-package-json]: package.json
 [x-repo-pr-compare]: https://github.com/xunnamius/black-flag/compare
 [x-repo-support]: /.github/SUPPORT.md
-
-# black-flag
-
-(oooh, it's already written, I just have to publish it!)
