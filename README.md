@@ -15,7 +15,8 @@
 [![Black Lives Matter!][x-badge-blm-image]][x-badge-blm-link]
 [![Last commit timestamp][x-badge-lastcommit-image]][x-badge-repo-link]
 [![Codecov][x-badge-codecov-image]][x-badge-codecov-link]
-[![Source license][x-badge-license-image]][x-badge-license-link][![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
+[![Source license][x-badge-license-image]][x-badge-license-link]
+[![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
 
 [![NPM version][x-badge-npm-image]][x-badge-npm-link]
 [![Monthly Downloads][x-badge-downloads-image]][x-badge-npm-link]
