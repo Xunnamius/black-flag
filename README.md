@@ -3,7 +3,7 @@
 </p>
 
 <p align="center" width="100%">
-  <code>$ black-pearl hoist the colors --black-flag --no-skull</code>
+  <code>$ black-pearl hoist the colors --black-flag</code>
 </p>
 
 <hr />
@@ -15,11 +15,10 @@
 [![Black Lives Matter!][x-badge-blm-image]][x-badge-blm-link]
 [![Last commit timestamp][x-badge-lastcommit-image]][x-badge-repo-link]
 [![Codecov][x-badge-codecov-image]][x-badge-codecov-link]
-[![Source license][x-badge-license-image]][x-badge-license-link]
+[![Source license][x-badge-license-image]][x-badge-license-link][![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
 
-[![Monthly Downloads][x-badge-downloads-image]][x-badge-npm-link]
 [![NPM version][x-badge-npm-image]][x-badge-npm-link]
-[![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
+[![Monthly Downloads][x-badge-downloads-image]][x-badge-npm-link]
 
 </div>
 
