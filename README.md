@@ -30,7 +30,8 @@
 # Black Flag
 
 Though the code is already written (yay), the documentation is a work in
-progress! See also: the black-flag-example and projector-lens-cli projects.
+progress! See also: the xunnctl, git-add-then-commit, projector-lens-cli
+projects for real life usage examples.
 
 ## Features 🏴
 
