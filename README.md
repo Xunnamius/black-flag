@@ -30,12 +30,15 @@
 # Black Flag
 
 Though the code is already written (yay), the documentation is a work in
-progress!
+progress! See also: the black-flag-example and projector-lens-cli projects.
 
 ## Features 🏴
 
 - Built on top of the amazing [yargs](https://www.npmjs.com/package/yargs)
   library.
+
+  > Note that yargs is _a dependency_ of Black Flag. Black Flag is _not_ a fork
+  > of yargs!
 
 - First-class support for creating sprawling deeply nested tree-like
   command/sub-command structures easily, consistently, and without incident.
@@ -65,9 +68,20 @@ progress!
   - Auto-discovered commands are provided via individual importable modules
     entirely decoupled from yargs and Black Flag.
   - Configuration hooks, if used, are thin simple testable/mockable functions.
-  - Black Flag provides a helper function for easily running commands:
-    `runProgram(...)`.
-  - See [`docs/`](#) and [`tests/`](#) for examples.
+  - Black Flag provides two utility functions to easily bootstrap your CLI in
+    test environments or elsewhere: `runProgram` and its factory function
+    `makeRunner`.
+
+    ```typescript
+    const run = makeRunner('./command');
+
+    run('--help');
+    run('--welp');
+    run('--yelp');
+
+    makeRunner('./command')(['multi-string', 'nested', '--help']);
+    runProgram('./command', 'single-string nested --help');
+    ```
 
 - Simple comprehensive error handling and reporting, including suggesting an
   exit code at the handler level without having to call `process.exit` (which is
@@ -87,26 +101,25 @@ progress!
 
 - Easily stub out complex deeply-nested interfaces without having to provide
   implementation details right away (running an "unimplemented" command as an
-  end-user will result in a `NotImplementedError`).
+  end-user will result in a `CommandNotImplementedError`).
 
-- Bring your own mutations to a global context object shared between all
+- Bring your own well-typed mutations to a global context object shared between
+  all
   [command modules](https://github.com/yargs/yargs/blob/main/docs/api.md#commandmodule),
   handlers, builder functions, and the Black Flag framework itself, allowing for
   safe easy shared state and other advanced behavior.
 
 - Convention is favored over configuration (Black Flag is so-called "zero
-  config").
+  config"). Optional configuration hooks still available.
 
-- Optional configuration hooks still available.
-
-- You're still working with yargs instances, so there's no new interface to
-  learn, all the current
+- You're still working with yargs instances, so there's no unfamiliar interface
+  to wrestle with, all the current
   [yargs documentation](https://github.com/yargs/yargs/blob/main/docs/api.md)
   still applies, and there should be few if any compatibility issues with the
   existing yargs ecosystem.
 
-- Yargs instances are configured with useful defaults (easily overridden in a
-  configuration hook):
+- Yargs instances, including nested/child command instances, are configured with
+  useful but easily-overridden defaults:
 
   - `fail(...)` (Black Flag configures a custom failure handler)
   - `showHelpOnFail(false)`
@@ -144,22 +157,13 @@ progress!
   isn't supported since the functionality is essentially covered by
   configuration hooks.
 
-- A bug in yargs prevents `showHelp()`/`--help` from printing anything when
-  using an async builder function (or promise-returning function) for a default
-  command. I'm not the only one that has encountered
-  [something like this](https://github.com/yargs/yargs/issues/793#issuecomment-704749472).
-  However, Black Flag supports an asynchronous function as the value of
-  `module.exports` in CJS code, and top-level await in ESM code, so if you
-  really need an async builder function, hoist the async logic to work around
-  this bug for now.
-
-- `process.exit(...)` is never called (`process.exitCode` is used instead).
-
-- Black Flag disables built-in `--help` handling for parent commands, replacing
-  it with a custom functionally-identical solution where necessary.
-  End-developers and their users will not notice the difference. The built-in
-  functionality was disabled because it was interfering with the handoff between
-  parent and child commands.
+- A [bug](https://github.com/yargs/yargs/issues/793#issuecomment-704749472) in
+  yargs prevents `showHelp()`/`--help` from printing anything when using an
+  async builder function (or promise-returning function) for a default command,
+  so they are not allowed. However, Black Flag supports an asynchronous function
+  as the value of `module.exports` in CJS code, and top-level await in ESM code,
+  so if you really need an async builder function, hoist the async logic to work
+  around this bug for now.
 
 ## Notes 🏴
 
@@ -167,6 +171,14 @@ progress!
   documentation, such as `BuilderCallback` not showing that vanilla yargs
   [builder functions](https://github.com/yargs/yargs/blob/main/docs/api.md#commandmodule)
   are invoked with a second parameter `helpOrVersionSet`.
+
+- Black Flag disables built-in `--help` handling for parent commands, replacing
+  it with a custom functionally-identical solution where necessary.
+  End-developers and their users will not notice the difference. The built-in
+  functionality was disabled because it was interfering with the handoff between
+  parent and child commands.
+
+- `process.exit(...)` is never called (`process.exitCode` is used instead).
 
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
