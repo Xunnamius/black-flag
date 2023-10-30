@@ -94,7 +94,7 @@ By default, commands assume the name of their file or, for index files, their
 parent directory; the root command assumes the name of the project (via
 `package.json`).
 
-```
+```text
 my-cli-project
 ├── cli.ts
 ├── commands
@@ -179,12 +179,12 @@ export function handler(argv) {
 }
 ```
 
-```
+```text
 myctl init --lang 'node' --version=10.4
 > initializing new node project...
 ```
 
-```
+```text
 myctl init --lang 'python' --version=10.4
 Usage: myctl init
 
@@ -197,7 +197,7 @@ Invalid values:
   Argument: version, Given: 10.4, Choices: "3.10", "3.11", "3.12"
 ```
 
-```
+```text
 myctl init --help
 Usage: myctl init
 
@@ -665,12 +665,12 @@ export function handler(argv) {
 }
 ```
 
-```
+```text
 myctl
 done!
 ```
 
-```
+```text
 DEBUG='myctl*' myctl
 myctl beginning to do a bunch of cool stuff... +0ms
 myctl saw some result: {
@@ -682,7 +682,7 @@ myctl } +220ms
 done!
 ```
 
-```
+```text
 DEBUG='*' myctl
 ... A LOT OF DETAILED DEBUG OUTPUT FROM BLACK FLAG AND MYCTL ...
 done!
@@ -780,7 +780,7 @@ npm install black-flag
 Let's create the folder that will hold all our commands as well as the entry
 point Node recognizes:
 
-```
+```text
 mkdir commands
 touch cli.js
 chmod +x cli.js
@@ -801,7 +801,7 @@ Let's create our first command, the _root command_. Every Black Flag project has
 one, and it's always named `index.js`. In vanilla yargs parlance, this would be
 the highest-level "default command".
 
-```
+```text
 touch commands/index.js
 ```
 
@@ -878,6 +878,8 @@ You may have noticed that Black Flag calls `yargs::strict(true)` on
 auto-discovered commands by default. In fact, commands are configured with
 several useful defaults:
 
+<!-- lint disable list-item-style -->
+
 - `exitProcess(false)`
 - `fail(...)` (Black Flag uses a custom failure handler)
 - `help(false).option('help', { boolean: true })` (parent commands only)
@@ -888,6 +890,8 @@ several useful defaults:
 - `version(false)`
   - `version(pkgJson.version || false)` for the root command
 - `wrap(yargs.terminalWidth())`
+
+<!-- lint enable list-item-style -->
 
 Any default can be overridden on a command-by-command basis via the `builder`
 function, which gives you direct access to the entire yargs API. Let's add one
@@ -1143,6 +1147,8 @@ yargs and Black Flag. They should not be relevant for most projects.
 
 In no particular order:
 
+<!-- lint disable list-item-style -->
+
 - The [`yargs::argv`][21] magic property is soft-disabled (always returns
   `undefined`) so that deep cloning a yargs instance doesn't result in `parse`
   (_and command handlers_) getting invoked several times, _even after an error
@@ -1204,6 +1210,8 @@ In no particular order:
   treasure-chest --help retrieve # Will FAIL
   ```
 
+<!-- lint enable list-item-style -->
+
 ### Advanced Usage
 
 > Note: you shouldn't need to reach below Black Flag's declarative abstraction
@@ -1234,7 +1242,7 @@ await runCommand('./commands', {
 });
 ```
 
-```
+```javascript
 commands: Map(6) {
   'myctl' => { program: [yargs], metadata: [Object] },
   'myctl init' => { program: [yargs], metadata: [Object] },
@@ -1382,7 +1390,6 @@ key][x-repo-all-contributors-emojis]):
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 <!-- remark-ignore-end -->
 
@@ -1446,7 +1453,7 @@ specification. Contributions of any kind welcome!
 [3]: https://github.com/yargs/yargs/issues/793
 [4]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/api.md
-[5]: #built-in-support-for-dynamic-options
+[5]: #built-in-support-for-dynamic-options-
 [6]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/advanced.md#providing-a-command-module
 [7]:
