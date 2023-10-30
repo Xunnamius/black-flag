@@ -1463,7 +1463,7 @@ specification. Contributions of any kind welcome!
 [9]: https://en.wikipedia.org/wiki/Convention_over_configuration
 [10]: https://www.npmjs.com/package/debug
 [11]: https://www.npmjs.com/package/debug#usage
-[12]: gttps://github.com/Xunnamius/black-flag-demo
+[12]: https://github.com/Xunnamius/black-flag-demo
 [13]: #building-and-running-your-cli
 [14]: #introduction
 [15]: https://nodejs.org/api/packages.html#type
