@@ -288,7 +288,7 @@ export default runProgram(join(__dirname, 'commands'));
 # This would also work
 deno ./cli.ts -- remote show origin
 # Or, if we were writing vanilla JavaScript (or ran our source through Babel)...
-node ./cli.js -- remote show origin
+./cli.js -- remote show origin
 # ... and then published it and ran something like: npm i -g my-cli-project
 myctl remote show origin
 ```
@@ -819,7 +819,7 @@ files accordingly!
 With that in mind, let's actually run the CLI now:
 
 ```shell
-node ./cli.js
+./cli.js
 ```
 
 ---
@@ -831,7 +831,7 @@ CommandNotImplementedError: attempted to invoke unimplemented functionality
 Let's try with a bad positional parameter:
 
 ```shell
-node ./cli.js bad
+./cli.js bad
 ```
 
 ---
@@ -852,7 +852,7 @@ Unknown argument: bad
 How about with a bad option:
 
 ```shell
-node ./cli.js --bad
+./cli.js --bad
 ```
 
 ---
@@ -891,7 +891,7 @@ several useful defaults:
 
 Any default can be overridden on a command-by-command basis via the `builder`
 function, which gives you direct access to the entire yargs API. Let's add one
-to `commands/index.js` along with a `handler` and `usage`:
+to `commands/index.js` along with a `handler` function and `usage` string:
 
 ```javascript
 /**
@@ -923,7 +923,7 @@ export const usage = 'Usage: $0 command [options]';
 Now let's run the CLI again:
 
 ```shell
-node ./cli.js
+./cli.js
 ```
 
 ---
@@ -935,7 +935,7 @@ ran root command handler
 And with a "bad" argument (we're no longer in strict mode):
 
 ```shell
-node ./cli.js --bad --bad2 --bad3
+./cli.js --bad --bad2 --bad3
 ```
 
 ---
@@ -958,7 +958,7 @@ touch commands/remote/show.js
 Wow, that was easy. Let's run our CLI now:
 
 ```shell
-node ./cli.js --help
+./cli.js --help
 ```
 
 ---
@@ -979,7 +979,7 @@ Options:
 Let's try a child command:
 
 ```shell
-node ./cli.js remote --help
+./cli.js remote --help
 ```
 
 ---
@@ -1005,7 +1005,7 @@ each command's options are still enumerated in insertion order.
 Now let's try a grandchild command:
 
 ```shell
-node ./cli.js remote show --help
+./cli.js remote show --help
 ```
 
 ---
