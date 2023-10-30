@@ -40,7 +40,7 @@ declarative features.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Introduction](#introduction)
-  - [Build Deeply Nested Hierarchies of Commands Entirely Declaratively ✨](#build-deeply-nested-hierarchies-of-commands-entirely-declaratively-)
+  - [Build Deep Command Hierarchies Entirely Declaratively ✨](#build-deep-command-hierarchies-entirely-declaratively-)
   - [Built-In Support for Dynamic Options ✨](#built-in-support-for-dynamic-options-)
   - [It's Yargs All the Way down ✨](#its-yargs-all-the-way-down-)
   - [Run Your Tools Safely and Consistently ✨](#run-your-tools-safely-and-consistently-)
