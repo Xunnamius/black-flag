@@ -70,7 +70,7 @@ declarative features.
 > <a href="https://github.com/yargs/yargs/blob/HEAD/docs/examples.md" target="_blank">intro
 > documentation</a> before continuing!
 
-### Build Deeply Nested Hierarchies of Commands Entirely Declaratively ✨
+### Build Deep Command Hierarchies Entirely Declaratively ✨
 
 Black Flag provides first-class support for authoring sprawling deeply nested
 tree-like structures of commands and sub-commands.
