@@ -40,7 +40,7 @@ declarative features.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Introduction](#introduction)
-  - [Build Deep Command Hierarchies Entirely Declaratively ✨](#build-deep-command-hierarchies-entirely-declaratively-)
+  - [Declaratively Build Deep Command Hierarchies ✨](#declaratively-build-deep-command-hierarchies-)
   - [Built-In Support for Dynamic Options ✨](#built-in-support-for-dynamic-options-)
   - [It's Yargs All the Way down ✨](#its-yargs-all-the-way-down-)
   - [Run Your Tools Safely and Consistently ✨](#run-your-tools-safely-and-consistently-)
@@ -70,7 +70,7 @@ declarative features.
 > <a href="https://github.com/yargs/yargs/blob/HEAD/docs/examples.md" target="_blank">intro
 > documentation</a> before continuing!
 
-### Build Deep Command Hierarchies Entirely Declaratively ✨
+### Declaratively Build Deep Command Hierarchies ✨
 
 Black Flag provides first-class support for authoring sprawling deeply nested
 tree-like structures of commands and sub-commands.
