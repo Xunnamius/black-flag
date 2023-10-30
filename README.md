@@ -268,8 +268,8 @@ export default configuration;
 
 ### Run Your Tool Safely and Consistently ✨
 
-Black Flag not only helps you build your command line interface tool, but _run
-it_ too.
+Black Flag not only helps you declaratively build your CLI tool, but _run it_
+too.
 
 ```typescript
 #!/usr/bin/env deno
@@ -632,7 +632,7 @@ environment variable to an [appropriate value][11]:
 DEBUG='*' myctl
 # Only shows built-in debug output from Black Flag
 DEBUG='black-flag*' myctl
-# Only shows custom debug output from your tool's command configuration files
+# Only shows custom debug output from your tool's command files
 DEBUG='myctl*' myctl
 ```
 
@@ -871,8 +871,9 @@ Unknown argument: bad
 ```
 
 We could publish right now if we wanted to. The CLI would be perfectly
-functional, could be installed via `npm i -g myctl`, and called from the CLI as
-`myctl`. Let's hold off on that for now though.
+functional in that it would run to completion regardless of its current lack of
+useful features. Our new package could then be installed via `npm i -g myctl`,
+and called from the CLI as `myctl`! Let's hold off on that though.
 
 You may have noticed that Black Flag calls `yargs::strict(true)` on
 auto-discovered commands by default. In fact, commands are configured with
