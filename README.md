@@ -42,7 +42,7 @@ capabilities with several powerful declarative features.
   - [Declaratively Build Deep Command Hierarchies ✨](#declaratively-build-deep-command-hierarchies-)
   - [Built-In Support for Dynamic Options ✨](#built-in-support-for-dynamic-options-)
   - [It's Yargs All the Way down ✨](#its-yargs-all-the-way-down-)
-  - [Run Your Tools Safely and Consistently ✨](#run-your-tools-safely-and-consistently-)
+  - [Run Your Tool Safely and Consistently ✨](#run-your-tool-safely-and-consistently-)
   - [Convention over Configuration ✨](#convention-over-configuration-)
   - [Simple Comprehensive Error Handling and Reporting ✨](#simple-comprehensive-error-handling-and-reporting-)
   - [A Pleasant Testing Experience ✨](#a-pleasant-testing-experience-)
@@ -266,7 +266,7 @@ const configuration: Configuration = {
 export default configuration;
 ```
 
-### Run Your Tools Safely and Consistently ✨
+### Run Your Tool Safely and Consistently ✨
 
 Black Flag not only helps you build your command line interface tool, but _run
 it_ too.
