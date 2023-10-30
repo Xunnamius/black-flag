@@ -65,7 +65,7 @@ capabilities with several powerful declarative features.
 
 ## Introduction
 
-> Not yet familiar with yargs? Check out their [intro][2] documentation before
+> Not yet familiar with yargs? Check out their [intro documentation][2] before
 > continuing!
 
 ### Declaratively Build Deep Command Hierarchies ✨
