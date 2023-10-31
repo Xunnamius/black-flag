@@ -1387,8 +1387,8 @@ See [LICENSE][x-repo-license].
 
 **[New issues][x-repo-choose-new-issue] and [pull requests][x-repo-pr-compare]
 are always welcome and greatly appreciated! 🤩** Just as well, you can [star 🌟
-this project][x-badge-repo-link] to let me know you found it useful! ✊🏿
-<small>Or you could [buy me a beer][42] 🥺</small> Thank you!
+this project][x-badge-repo-link] to let me know you found it useful! ✊🏿 Or you
+could [buy me a beer][42] 🥺 Thank you!
 
 See [CONTRIBUTING.md][x-repo-contributing] and [SUPPORT.md][x-repo-support] for
 more information.
