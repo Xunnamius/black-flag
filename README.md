@@ -309,6 +309,7 @@ by [`PreExecutionContext::execute`][10], which is a wrapper around
 ```typescript
 import { join } from 'node:path';
 import { runProgram, configureProgram } from 'black-flag';
+import { isCliError } from 'black-flag/util';
 
 export default runProgram(join(__dirname, 'commands'));
 
