@@ -578,7 +578,7 @@ production: [`runProgram`][13].
 import { makeRunner } from 'black-flag/util';
 
 let latestError: string | undefined = undefined;
-const run = makeRunner(`${__dirname}/command`, {
+const run = makeRunner(`${__dirname}/commands`, {
   // We run our commands decoupled from our CLI's actual configuration hooks,
   // since they're too heavy for use in our unit tests. Instead, we substitute
   // some bare bones configurations:
@@ -1063,7 +1063,7 @@ import { makeRunner } from 'black-flag/util';
 
 // makeRunner is a factory function that returns runProgram functions with
 // curried arguments.
-const run = makeRunner(`${__dirname}/command`);
+const run = makeRunner(`${__dirname}/commands`);
 
 afterEach(() => {
   // Since runProgram (i.e. what is returned by makeRunner) sets
