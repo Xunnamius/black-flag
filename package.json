@@ -211,7 +211,7 @@
     "tsconfig-replace-paths": "^0.0.14",
     "type-fest": "^4.6.0",
     "typedoc": "^0.25.3",
-    "typedoc-plugin-markdown": "^3.16.0",
+    "typedoc-plugin-markdown": "^3.17.0",
     "typescript": "^5.2.2",
     "unique-filename": "^3.0.0"
   },
