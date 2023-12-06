@@ -176,7 +176,7 @@ export type FrameworkArguments = {
 };
 
 /**
- * Accepts an optional `rawArgv` array that defaults to
+ * This function accepts an optional `rawArgv` array that defaults to
  * `yargs::hideBin(process.argv)` and returns an arguments object representing
  * the parsed CLI input for the given root {@link Program}.
  */

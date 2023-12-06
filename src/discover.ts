@@ -106,7 +106,6 @@ export async function discoverCommands(
   debug('searching upwards for nearest package.json file starting at %O', basePath);
 
   const pkg = {
-    // ? Didn't feel like doing an esm-interop dance
     path: await (await import('pkg-up')).pkgUp({ cwd: basePath }),
     name: undefined as string | undefined,
     version: undefined as string | undefined
@@ -162,7 +161,7 @@ export async function discoverCommands(
     debug('initial parent lineage: %O', lineage);
     debug('is root program: %O', isRootProgram);
 
-    const parentProgram = isRootProgram ? rootProgram : makeProgram();
+    const parentProgram = isRootProgram ? rootProgram : await makeProgram();
     const { configuration: parentConfig, metadata: parentMeta } = await loadConfiguration(
       ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
         path.join(configPath, `index.${extension}`)
@@ -187,16 +186,14 @@ export async function discoverCommands(
     debug('updated parent lineage: %O', lineage);
     debug('program full name: %O', parentConfigFullName);
 
-    if (isRootProgram) {
-      configureRootProgram(parentProgram, parentConfig, parentConfigFullName);
-    } else {
-      configureParentProgram(
-        parentProgram,
-        parentConfig,
-        parentConfigFullName,
-        previousParentProgram
-      );
-    }
+    await (isRootProgram
+      ? configureRootProgram(parentProgram, parentConfig, parentConfigFullName)
+      : configureParentProgram(
+          parentProgram,
+          parentConfig,
+          parentConfigFullName,
+          previousParentProgram
+        ));
 
     debug_load(
       `discovered ${parentType} configuration (depth: %O) for program %O`,
@@ -227,7 +224,7 @@ export async function discoverCommands(
       } else if (isPotentialChildConfigOfCurrentParent) {
         debug('attempting to load file...');
 
-        const childProgram = makeProgram();
+        const childProgram = await makeProgram();
         const { configuration: childConfig, metadata: childMeta } =
           await loadConfiguration(entryFullPath, childProgram, context);
 
@@ -245,7 +242,7 @@ export async function discoverCommands(
 
         debug('child full name (lineage): %O', childConfigFullName);
 
-        configureChildProgram(
+        await configureChildProgram(
           childProgram,
           childConfig,
           childConfigFullName,
@@ -441,12 +438,12 @@ export async function discoverCommands(
    * - Enables built-in `--version` support unless `package.json::version` is
    *   not available
    */
-  function configureRootProgram(
+  async function configureRootProgram(
     program: AnyProgram,
     config: AnyConfiguration,
     fullName: string
-  ): void {
-    configureParentProgram(program, config, fullName);
+  ): Promise<void> {
+    await configureParentProgram(program, config, fullName);
 
     const shadowProgram = shadowPrograms.get(program);
     assert(shadowProgram !== undefined);
@@ -470,13 +467,13 @@ export async function discoverCommands(
    *
    * - Registers a proxy command (including aliases) to `parentProgram`
    */
-  function configureParentProgram(
+  async function configureParentProgram(
     program: AnyProgram,
     config: AnyConfiguration,
     fullName: string,
     parentParentProgram?: AnyProgram
-  ): void {
-    const shadowProgram = makeProgram({ isShadowClone: true });
+  ): Promise<void> {
+    const shadowProgram = await makeProgram({ isShadowClone: true });
 
     // ? Swap out --help support for something that plays nice with the
     // ? existence of child programs
@@ -502,8 +499,8 @@ export async function discoverCommands(
       }
     };
 
-    configureProgram(program, config, fullName);
-    configureProgram(shadowProgram, config, fullName);
+    await configureProgram(program, config, fullName);
+    await configureProgram(shadowProgram, config, fullName);
 
     proxyParentToChild(program, config, fullName, shadowProgram, parentParentProgram);
 
@@ -521,16 +518,16 @@ export async function discoverCommands(
    * - Calls {@link proxyParentToChild}
    * - Enables built-in `--help` magic
    */
-  function configureChildProgram(
+  async function configureChildProgram(
     program: AnyProgram,
     config: AnyConfiguration,
     fullName: string,
     parentProgram: AnyProgram
-  ): void {
-    const shadowProgram = makeProgram({ isShadowClone: true });
+  ): Promise<void> {
+    const shadowProgram = await makeProgram({ isShadowClone: true });
 
-    configureProgram(program, config, fullName);
-    configureProgram(shadowProgram, config, fullName);
+    await configureProgram(program, config, fullName);
+    await configureProgram(shadowProgram, config, fullName);
 
     proxyParentToChild(program, config, fullName, shadowProgram, parentProgram);
 
@@ -553,7 +550,7 @@ export async function discoverCommands(
    * - Allow output to span entire terminal width
    * - Disable built-in error/help reporting (we'll handle it ourselves)
    */
-  function configureProgram(
+  async function configureProgram(
     program: AnyProgram,
     config: AnyConfiguration,
     fullName: string

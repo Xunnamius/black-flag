@@ -1,6 +1,5 @@
 import assert from 'node:assert';
 
-import alphaSort from 'alpha-sort';
 import { name as pkgName } from 'package';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
@@ -86,7 +85,7 @@ export async function configureProgram<
 ): Promise<PreExecutionContext<CustomContext>> {
   debug('configureProgram was invoked');
 
-  const rootProgram = makeProgram();
+  const rootProgram = await makeProgram();
 
   let commandModulePath: string;
 
@@ -316,7 +315,7 @@ export async function configureProgram<
  * The instance also exposes three new methods: `command_deferred`,
  * `command_finalize_deferred`, and `strict_force`.
  */
-export function makeProgram<
+export async function makeProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >({ isShadowClone = false } = {}) {
   const debug_ = debug.extend('make');
@@ -325,6 +324,7 @@ export function makeProgram<
 
   debug_('created new %O Program instance', descriptor);
 
+  const alphaSort = (await import('alpha-sort')).default;
   const y = yargs() as unknown as Program<CustomCliArguments>;
 
   return new Proxy(y, {
