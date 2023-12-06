@@ -274,7 +274,7 @@ Black Flag not only helps you declaratively build your CLI tool, but _run it_
 too.
 
 ```typescript
-#!/usr/bin/env deno
+#!/usr/bin/env node
 // File: my-cli-project/cli.ts
 
 import { join } from 'node:path';
@@ -286,13 +286,13 @@ export default runProgram(join(__dirname, 'commands'));
 
 ```shell
 # This would work thanks to that shebang (#!)
-./cli.ts remote show origin
-# This would also work
-deno ./cli.ts -- remote show origin
-# Or, if we were writing vanilla JavaScript (or ran our source through Babel)...
+./cli.js remote show origin
+# This works after transpiling our .ts files to .js with babel...
 node ./cli.js -- remote show origin
-# ... and then published it and ran something like: npm i -g my-cli-project
+# ... and then published it and ran something like: npm i -g my-cli-project.
 myctl remote show origin
+# Or, if we were using something that supported TypeScript natively:
+deno ./cli.ts -- remote show origin
 ```
 
 The [`runProgram`][7] function bootstraps your CLI whenever you need it, e.g.
@@ -304,12 +304,12 @@ when testing, in production, when importing your CLI as a dependency, etc.
 Under the hood, `runProgram` calls [`configureProgram`][9], which auto-discovers
 and collects all the configurations exported from your command files, followed
 by [`PreExecutionContext::execute`][10], which is a wrapper around
-`yargs::parseAsync`.
+`yargs::parseAsync` and `yargs::hideBin`.
 
 ```typescript
 import { join } from 'node:path';
 import { runProgram, configureProgram } from 'black-flag';
-import { isCliError } from 'black-flag/util';
+import { hideBin, isCliError } from 'black-flag/util';
 
 export default runProgram(join(__dirname, 'commands'));
 
@@ -320,7 +320,7 @@ let parsedArgv = undefined;
 try {
   const commandsDir = join(__dirname, 'commands');
   const preExecutionContext = await configureProgram(commandsDir);
-  parsedArgv = await preExecutionContext.execute(process.argv);
+  parsedArgv = await preExecutionContext.execute(hideBin(process.argv));
   process.exitCode = 0;
 } catch (error) {
   process.exitCode = isCliError(error) ? error.suggestedExitCode : 1;
@@ -350,8 +350,6 @@ import type {
   ConfigureExecutionPrologue
 } from 'black-flag';
 
-import { hideBin } from 'black-flag/util';
-
 // These configuration hooks have been listed in the order they're typically
 // executed by Black Flag.
 
@@ -380,21 +378,31 @@ export const configureExecutionPrologue: ConfigureExecutionPrologue = async (
   context
 ) => {
   // Typically unnecessary (and suboptimal) to use this hook. Configure commands
-  // declaratively using the filesystem instead. Otherwise, at this point,
-  // you're just using yargs :)
+  // (including the root command) declaratively using the filesystem instead.
+  // Otherwise, at this point, you're just using yargs but with extra steps.
+  // Even worse, you'd have to configure each instance _and its shadow_ (see
+  // appendix).
+  //
+  // Prefer the simple filesystem-based declarative API over this function!
 };
 
 /**
  * This function is called once towards the beginning of the execution of
- * `PreExecutionContext::execute` and should return a `process.argv`-like array.
+ * `PreExecutionContext::execute(X)` and should return a `process.argv`-like
+ * array.
  */
 export const configureArguments: ConfigureArguments = async (
-  rawArgv, // <== This is: whatever was passed to ::execute(...) or process.argv
+  rawArgv, // <== This is either the X in ::execute(X), or hideBin(process.argv)
   context
 ) => {
   // This is where yargs middleware and other argument pre-processing can be
   // implemented, if necessary.
-  return hideBin(rawArgv);
+
+  // When PreExecutionContext::execute is invoked without arguments, Black Flag
+  // calls the yargs::hideBin helper utility on process.argv for you. Therefore,
+  // calling hideBin here would cause a bug. You shouldn't ever need to call
+  // `hideBin` manually, but if you do, it's re-exported from 'black-flag/util'.
+  return rawArgv;
 };
 
 /**
@@ -422,7 +430,7 @@ export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
 Then our CLI's entry point might look something like this:
 
 ```typescript
-#!/usr/bin/env deno
+#!/usr/bin/env node
 // File: my-cli-project/cli.ts
 
 import { join } from 'node:path';
@@ -431,7 +439,7 @@ import { runProgram } from 'black-flag';
 export default runProgram(
   join(__dirname, 'commands'),
   // Just pass an object of your configuration hooks. Promises are okay!
-  import('./configure.ts') // <== For Node/non-TypeScript projects, it'd be .js
+  import('./configure.js') // <== For deno projects, it'd be ".ts" over ".js"
 );
 ```
 
@@ -528,13 +536,16 @@ Suppose we wrote some configuration hooks in `my-cli-project/configure.ts`:
 // File: my-cli-project/configure.ts
 
 import {
-  hideBin,
   type ConfigureArguments,
   type ConfigureErrorHandlingEpilogue
-} from 'black-flag/util';
+} from 'black-flag';
 
 export const configureArguments: ConfigureArguments = (rawArgv) => {
-  return hideBin(rawArgv);
+  return preprocessInputArgs(rawArgv);
+
+  function preprocessInputArgs(args) {
+    // ...
+  }
 };
 
 export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
@@ -548,7 +559,7 @@ export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
 
 import * as conf from './configure';
 
-test('configureArguments returns expected arguments', async () => {
+test('configureArguments returns pre-processed arguments', async () => {
   expect.hasAssertions();
   await expect(conf.configureArguments([1, 2, 3])).resolves.toStrictEqual([3]);
 });
@@ -567,9 +578,9 @@ test('configureErrorHandlingEpilogue outputs as expected', async () => {
 
 And for those who prefer a more holistic behavior-driven testing approach, you
 can use the same function for testing your CLI that you use as an entry point in
-production: [`runProgram`][13].
+production: [`runProgram`][7].
 
-> Black Flag additionally provides the [`makeRunner`][14] utility function so
+> Black Flag additionally provides the [`makeRunner`][13] utility function so
 > you don't have to tediously copy and paste `runProgram(...)` and all its
 > arguments between tests.
 
@@ -626,9 +637,9 @@ it('throws on bad init --lang argument', async () => {
 
 ### Built-In `debug` Integration for Runtime Insights ✨
 
-Black Flag integrates [debug][15], allowing for deep insight into your tool's
+Black Flag integrates [debug][14], allowing for deep insight into your tool's
 runtime without significant overhead or code changes. Simply set the `DEBUG`
-environment variable to an [appropriate value][16]:
+environment variable to an [appropriate value][15]:
 
 ```shell
 # Shows all possible debug output
@@ -640,7 +651,7 @@ DEBUG='myctl*' myctl
 ```
 
 To get meaningful debug output from your commands themselves, just use
-[debug][15]:
+[debug][14]:
 
 ```typescript
 // File: my-cli-project/commands/index.ts
@@ -699,8 +710,8 @@ However, your command files are not tightly coupled with Black Flag. An
 unfortunate side effect of this flexibility is that your command files do not
 automatically pick up Black Flag's types in your IDE/editor. Fortunately, Black
 Flag exports all its exposed types, including the generic
-[`RootConfiguration`][17], [`ParentConfiguration`][18], and
-[`ChildConfiguration`][19] types.
+[`RootConfiguration`][16], [`ParentConfiguration`][17], and
+[`ChildConfiguration`][18] types.
 
 Using these types, your command files themselves can be fully typed and you can
 enjoy the improved DX that comes with comprehensive intellisense. And for those
@@ -725,11 +736,11 @@ module.exports = {
 ```
 
 Child commands (commands not declared in index files) should use
-[`ChildConfiguration`][19]. Parent commands (commands declared in index files)
-should use [`ParentConfiguration`][18]. The root parent command (at the apex of
-the directory storing your command files) should use [`RootConfiguration`][17].
+[`ChildConfiguration`][18]. Parent commands (commands declared in index files)
+should use [`ParentConfiguration`][17]. The root parent command (at the apex of
+the directory storing your command files) should use [`RootConfiguration`][16].
 
-> There's also [`Configuration`][20], the supertype of the three
+> There's also [`Configuration`][19], the supertype of the three
 > `XConfiguration` subtypes.
 
 Similarly, if you're using configuration hooks in a separate file, you can enjoy
@@ -745,9 +756,9 @@ details about generics.
 ---
 
 And that's Black Flag in a nutshell! Check out a complete demo repository for
-that snazzy `myctl` tool [here][21]. Or play with the real thing on NPM:
+that snazzy `myctl` tool [here][20]. Or play with the real thing on NPM:
 `npx -p @xunnamius/my-cli-project myctl --help` (also supports `DEBUG`
-environment variable). Or check out the [step-by-step getting started guide][22]
+environment variable). Or check out the [step-by-step getting started guide][21]
 below!
 
 ## Install
@@ -759,9 +770,9 @@ npm install black-flag
 ## Usage
 
 What follows is a simple step-by-step guide for building, running, and testing
-the `myctl` tool from [the introduction][23].
+the `myctl` tool from [the introduction][22].
 
-> There's also a functional [`myctl` demo repository][21]. And you can interact
+> There's also a functional [`myctl` demo repository][20]. And you can interact
 > with the published version on NPM:
 > `npx -p @xunnamius/my-cli-project myctl --help`.
 
@@ -813,7 +824,7 @@ touch commands/index.js
 Depending on how you invoke Black Flag (e.g. with Node, Deno, Babel+Node, etc),
 command files support a subset of the following extensions in precedence order:
 `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`. To keep things simple, we'll be
-using ES modules as `.js` files (note the [type][24] in `package.json`).
+using ES modules as `.js` files (note the [type][23] in `package.json`).
 
 Also note that empty files, and files that do not export a `handler` function,
 are picked up by Black Flag as unfinished/unimplemented commands. They will
@@ -894,6 +905,10 @@ defaults:
 - `showHelpOnFail(true)` (Black Flag uses a custom failure handler)
 - `strict(true)`
 - `usage(...)`
+  - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
+    (such as in [`configureExecutionPrologue`][24]) will concatenate each
+    invocation's arguments into one long usage string instead of overwriting
+    previous invocations with later ones
 - `version(false)`
   - `version(pkgJson.version || false)` for the root command
 - `wrap(yargs.terminalWidth())`
@@ -1051,8 +1066,8 @@ throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
 Note that we use [`makeRunner`][28] below, which is a factory function that
-returns a [curried][29] version of [`runProgram`][13] that is far less tedious
-to invoke successively.
+returns a [curried][29] version of [`runProgram`][7] that is far less tedious to
+invoke successively.
 
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
 > entire CLI _from scratch_. Other than stuff like [the require cache][30],
@@ -1150,55 +1165,69 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 > yargs!
 
 Aside from the expanded feature set, there are some minor differences between
-yargs and Black Flag. They should not be relevant for most projects.
-
-In no particular order:
+yargs and Black Flag. They should not be relevant given proper use of Black
+Flag, but are noted below nonetheless.
 
 <!-- lint disable list-item-style -->
 
-- The `yargs::argv` magic property is soft-disabled (always returns `undefined`)
-  so that deep cloning a yargs instance doesn't result in `parse` (_and command
-  handlers_) getting invoked several times, _even after an error occurred in an
-  earlier invocation_. This can lead to undefined or even dangerous behavior.
-  Who in their right mind is out here cloning yargs instances, you may ask?
-  [Jest does so whenever you use certain asymmetric matchers][31].
+#### Minor Differences
 
-  Either way, you should never call `yargs::parse`, `yargs::parseAsync`,
-  `yargs::argv`, etc directly, but call [`runProgram`][13] or
-  [`PreExecutionContext::execute`][10] instead, making this effectively a
-  non-issue.
+- The `yargs::argv` magic property is soft-disabled (always returns `undefined`)
+  so that deep cloning a yargs instance doesn't result in `yargs::parse` (_and
+  yargs's command handlers_) getting invoked several times, _even after an error
+  occurred in an earlier invocation_. This can lead to undefined or even
+  dangerous behavior.
+
+  > Who in their right mind is out here cloning yargs instances, you may ask?
+  > [Jest does so whenever you use certain asymmetric matchers][31].
+
+  Regardless, you should never have to reach below Black Flag's abstraction over
+  yargs to call methods like `yargs::parse`, `yargs::parseAsync`, `yargs::argv`,
+  etc. Instead, just [use Black Flag as intended][7].
+
+  Therefore, this is effectively a non-issue with proper declarative use of
+  Black Flag.
 
 - Though it would be trivial, yargs [middleware][32] isn't supported since the
-  functionality is already covered by the `configureArguments` configuration
-  hook ~~and I didn't notice yargs had this feature until after I wrote Black
-  Flag~~.
+  functionality is already covered by configuration hooks ~~and I didn't notice
+  yargs had this feature until after I wrote Black Flag~~. If you have a yargs
+  middleware function you want to run, call it in [`configureArguments`][24]
+  instead.
 
-- A [bug][33] in yargs prevents `showHelp(...)`/`--help` from printing anything
-  when using an async [`builder`][6] function (or promise-returning function)
-  for a default command, so they are not allowed by intellisense. However, Black
-  Flag supports an asynchronous function as the value of `module.exports` in CJS
-  code, and top-level await in ESM code, so if you really need an async
-  [`builder`][6] function, [hoist][34] the async logic to work around this bug
-  for now.
+#### Irrelevant Differences
 
-- Since custom error handling is covered quite comprehensively by the
-  [`configureErrorHandlingEpilogue`][12] configuration hook, the
-  `yargs::showHelpOnFail(...)` method will ignore the "message" parameter. Use
-  the hook if you want custom error messages and the like.
+- A [bug][33] in yargs\@17.7.2 prevents `showHelp(...)`/`--help` from printing
+  anything when using an async [`builder`][6] function (or promise-returning
+  function) for a default command, so they are not allowed by intellisense.
+  However, Black Flag supports an asynchronous function as the value of
+  `module.exports` in CJS code, and top-level await in ESM code, so if you
+  really need an async [`builder`][6] function, [hoist][34] the async logic to
+  work around this bug for now.
+
+- One of Black Flag's features is simple comprehensive error reporting via the
+  [`configureErrorHandlingEpilogue`][12] configuration hook. Therefore, the
+  `yargs::showHelpOnFail(...)` method will ignore the redundant "message"
+  parameter. Use said hook to output an "epilogue" message after yargs outputs
+  an error message.
 
 - Since every auto-discovered command translates [into its own yargs
   instances][35], the [`command`][6] property, if exported by your command
   file(s), must start with `"$0"`. However, most command files shouldn't export
   a [`command`][6] property at all since the default usually suffices.
 
-- Yargs methods like `yargs::check` no longer apply globally across disparate
-  yargs instances since [they are literally different objects in memory][35]. In
-  the weird case where you want the same check to apply to every single command
-  in your hierarchy, you can call `yargs::check` for each command (perhaps via
-  the [`configureExecutionPrologue`][36] hook).
+  > Black Flag will throw if any auto-discovered command exports an invalid
+  > property.
 
-  This is how most vanilla yargs methods already work with respect to
-  sub-commands and so shouldn't be an issue for most projects.
+- `yargs::check` and `yargs::global`, while they work as expected on commands
+  and their direct sub-commands, do not necessarily apply "globally" across your
+  entire command hierarchy since [there are several _distinct_ yargs instances
+  in play when Black Flag executes][35]. This is not a problem for most projects
+  and vanilla yargs already has a similar limitation with `yargs::check`.
+
+  However, if for some reason you want a uniform check to apply to every single
+  yargs instance across your entire command hierarchy, you can leverage the
+  [`configureExecutionPrologue`][36] hook and [command metadata][35] to work
+  around this.
 
 - Due to the way Black Flag stacks yargs instances, arbitrary parameters cannot
   appear in the arguments list until after the final command name.
@@ -1222,10 +1251,11 @@ In no particular order:
   treasure-chest --help retrieve # Will FAIL
   ```
 
-  Vanilla yargs [never really supported this functionality][37] (e.g. you can't
-  do `git -p ls-files --full-name` with yargs and have that mean something
-  different than `git ls-files --full-name -p`). Black Flag makes this a formal
-  invariant that will throw an error.
+  This limitation was inherited from yargs itself: vanilla yargs [never really
+  supported this functionality][37] in that you can't implement
+  `git -p ls-files --full-name` and have that mean something different than
+  `git ls-files --full-name -p` or `git -p ls-files --full-name -p` with yargs.
+  Black Flag makes this a formal invariant that will throw an error.
 
 <!-- lint enable list-item-style -->
 
@@ -1272,13 +1302,14 @@ commands: Map(6) {
 
 Each of these six programs is actually two yargs instances:
 
-1. The **actual** yargs instance is responsible for generating help text,
-   proxying control to sub-command yargs instances, and first-pass arguments
-   parsing (said parse result is used as the `argv` third parameter passed to
-   [`builder`][6] functions).
+1. The **actual** (or **"non-shadow"**) yargs instance is responsible for
+   generating help text, proxying control to sub-command yargs instances, and
+   first-pass arguments parsing and validation. Said parse result is used as the
+   `argv` third parameter passed to [`builder`][6] functions.
 
-2. The **shadow** yargs instance is responsible for validating parsed arguments
-   and running the provided [`handler`][6].
+2. The **shadow** yargs instance is responsible for second-pass arguments
+   parsing and validation, running each command's [`handler`][6], and returning
+   the `argv` returned by [`PreExecutionContext::execute`][10].
 
 Actual instances are available as the `program` property of each object in
 [`PreExecutionContext::commands`][10]. The actual instance representing the root
@@ -1299,8 +1330,12 @@ await preExecutionContext.execute();
 Shadow instances are "clones" of their actual instances, and are available as
 the [`metadata.shadow`][38] property of each object in
 [`PreExecutionContext::commands`][10]. The actual command and its shadow clone
-are identical except the actual command is never set to strict mode while the
-shadow is set to strict mode by default.
+are identical except the actual command is [_never_ set to strict mode][39]
+while the shadow is set to strict mode by default.
+
+> Note that non-shadow instances have their strict mode functions [soft
+> disabled][39] for the reasons described below. When executing Black Flag in
+> [debug mode][40], you will be warned when accidentally invoking them.
 
 Therefore: if you want to tamper with the instance responsible for handing off
 or "proxying" control between yargs instances, operate on the actual instance.
@@ -1311,19 +1346,23 @@ running a program's actual [`handler`][6] function, you should operate on
 This bifurcation of responsibility facilitates the double-parsing necessary for
 both [_dynamic options_][5] and _dynamic strictness_.
 
-For dynamic options, Black Flag can accurately parse the given arguments with
-the actual instance and then invoke the shadow clone afterwards, feeding its
-[`builder`][6] function a proper `argv` third parameter.
+In implementing dynamic options, Black Flag accurately parses the given
+arguments with the actual instance on the first pass and feeds the result to the
+[`builder`][6] function of the shadow clone on the second pass (via [`builder`'s
+new third parameter][5]).
 
-With dynamic strictness, Black Flag can guarantee both parent and child programs
-are evaluated in vanilla yargs strict mode by default, meaning an end user
-trying to invoke a non-existent subcommand will throw. With vanilla yargs strict
-mode, this would mean disallowing any arguments unrecognized by the yargs
-instance doing the proxying, even if the yargs instance being proxied to _does_
-recognize said arguments, which would break Black Flag entirely; hence the need
-for so-called "dynamic strictness," which allows parent yargs instances to proxy
-control to child yargs instances in your command hierarchy even when ancestor
-commands are not aware of the syntax accepted by their distant descendants.
+By facilitating dynamic strictness, Black Flag can guarantee both parent and
+child programs are evaluated in vanilla yargs strict mode by default, meaning an
+end user trying to invoke a non-existent sub-command will throw. With vanilla
+yargs strict mode, this would mean disallowing any arguments unrecognized by the
+yargs instance doing the proxying, even if the yargs instance being proxied to
+_does_ recognize said arguments. This would break Black Flag's support for deep
+command hierarchies entirely.
+
+Hence the need for so-called "dynamic strictness," which allows parent yargs
+instances to proxy control to child yargs instances in your hierarchy of
+commands even when ancestor commands are not aware of the syntax accepted by
+their distant descendants.
 
 See [the docs][x-repo-docs] for more details on Black Flag's internals.
 
@@ -1334,9 +1373,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][39], I realized the (irritatingly disparate 😖) structures of my
+another tool][41], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][40] to ["optimize" my workflows][41], I
+yargs. And, as I'm [always eager][42] to ["optimize" my workflows][43], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1348,7 +1387,9 @@ Throw in a re-watch of the PotC series and Black Flag was born! 🏴‍☠🍾
 ### Published Package Details
 
 This is a [CJS2 package][x-pkg-cjs-mojito] with statically-analyzable exports
-built by Babel for Node.js versions that are not end-of-life.
+built by Babel for Node.js versions that are not end-of-life. For TypeScript
+users, this package supports both `"Node10"` and `"Node16"` module resolution
+strategies.
 
 <details><summary>Expand details</summary>
 
@@ -1357,7 +1398,8 @@ or `await import(...)`) source will load this package from the same entry points
 when using Node. This has several benefits, the foremost being: less code
 shipped/smaller package size, avoiding [dual package
 hazard][x-pkg-dual-package-hazard] entirely, distributables are not
-packed/bundled/uglified, and a less complex build process.
+packed/bundled/uglified, a drastically less complex build process, and CJS
+consumers aren't shafted.
 
 Each entry point (i.e. `ENTRY`) in [`package.json`'s
 `exports[ENTRY]`][x-repo-package-json] object includes one or more [export
@@ -1376,7 +1418,7 @@ Though [`package.json`][x-repo-package-json] includes
 [`{ "type": "commonjs" }`][x-pkg-type], note that any ESM-only entry points will
 be ES module (`.mjs`) files. Finally, [`package.json`][x-repo-package-json] also
 includes the [`sideEffects`][x-pkg-side-effects-key] key, which is `false` for
-optimal [tree shaking][x-pkg-tree-shaking].
+optimal [tree shaking][x-pkg-tree-shaking] where appropriate.
 
 </details>
 
@@ -1389,7 +1431,7 @@ See [LICENSE][x-repo-license].
 **[New issues][x-repo-choose-new-issue] and [pull requests][x-repo-pr-compare]
 are always welcome and greatly appreciated! 🤩** Just as well, you can [star 🌟
 this project][x-badge-repo-link] to let me know you found it useful! ✊🏿 Or you
-could [buy me a beer][42] 🥺 Thank you!
+could \[buy me a beer]\[42] 🥺 Thank you!
 
 See [CONTRIBUTING.md][x-repo-contributing] and [SUPPORT.md][x-repo-support] for
 more information.
@@ -1503,18 +1545,18 @@ specification. Contributions of any kind welcome!
 [10]: ./docs/modules/index.md#preexecutioncontext
 [11]: https://en.wikipedia.org/wiki/Convention_over_configuration
 [12]: ./docs/modules/index.md#configureerrorhandlingepilogue
-[13]: ./docs/modules/index.md#runprogram
-[14]: ./docs/modules/util.md#makerunner
-[15]: https://www.npmjs.com/package/debug
-[16]: https://www.npmjs.com/package/debug#usage
-[17]: ./docs/modules/index.md#rootconfiguration
-[18]: ./docs/modules/index.md#parentconfiguration
-[19]: ./docs/modules/index.md#childconfiguration
-[20]: ./docs/modules/index.md#configuration
-[21]: https://github.com/Xunnamius/black-flag-demo
-[22]: #building-and-running-your-cli
-[23]: #introduction
-[24]: https://nodejs.org/api/packages.html#type
+[13]: ./docs/modules/util.md#makerunner
+[14]: https://www.npmjs.com/package/debug
+[15]: https://www.npmjs.com/package/debug#usage
+[16]: ./docs/modules/index.md#rootconfiguration
+[17]: ./docs/modules/index.md#parentconfiguration
+[18]: ./docs/modules/index.md#childconfiguration
+[19]: ./docs/modules/index.md#configuration
+[20]: https://github.com/Xunnamius/black-flag-demo
+[21]: #building-and-running-your-cli
+[22]: #introduction
+[23]: https://nodejs.org/api/packages.html#type
+[24]: #convention-over-configuration-
 [25]: https://www.npmjs.com/package/alpha-sort
 [26]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
@@ -1532,8 +1574,10 @@ specification. Contributions of any kind welcome!
 [36]: ./docs/modules/index.md#configureexecutionprologue
 [37]: https://github.com/yargs/yargs/issues/156
 [38]: ./docs/modules/index.md#programmetadata
-[39]: https://github.com/Xunnamius/xunnctl
-[40]: https://xkcd.com/1205
-[41]:
+[39]:
+  https://github.com/Xunnamius/black-flag/blob/4e6f51f68d9a0e29ae8e750d53762368e1cfcc67/src/constant.ts#L15-L23
+[40]: #built-in-debug-integration-for-runtime-insights-
+[41]: https://github.com/Xunnamius/xunnctl
+[42]: https://xkcd.com/1205
+[43]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
-[42]: https://github.com/sponsors/Xunnamius
