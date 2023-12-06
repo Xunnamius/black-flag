@@ -25,7 +25,7 @@ The exit code used when a sanity check fails.
 
 #### Defined in
 
-[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L44)
+[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L44)
 
 ___
 
@@ -37,7 +37,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 #### Defined in
 
-[src/constant.ts:36](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L36)
+[src/constant.ts:36](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L36)
 
 ___
 
@@ -49,7 +49,7 @@ The exit code used when executing an unimplemented child program.
 
 #### Defined in
 
-[src/constant.ts:40](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L40)
+[src/constant.ts:40](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L40)
 
 ___
 
@@ -61,4 +61,4 @@ The exit code used when execution succeeds and exits gracefully.
 
 #### Defined in
 
-[src/constant.ts:32](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L32)
+[src/constant.ts:32](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L32)

@@ -56,43 +56,43 @@
 
 ### AnyArguments
 
-Ƭ **AnyArguments**: [`Arguments`](index.md#arguments)<`Record`<`string`, `unknown`\>\>
+Ƭ **AnyArguments**: [`Arguments`](index.md#arguments)\<`Record`\<`string`, `unknown`\>\>
 
 The most generic form of [Arguments](index.md#arguments).
 
 #### Defined in
 
-[types/program.ts:12](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L12)
+[types/program.ts:12](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L12)
 
 ___
 
 ### AnyConfiguration
 
-Ƭ **AnyConfiguration**: [`Configuration`](index.md#configuration)<`Record`<`string`, `unknown`\>\>
+Ƭ **AnyConfiguration**: [`Configuration`](index.md#configuration)\<`Record`\<`string`, `unknown`\>\>
 
-The most generic form of [Configuration](index.md#configuration).
+The most generic implementation type of [Configuration](index.md#configuration).
 
 #### Defined in
 
-[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L9)
+[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L9)
 
 ___
 
 ### AnyProgram
 
-Ƭ **AnyProgram**: [`Program`](index.md#program)<`Record`<`string`, `unknown`\>\>
+Ƭ **AnyProgram**: [`Program`](index.md#program)\<`Record`\<`string`, `unknown`\>\>
 
 The most generic form of [Program](index.md#program).
 
 #### Defined in
 
-[types/program.ts:25](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L25)
+[types/program.ts:25](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L25)
 
 ___
 
 ### Arguments
 
-Ƭ **Arguments**<`CustomCliArguments`\>: `_Arguments`<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>
+Ƭ **Arguments**\<`CustomCliArguments`\>: `_Arguments`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>
 
 Represents the shape of the parsed CLI arguments, plus `_` and `$0`, any
 (hidden) arguments/properties specific to Black Flag, and an indexer falling
@@ -102,17 +102,17 @@ back to `unknown` for unrecognized arguments.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/program.ts:19](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L19)
+[types/program.ts:19](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L19)
 
 ___
 
 ### ChildConfiguration
 
-Ƭ **ChildConfiguration**<`CustomCliArguments`\>: `Partial`<[`Configuration`](index.md#configuration)<`CustomCliArguments`\>\>
+Ƭ **ChildConfiguration**\<`CustomCliArguments`\>: `Partial`\<[`Configuration`](index.md#configuration)\<`CustomCliArguments`\>\>
 
 A partial extension to the [Configuration](index.md#configuration) interface for child
 configurations. This type was designed for use in external ESM/CJS module
@@ -122,11 +122,11 @@ files that will eventually get imported via auto-discovery.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/module.ts:121](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L121)
+[types/module.ts:121](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L121)
 
 ___
 
@@ -144,13 +144,13 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L48)
 
 ___
 
 ### Configuration
 
-Ƭ **Configuration**<`CustomCliArguments`\>: `Object`
+Ƭ **Configuration**\<`CustomCliArguments`\>: `Object`
 
 A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a
@@ -160,30 +160,30 @@ subtype of this interface.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Type declaration
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `aliases` | `string`[] | An array of `command` aliases [as interpreted](https://github.com/yargs/yargs/pull/647) by [yargs](https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases). Note that positional arguments defined in aliases are ignored. **`Default`** ```ts [] ``` |
-| `builder` | { `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)<`CustomCliArguments`\>) => [`Program`](index.md#program)<`CustomCliArguments`\> \| `_Program` | An object containing yargs options configuration or a function that will receive and return the current yargs instance. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
-| `command` | ``"$0"`` \| \`$0 ${string}\` | The command as interpreted by yargs. May contain positional arguments. It is usually unnecessary to change or use this property. **`Default`** ```ts "$0" ``` |
+| `builder` | \{ `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)\<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => [`Program`](index.md#program)\<`CustomCliArguments`\> \| `_Program` | An object containing yargs options configuration or a function that will receive and return the current yargs instance. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
+| `command` | ``"$0"`` \| \`$0 $\{string}\` | The command as interpreted by yargs. May contain positional arguments. It is usually unnecessary to change or use this property. **`Default`** ```ts "$0" ``` |
 | `deprecated` | `string` \| `boolean` | If truthy, the command will be considered "deprecated" by yargs. If `deprecated` is a string, it will additionally be treated as a deprecation message and printed. **`Default`** ```ts false ``` |
 | `description` | `string` \| ``false`` | The description for the command in help text. If `false`, the command will be considered "hidden" by yargs. **`Default`** ```ts "" ``` |
-| `handler` | (`args`: [`Arguments`](index.md#arguments)<`CustomCliArguments`\>) => `Promisable`<`void`\> | A function called when this command is invoked. It will receive an object of parsed arguments. If `undefined`, a `CommandNotImplementedError` will be thrown. **`Default`** ```ts undefined ``` |
+| `handler` | (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\> | A function called when this command is invoked. It will receive an object of parsed arguments. If `undefined`, a `CommandNotImplementedError` will be thrown. **`Default`** ```ts undefined ``` |
 | `name` | `string` | The name of the command. **Must not contain any spaces** or any characters that yargs does not consider valid for a command name. An error will be thrown if spaces are present. Defaults to the filename, excluding its extension, containing the configuration, or the directory name if the filename without extension is "index". |
 | `usage` | `string` | Set a usage message shown at the top of the command's help text. The string `$0` will be replaced with the _full name_ of the command. **`Default`** ```ts "Usage: $0" ``` |
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L16)
 
 ___
 
 ### ConfigureArguments
 
-Ƭ **ConfigureArguments**<`CustomContext`\>: (`rawArgv`: typeof `process.argv`, `context`: `CustomContext`) => `Promisable`<typeof `process.argv`\>
+Ƭ **ConfigureArguments**\<`CustomContext`\>: (`rawArgv`: typeof `process.argv`, `context`: `CustomContext`) => `Promisable`\<typeof `process.argv`\>
 
 #### Type parameters
 
@@ -193,7 +193,7 @@ ___
 
 #### Type declaration
 
-▸ (`rawArgv`, `context`): `Promisable`<typeof `process.argv`\>
+▸ (`rawArgv`, `context`): `Promisable`\<typeof `process.argv`\>
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like array.
@@ -210,17 +210,17 @@ implemented.
 
 ##### Returns
 
-`Promisable`<typeof `process.argv`\>
+`Promisable`\<typeof `process.argv`\>
 
 #### Defined in
 
-[types/configure.ts:39](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L39)
+[types/configure.ts:39](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L39)
 
 ___
 
 ### ConfigureErrorHandlingEpilogue
 
-Ƭ **ConfigureErrorHandlingEpilogue**<`CustomContext`\>: (`meta`: { `error`: `unknown` ; `exitCode`: `number` ; `message`: `string`  }, `argv`: `Omit`<`Partial`<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & { `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  }, `context`: `CustomContext`) => `Promisable`<`void`\>
+Ƭ **ConfigureErrorHandlingEpilogue**\<`CustomContext`\>: (`meta`: \{ `error`: `unknown` ; `exitCode`: `number` ; `message`: `string`  }, `argv`: `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  }, `context`: `CustomContext`) => `Promisable`\<`void`\>
 
 #### Type parameters
 
@@ -230,7 +230,7 @@ ___
 
 #### Type declaration
 
-▸ (`meta`, `argv`, `context`): `Promisable`<`void`\>
+▸ (`meta`, `argv`, `context`): `Promisable`\<`void`\>
 
 This function is called once at the very end of the error handling process
 after an error has occurred.
@@ -249,22 +249,22 @@ exceptions to this are if (1) the error occurs within
 | `meta.error` | `unknown` |
 | `meta.exitCode` | `number` |
 | `meta.message` | `string` |
-| `argv` | `Omit`<`Partial`<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & { `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  } |
+| `argv` | `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  } |
 | `context` | `CustomContext` |
 
 ##### Returns
 
-`Promisable`<`void`\>
+`Promisable`\<`void`\>
 
 #### Defined in
 
-[types/configure.ts:72](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L72)
+[types/configure.ts:72](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L72)
 
 ___
 
 ### ConfigureExecutionContext
 
-Ƭ **ConfigureExecutionContext**<`CustomContext`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`<`CustomContext`\>
+Ƭ **ConfigureExecutionContext**\<`CustomContext`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`\<`CustomContext`\>
 
 #### Type parameters
 
@@ -274,7 +274,7 @@ ___
 
 #### Type declaration
 
-▸ (`context`): `Promisable`<`CustomContext`\>
+▸ (`context`): `Promisable`\<`CustomContext`\>
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return what will become the global
@@ -288,17 +288,17 @@ This function is called once towards the beginning of the execution of
 
 ##### Returns
 
-`Promisable`<`CustomContext`\>
+`Promisable`\<`CustomContext`\>
 
 #### Defined in
 
-[types/configure.ts:11](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L11)
+[types/configure.ts:11](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L11)
 
 ___
 
 ### ConfigureExecutionEpilogue
 
-Ƭ **ConfigureExecutionEpilogue**<`CustomContext`\>: (`argv`: [`Arguments`](index.md#arguments), `context`: `CustomContext`) => `Promisable`<[`Arguments`](index.md#arguments)\>
+Ƭ **ConfigureExecutionEpilogue**\<`CustomContext`\>: (`argv`: [`Arguments`](index.md#arguments), `context`: `CustomContext`) => `Promisable`\<[`Arguments`](index.md#arguments)\>
 
 #### Type parameters
 
@@ -308,7 +308,7 @@ ___
 
 #### Type declaration
 
-▸ (`argv`, `context`): `Promisable`<[`Arguments`](index.md#arguments)\>
+▸ (`argv`, `context`): `Promisable`\<[`Arguments`](index.md#arguments)\>
 
 This function is called once after CLI argument parsing completes and either
 (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown.
@@ -330,17 +330,17 @@ while triggering an early exit as desired, will _not_ result in
 
 ##### Returns
 
-`Promisable`<[`Arguments`](index.md#arguments)\>
+`Promisable`\<[`Arguments`](index.md#arguments)\>
 
 #### Defined in
 
-[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L58)
+[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L58)
 
 ___
 
 ### ConfigureExecutionPrologue
 
-Ƭ **ConfigureExecutionPrologue**<`CustomContext`\>: (`program`: [`Program`](index.md#program), `context`: `CustomContext`) => `Promisable`<`void`\>
+Ƭ **ConfigureExecutionPrologue**\<`CustomContext`\>: (`program`: [`Program`](index.md#program), `context`: `CustomContext`) => `Promisable`\<`void`\>
 
 #### Type parameters
 
@@ -350,7 +350,7 @@ ___
 
 #### Type declaration
 
-▸ (`program`, `context`): `Promisable`<`void`\>
+▸ (`program`, `context`): `Promisable`\<`void`\>
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any
@@ -373,17 +373,17 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 ##### Returns
 
-`Promisable`<`void`\>
+`Promisable`\<`void`\>
 
 #### Defined in
 
-[types/configure.ts:28](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L28)
+[types/configure.ts:28](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L28)
 
 ___
 
 ### ConfigureHooks
 
-Ƭ **ConfigureHooks**<`CustomContext`\>: `Object`
+Ƭ **ConfigureHooks**\<`CustomContext`\>: `Object`
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.
@@ -398,15 +398,15 @@ definition for details.
 
 | Name | Type |
 | :------ | :------ |
-| `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments)<`CustomContext`\> |
-| `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)<`CustomContext`\> |
-| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)<`CustomContext`\> |
-| `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)<`CustomContext`\> |
-| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)<`CustomContext`\> |
+| `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments)\<`CustomContext`\> |
+| `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)\<`CustomContext`\> |
+| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> |
+| `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\<`CustomContext`\> |
+| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> |
 
 #### Defined in
 
-[types/configure.ts:87](https://github.com/Xunnamius/black-flag/blob/873af70/types/configure.ts#L87)
+[types/configure.ts:87](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/configure.ts#L87)
 
 ___
 
@@ -424,43 +424,43 @@ The globally-accessible shared context object.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `commands` | `Map`<`string`, { `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `program`: [`AnyProgram`](index.md#anyprogram)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) (including shadow [Program](index.md#program) instances) as values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map, if there are any pairs, will always be the root program. |
+| `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `program`: [`AnyProgram`](index.md#anyprogram)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) (including shadow [Program](index.md#program) instances) as values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map, if there are any pairs, will always be the root program. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | { `[key: string]`: `unknown`; `initialTerminalWidth`: `number` ; `rawArgv`: typeof `process.argv`  } | The current state of the execution environment. |
+| `state` | \{ `[key: string]`: `unknown`; `initialTerminalWidth`: `number` ; `rawArgv`: typeof `process.argv`  } | The current state of the execution environment. |
 | `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined when `configureProgram` is called. |
 | `state.rawArgv` | typeof `process.argv` | A subset of the original argv returned by [ConfigureArguments](index.md#configurearguments). It is used internally to give the final command in the arguments list the chance to parse argv. Further, it is used to enforce the ordering invariant on chained child program invocations. That is: all non-positional arguments must appear _after_ the last command name in any arguments list parsed by this program. For example: - Good (satisfies invariant): `rootcmd subcmd subsubcmd --help` - Bad (violation of invariant): `rootcmd --help subcmd subsubcmd` Since it will be actively manipulated by each command in the arguments list, **do not rely on `rawArgv` for anything other than checking invariant satisfaction.** |
 
 #### Defined in
 
-[types/program.ts:195](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L195)
+[types/program.ts:211](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L211)
 
 ___
 
 ### Executor
 
-Ƭ **Executor**: (`rawArgv?`: `Parameters`<[`ConfigureArguments`](index.md#configurearguments)\>[``0``]) => `Promise`<`Awaited`<`ReturnType`<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+Ƭ **Executor**: (`rawArgv?`: `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``]) => `Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
 
 #### Type declaration
 
-▸ (`rawArgv?`): `Promise`<`Awaited`<`ReturnType`<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+▸ (`rawArgv?`): `Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
 
-Accepts an optional array that defaults to `process.argv` and returns an
-arguments object representing the parsed CLI input for the given root
-[Program](index.md#program).
+Accepts an optional `rawArgv` array that defaults to
+`yargs::hideBin(process.argv)` and returns an arguments object representing
+the parsed CLI input for the given root [Program](index.md#program).
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `rawArgv?` | `Parameters`<[`ConfigureArguments`](index.md#configurearguments)\>[``0``] |
+| `rawArgv?` | `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``] |
 
 ##### Returns
 
-`Promise`<`Awaited`<`ReturnType`<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+`Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
 
 #### Defined in
 
-[types/program.ts:171](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L171)
+[types/program.ts:183](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L183)
 
 ___
 
@@ -483,13 +483,13 @@ Instead of using this type directly, your project's custom arguments (e.g.
 
 #### Defined in
 
-[types/program.ts:162](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L162)
+[types/program.ts:174](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L174)
 
 ___
 
 ### ImportedConfigurationModule
 
-Ƭ **ImportedConfigurationModule**<`CustomCliArguments`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`<`Partial`<[`RootConfiguration`](index.md#rootconfiguration)<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)<`CustomCliArguments`\>\>\> \| `Partial`<[`RootConfiguration`](index.md#rootconfiguration)<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)<`CustomCliArguments`\>\> & { `__esModule?`: ``false`` ; `default?`: [`ImportedConfigurationModule`](index.md#importedconfigurationmodule)<`CustomCliArguments`\>  } \| { `__esModule`: ``true``  }
+Ƭ **ImportedConfigurationModule**\<`CustomCliArguments`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`\<`Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\>\> \| `Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\> & \{ `__esModule?`: ``false`` ; `default?`: [`ImportedConfigurationModule`](index.md#importedconfigurationmodule)\<`CustomCliArguments`\>  } \| \{ `__esModule`: ``true``  }
 
 The shape of a Configuration object imported from a CJS/ESM module external
 to the CLI framework (e.g. importing an auto-discovered config module from a
@@ -499,17 +499,17 @@ file).
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/module.ts:130](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L130)
+[types/module.ts:130](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L130)
 
 ___
 
 ### ParentConfiguration
 
-Ƭ **ParentConfiguration**<`CustomCliArguments`\>: `Partial`<[`Configuration`](index.md#configuration)<`CustomCliArguments`\>\>
+Ƭ **ParentConfiguration**\<`CustomCliArguments`\>: `Partial`\<[`Configuration`](index.md#configuration)\<`CustomCliArguments`\>\>
 
 A partial extension to the [Configuration](index.md#configuration) interface for non-root
 parent configurations. This type was designed for use in external ESM/CJS
@@ -519,17 +519,17 @@ module files that will eventually get imported via auto-discovery.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/module.ts:112](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L112)
+[types/module.ts:112](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L112)
 
 ___
 
 ### PreExecutionContext
 
-Ƭ **PreExecutionContext**<`CustomContext`\>: `CustomContext` & { `execute`: [`Executor`](index.md#executor) ; `program`: [`Program`](index.md#program)  }
+Ƭ **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & \{ `execute`: [`Executor`](index.md#executor) ; `program`: [`Program`](index.md#program)  }
 
 The pre-execution context that is the result of calling `configureProgram`.
 
@@ -541,13 +541,13 @@ The pre-execution context that is the result of calling `configureProgram`.
 
 #### Defined in
 
-[types/program.ts:178](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L178)
+[types/program.ts:193](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L193)
 
 ___
 
 ### Program
 
-Ƭ **Program**<`CustomCliArguments`\>: `Omit`<`_Program`<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"``\> & { `command`: `_Program`<`CustomCliArguments`\>[``"command"``] & (`command`: `string` \| `string`[], `description`: `string` \| ``false``, `builder`: { `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)<`CustomCliArguments`\>) => `Argv`<{}\> \| [`Program`](index.md#program)<`CustomCliArguments`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)<`CustomCliArguments`\>) => `Promisable`<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)<`CustomCliArguments`\> ; `strict_force`: (`enabled`: `boolean`) => `void` ; `version`: `_Program`<`CustomCliArguments`\>[``"version"``] & (`version`: `string` \| ``false``) => [`Program`](index.md#program)<`CustomCliArguments`\>  }
+Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"``\> & \{ `command`: `_Program`\<`CustomCliArguments`\>[``"command"``] & (`command`: `string` \| `string`[], `description`: `string` \| ``false``, `builder`: \{ `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)\<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Argv`\<{}\> \| [`Program`](index.md#program)\<`CustomCliArguments`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `strict_force`: (`enabled`: `boolean`) => `void` ; `version`: `_Program`\<`CustomCliArguments`\>[``"version"``] & (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -559,11 +559,11 @@ by yargs but with several differences and should be preferred.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/program.ts:34](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L34)
+[types/program.ts:34](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L34)
 
 ___
 
@@ -587,13 +587,13 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:94](https://github.com/Xunnamius/black-flag/blob/873af70/types/program.ts#L94)
+[types/program.ts:106](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/program.ts#L106)
 
 ___
 
 ### RootConfiguration
 
-Ƭ **RootConfiguration**<`CustomCliArguments`\>: `Partial`<[`ParentConfiguration`](index.md#parentconfiguration)<`CustomCliArguments`\>\>
+Ƭ **RootConfiguration**\<`CustomCliArguments`\>: `Partial`\<[`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\>\>
 
 A partial extension to the [Configuration](index.md#configuration) interface for root
 configurations. This type was designed for use in external ESM/CJS module
@@ -603,11 +603,11 @@ files that will eventually get imported via auto-discovery.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Defined in
 
-[types/module.ts:103](https://github.com/Xunnamius/black-flag/blob/873af70/types/module.ts#L103)
+[types/module.ts:103](https://github.com/Xunnamius/black-flag/blob/4e6f51f/types/module.ts#L103)
 
 ## Variables
 
@@ -620,7 +620,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:7](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L7)
+[src/constant.ts:7](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L7)
 
 ___
 
@@ -633,7 +633,7 @@ Hard-coded default program `usage` text provided to yargs instances via
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/873af70/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/constant.ts#L13)
 
 ___
 
@@ -679,19 +679,20 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:159](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L159)
+[src/error.ts:159](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L159)
 
 ## Functions
 
 ### configureProgram
 
-▸ **configureProgram**<`CustomContext`\>(`commandModulePath?`, `configurationHooks?`): `Promise`<[`PreExecutionContext`](index.md#preexecutioncontext)<`CustomContext`\>\>
+▸ **configureProgram**\<`CustomContext`\>(`commandModulePath?`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
 Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing a fully-configured
 [Program](index.md#program) instance with the provided configuration hooks and an
 [Executor](index.md#executor) function.
 
-Command auto-discovery will occur at `commandModulePath`, if defined.
+Command auto-discovery will occur at `commandModulePath`, if defined;
+otherwise, command auto-discovery is disabled.
 
 **This function throws whenever an exception occurs** (including exceptions
 representing a graceful exit), making it not ideal as an entry point for a
@@ -709,17 +710,17 @@ the exit code for you.
 | Name | Type |
 | :------ | :------ |
 | `commandModulePath?` | `string` |
-| `configurationHooks?` | [`ConfigureHooks`](index.md#configurehooks)<`CustomContext`\> |
+| `configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<`CustomContext`\>\> |
 
 #### Returns
 
-`Promise`<[`PreExecutionContext`](index.md#preexecutioncontext)<`CustomContext`\>\>
+`Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
 #### Defined in
 
-[src/index.ts:52](https://github.com/Xunnamius/black-flag/blob/873af70/src/index.ts#L52)
+[src/index.ts:54](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/index.ts#L54)
 
-▸ **configureProgram**<`CustomContext`\>(`configurationHooks?`): `Promise`<[`PreExecutionContext`](index.md#preexecutioncontext)<`CustomContext`\>\>
+▸ **configureProgram**\<`CustomContext`\>(`configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
 Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing a fully-configured
 [Program](index.md#program) instance with default configuration hooks and an
@@ -742,21 +743,21 @@ the exit code for you.
 
 | Name | Type |
 | :------ | :------ |
-| `configurationHooks?` | [`ConfigureHooks`](index.md#configurehooks)<`CustomContext`\> |
+| `configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<`CustomContext`\>\> |
 
 #### Returns
 
-`Promise`<[`PreExecutionContext`](index.md#preexecutioncontext)<`CustomContext`\>\>
+`Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
 #### Defined in
 
-[src/index.ts:70](https://github.com/Xunnamius/black-flag/blob/873af70/src/index.ts#L70)
+[src/index.ts:72](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/index.ts#L72)
 
 ___
 
 ### makeProgram
 
-▸ **makeProgram**<`CustomCliArguments`\>(`«destructured»?`): [`Program`](index.md#program)<`CustomCliArguments`\>
+▸ **makeProgram**\<`CustomCliArguments`\>(`«destructured»?`): [`Program`](index.md#program)\<`CustomCliArguments`\>
 
 Returns an non-configured [Program](index.md#program) instance, which is just a
 lightly-decorated yargs instance.
@@ -770,14 +771,14 @@ Among other things, this function is sugar for `return (await
 import('yargs/yargs')).default()`. Note that the returned yargs instance has
 its magical `::argv` property disabled via a [this-recovering `Proxy`
 object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#no_private_property_forwarding).
-The instance also exposes two new methods: `command_deferred` and
-`command_finalize_deferred`.
+The instance also exposes three new methods: `command_deferred`,
+`command_finalize_deferred`, and `strict_force`.
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
@@ -788,17 +789,17 @@ The instance also exposes two new methods: `command_deferred` and
 
 #### Returns
 
-[`Program`](index.md#program)<`CustomCliArguments`\>
+[`Program`](index.md#program)\<`CustomCliArguments`\>
 
 #### Defined in
 
-[src/index.ts:311](https://github.com/Xunnamius/black-flag/blob/873af70/src/index.ts#L311)
+[src/index.ts:319](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/index.ts#L319)
 
 ___
 
 ### runProgram
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the dynamically imported `configureProgram().execute()` function.
 
@@ -811,23 +812,23 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature1` |
+| `...args` | [commandModulePath?: string] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 #### Defined in
 
-[src/util.ts:79](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L79)
+[src/util.ts:65](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L65)
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the dynamically imported
 `configureProgram(configurationHooks).execute()` function.
@@ -841,23 +842,23 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature2`<`CustomContext`\> |
+| `...args` | [commandModulePath: string, configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 #### Defined in
 
-[src/util.ts:92](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L92)
+[src/util.ts:80](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L80)
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the `preExecutionContext.execute()` function.
 
@@ -870,23 +871,23 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature3`<`CustomContext`\> |
+| `...args` | [commandModulePath: string, preExecutionContext: PreExecutionContext\<CustomContext\>] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 #### Defined in
 
-[src/util.ts:105](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L105)
+[src/util.ts:96](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L96)
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the dynamically imported `configureProgram().execute(argv)` function.
 
@@ -899,23 +900,23 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature4` |
+| `...args` | [commandModulePath: string, argv: string \| string[]] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 #### Defined in
 
-[src/util.ts:118](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L118)
+[src/util.ts:112](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L112)
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the dynamically imported
 `configureProgram(configurationHooks).execute(argv)` function.
@@ -929,23 +930,23 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature5`<`CustomContext`\> |
+| `...args` | [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 #### Defined in
 
-[src/util.ts:131](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L131)
+[src/util.ts:127](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L127)
 
-▸ **runProgram**<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the `preExecutionContext.execute(argv)` function.
 
@@ -958,18 +959,18 @@ to the appropriate value and `undefined` is returned.
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | `RunProgramSignature6`<`CustomContext`\> |
+| `...args` | [commandModulePath: string, argv: string \| string[], preExecutionContext: PreExecutionContext\<CustomContext\>] |
 
 #### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 #### Defined in
 
-[src/util.ts:142](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L142)
+[src/util.ts:144](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L144)

@@ -55,7 +55,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L21)
 
 ___
 
@@ -77,13 +77,13 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L34)
 
 ___
 
 ### makeRunner
 
-▸ **makeRunner**<`CustomCliArguments`\>(`commandModulePath?`): <CustomContext, T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+▸ **makeRunner**\<`CustomCliArguments`\>(`commandModulePath?`): \<CustomContext, T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 A factory function that returns a [runProgram](index.md#runprogram) function that can be
 called multiple times while only having to provide the `commandModulePath`
@@ -97,7 +97,7 @@ require multiple calls to `runProgram(...)`.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
@@ -109,14 +109,14 @@ require multiple calls to `runProgram(...)`.
 
 `fn`
 
-▸ <`CustomContext`, `T`\>(`...args`): `Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+▸ \<`CustomContext`, `T`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 ##### Type parameters
 
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `T` | extends `RunProgramSignature`<`CustomContext`\> |
+| `T` | extends [commandModulePath?: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, preExecutionContext: PreExecutionContext\<CustomContext\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: PreExecutionContext\<CustomContext\>] |
 
 ##### Parameters
 
@@ -126,8 +126,8 @@ require multiple calls to `runProgram(...)`.
 
 ##### Returns
 
-`Promise`<[`Arguments`](index.md#arguments)<`CustomCliArguments`\>\>
+`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 #### Defined in
 
-[src/util.ts:55](https://github.com/Xunnamius/black-flag/blob/873af70/src/util.ts#L55)
+[src/util.ts:21](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L21)

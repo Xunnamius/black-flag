@@ -51,7 +51,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:112](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L112)
+[src/error.ts:112](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L112)
 
 ## Properties
 
@@ -65,7 +65,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L108)
+[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L108)
 
 ___
 
@@ -93,7 +93,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1068
+node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1067
+node_modules/typescript/lib/lib.es5.d.ts:1075
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1069
+node_modules/typescript/lib/lib.es5.d.ts:1077
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L66)
 
 ___
 
@@ -170,7 +170,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:11
+node_modules/@types/node/globals.d.ts:28
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:13
+node_modules/@types/node/globals.d.ts:30
 
 ## Methods
 
@@ -211,4 +211,4 @@ Create .stack property on a target object
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:4
+node_modules/@types/node/globals.d.ts:21

@@ -22,7 +22,7 @@ can be used as a simple wrapper around other errors.
 
 ## Implements
 
-- `NonNullable`<[`CliErrorOptions`](../modules/index.md#clierroroptions)\>
+- `NonNullable`\<[`CliErrorOptions`](../modules/index.md#clierroroptions)\>
 
 ## Table of contents
 
@@ -71,7 +71,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L73)
+[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L73)
 
 • **new CliError**(`cause`, `options`, `message`, `superOptions`): [`CliError`](index.CliError.md)
 
@@ -97,7 +97,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L78)
+[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L78)
 
 ## Properties
 
@@ -107,7 +107,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L68)
+[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L68)
 
 ___
 
@@ -135,7 +135,7 @@ AppError.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1068
+node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
@@ -149,7 +149,7 @@ AppError.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1067
+node_modules/typescript/lib/lib.es5.d.ts:1075
 
 ___
 
@@ -163,7 +163,7 @@ AppError.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1069
+node_modules/typescript/lib/lib.es5.d.ts:1077
 
 ___
 
@@ -177,7 +177,7 @@ NonNullable.suggestedExitCode
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/873af70/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L66)
 
 ___
 
@@ -212,7 +212,7 @@ AppError.prepareStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:11
+node_modules/@types/node/globals.d.ts:28
 
 ___
 
@@ -226,7 +226,7 @@ AppError.stackTraceLimit
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:13
+node_modules/@types/node/globals.d.ts:30
 
 ## Methods
 
@@ -253,4 +253,4 @@ AppError.captureStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:4
+node_modules/@types/node/globals.d.ts:21
