@@ -1,8 +1,9 @@
+import assert from 'node:assert';
+
 import { FrameworkExitCode } from 'universe/constant';
 import { isCliError, isGracefulEarlyExitError } from 'universe/error';
 
 import type { EmptyObject, Promisable } from 'type-fest';
-
 import type { ConfigureHooks } from 'types/configure';
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
@@ -11,18 +12,34 @@ import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/pro
 
 /**
  * A factory function that returns a {@link runProgram} function that can be
- * called multiple times while only having to provide the `commandModulePath`
- * parameter, as well as the optional `CustomContext` and `CustomCliArguments`
- * type parameters, at initialization.
+ * called multiple times while only having to provide a subset of the required
+ * parameters at initialization.
  *
  * This is useful when unit/integration testing your CLI, which will likely
  * require multiple calls to `runProgram(...)`.
  */
 export function makeRunner<
+  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(commandModulePath?: string | undefined) {
+>(options?: {
+  /**
+   * @see {@link runProgram}
+   */
+  commandModulePath?: string | undefined;
+  /**
+   * @see {@link runProgram}
+   *
+   * Note: cannot be used with `configurationHooks`.
+   */
+  configurationHooks?: Promisable<ConfigureHooks<ExecutionContext>>;
+  /**
+   * @see {@link runProgram}
+   *
+   * Node: cannot be used with `preExecutionContext`.
+   */
+  preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
+}) {
   return <
-    CustomContext extends ExecutionContext,
     T extends
       | [commandModulePath?: string]
       | [
@@ -47,11 +64,27 @@ export function makeRunner<
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
   ) => {
-    const tail = [commandModulePath, ...args] as unknown as Parameters<
-      typeof runProgram<CustomContext, CustomCliArguments>
-    >;
+    const { commandModulePath, configurationHooks, preExecutionContext } = options || {};
+    const parameters: unknown[] = [commandModulePath, ...args];
+    const hasAdditionalConfig = !!(configurationHooks || preExecutionContext);
 
-    return runProgram<CustomContext, CustomCliArguments>(...tail);
+    assert(!!configurationHooks !== !!preExecutionContext);
+
+    if (
+      hasAdditionalConfig &&
+      (args.length === 0 ||
+        (args.length === 1 && (typeof args[0] === 'string' || Array.isArray(args[0]))))
+    ) {
+      // ? Specifying hooks or a context at the runProgram level will override
+      // ? configurationHooks/PreExecutionContext. However, if no override is
+      // ? provided, configurationHooks/PreExecutionContext will be used by
+      // ? default with respect to the call signature.
+      parameters.push(configurationHooks || preExecutionContext);
+    }
+
+    return runProgram<CustomContext, CustomCliArguments>(
+      ...(parameters as Parameters<typeof runProgram<CustomContext, CustomCliArguments>>)
+    );
   };
 }
 
@@ -209,7 +242,7 @@ export async function runProgram<
 
   try {
     preExecutionContext ||= await (
-      await import('universe/index.js')
+      await import('universe/index')
     ).configureProgram(commandModulePath, configurationHooks);
 
     const parsedArgv = (await preExecutionContext.execute(

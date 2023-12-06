@@ -47,7 +47,8 @@ export type ConfigureArguments<
  * This function is called once after CLI argument parsing completes and either
  * (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown.
  * The value returned by this function is used as the return value of the
- * `PreExecutionContext::execute` method.
+ * `PreExecutionContext::execute` method. This function will _not_ be called
+ * when yargs argument validation fails.
  *
  * This function is the complement of {@link ConfigureExecutionPrologue}.
  *
@@ -68,6 +69,9 @@ export type ConfigureExecutionEpilogue<
  * exceptions to this are if (1) the error occurs within
  * `configureErrorHandlingEpilogue` itself or (2) the error is an instance of
  * `GracefulEarlyExitError`.
+ *
+ * This function is also called even after yargs internally handles and reports
+ * an argument parsing/validation error.
  */
 export type ConfigureErrorHandlingEpilogue<
   CustomContext extends ExecutionContext = ExecutionContext

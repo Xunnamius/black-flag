@@ -179,6 +179,11 @@ export type FrameworkArguments = {
  * This function accepts an optional `rawArgv` array that defaults to
  * `yargs::hideBin(process.argv)` and returns an arguments object representing
  * the parsed CLI input for the given root {@link Program}.
+ *
+ * **This function throws whenever an exception occurs** (including exceptions
+ * representing a graceful exit), making it not ideal as an entry point for a
+ * CLI. See `runProgram` for a wrapper function that handles exceptions and sets
+ * the exit code for you.
  */
 export type Executor = (
   /**
@@ -201,6 +206,11 @@ export type PreExecutionContext<
    * Execute `program`, parsing any available CLI arguments and running the
    * appropriate handler, and return the resulting final parsed arguments
    * object.
+   *
+   * **This function throws whenever an exception occurs** (including exceptions
+   * representing a graceful exit), making it not ideal as an entry point for a
+   * CLI. See `runProgram` for a wrapper function that handles exceptions and
+   * sets the exit code for you.
    */
   execute: Executor;
 };

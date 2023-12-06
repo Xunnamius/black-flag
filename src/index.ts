@@ -45,6 +45,11 @@ const debug = rootDebugLogger.extend('index');
  * Command auto-discovery will occur at `commandModulePath`, if defined;
  * otherwise, command auto-discovery is disabled.
  *
+ * If no commands are loaded, Black Flag will enter a "safe mode" fail state in
+ * which a partially-initialized yargs instance is returned for
+ * `PreExecutionContext::program`. Outside of a testing environment, it is not
+ * ideal to run Black Flag in this way.
+ *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
  * CLI. See `runProgram` for a wrapper function that handles exceptions and sets
@@ -151,14 +156,34 @@ export async function configureProgram<
     debug.warn('skipped command auto-discovery entirely due to call signature');
   }
 
+  if (!context.commands.size) {
+    debug.warn('black flag initialization failed: no commands were loaded');
+    debug.warn(
+      'black flag initialization failed: the yargs instance returned by this function is only partially initialized (safe mode)'
+    );
+  }
+
   debug('entering configureExecutionPrologue');
 
   await configurationHooks.configureExecutionPrologue(rootProgram, context);
 
   debug('exited configureExecutionPrologue');
 
+  let alreadyInvoked = false;
   const parseAndExecuteWithErrorHandling: Executor = async (argv_) => {
     debug('execute was invoked');
+
+    if (alreadyInvoked) {
+      // * The documentation and issues literature is ambivalent on what level
+      // * of support exists for calling yargs::parse multiple times, but our
+      // * unit tests don't lie. It doesn't work. So let's formalize this
+      // * invariant.
+      throw new AssertionFailedError(
+        ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
+      );
+    }
+
+    alreadyInvoked = true;
 
     try {
       debug('raw argv: %O', argv_);
@@ -325,9 +350,9 @@ export async function makeProgram<
   debug_('created new %O Program instance', descriptor);
 
   const alphaSort = (await import('alpha-sort')).default;
-  const y = yargs() as unknown as Program<CustomCliArguments>;
+  const vanillaYargs = yargs() as unknown as Program<CustomCliArguments>;
 
-  return new Proxy(y, {
+  return new Proxy(vanillaYargs, {
     get(target, property: keyof Program<CustomCliArguments>) {
       // ? What are command_deferred and command_finalize_deferred? Well,
       // ? when generating help text, yargs will enumerate commands and options

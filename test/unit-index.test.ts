@@ -5,7 +5,7 @@
 
 import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import * as discover from 'universe/discover';
-import { CliError } from 'universe/error';
+import { CliError, ErrorMessage } from 'universe/error';
 
 import * as bf from 'universe/exports/index';
 import * as bf_util from 'universe/exports/util';
@@ -44,12 +44,13 @@ describe('::configureProgram', () => {
   it('creates executable instance with default configuration hooks when called with 0 arguments', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy, exitSpy }) => {
+    await withMocks(async ({ logSpy, exitSpy, errorSpy }) => {
       await expect(
         (await bf.configureProgram()).execute(['--help'])
-      ).resolves.toBeDefined();
+      ).rejects.toBeDefined();
 
       expect(exitSpy).toHaveBeenCalled();
+      expect(errorSpy).toHaveBeenCalled();
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^[^-]+--help[^-]+--version[^-]+$/)]
       ]);
@@ -132,14 +133,16 @@ describe('::configureProgram', () => {
       ]);
     });
 
-    await withMocks(async ({ logSpy, exitSpy }) => {
+    await withMocks(async ({ logSpy, exitSpy, errorSpy }) => {
       await expect(
         (await bf.configureProgram(config)).execute(['--help'])
-      ).resolves.toBeDefined();
+      ).rejects.toBeDefined();
 
       await expect(
         (await bf.configureProgram(promisedConfig)).execute(['--help'])
-      ).resolves.toBeDefined();
+      ).rejects.toBeDefined();
+
+      expect(errorSpy).toHaveBeenCalled();
 
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^custom usage message\n/)],
@@ -150,40 +153,43 @@ describe('::configureProgram', () => {
     });
   });
 
-  it('returns a non-strict instance if command auto-discovery is disabled or no commands were discovered', async () => {
+  it('returns a non-strict "safe mode" instance if command auto-discovery is disabled or no commands were discovered', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
-      const { execute } = await bf.configureProgram();
-
-      await execute(['--help']);
-
-      expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(0);
-
-      await execute(['--bad']);
+      await expect(
+        (await bf.configureProgram()).execute(['--help'])
+      ).rejects.toBeDefined();
 
       expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(0);
+      expect(errorSpy.mock.calls).toHaveLength(1);
+      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
+
+      // ? "safe mode" instance is non-strict, so badness works by default
+      await expect(
+        (await bf.configureProgram()).execute(['--bad'])
+      ).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toHaveLength(1);
+      expect(errorSpy.mock.calls).toHaveLength(1);
       expect(exitSpy.mock.calls).toStrictEqual([[0]]);
     });
 
     await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
-      const { execute } = await bf.configureProgram({
-        configureArguments(argv) {
-          return argv;
-        }
-      });
-
-      await execute(['--help']);
+      await expect(
+        (await bf.configureProgram(getFixturePath('empty-dir'))).execute(['--help'])
+      ).rejects.toBeDefined();
 
       expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(0);
+      expect(errorSpy.mock.calls).toHaveLength(1);
 
-      await execute(['--bad']);
+      // ? "safe mode" instance is non-strict, so badness works by default
+      await expect(
+        (await bf.configureProgram(getFixturePath('empty-dir'))).execute(['--bad'])
+      ).resolves.toBeDefined();
 
       expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(0);
+      expect(errorSpy.mock.calls).toHaveLength(1);
       expect(exitSpy.mock.calls).toStrictEqual([[0]]);
     });
   });
@@ -275,6 +281,9 @@ describe('::configureProgram', () => {
     });
   });
 
+  // * Note that tests using getFixturePath and others that avoid black flag's
+  // * "safe mode" will not throw/reject when --help (a valid arg) is passed
+  // * since normal black flag instances are properly configured.
   describe('::execute', () => {
     it('calls hideBin on process.argv only if no argv argument provided', async () => {
       expect.hasAssertions();
@@ -283,16 +292,21 @@ describe('::configureProgram', () => {
 
       await withMocks(
         async () => {
-          const context = await bf.configureProgram({
+          const config: bf.ConfigureHooks = {
             configureArguments(argv) {
               expect(argv).toStrictEqual(['3']);
               succeeded++;
               return argv;
             }
-          });
+          };
 
-          await context.execute();
-          await context.execute(['3']);
+          await expect(
+            (await bf.configureProgram(config)).execute()
+          ).resolves.toBeDefined();
+
+          await expect(
+            (await bf.configureProgram(config)).execute(['3'])
+          ).resolves.toBeDefined();
         },
         {
           simulatedArgv: ['1', '2', '3'],
@@ -363,18 +377,23 @@ describe('::configureProgram', () => {
     it('outputs explicit help text to stdout and implicit to stderr with expected exit codes', async () => {
       expect.hasAssertions();
 
-      await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
-        const run = bf_util.makeRunner(getFixturePath('one-file-index'));
+      await withMocks(async ({ logSpy, errorSpy }) => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-index'))).execute([
+            '--help'
+          ])
+        ).resolves.toBeDefined();
 
-        await run('--help');
+        expect(logSpy.mock.calls).toStrictEqual([
+          expect.arrayContaining([expect.stringContaining('--help')])
+        ]);
 
-        expect(getExitCode()).toBe(0);
-        expect(logSpy.mock.calls).toHaveLength(1);
         expect(errorSpy.mock.calls).toHaveLength(0);
 
-        await run('--bad');
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-index'))).execute(['--bad'])
+        ).rejects.toBeDefined();
 
-        expect(getExitCode()).toBe(1);
         expect(logSpy.mock.calls).toHaveLength(1);
         expect(errorSpy.mock.calls).toStrictEqual([
           expect.arrayContaining([expect.stringContaining('--help')]),
@@ -404,8 +423,8 @@ describe('::configureProgram', () => {
 
       const callOrder: string[] = [];
 
-      await withMocks(async ({ logSpy, errorSpy, stderrSpy, stdoutSpy }) => {
-        const { execute } = await bf.configureProgram({
+      await withMocks(async ({ logSpy, errorSpy }) => {
+        const config: bf.ConfigureHooks = {
           configureArguments(argv) {
             callOrder.push('configureArguments');
             return argv;
@@ -422,31 +441,40 @@ describe('::configureProgram', () => {
             return context;
           },
           configureExecutionPrologue(program) {
-            program.strict(true);
+            program.strict_force(true);
+            program.exitProcess(false);
             callOrder.push('configureExecutionPrologue');
           }
-        });
+        };
 
-        await expect(execute()).resolves.toBeDefined();
-        await expect(execute(['--help'])).resolves.toBeDefined();
-        await expect(execute(['--bad'])).resolves.toBeDefined();
+        await expect(
+          (await bf.configureProgram(config)).execute()
+        ).resolves.toBeDefined();
 
-        // TODO: deleteme
-        expect(logSpy.mock.calls).toBeEmpty();
-        expect(errorSpy.mock.calls).toBeEmpty();
-        expect(stderrSpy.mock.calls).toBeEmpty();
-        expect(stdoutSpy.mock.calls).toBeEmpty();
+        await expect(
+          (await bf.configureProgram(config)).execute(['--help'])
+        ).resolves.toBeDefined();
+
+        await expect(
+          (await bf.configureProgram(config)).execute(['--bad'])
+        ).rejects.toBeDefined();
+
+        expect(logSpy).toHaveBeenCalled();
+        expect(errorSpy).toHaveBeenCalled();
 
         expect(callOrder).toStrictEqual([
           'configureExecutionContext',
           'configureExecutionPrologue',
-
           'configureArguments',
           'configureExecutionEpilogue',
 
+          'configureExecutionContext',
+          'configureExecutionPrologue',
           'configureArguments',
           'configureExecutionEpilogue',
 
+          'configureExecutionContext',
+          'configureExecutionPrologue',
           'configureArguments',
           'configureErrorHandlingEpilogue'
         ]);
@@ -490,6 +518,51 @@ describe('::configureProgram', () => {
         });
 
         expect(errorSpy).toHaveBeenCalled();
+      });
+    });
+
+    it('throws if invoked more than once', async () => {
+      expect.hasAssertions();
+
+      const { execute } = await bf.configureProgram();
+
+      await withMocks(async () => {
+        await expect(execute()).resolves.toBeDefined();
+        await expect(execute()).rejects.toMatchObject({
+          message: ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
+        });
+      });
+    });
+
+    it("does the right thing when a command's builder throws", async () => {
+      expect.hasAssertions();
+
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-throws-builder')
+      );
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(execute()).rejects.toBeDefined();
+
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('error thrown in builder')]
+        ]);
+      });
+    });
+
+    it("does the right thing when a command's handler throws", async () => {
+      expect.hasAssertions();
+
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-throws-handler')
+      );
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(execute()).rejects.toBeDefined();
+
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('error thrown in handler')]
+        ]);
       });
     });
   });
@@ -740,6 +813,18 @@ describe('::configureProgram', () => {
 
     it('behaves properly when CliError or non-CliError is thrown from handler', async () => {
       expect.hasAssertions();
+    });
+
+    it('throws when an auto-discovered command file itself throws upon attempted import', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async () => {
+        await expect(
+          bf.configureProgram(getFixturePath('one-file-throws'))
+        ).rejects.toMatchObject({
+          message: expect.stringContaining('error thrown upon importing this file')
+        });
+      });
     });
 
     it('throws when existence invariant is violated', async () => {

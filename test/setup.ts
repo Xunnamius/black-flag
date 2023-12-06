@@ -364,9 +364,13 @@ export async function withMockedExit(
     getExitCode: () => typeof process.exitCode;
   }) => Promisable<void>
 ) {
-  const _exitSpy = jest
-    .spyOn(process, 'exit')
-    .mockImplementation(() => undefined as never);
+  const _exitSpy = jest.spyOn(process, 'exit').mockImplementation((code) => {
+    throw new Error(
+      `process.exit(${
+        code ?? ''
+      }) was just called, but it was suppressed via withMockedExit`
+    );
+  });
 
   const oldProcessExitCode = process.exitCode;
 
@@ -374,11 +378,12 @@ export async function withMockedExit(
   // ? when all we really wanted was to track changes to process.exitCode. To
   // ? prevent this, we expect that our spy has not been called at all UNLESS
   // ? the caller of withMockedExit used the spy (accessed a property).
-  let wasAccessed = false;
+  let exitSpyWasAccessed = false;
+  let getExitCodeWasUsed = false;
 
   const exitSpyProxy = new Proxy(_exitSpy, {
     get(target, property) {
-      wasAccessed = true;
+      exitSpyWasAccessed = true;
 
       const value: unknown =
         // @ts-expect-error: TypeScript isn't smart enough to figure this out
@@ -399,18 +404,30 @@ export async function withMockedExit(
     await fn({
       exitSpy: exitSpyProxy,
       getExitCode() {
-        wasAccessed = true;
+        getExitCodeWasUsed = true;
         return process.exitCode;
       }
     });
 
-    if (!wasAccessed) {
+    if (!exitSpyWasAccessed && !getExitCodeWasUsed) {
       expect({
-        'expected-zero-calls': exitSpyProxy.mock.calls,
-        'expected-zero-exit-code': process.exitCode || '0 or undefined'
+        'expected process.exit calls': exitSpyProxy.mock.calls,
+        'expected process.exitCode value': process.exitCode || '0 or undefined'
       }).toStrictEqual({
-        'expected-zero-calls': [],
-        'expected-zero-exit-code': '0 or undefined'
+        'expected process.exit calls': [],
+        'expected process.exitCode value': '0 or undefined'
+      });
+    } else if (!exitSpyWasAccessed) {
+      expect({
+        'expected process.exit calls': exitSpyProxy.mock.calls
+      }).toStrictEqual({
+        'expected process.exit calls': []
+      });
+    } else if (!getExitCodeWasUsed) {
+      expect({
+        'expected process.exitCode value': process.exitCode || '0 or undefined'
+      }).toStrictEqual({
+        'expected process.exitCode value': '0 or undefined'
       });
     }
   } finally {

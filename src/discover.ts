@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { isNativeError } from 'node:util/types';
 
 import { makeProgram, wrapExecutionContext } from 'universe/index';
 
@@ -27,9 +28,8 @@ import type {
   ImportedConfigurationModule
 } from 'types/module';
 
-import { DEFAULT_USAGE_TEXT } from 'universe/constant';
-
 import type { PackageJson } from 'type-fest';
+import { DEFAULT_USAGE_TEXT } from 'universe/constant';
 
 const hasSpacesRegExp = /\s+/;
 
@@ -317,14 +317,24 @@ export async function discoverCommands(
         debug_('configuration file absolute path: %O', maybeConfigPath);
         debug_('configuration file metadata: %O', meta);
 
-        let maybeImportedConfig: ImportedConfigurationModule | undefined =
+        let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
+
+        try {
           // eslint-disable-next-line no-await-in-loop
-          await import(maybeConfigPath).catch((error) => {
+          maybeImportedConfig = await import(maybeConfigPath);
+        } catch (error) {
+          if (
+            isModuleNotFoundSystemError(error) &&
+            error.moduleName === maybeConfigPath
+          ) {
             debug_.warn(
               'a recoverable failure occurred while attempting to load configuration: %O',
               `${error}`
             );
-          });
+          } else {
+            throw error;
+          }
+        }
 
         if (maybeImportedConfig) {
           let rawConfig: Partial<Configuration>;
@@ -765,4 +775,23 @@ function defaultHandler() {
  */
 function capitalize(str: string) {
   return (str.at(0)?.toUpperCase() || '') + str.slice(1);
+}
+
+/**
+ * Type-guard for Node's "MODULE_NOT_FOUND" so-called `SystemError`.
+ */
+function isModuleNotFoundSystemError(error: unknown): error is NodeJS.ErrnoException & {
+  _originalMessage: string;
+  code: 'MODULE_NOT_FOUND';
+  hint: string;
+  moduleName: string;
+  requireStack: unknown;
+  siblingWithSimilarExtensionFound: boolean;
+} {
+  return (
+    isNativeError(error) &&
+    'code' in error &&
+    error.code === 'MODULE_NOT_FOUND' &&
+    'moduleName' in error
+  );
 }
