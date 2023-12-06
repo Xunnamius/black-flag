@@ -15,8 +15,8 @@ module.exports = {
     (process.env.VSCODE_INSPECTOR_OPTIONS
       ? 60 * 24
       : process.platform == 'win32'
-      ? 5
-      : 1),
+        ? 5
+        : 1),
   // ? Minimum of 2 concurrent tests executed at once; maximum of cpu cores - 1
   maxConcurrency: Math.max(require('node:os').cpus().length - 1, 2),
   verbose: false,
@@ -34,5 +34,7 @@ module.exports = {
   setupFilesAfterEnv: ['./test/setup.ts'],
   collectCoverageFrom: ['src/**/*.ts?(x)', 'external-scripts/**/*.ts?(x)'],
   // ? Make sure jest-haste-map doesn't try to parse and cache fixtures
-  modulePathIgnorePatterns: ['<rootDir>/test/fixtures']
+  modulePathIgnorePatterns: ['<rootDir>/test/fixtures'],
+  // ? Tell Jest to transpile any packages published as ESM
+  transformIgnorePatterns: ['/node_modules/(?!pkg-up)/']
 };
