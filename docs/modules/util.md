@@ -55,7 +55,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/0548d34/src/error.ts#L21)
 
 ___
 
@@ -77,18 +77,17 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/0548d34/src/error.ts#L34)
 
 ___
 
 ### makeRunner
 
-▸ **makeRunner**\<`CustomCliArguments`\>(`commandModulePath?`): \<CustomContext, T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **makeRunner**\<`CustomContext`, `CustomCliArguments`\>(`options?`): \<T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 A factory function that returns a [runProgram](index.md#runprogram) function that can be
-called multiple times while only having to provide the `commandModulePath`
-parameter, as well as the optional `CustomContext` and `CustomCliArguments`
-type parameters, at initialization.
+called multiple times while only having to provide a subset of the required
+parameters at initialization.
 
 This is useful when unit/integration testing your CLI, which will likely
 require multiple calls to `runProgram(...)`.
@@ -97,25 +96,28 @@ require multiple calls to `runProgram(...)`.
 
 | Name | Type |
 | :------ | :------ |
+| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `commandModulePath?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `options?` | `Object` | - |
+| `options.commandModulePath?` | `string` | **`See`** [runProgram](index.md#runprogram) |
+| `options.configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<[`ExecutionContext`](index.md#executioncontext)\>\> | **`See`** [runProgram](index.md#runprogram) Note: cannot be used with `configurationHooks`. |
+| `options.preExecutionContext?` | `Promisable`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<[`ExecutionContext`](index.md#executioncontext)\>\> | **`See`** [runProgram](index.md#runprogram) Node: cannot be used with `preExecutionContext`. |
 
 #### Returns
 
 `fn`
 
-▸ \<`CustomContext`, `T`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ \<`T`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 ##### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
 | `T` | extends [commandModulePath?: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, preExecutionContext: PreExecutionContext\<CustomContext\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: PreExecutionContext\<CustomContext\>] |
 
 ##### Parameters
@@ -130,4 +132,4 @@ require multiple calls to `runProgram(...)`.
 
 #### Defined in
 
-[src/util.ts:21](https://github.com/Xunnamius/black-flag/blob/4e6f51f/src/util.ts#L21)
+[src/util.ts:21](https://github.com/Xunnamius/black-flag/blob/0548d34/src/util.ts#L21)
