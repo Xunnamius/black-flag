@@ -477,9 +477,9 @@ runtime, including for all your commands and configuration hooks. Specifically:
 - Access to the parsed process arguments at the time the error occurred (if
   available).
 
-Error handling, including what is and isn't output and how, is determined by the
-optionally-provided [`configureErrorHandlingEpilogue`][12] configuration hook,
-as well as each command file's optionally-exported [`builder`][6] function.
+How errors are reported is determined by the optionally-provided
+[`configureErrorHandlingEpilogue`][12] configuration hook, as well as each
+command file's optionally-exported [`builder`][6] function.
 
 ```typescript
 // File: my-cli-project/cli.ts
@@ -501,9 +501,8 @@ export function builder(yargs) {
 }
 ```
 
-> Note that yargs also does its own internal error handling when parsing and
-> validating arguments. [`configureErrorHandlingEpilogue`][12] will not control
-> how yargs reports argument validation failures, nor should it.
+> Note that yargs comes with its own internal argument validation and error
+> handling logic that can be configured separately.
 
 ### A Pleasant Testing Experience ✨
 
