@@ -10,18 +10,24 @@
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "inlineSourceMap": true,
     "incremental": true,
+    "inlineSourceMap": true,
     "isolatedModules": true,
-    "lib": ["ESNext"],
-    "module": "esnext",
-    "moduleResolution": "node",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "WebWorker.ImportScripts",
+      "ScriptHost",
+      "DOM.Iterable"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noEmit": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "paths": {
-      // ! If changed, also update these aliases in babel.config.js,
-      // ! webpack.config.js, next.config.ts, eslintrc.js, and jest.config.js
+      // ! If changed, also update these aliases in jest.config.js,
+      // ! webpack.config.js, next.config.ts, and .eslintrc.js
       "externals/*": ["external-scripts/*"],
       "multiverse/*": ["lib/*"],
       "package": ["package.json"],
@@ -33,17 +39,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "ESNext"
   },
-  "exclude": [
-    "**/node_modules",
-    "**/coverage",
-    "**/dist",
-    "**/bin",
-    "**/build",
-    "**/test/fixtures",
-    "**/test/integration/assets"
-  ],
+  "exclude": ["node_modules"],
   "include": [
     "types/**/*",
     "lib/**/*",
