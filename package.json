@@ -106,7 +106,7 @@
     "@semantic-release/git": "^10.0.1",
     "@types/debug": "^4.1.12",
     "@types/glob": "^8.1.0",
-    "@types/jest": "^29.5.10",
+    "@types/jest": "^29.5.11",
     "@types/merge-descriptors": "^1.0.3",
     "@types/node": "^20.10.3",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
