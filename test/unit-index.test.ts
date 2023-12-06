@@ -44,17 +44,19 @@ describe('::configureProgram', () => {
   it('creates executable instance with default configuration hooks when called with 0 arguments', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy }) => {
+    await withMocks(async ({ logSpy, exitSpy }) => {
       await expect(
         (await bf.configureProgram()).execute(['--help'])
       ).resolves.toBeDefined();
+
+      expect(exitSpy).toHaveBeenCalled();
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^[^-]+--help[^-]+--version[^-]+$/)]
       ]);
     });
   });
 
-  it('does not attempt command auto-discovery when called with 0 arguments', async () => {
+  it('does not attempt command auto-discovery when called without commandModulePath', async () => {
     expect.hasAssertions();
 
     const discoverSpy = jest
@@ -63,11 +65,12 @@ describe('::configureProgram', () => {
 
     await withMocks(async () => {
       await bf.configureProgram();
+      await bf.configureProgram({});
       expect(discoverSpy.mock.calls).toHaveLength(0);
     });
   });
 
-  it('attempts command auto-discovery when called with >=1 argument', async () => {
+  it('attempts command auto-discovery when called with commandModulePath', async () => {
     expect.hasAssertions();
 
     const discoverSpy = jest
@@ -76,19 +79,81 @@ describe('::configureProgram', () => {
 
     await withMocks(async () => {
       await bf.configureProgram('/does-not-exist');
-      expect(discoverSpy.mock.calls).toHaveLength(1);
+      await bf.configureProgram('/does-not-exist', {});
+      expect(discoverSpy.mock.calls).toHaveLength(2);
     });
   });
 
   it('supports alternative call signatures', async () => {
     expect.hasAssertions();
-    // TODO: including configuration hooks object wrapped in a promise
+
+    const config: bf.ConfigureHooks = {
+      configureExecutionPrologue(program) {
+        program.usage('custom usage message');
+      }
+    };
+
+    const promisedConfig = Promise.resolve(config);
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        (await bf.configureProgram(getFixturePath('one-file-index'))).execute(['--help'])
+      ).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringMatching(/^Usage text for root program one-file-index\n/)]
+      ]);
+    });
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        (await bf.configureProgram(getFixturePath('one-file-index'), config)).execute([
+          '--help'
+        ])
+      ).resolves.toBeDefined();
+
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), promisedConfig)
+        ).execute(['--help'])
+      ).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /^Usage text for root program one-file-index\ncustom usage message\n/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /^Usage text for root program one-file-index\ncustom usage message\n/
+          )
+        ]
+      ]);
+    });
+
+    await withMocks(async ({ logSpy, exitSpy }) => {
+      await expect(
+        (await bf.configureProgram(config)).execute(['--help'])
+      ).resolves.toBeDefined();
+
+      await expect(
+        (await bf.configureProgram(promisedConfig)).execute(['--help'])
+      ).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringMatching(/^custom usage message\n/)],
+        [expect.stringMatching(/^custom usage message\n/)]
+      ]);
+
+      expect(exitSpy.mock.calls).toStrictEqual([[0], [0]]);
+    });
   });
 
-  it('returns a non-strict instance if command auto-discovery is disabled', async () => {
+  it('returns a non-strict instance if command auto-discovery is disabled or no commands were discovered', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy, errorSpy }) => {
+    await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
       const { execute } = await bf.configureProgram();
 
       await execute(['--help']);
@@ -100,24 +165,100 @@ describe('::configureProgram', () => {
 
       expect(logSpy.mock.calls).toHaveLength(1);
       expect(errorSpy.mock.calls).toHaveLength(0);
+      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
+    });
+
+    await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
+      const { execute } = await bf.configureProgram({
+        configureArguments(argv) {
+          return argv;
+        }
+      });
+
+      await execute(['--help']);
+
+      expect(logSpy.mock.calls).toHaveLength(1);
+      expect(errorSpy.mock.calls).toHaveLength(0);
+
+      await execute(['--bad']);
+
+      expect(logSpy.mock.calls).toHaveLength(1);
+      expect(errorSpy.mock.calls).toHaveLength(0);
+      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
     });
   });
 
-  it('uses "name" from directory or filename without extension as program name if no name is provided', async () => {
+  it('uses "name" from package.json, directory, or filename without extension as program name if no name is provided', async () => {
     expect.hasAssertions();
+
+    await withMocks(async () => {
+      const context = await bf.configureProgram(
+        getFixturePath('nested-several-empty-files')
+      );
+
+      expect(Array.from(context.commands.keys())).toStrictEqual([
+        'fake-name',
+        'fake-name nested',
+        'fake-name nested first',
+        'fake-name nested second',
+        'fake-name nested third'
+      ]);
+    });
   });
 
   it('uses "name" from directory or filename without extension as root program name if no name is provided and no package.json is found', async () => {
     expect.hasAssertions();
+
+    const pkgUpNamespace = await import('pkg-up');
+    jest
+      .spyOn(pkgUpNamespace, 'pkgUp')
+      .mockImplementation(() => Promise.resolve(undefined));
+
+    await withMocks(async () => {
+      const context = await bf.configureProgram(
+        getFixturePath('nested-several-empty-files')
+      );
+
+      expect(Array.from(context.commands.keys())).toStrictEqual([
+        'nested-several-empty-files',
+        'nested-several-empty-files nested',
+        'nested-several-empty-files nested first',
+        'nested-several-empty-files nested second',
+        'nested-several-empty-files nested third'
+      ]);
+    });
   });
 
-  it('uses "name" from package.json as root program name if no name is provided', async () => {
+  it('uses "name" from directory or filename without extension as root program name if no name is provided and empty package.json is found', async () => {
     expect.hasAssertions();
-    // TODO: test by faking node:fs return value for package.json
+
+    await withMocks(async () => {
+      const context = await bf.configureProgram(
+        getFixturePath('empty-index-file-package')
+      );
+
+      expect(Array.from(context.commands.keys())).toStrictEqual([
+        'empty-index-file-package'
+      ]);
+    });
   });
 
   it('disables --version if package.json has no "version" property', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      const context = await bf.configureProgram(
+        getFixturePath('empty-index-file-package-no-version')
+      );
+
+      expect(Array.from(context.commands.keys())).toStrictEqual(['fake-name-no-version']);
+
+      await expect(context.execute(['--help'])).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.not.stringContaining('--version')]
+      ]);
+    });
   });
 
   it('throws when configureExecutionContext returns falsy', async () => {
@@ -135,6 +276,33 @@ describe('::configureProgram', () => {
   });
 
   describe('::execute', () => {
+    it('calls hideBin on process.argv only if no argv argument provided', async () => {
+      expect.hasAssertions();
+
+      let succeeded = 0;
+
+      await withMocks(
+        async () => {
+          const context = await bf.configureProgram({
+            configureArguments(argv) {
+              expect(argv).toStrictEqual(['3']);
+              succeeded++;
+              return argv;
+            }
+          });
+
+          await context.execute();
+          await context.execute(['3']);
+        },
+        {
+          simulatedArgv: ['1', '2', '3'],
+          options: { replaceEntireArgv: true }
+        }
+      );
+
+      expect(succeeded).toBe(2);
+    });
+
     it('passes around configured arguments and returns epilogue result', async () => {
       expect.hasAssertions();
 
@@ -153,6 +321,42 @@ describe('::configureProgram', () => {
         });
 
         await expect(execute()).resolves.toBe(expectedResult);
+      });
+    });
+
+    it('passes around context singleton', async () => {
+      expect.hasAssertions();
+
+      let expectedContext: ExecutionContext;
+
+      await withMocks(async () => {
+        const { execute } = await bf.configureProgram({
+          configureArguments(argv, context) {
+            expect(context).toBe(expectedContext);
+            return argv;
+          },
+          configureExecutionEpilogue(argv, context) {
+            expect(argv[$executionContext]).toBe(expectedContext);
+            expect(context).toBe(expectedContext);
+            return argv;
+          },
+          configureErrorHandlingEpilogue(_meta, argv, context) {
+            expect(argv[$executionContext]).toBe(expectedContext);
+            expect(context).toBe(expectedContext);
+          },
+          configureExecutionContext(context) {
+            context.ok = true;
+            return context;
+          },
+          configureExecutionPrologue(_program, context) {
+            expect(context.ok).toBeTrue();
+            expectedContext = context;
+          }
+        });
+
+        const result = await execute();
+        expect(result).toBeDefined();
+        expect(result[$executionContext]).toBe(expectedContext);
       });
     });
 
@@ -197,6 +401,56 @@ describe('::configureProgram', () => {
 
     it('calls all configuration hooks in the expected order', async () => {
       expect.hasAssertions();
+
+      const callOrder: string[] = [];
+
+      await withMocks(async ({ logSpy, errorSpy, stderrSpy, stdoutSpy }) => {
+        const { execute } = await bf.configureProgram({
+          configureArguments(argv) {
+            callOrder.push('configureArguments');
+            return argv;
+          },
+          configureExecutionEpilogue(argv) {
+            callOrder.push('configureExecutionEpilogue');
+            return argv;
+          },
+          configureErrorHandlingEpilogue() {
+            callOrder.push('configureErrorHandlingEpilogue');
+          },
+          configureExecutionContext(context) {
+            callOrder.push('configureExecutionContext');
+            return context;
+          },
+          configureExecutionPrologue(program) {
+            program.strict(true);
+            callOrder.push('configureExecutionPrologue');
+          }
+        });
+
+        await expect(execute()).resolves.toBeDefined();
+        await expect(execute(['--help'])).resolves.toBeDefined();
+        await expect(execute(['--bad'])).resolves.toBeDefined();
+
+        // TODO: deleteme
+        expect(logSpy.mock.calls).toBeEmpty();
+        expect(errorSpy.mock.calls).toBeEmpty();
+        expect(stderrSpy.mock.calls).toBeEmpty();
+        expect(stdoutSpy.mock.calls).toBeEmpty();
+
+        expect(callOrder).toStrictEqual([
+          'configureExecutionContext',
+          'configureExecutionPrologue',
+
+          'configureArguments',
+          'configureExecutionEpilogue',
+
+          'configureArguments',
+          'configureExecutionEpilogue',
+
+          'configureArguments',
+          'configureErrorHandlingEpilogue'
+        ]);
+      });
     });
 
     it('still calls configureExecutionEpilogue when GracefulEarlyExitError is throw from a command handler', async () => {
@@ -219,7 +473,7 @@ describe('::configureProgram', () => {
           message: expect.stringMatching(/typeof process\.argv/)
         });
 
-        expect(errorSpy).toBeCalled();
+        expect(errorSpy).toHaveBeenCalled();
       });
     });
 
@@ -235,7 +489,7 @@ describe('::configureProgram', () => {
           message: expect.stringMatching(/Arguments/)
         });
 
-        expect(errorSpy).toBeCalled();
+        expect(errorSpy).toHaveBeenCalled();
       });
     });
   });
@@ -283,6 +537,10 @@ describe('::configureProgram', () => {
       });
     });
 
+    it('supports all configuration options at root, parent, and child levels', async () => {
+      expect.hasAssertions();
+    });
+
     it('supports random additions to the ExecutionContext', async () => {
       expect.hasAssertions();
     });
@@ -296,8 +554,8 @@ describe('::configureProgram', () => {
 
       await withMocks(async ({ logSpy }) => {
         await bf.runProgram(getFixturePath('empty'), '--help');
-        expect(logSpy).toBeCalledWith(expect.stringContaining('Options:'));
-        expect(logSpy).not.toBeCalledWith(expect.stringContaining('Commands:'));
+        expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Options:'));
+        expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
       });
     });
 
@@ -498,7 +756,7 @@ describe('::configureProgram', () => {
   });
 });
 
-describe('::runProgram and util::bf_util.makeRunner', () => {
+describe('::runProgram and util::makeRunner', () => {
   it('supports all call signatures', async () => {
     expect.hasAssertions();
 
@@ -562,7 +820,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
 
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       expect(result3).toBeEmptyObject();
-      expect(logSpy).toBeCalledTimes(4);
+      expect(logSpy).toHaveBeenCalledTimes(4);
     });
   });
 
@@ -588,7 +846,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       await run('cmd');
 
       expect(getExitCode()).toBe(FrameworkExitCode.NotImplemented);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 
@@ -600,7 +858,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       await run('nested --help');
 
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-      expect(logSpy).toBeCalled();
+      expect(logSpy).toHaveBeenCalled();
     });
   });
 
@@ -612,7 +870,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       await run({ configureArguments: () => undefined as any });
 
       expect(getExitCode()).toBe(FrameworkExitCode.AssertionFailed);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 
@@ -627,7 +885,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       });
 
       expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 
@@ -642,7 +900,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       });
 
       expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 
@@ -657,7 +915,7 @@ describe('::runProgram and util::bf_util.makeRunner', () => {
       });
 
       expect(getExitCode()).toBe(5);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 
@@ -678,7 +936,7 @@ describe('::CliError', () => {
       });
 
       expect(getExitCode()).toBe(1);
-      expect(errorSpy).toBeCalled();
+      expect(errorSpy).toHaveBeenCalled();
     });
   });
 });

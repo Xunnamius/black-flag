@@ -2,6 +2,9 @@
 /// <reference path="../index.d.ts"/>
 
 // * Exports async function to test handling async exports...
+/**
+ * @type {Type.ConfigModule}
+ */
 module.exports = async (context) => {
   const {dirname, basename } = require('node:path');
   const name = basename(dirname(__filename));
@@ -10,6 +13,7 @@ module.exports = async (context) => {
    * @type {Type.RootConfig}
    */
   const commandModule = {
+    usage: `usage text for root program ${name}`,
     description: `description for root program ${name}`,
     builder: (yargs) => {
       return yargs.option(name, { count: true });

@@ -4,7 +4,9 @@ import path from 'node:path';
  * Returns a `Program` instance's {@link PreExecutionContext}.
  */
 export async function getProgram() {
-  const preExecutionContext = await (await import('universe/index')).configureProgram();
+  const preExecutionContext = await (
+    await import('universe/index.js')
+  ).configureProgram();
   return preExecutionContext;
 }
 

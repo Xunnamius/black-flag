@@ -16,7 +16,7 @@ import 'jest-extended/all';
 
 import type { Debugger } from 'debug';
 import type { ExecaReturnValue } from 'execa';
-import type { Merge, Promisable } from 'type-fest';
+import type { Merge, PackageJson, Promisable } from 'type-fest';
 //import type { SimpleGit } from 'simple-git';
 
 // ! Note that these notes are relics of a copy-paste and are not recent. Most
@@ -50,25 +50,28 @@ globalDebug(`pkgVersion: "${pkgVersion}"`);
 export type MockedArgvOptions = {
   /**
    * By default, the first two elements in `process.argv` are preserved. Setting
-   * `replace` to `true` will cause the entire process.argv array to be replaced
+   * `replaceEntireArgv` to `true` will cause the entire `process.argv` array to
+   * be replaced.
+   *
    * @default false
    */
-  replace?: boolean;
+  replaceEntireArgv?: boolean;
 };
 
 // TODO: XXX: make this into a separate (mock-env) package (along w/ the below)
 export type MockedEnvOptions = {
   /**
    * By default, the `process.env` object is emptied and re-hydrated with
-   * `newEnv`. Setting `replace` to `false` will cause `newEnv` to be appended
-   * instead
+   * `newEnv`. Setting `replaceEntireEnv` to `false` will cause `newEnv` to be
+   * appended instead.
+   *
    * @default true
    */
-  replace?: boolean;
+  replaceEntireEnv?: boolean;
   /**
    * If `true`, whenever `process.env.DEBUG` is present, it will be forwarded
-   * as-is to the underlying environment mock even when `replace` is `true`.
-   * This allows debug output to make it to the screen.
+   * as-is to the underlying environment mock even when `replaceEntireEnv` is
+   * `true`. This allows debug output to make it to the screen.
    *
    * @default true
    */
@@ -221,15 +224,18 @@ export async function withMockedArgv(
   fn: () => Promisable<void>,
   simulatedArgv: string[],
   // eslint-disable-next-line unicorn/no-object-as-default-parameter
-  { replace = false }: MockedArgvOptions = {}
+  { replaceEntireArgv = false }: MockedArgvOptions = {}
 ) {
   // ? Take care to preserve the original argv array reference in memory
-  const previousArgv = process.argv.splice(replace ? 0 : 2, process.argv.length);
+  const previousArgv = process.argv.splice(
+    replaceEntireArgv ? 0 : 2,
+    process.argv.length
+  );
   process.argv.push(...simulatedArgv);
 
   await fn();
 
-  process.argv.splice(replace ? 0 : 2, process.argv.length);
+  process.argv.splice(replaceEntireArgv ? 0 : 2, process.argv.length);
   process.argv.push(...previousArgv);
 }
 
@@ -257,7 +263,7 @@ export async function withMockedEnv(
   fn: () => Promisable<void>,
   simulatedEnv: Record<string, string>,
   // eslint-disable-next-line unicorn/no-object-as-default-parameter
-  { passthroughDebugEnv = true, replace = true }: MockedEnvOptions = {}
+  { passthroughDebugEnv = true, replaceEntireEnv = true }: MockedEnvOptions = {}
 ) {
   const previousEnv = { ...process.env };
   const clearEnv = () =>
@@ -266,7 +272,7 @@ export async function withMockedEnv(
     );
 
   // ? Take care to preserve the original env object reference in memory
-  if (replace) clearEnv();
+  if (replaceEntireEnv) clearEnv();
 
   Object.assign(
     process.env,
@@ -358,21 +364,57 @@ export async function withMockedExit(
     getExitCode: () => typeof process.exitCode;
   }) => Promisable<void>
 ) {
-  const exitSpy = jest
+  const _exitSpy = jest
     .spyOn(process, 'exit')
     .mockImplementation(() => undefined as never);
 
   const oldProcessExitCode = process.exitCode;
 
+  // ? Sometimes the program is trying to crash but the attempt is swallowed
+  // ? when all we really wanted was to track changes to process.exitCode. To
+  // ? prevent this, we expect that our spy has not been called at all UNLESS
+  // ? the caller of withMockedExit used the spy (accessed a property).
+  let wasAccessed = false;
+
+  const exitSpyProxy = new Proxy(_exitSpy, {
+    get(target, property) {
+      wasAccessed = true;
+
+      const value: unknown =
+        // @ts-expect-error: TypeScript isn't smart enough to figure this out
+        target[property];
+
+      if (value instanceof Function) {
+        return function (...args: unknown[]) {
+          // ? "this-recovering" code
+          return value.apply(target, args);
+        };
+      }
+
+      return value;
+    }
+  });
+
   try {
     await fn({
-      exitSpy,
+      exitSpy: exitSpyProxy,
       getExitCode() {
+        wasAccessed = true;
         return process.exitCode;
       }
     });
+
+    if (!wasAccessed) {
+      expect({
+        'expected-zero-calls': exitSpyProxy.mock.calls,
+        'expected-zero-exit-code': process.exitCode || '0 or undefined'
+      }).toStrictEqual({
+        'expected-zero-calls': [],
+        'expected-zero-exit-code': '0 or undefined'
+      });
+    }
   } finally {
-    exitSpy.mockRestore();
+    exitSpyProxy.mockRestore();
     process.exitCode = oldProcessExitCode;
   }
 }
@@ -387,7 +429,7 @@ export function protectedImportFactory(path: string) {
 
       if (expect && factoryOptions?.expectedExitCode !== undefined) {
         if (getExitCode() === undefined) {
-          expect(exitSpy).toBeCalledWith(factoryOptions.expectedExitCode);
+          expect(exitSpy).toHaveBeenCalledWith(factoryOptions.expectedExitCode);
         } else {
           expect(getExitCode()).toBe(factoryOptions.expectedExitCode);
         }
@@ -760,7 +802,11 @@ export function npmCopySelfFixture(): MockFixture {
     setup: async (context) => {
       const root = resolvePath(__dirname, '..');
 
-      const { files: patterns } = await import('../package.json');
+      const { files: patterns } = (await import(
+        '../package.json'
+      )) as unknown as PackageJson;
+
+      assert(patterns !== undefined);
 
       const sourcePaths = patterns.flatMap((p) => glob.sync(p, { cwd: root, root }));
       const destinationPath = resolvePath(

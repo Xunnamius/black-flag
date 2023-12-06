@@ -6,42 +6,8 @@ import type { EmptyObject, Promisable } from 'type-fest';
 import type { ConfigureHooks } from 'types/configure';
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
-type RunProgramSignature1 = [commandModulePath?: string];
-
-type RunProgramSignature2<CustomContext extends ExecutionContext> = [
-  commandModulePath: string | undefined,
-  configurationHooks: Promisable<ConfigureHooks<CustomContext>>
-];
-
-type RunProgramSignature3<CustomContext extends ExecutionContext> = [
-  commandModulePath: string | undefined,
-  preExecutionContext: PreExecutionContext<CustomContext>
-];
-
-type RunProgramSignature4 = [
-  commandModulePath: string | undefined,
-  argv: string | string[]
-];
-
-type RunProgramSignature5<CustomContext extends ExecutionContext> = [
-  commandModulePath: string | undefined,
-  argv: string | string[],
-  configurationHooks: Promisable<ConfigureHooks<CustomContext>>
-];
-
-type RunProgramSignature6<CustomContext extends ExecutionContext> = [
-  commandModulePath: string | undefined,
-  argv: string | string[],
-  preExecutionContext: PreExecutionContext<CustomContext>
-];
-
-type RunProgramSignature<CustomContext extends ExecutionContext> =
-  | RunProgramSignature1
-  | RunProgramSignature2<CustomContext>
-  | RunProgramSignature3<CustomContext>
-  | RunProgramSignature4
-  | RunProgramSignature5<CustomContext>
-  | RunProgramSignature6<CustomContext>;
+// * Lots of repeated types in this file. Why? Because typedoc gets mad if we
+// * don't.
 
 /**
  * A factory function that returns a {@link runProgram} function that can be
@@ -57,7 +23,27 @@ export function makeRunner<
 >(commandModulePath?: string | undefined) {
   return <
     CustomContext extends ExecutionContext,
-    T extends RunProgramSignature<CustomContext>
+    T extends
+      | [commandModulePath?: string]
+      | [
+          commandModulePath: string | undefined,
+          configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+        ]
+      | [
+          commandModulePath: string | undefined,
+          preExecutionContext: PreExecutionContext<CustomContext>
+        ]
+      | [commandModulePath: string | undefined, argv: string | string[]]
+      | [
+          commandModulePath: string | undefined,
+          argv: string | string[],
+          configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+        ]
+      | [
+          commandModulePath: string | undefined,
+          argv: string | string[],
+          preExecutionContext: PreExecutionContext<CustomContext>
+        ]
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
   ) => {
@@ -80,7 +66,9 @@ export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(...args: RunProgramSignature1): Promise<Arguments<CustomCliArguments> | undefined>;
+>(
+  ...args: [commandModulePath?: string]
+): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the dynamically imported
  * `configureProgram(configurationHooks).execute()` function.
@@ -93,7 +81,10 @@ export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  ...args: RunProgramSignature2<CustomContext>
+  ...args: [
+    commandModulePath: string | undefined,
+    configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+  ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the `preExecutionContext.execute()` function.
@@ -106,7 +97,10 @@ export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  ...args: RunProgramSignature3<CustomContext>
+  ...args: [
+    commandModulePath: string | undefined,
+    preExecutionContext: PreExecutionContext<CustomContext>
+  ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the dynamically imported `configureProgram().execute(argv)` function.
@@ -119,7 +113,9 @@ export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(...args: RunProgramSignature4): Promise<Arguments<CustomCliArguments>>;
+>(
+  ...args: [commandModulePath: string | undefined, argv: string | string[]]
+): Promise<Arguments<CustomCliArguments>>;
 /**
  * Invokes the dynamically imported
  * `configureProgram(configurationHooks).execute(argv)` function.
@@ -131,7 +127,13 @@ export async function runProgram<
 export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(...args: RunProgramSignature5<CustomContext>): Promise<Arguments<CustomCliArguments>>;
+>(
+  ...args: [
+    commandModulePath: string | undefined,
+    argv: string | string[],
+    configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+  ]
+): Promise<Arguments<CustomCliArguments>>;
 /**
  * Invokes the `preExecutionContext.execute(argv)` function.
  *
@@ -142,12 +144,38 @@ export async function runProgram<
 export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(...args: RunProgramSignature6<CustomContext>): Promise<Arguments<CustomCliArguments>>;
+>(
+  ...args: [
+    commandModulePath: string | undefined,
+    argv: string | string[],
+    preExecutionContext: PreExecutionContext<CustomContext>
+  ]
+): Promise<Arguments<CustomCliArguments>>;
 export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  ...args: RunProgramSignature<CustomContext>
+  ...args:
+    | [commandModulePath?: string]
+    | [
+        commandModulePath: string | undefined,
+        configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+      ]
+    | [
+        commandModulePath: string | undefined,
+        preExecutionContext: PreExecutionContext<CustomContext>
+      ]
+    | [commandModulePath: string | undefined, argv: string | string[]]
+    | [
+        commandModulePath: string | undefined,
+        argv: string | string[],
+        configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+      ]
+    | [
+        commandModulePath: string | undefined,
+        argv: string | string[],
+        preExecutionContext: PreExecutionContext<CustomContext>
+      ]
 ): Promise<Arguments<CustomCliArguments> | undefined> {
   const commandModulePath = args[0];
   let argv: string | string[] | undefined = undefined;
@@ -181,7 +209,7 @@ export async function runProgram<
 
   try {
     preExecutionContext ||= await (
-      await import('universe/index')
+      await import('universe/index.js')
     ).configureProgram(commandModulePath, configurationHooks);
 
     const parsedArgv = (await preExecutionContext.execute(

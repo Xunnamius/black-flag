@@ -217,26 +217,28 @@ export async function discoverCommands(
       const isPotentialChildConfigOfCurrentParent =
         /.*(?<!index)\.(?:js|mjs|cjs|ts|mts|cts)$/.test(entry.name);
 
-      debug('saw potential child configuration file: %O', entry.path);
+      const entryFullPath = path.join(entry.path, entry.name);
+
+      debug('saw potential child configuration file: %O', entryFullPath);
 
       if (entry.isDirectory()) {
         debug('file is actually a directory, recursing...');
-        await discover(entry.path, lineage, parentProgram);
+        await discover(entryFullPath, lineage, parentProgram);
       } else if (isPotentialChildConfigOfCurrentParent) {
         debug('attempting to load file...');
 
         const childProgram = makeProgram();
         const { configuration: childConfig, metadata: childMeta } =
-          await loadConfiguration(entry.path, childProgram, context);
+          await loadConfiguration(entryFullPath, childProgram, context);
 
         if (!childConfig) {
           debug.error(
             `failed to load child configuration (depth: %O) due to missing or invalid file %O`,
             depth,
-            entry.path
+            entryFullPath
           );
 
-          throw new AssertionFailedError(ErrorMessage.ConfigLoadFailure(entry.path));
+          throw new AssertionFailedError(ErrorMessage.ConfigLoadFailure(entryFullPath));
         }
 
         const childConfigFullName = `${parentConfigFullName} ${childConfig.name}`;
@@ -362,8 +364,8 @@ export async function discoverCommands(
               (isRootProgram && pkg.name
                 ? pkg.name
                 : isParentProgram
-                ? meta.parentDirName
-                : meta.filenameWithoutExtension)
+                  ? meta.parentDirName
+                  : meta.filenameWithoutExtension)
             ).trim(),
             // ? This property is trimmed below
             usage: rawConfig.usage || DEFAULT_USAGE_TEXT

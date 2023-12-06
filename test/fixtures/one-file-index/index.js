@@ -8,7 +8,7 @@ const name = basename(dirname(__filename));
  * @type {Type.RootConfig}
  */
 module.exports = {
-  description: `description for root program ${name}`,
+  usage: `usage text for root program ${name}`,
   builder: (yargs) => {
     return yargs.option(name, { boolean: true });
   },

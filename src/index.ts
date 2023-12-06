@@ -2,6 +2,7 @@ import assert from 'node:assert';
 
 import alphaSort from 'alpha-sort';
 import { name as pkgName } from 'package';
+import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
 import { createDebugLogger } from 'multiverse/rejoinder';
@@ -32,7 +33,7 @@ import type {
   Program
 } from 'types/program';
 
-import type { EmptyObject } from 'type-fest';
+import type { EmptyObject, Promisable } from 'type-fest';
 
 const rootDebugLogger = createDebugLogger({ namespace: pkgName });
 const debug = rootDebugLogger.extend('index');
@@ -42,7 +43,8 @@ const debug = rootDebugLogger.extend('index');
  * {@link Program} instance with the provided configuration hooks and an
  * {@link Executor} function.
  *
- * Command auto-discovery will occur at `commandModulePath`, if defined.
+ * Command auto-discovery will occur at `commandModulePath`, if defined;
+ * otherwise, command auto-discovery is disabled.
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
@@ -53,7 +55,7 @@ export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
   commandModulePath?: string,
-  configurationHooks?: ConfigureHooks<CustomContext>
+  configurationHooks?: Promisable<ConfigureHooks<CustomContext>>
 ): Promise<PreExecutionContext<CustomContext>>;
 /**
  * Create and return a {@link PreExecutionContext} containing a fully-configured
@@ -70,14 +72,17 @@ export async function configureProgram<
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
-  configurationHooks?: ConfigureHooks<CustomContext>
+  configurationHooks?: Promisable<ConfigureHooks<CustomContext>>
 ): Promise<PreExecutionContext<CustomContext>>;
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
   ...args:
-    | [configurationHooks?: ConfigureHooks<CustomContext>]
-    | [commandModulePath?: string, configurationHooks?: ConfigureHooks<CustomContext>]
+    | [configurationHooks?: Promisable<ConfigureHooks<CustomContext>>]
+    | [
+        commandModulePath?: string,
+        configurationHooks?: Promisable<ConfigureHooks<CustomContext>>
+      ]
 ): Promise<PreExecutionContext<CustomContext>> {
   debug('configureProgram was invoked');
 
@@ -104,10 +109,10 @@ export async function configureProgram<
 
   if (typeof args[0] === 'string') {
     commandModulePath = args[0];
-    Object.assign(configurationHooks, args[1]);
+    Object.assign(configurationHooks, await args[1]);
   } else {
     commandModulePath = '';
-    Object.assign(configurationHooks, args[0], args[1]);
+    Object.assign(configurationHooks, await args[0], await args[1]);
   }
 
   debug('command module auto-discovery path: %O', commandModulePath);
@@ -162,7 +167,7 @@ export async function configureProgram<
       debug('entering configureArguments');
 
       const argv = await configurationHooks.configureArguments(
-        argv_?.length ? argv_ : process.argv,
+        argv_?.length ? argv_ : hideBin(process.argv),
         context
       );
 
@@ -281,7 +286,10 @@ export async function configureProgram<
 
   debug('finalizing deferred command registrations');
 
-  context.commands.forEach((wrapper) => wrapper.program.command_finalize_deferred());
+  context.commands.forEach((wrapper, command) => {
+    debug('calling ::command_finalize_deferred for %O', command);
+    wrapper.program.command_finalize_deferred();
+  });
 
   debug('configureProgram invocation succeeded');
 
@@ -305,8 +313,8 @@ export async function configureProgram<
  * import('yargs/yargs')).default()`. Note that the returned yargs instance has
  * its magical `::argv` property disabled via a [this-recovering `Proxy`
  * object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#no_private_property_forwarding).
- * The instance also exposes two new methods: `command_deferred` and
- * `command_finalize_deferred`.
+ * The instance also exposes three new methods: `command_deferred`,
+ * `command_finalize_deferred`, and `strict_force`.
  */
 export function makeProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
@@ -317,7 +325,9 @@ export function makeProgram<
 
   debug_('created new %O Program instance', descriptor);
 
-  return new Proxy(yargs() as unknown as Program<CustomCliArguments>, {
+  const y = yargs() as unknown as Program<CustomCliArguments>;
+
+  return new Proxy(y, {
     get(target, property: keyof Program<CustomCliArguments>) {
       // ? What are command_deferred and command_finalize_deferred? Well,
       // ? when generating help text, yargs will enumerate commands and options
@@ -377,7 +387,8 @@ export function makeProgram<
       if (property === 'strict_force') {
         return function (enabled = true) {
           debug_(
-            'forced strict, strictCommands, and strictOptions for %O Program instance',
+            'forced strict, strictCommands, and strictOptions to %O for %O Program instance',
+            enabled,
             descriptor
           );
           target.strict(enabled);
@@ -390,20 +401,39 @@ export function makeProgram<
         property === 'argv' ||
         (!isShadowClone && DISALLOWED_NON_SHADOW_PROGRAM_METHODS.includes(property))
       ) {
-        debug_.warn(
-          `trapped attempted access to disabled %O::${property} property`,
-          descriptor
-        );
+        if (debug_.enabled) {
+          debug_.warn(
+            `trapped attempted access to disabled %O::${property} property on non-shadow yargs instance`,
+            descriptor
+          );
+
+          // * Kept here as a reminder that we don't want to do this. Why?
+          // * Because the double parsing from dynamic options might trigger
+          // * parallel calls to a disallowed function that would fail on the
+          // * non-shadow instance but would SUCCEED on the shadow instance and
+          // * everything would function as intended to the end dev as a result.
+          // *
+          // * Warnings should not be issued about success.
+          // if (!emittedWarning) {
+          //   // ? Make it obvious when something does something we don't like
+          //   process.emitWarning(
+          //     `trapped attempted access to disabled "${property}" property on non-shadow yargs instance. See the Black Flag documentation for more info.`,
+          //     { code: 'BLACKFLAG_DISABLED_PROP_WARNING' }
+          //   );
+          //   emittedWarning = true;
+          // }
+        }
 
         // ? Why go through all this trouble? Because, Jest likes to make "deep
         // ? cyclical copies" of objects from time to time, especially WHEN
         // ? ERRORS ARE THROWN. These deep copies necessarily require
         // ? recursively accessing every property of the object... including
-        // ? disabled properties on non-shadow instances like ::strict, or magic
-        // ? properties like ::argv, which causes ::parse to be called multiple
-        // ? times AFTER AN ERROR ALREADY OCCURRED, which leads to undefined
-        // ? behavior and heisenbugs. Yuck.
-        return property === 'argv' ? undefined : () => undefined;
+        // ? magic properties like ::argv, which causes ::parse to be called
+        // ? multiple times AFTER AN ERROR ALREADY OCCURRED, which leads to
+        // ? undefined behavior and heisenbugs. Yuck.
+        return property === 'argv'
+          ? void 'disabled by Black Flag (use parseAsync instead)'
+          : () => void 'disabled by Black Flag (use metadata.shadow instead)';
       }
 
       const value: unknown = target[property];
