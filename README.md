@@ -501,6 +501,10 @@ export function builder(yargs) {
 }
 ```
 
+> Note that yargs also does its own internal error handling when parsing and
+> validating arguments. [`configureErrorHandlingEpilogue`][12] will not control
+> how yargs reports argument validation failures, nor should it.
+
 ### A Pleasant Testing Experience ✨
 
 Black Flag was built with a pleasant unit/integration testing experience in
@@ -1072,7 +1076,8 @@ invoke successively.
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
 > entire CLI _from scratch_. Other than stuff like [the require cache][30],
 > there is no shared state between invocations unless you explicitly make it so.
-> This makes testing your commands "in isolation" dead simple.
+> This makes testing your commands "in isolation" dead simple and avoids a
+> [common yargs footgun][31].
 
 ```javascript
 import { makeRunner } from 'black-flag/util';
@@ -1179,7 +1184,7 @@ Flag, but are noted below nonetheless.
   dangerous behavior.
 
   > Who in their right mind is out here cloning yargs instances, you may ask?
-  > [Jest does so whenever you use certain asymmetric matchers][31].
+  > [Jest does so whenever you use certain asymmetric matchers][32].
 
   Regardless, you should never have to reach below Black Flag's abstraction over
   yargs to call methods like `yargs::parse`, `yargs::parseAsync`, `yargs::argv`,
@@ -1188,7 +1193,7 @@ Flag, but are noted below nonetheless.
   Therefore, this is effectively a non-issue with proper declarative use of
   Black Flag.
 
-- Though it would be trivial, yargs [middleware][32] isn't supported since the
+- Though it would be trivial, yargs [middleware][33] isn't supported since the
   functionality is already covered by configuration hooks ~~and I didn't notice
   yargs had this feature until after I wrote Black Flag~~. If you have a yargs
   middleware function you want to run, call it in [`configureArguments`][24]
@@ -1196,13 +1201,23 @@ Flag, but are noted below nonetheless.
 
 #### Irrelevant Differences
 
-- A [bug][33] in yargs\@17.7.2 prevents `showHelp(...)`/`--help` from printing
+- A [bug][34] in yargs\@17.7.2 prevents `showHelp(...)`/`--help` from printing
   anything when using an async [`builder`][6] function (or promise-returning
   function) for a default command, so they are not allowed by intellisense.
   However, Black Flag supports an asynchronous function as the value of
   `module.exports` in CJS code, and top-level await in ESM code, so if you
-  really need an async [`builder`][6] function, [hoist][34] the async logic to
+  really need an async [`builder`][6] function, [hoist][35] the async logic to
   work around this bug for now.
+
+- Vanilla yargs (as of 17.7.2) [doesn't really support][31] [calling
+  `yargs::parse` et al multiple times on the same instance][36], [which seems to
+  be a regression][37].
+
+  Black Flag addresses this in two ways. First, the [`runProgram`][7] helper
+  takes care of state isolation for you, making it safe to call
+  [`runProgram`][7] multiple times. Easy peasy. Second,
+  [`PreExecutionContext::execute`][10] (the wrapper around `yargs::parseAsync`)
+  will throw if invoked more than once.
 
 - One of Black Flag's features is simple comprehensive error reporting via the
   [`configureErrorHandlingEpilogue`][12] configuration hook. Therefore, the
@@ -1211,7 +1226,7 @@ Flag, but are noted below nonetheless.
   an error message.
 
 - Since every auto-discovered command translates [into its own yargs
-  instances][35], the [`command`][6] property, if exported by your command
+  instances][38], the [`command`][6] property, if exported by your command
   file(s), must start with `"$0"`. However, most command files shouldn't export
   a [`command`][6] property at all since the default usually suffices.
 
@@ -1221,12 +1236,12 @@ Flag, but are noted below nonetheless.
 - `yargs::check` and `yargs::global`, while they work as expected on commands
   and their direct sub-commands, do not necessarily apply "globally" across your
   entire command hierarchy since [there are several _distinct_ yargs instances
-  in play when Black Flag executes][35]. This is not a problem for most projects
+  in play when Black Flag executes][38]. This is not a problem for most projects
   and vanilla yargs already has a similar limitation with `yargs::check`.
 
   However, if for some reason you want a uniform check to apply to every single
   yargs instance across your entire command hierarchy, you can leverage the
-  [`configureExecutionPrologue`][36] hook and [command metadata][35] to work
+  [`configureExecutionPrologue`][39] hook and [command metadata][38] to work
   around this.
 
 - Due to the way Black Flag stacks yargs instances, arbitrary parameters cannot
@@ -1252,7 +1267,7 @@ Flag, but are noted below nonetheless.
   ```
 
   This limitation was inherited from yargs itself: vanilla yargs [never really
-  supported this functionality][37] in that you can't implement
+  supported this functionality][40] in that you can't implement
   `git -p ls-files --full-name` and have that mean something different than
   `git ls-files --full-name -p` or `git -p ls-files --full-name -p` with yargs.
   Black Flag makes this a formal invariant that will throw an error.
@@ -1328,20 +1343,20 @@ await preExecutionContext.execute();
 ```
 
 Shadow instances are "clones" of their actual instances, and are available as
-the [`metadata.shadow`][38] property of each object in
+the [`metadata.shadow`][41] property of each object in
 [`PreExecutionContext::commands`][10]. The actual command and its shadow clone
-are identical except the actual command is [_never_ set to strict mode][39]
+are identical except the actual command is [_never_ set to strict mode][42]
 while the shadow is set to strict mode by default.
 
 > Note that non-shadow instances have their strict mode functions [soft
-> disabled][39] for the reasons described below. When executing Black Flag in
-> [debug mode][40], you will be warned when accidentally invoking them.
+> disabled][42] for the reasons described below. When executing Black Flag in
+> [debug mode][43], you will be warned when accidentally invoking them.
 
 Therefore: if you want to tamper with the instance responsible for handing off
 or "proxying" control between yargs instances, operate on the actual instance.
 On the other hand, if you want to tamper with the instance responsible for
 running a program's actual [`handler`][6] function, you should operate on
-[`metadata.shadow`][38].
+[`metadata.shadow`][41].
 
 This bifurcation of responsibility facilitates the double-parsing necessary for
 both [_dynamic options_][5] and _dynamic strictness_.
@@ -1373,9 +1388,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][41], I realized the (irritatingly disparate 😖) structures of my
+another tool][44], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][42] to ["optimize" my workflows][43], I
+yargs. And, as I'm [always eager][45] to ["optimize" my workflows][46], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1564,20 +1579,23 @@ specification. Contributions of any kind welcome!
 [28]: ./docs/modules/index.md#makeprogram
 [29]: https://builtin.com/software-engineering-perspectives/currying-javascript
 [30]: https://jestjs.io/docs/jest-object#jestresetmodules
-[31]:
-  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[31]: https://github.com/yargs/yargs/issues/2191
 [32]:
+  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[33]:
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[33]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
-[34]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[35]: #advanced-usage
-[36]: ./docs/modules/index.md#configureexecutionprologue
-[37]: https://github.com/yargs/yargs/issues/156
-[38]: ./docs/modules/index.md#programmetadata
-[39]:
+[34]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
+[35]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
+[36]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
+[37]: https://github.com/yargs/yargs/issues/1137
+[38]: #advanced-usage
+[39]: ./docs/modules/index.md#configureexecutionprologue
+[40]: https://github.com/yargs/yargs/issues/156
+[41]: ./docs/modules/index.md#programmetadata
+[42]:
   https://github.com/Xunnamius/black-flag/blob/4e6f51f68d9a0e29ae8e750d53762368e1cfcc67/src/constant.ts#L15-L23
-[40]: #built-in-debug-integration-for-runtime-insights-
-[41]: https://github.com/Xunnamius/xunnctl
-[42]: https://xkcd.com/1205
-[43]:
+[43]: #built-in-debug-integration-for-runtime-insights-
+[44]: https://github.com/Xunnamius/xunnctl
+[45]: https://xkcd.com/1205
+[46]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
