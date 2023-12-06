@@ -35,6 +35,6 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts?(x)', 'external-scripts/**/*.ts?(x)'],
   // ? Make sure jest-haste-map doesn't try to parse and cache fixtures
   modulePathIgnorePatterns: ['<rootDir>/test/fixtures'],
-  // ? Tell Jest to transpile any packages published as ESM
-  transformIgnorePatterns: ['/node_modules/(?!pkg-up|alpha-sort)']
+  // ? Tell Jest to transpile node_modules (for ESM interop)
+  transformIgnorePatterns: []
 };
