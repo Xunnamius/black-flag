@@ -4,7 +4,7 @@ import type { Options as _Options, Argv as _Program } from 'yargs';
 import type { Arguments, ExecutionContext, Program } from 'types/program';
 
 /**
- * The most generic form of {@link Configuration}.
+ * The most generic implementation type of {@link Configuration}.
  */
 export type AnyConfiguration = Configuration<Record<string, unknown>>;
 

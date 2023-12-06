@@ -28,6 +28,8 @@ The ideal contributor flow is as follows:
    - You use `npm ci` here instead of `npm install` to [prevent unnecessary
      updates to `package.json` and `package-lock.json`][npm-ci], but if it makes
      more sense to use `npm install` feel free to use that instead.
+     - **If you're getting an EINTEGRITY error from npm, you need to delete
+       package-lock.json before running `npm install` (not `npm ci`).**
    - If `.env.example` exists, consider copying it to `.env` and configuring
      sensible defaults.
 3. Before making any changes, ensure all unit tests are passing with

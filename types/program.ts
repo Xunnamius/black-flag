@@ -70,17 +70,29 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
     };
 
     /**
+     * Identical to `yargs::command` except its execution is enqueued and
+     * deferred until {@link Program[command_finalize_deferred]} is called.
+     *
      * @see `yargs::command`
      * @internal
      */
     command_deferred: Program<CustomCliArguments>['command'];
 
     /**
+     * @see {@link Program[command_deferred]}
      * @internal
      */
     command_finalize_deferred: () => void;
 
     /**
+     * Invokes `yargs::strict(enabled)`, `yargs::strictCommands(enabled)`, and
+     * `yargs::strictOptions(enabled)` on behalf of the caller.
+     *
+     * This function allows you to bypass
+     * `DISALLOWED_NON_SHADOW_PROGRAM_METHODS` and disable strictness on
+     * non-shadow yargs instances. Note that **doing so will effectively break
+     * Black Flag and result in undefined behavior**.
+     *
      * @default true
      * @internal
      */
@@ -164,11 +176,14 @@ export type FrameworkArguments = {
 };
 
 /**
- * Accepts an optional array that defaults to `process.argv` and returns an
- * arguments object representing the parsed CLI input for the given root
- * {@link Program}.
+ * Accepts an optional `rawArgv` array that defaults to
+ * `yargs::hideBin(process.argv)` and returns an arguments object representing
+ * the parsed CLI input for the given root {@link Program}.
  */
 export type Executor = (
+  /**
+   * @default hideBin(process.argv)
+   */
   rawArgv?: Parameters<ConfigureArguments>[0]
 ) => Promise<Awaited<ReturnType<ConfigureExecutionEpilogue>>>;
 
@@ -183,8 +198,9 @@ export type PreExecutionContext<
    */
   program: Program;
   /**
-   * Execute `program`, parsing any available CLI arguments, and return the
-   * parsed arguments.
+   * Execute `program`, parsing any available CLI arguments and running the
+   * appropriate handler, and return the resulting final parsed arguments
+   * object.
    */
   execute: Executor;
 };
