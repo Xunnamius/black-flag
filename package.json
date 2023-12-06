@@ -86,10 +86,10 @@
     }
   },
   "dependencies": {
-    "alpha-sort": "^4.0.0",
+    "alpha-sort": "^5.0.0",
     "merge-descriptors": "^2.0.0",
     "named-app-errors": "^4.0.2",
-    "pkg-up": "^4.0.0",
+    "pkg-up": "^5.0.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
