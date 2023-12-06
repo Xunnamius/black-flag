@@ -1,9 +1,14 @@
 import assert from 'node:assert';
 
 import { FrameworkExitCode } from 'universe/constant';
-import { isCliError, isGracefulEarlyExitError } from 'universe/error';
+import { ErrorMessage, isCliError, isGracefulEarlyExitError } from 'universe/error';
 
-import type { EmptyObject, Promisable } from 'type-fest';
+import type {
+  EmptyObject,
+  Promisable,
+  RequiredDeep,
+  UnionToIntersection
+} from 'type-fest';
 import type { ConfigureHooks } from 'types/configure';
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
@@ -21,24 +26,31 @@ import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/pro
 export function makeRunner<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
->(options?: {
-  /**
-   * @see {@link runProgram}
-   */
-  commandModulePath?: string | undefined;
-  /**
-   * @see {@link runProgram}
-   *
-   * Note: cannot be used with `configurationHooks`.
-   */
-  configurationHooks?: Promisable<ConfigureHooks<ExecutionContext>>;
-  /**
-   * @see {@link runProgram}
-   *
-   * Node: cannot be used with `preExecutionContext`.
-   */
-  preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
-}) {
+>(
+  options?: {
+    /**
+     * @see {@link runProgram}
+     */
+    commandModulePath?: string | undefined;
+  } & (
+    | {
+        /**
+         * @see {@link runProgram}
+         *
+         * Note: cannot be used with `configurationHooks`.
+         */
+        configurationHooks?: Promisable<ConfigureHooks<ExecutionContext>>;
+      }
+    | {
+        /**
+         * @see {@link runProgram}
+         *
+         * Node: cannot be used with `preExecutionContext`.
+         */
+        preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
+      }
+  )
+) {
   return <
     T extends
       | [commandModulePath?: string]
@@ -64,17 +76,22 @@ export function makeRunner<
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
   ) => {
-    const { commandModulePath, configurationHooks, preExecutionContext } = options || {};
+    const { commandModulePath, configurationHooks, preExecutionContext } =
+      (options as UnionToIntersection<RequiredDeep<typeof options>> | undefined) || {};
+
     const parameters: unknown[] = [commandModulePath, ...args];
     const hasAdditionalConfig = !!(configurationHooks || preExecutionContext);
-
-    assert(!!configurationHooks !== !!preExecutionContext);
 
     if (
       hasAdditionalConfig &&
       (args.length === 0 ||
         (args.length === 1 && (typeof args[0] === 'string' || Array.isArray(args[0]))))
     ) {
+      assert(
+        !!configurationHooks !== !!preExecutionContext,
+        ErrorMessage.AssertionFailureBadParameterCombination()
+      );
+
       // ? Specifying hooks or a context at the runProgram level will override
       // ? configurationHooks/PreExecutionContext. However, if no override is
       // ? provided, configurationHooks/PreExecutionContext will be used by

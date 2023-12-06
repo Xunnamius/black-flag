@@ -193,5 +193,8 @@ export const ErrorMessage = {
   },
   AssertionFailureCannotExecuteMultipleTimes() {
     return 'yargs does not support safely calling "parse" more than once on the same instance. See documentation for details';
+  },
+  AssertionFailureBadParameterCombination() {
+    return 'cannot provide both "configurationHooks" and "preExecutionContext" properties';
   }
 };
