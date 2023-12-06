@@ -36,5 +36,5 @@ module.exports = {
   // ? Make sure jest-haste-map doesn't try to parse and cache fixtures
   modulePathIgnorePatterns: ['<rootDir>/test/fixtures'],
   // ? Tell Jest to transpile any packages published as ESM
-  transformIgnorePatterns: ['/node_modules/(?!pkg-up)/']
+  transformIgnorePatterns: ['/node_modules/(?!pkg-up|alpha-sort)']
 };
