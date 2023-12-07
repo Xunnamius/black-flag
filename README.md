@@ -561,6 +561,8 @@ export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
   };
 ```
 
+Then we could test it with the following:
+
 ```typescript
 // File: my-cli-project/test.ts (with Jest as test runner)
 
