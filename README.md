@@ -38,7 +38,7 @@ capabilities with several powerful declarative features.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Introduction](#introduction)
+- [Features](#features)
   - [Declaratively Build Deep Command Hierarchies ✨](#declaratively-build-deep-command-hierarchies-)
   - [Built-In Support for Dynamic Options ✨](#built-in-support-for-dynamic-options-)
   - [It's Yargs All the Way down ✨](#its-yargs-all-the-way-down-)
@@ -64,7 +64,7 @@ capabilities with several powerful declarative features.
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 <!-- remark-ignore-end -->
 
-## Introduction
+## Features
 
 > Not yet familiar with yargs? Check out their [intro documentation][2] before
 > continuing.
