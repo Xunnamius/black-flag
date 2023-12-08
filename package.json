@@ -108,7 +108,7 @@
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.11",
     "@types/merge-descriptors": "^1.0.3",
-    "@types/node": "^20.10.3",
+    "@types/node": "^20.10.4",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "@xunnamius/conventional-changelog-projector": "^1.2.1",
@@ -196,7 +196,7 @@
     "type-fest": "^4.8.3",
     "typedoc": "^0.25.4",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.3.2",
+    "typescript": "^5.3.3",
     "unique-filename": "^3.0.0"
   },
   "engines": {
