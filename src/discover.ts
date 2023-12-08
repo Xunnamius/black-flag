@@ -32,6 +32,7 @@ import type { PackageJson } from 'type-fest';
 import { DEFAULT_USAGE_TEXT } from 'universe/constant';
 
 const hasSpacesRegExp = /\s+/;
+const defaultHelpTextDescription = 'Show help text';
 
 /**
  * An internal mapping between program instances and their shadow clones.
@@ -487,7 +488,7 @@ export async function discoverCommands(
 
     // ? Swap out --help support for something that plays nice with the
     // ? existence of child programs
-    const helpConfig = { description: 'Show help text', boolean: true };
+    const helpConfig = { description: defaultHelpTextDescription, boolean: true };
     program.help(false).option('help', helpConfig);
     shadowProgram.help(false).option('help', helpConfig);
 
@@ -543,8 +544,8 @@ export async function discoverCommands(
 
     // ? Only child programs should use the built-in --help magic
 
-    program.help(true);
-    shadowProgram.help(true);
+    program.help('help', defaultHelpTextDescription);
+    shadowProgram.help('help', defaultHelpTextDescription);
 
     debug('%O was additionally configured as: %O', config.name, 'pure child');
   }

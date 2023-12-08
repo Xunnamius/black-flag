@@ -664,13 +664,23 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
     });
 
-    it('ignores empty command configuration root directory', async () => {
+    it('ignores empty command configuration root directory (safe mode)', async () => {
       expect.hasAssertions();
 
-      await withMocks(async ({ logSpy }) => {
+      await withMocks(async ({ logSpy, errorSpy, exitSpy, getExitCode }) => {
         await bf.runProgram(getFixturePath('empty'), '--help');
+
         expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Options:'));
         expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
+
+        // ? Safe mode yargs instance is not configured properly, so we can test
+        // ? for the consequences of passing "--help" to it:
+
+        expect(getExitCode()).toBe(1);
+        expect(exitSpy.mock.calls).toStrictEqual([[0]]);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('process.exit(0)')]
+        ]);
       });
     });
 
@@ -746,27 +756,32 @@ describe('::configureProgram', () => {
         await run('good1 good2 good3 --help');
         await run('good1 good2 good3 command --help');
 
-        // TODO: ensure --help is shown with description "Show help text"
-        expect(true).toBeFalse();
-
         expect(logSpy.mock.calls).toStrictEqual([
           [expect.stringMatching(expectedCommandsRegex(['good1']))],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good2'], 'black-flag good1')
+              expectedCommandsRegex(['good', 'good2'], 'fake-name good1')
             )
           ],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good3'], 'black-flag good1 good2')
+              expectedCommandsRegex(['good', 'good3'], 'fake-name good1 good2')
             )
           ],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['command'], 'black-flag good1 good2 good3')
+              expectedCommandsRegex(['command'], 'fake-name good1 good2 good3')
             )
           ],
           [expect.not.stringContaining('Commands:')]
+        ]);
+
+        expect(logSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('Show help text')],
+          [expect.stringContaining('Show help text')],
+          [expect.stringContaining('Show help text')],
+          [expect.stringContaining('Show help text')],
+          [expect.stringContaining('Show help text')]
         ]);
       });
     });
@@ -779,10 +794,11 @@ describe('::configureProgram', () => {
     it('does not repeat help text when handling yargs errors in deeply nested commands', async () => {
       expect.hasAssertions();
 
-      await withMocks(async ({ errorSpy }) => {
+      await withMocks(async ({ errorSpy, getExitCode }) => {
         const run = bf_util.makeRunner({
           commandModulePath: getFixturePath('nested-depth')
         });
+
         await run('good1 good2 good3 command --yelp');
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -790,6 +806,8 @@ describe('::configureProgram', () => {
           [],
           [expect.stringMatching('Unknown argument: yelp')]
         ]);
+
+        expect(getExitCode()).toBe(1);
       });
     });
 
