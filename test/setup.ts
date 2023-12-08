@@ -27,6 +27,9 @@ import type { Merge, PackageJson, Promisable } from 'type-fest';
 // ! The versions of the functions here are fixed in various ways compared to
 // ! older versions of this file. A great merging will have to occur soon...
 
+// TODO: for all the withMockedX functions, they should throw an error if the
+// TODO: thing they're trying to mock is already mocked!
+
 // TODO: automated tests against both Windows and Linux (and for all tooling)
 
 // TODO: consider stripping indents from all writeFiles (perhaps add option)

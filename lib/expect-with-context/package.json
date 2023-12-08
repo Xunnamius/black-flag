@@ -1,0 +1,6 @@
+{
+  "name": "expect-with-context",
+  "peerDependencies": {
+    "jest": ">=29.7.0"
+  }
+}

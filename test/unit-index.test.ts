@@ -13,6 +13,7 @@ import * as bf_util from 'universe/exports/util';
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
+import { makeExpect } from 'multiverse/expect-with-context';
 import type { Arguments, ExecutionContext } from 'types/program';
 
 describe('::configureProgram', () => {
@@ -611,7 +612,9 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       await withMocks(async ({ logSpy }) => {
-        const run = bf_util.makeRunner(getFixturePath('different-module-types'));
+        const run = bf_util.makeRunner({
+          commandModulePath: getFixturePath('different-module-types')
+        });
 
         await expect(run('exports-function --exports-function')).resolves.toStrictEqual(
           expect.objectContaining({
@@ -675,7 +678,9 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       await withMocks(async () => {
-        const run = bf_util.makeRunner(getFixturePath('nested-depth'));
+        const run = bf_util.makeRunner({
+          commandModulePath: getFixturePath('nested-depth')
+        });
 
         await expect(run('good1 good2 good3 command --command')).resolves.toStrictEqual(
           expect.objectContaining({
@@ -731,7 +736,9 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       await withMocks(async ({ logSpy }) => {
-        const run = bf_util.makeRunner(getFixturePath('nested-depth'));
+        const run = bf_util.makeRunner({
+          commandModulePath: getFixturePath('nested-depth')
+        });
 
         await run('--help');
         await run('good1 --help');
@@ -773,7 +780,9 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       await withMocks(async ({ errorSpy }) => {
-        const run = bf_util.makeRunner(getFixturePath('nested-depth'));
+        const run = bf_util.makeRunner({
+          commandModulePath: getFixturePath('nested-depth')
+        });
         await run('good1 good2 good3 command --yelp');
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -881,23 +890,24 @@ describe('::configureProgram', () => {
 });
 
 describe('::runProgram and util::makeRunner', () => {
-  it('supports all call signatures', async () => {
+  const commandModulePath = getFixturePath('log-handler');
+
+  const configurationHooks: bf.ConfigureHooks = {
+    configureExecutionPrologue() {
+      // eslint-disable-next-line no-console
+      console.warn(1);
+    }
+  };
+
+  const promisedConfigurationHooks = Promise.resolve({
+    configureExecutionPrologue() {
+      // eslint-disable-next-line no-console
+      console.warn(2);
+    }
+  });
+
+  it('::runProgram supports "safe mode" and commandModulePath call signatures', async () => {
     expect.hasAssertions();
-    const commandModulePath = getFixturePath('log-handler');
-
-    const config: bf.ConfigureHooks = {
-      configureExecutionPrologue() {
-        // eslint-disable-next-line no-console
-        console.warn(1);
-      }
-    };
-
-    const promisedConfig = Promise.resolve({
-      configureExecutionPrologue() {
-        // eslint-disable-next-line no-console
-        console.warn(2);
-      }
-    });
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
       await bf.runProgram();
@@ -924,13 +934,13 @@ describe('::runProgram and util::makeRunner', () => {
       expect(warnSpy).toHaveBeenCalledTimes(0);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
-      await bf.runProgram(commandModulePath, config);
+      await bf.runProgram(commandModulePath, configurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(4);
       expect(warnSpy.mock.calls).toStrictEqual([[1]]);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
-      await bf.runProgram(commandModulePath, promisedConfig);
+      await bf.runProgram(commandModulePath, promisedConfigurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(5);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2]]);
@@ -938,20 +948,20 @@ describe('::runProgram and util::makeRunner', () => {
 
       await bf.runProgram(
         commandModulePath,
-        await bf.configureProgram(commandModulePath, config)
+        await bf.configureProgram(commandModulePath, configurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(6);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1]]);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
-      await bf.runProgram(commandModulePath, ['--help'], config);
+      await bf.runProgram(commandModulePath, '--help', configurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(7);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1]]);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
-      await bf.runProgram(commandModulePath, ['--help'], promisedConfig);
+      await bf.runProgram(commandModulePath, ['--help'], promisedConfigurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(8);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2]]);
@@ -960,69 +970,306 @@ describe('::runProgram and util::makeRunner', () => {
       await bf.runProgram(
         commandModulePath,
         '--help',
-        await bf.configureProgram(commandModulePath, promisedConfig)
+        await bf.configureProgram(commandModulePath, promisedConfigurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(9);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2]]);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
     });
+  });
 
-    const run = bf_util.makeRunner({ commandModulePath });
+  describe('::makeRunner supports all call signatures', () => {
+    it('supports "safe mode" signatures', async () => {
+      expect.hasAssertions();
 
-    await withMocks(async ({ logSpy, getExitCode }) => {
-      await run();
+      await withMocks(async ({ warnSpy, logSpy, getExitCode }) => {
+        await expect(bf_util.makeRunner()()).resolves.toBeDefined();
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+        expect(logSpy).toHaveBeenCalledTimes(0);
+        expect(warnSpy).toHaveBeenCalledTimes(0);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
-      await run('--help');
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+        await expect(bf_util.makeRunner({ configurationHooks })()).resolves.toBeDefined();
 
-      const result1 = await run({
-        configureExecutionEpilogue(argv) {
-          return { ...argv, something: 'here' };
-        }
+        expect(logSpy).toHaveBeenCalledTimes(0);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await expect(
+          bf_util.makeRunner({
+            preExecutionContext: await bf.configureProgram(
+              commandModulePath,
+              configurationHooks
+            )
+          })(['--log-handler'])
+        ).resolves.toBeDefined();
+
+        expect(logSpy).toHaveBeenCalledTimes(1);
+        expect(warnSpy).toHaveBeenCalledTimes(2);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await expect(
+          bf_util.makeRunner({
+            commandModulePath,
+            preExecutionContext: await bf.configureProgram(
+              commandModulePath,
+              promisedConfigurationHooks
+            )
+          })(['--log-handler'])
+        ).resolves.toBeDefined();
+
+        expect(logSpy).toHaveBeenCalledTimes(2);
+        expect(warnSpy).toHaveBeenCalledTimes(3);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       });
+    });
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-      expect(result1).toStrictEqual(expect.objectContaining({ something: 'here' }));
+    it('supports commandModulePath signatures', async () => {
+      expect.hasAssertions();
 
-      const result11 = await run(
-        Promise.resolve({
-          configureExecutionEpilogue(argv) {
-            return { ...argv, something: 'here' };
+      await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
+        const run = bf_util.makeRunner({ commandModulePath });
+
+        await run();
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 1 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run('--help');
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(['--help']);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 3 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 4 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 5 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(await bf.configureProgram(commandModulePath, configurationHooks));
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 6 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(['--help'], configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 7 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(['--help'], promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 8 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2]]);
+
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(
+          '--help',
+          await bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+        );
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 9 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2]]);
+
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+      });
+    });
+
+    it('supports local args overwriting given defaults', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
+        const run = bf_util.makeRunner({
+          commandModulePath,
+          configurationHooks: {
+            ...configurationHooks,
+            configureExecutionEpilogue(argv) {
+              // eslint-disable-next-line no-console
+              console.warn(3);
+              return argv;
+            }
           }
-        })
-      );
+        });
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-      expect(result11).toStrictEqual(expect.objectContaining({ something: 'here' }));
+        const expectedWarnSpy = [];
+        await run();
 
-      await run(preExecutionContext);
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 1 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
 
-      const result2 = await run(['--help'], {
-        configureExecutionEpilogue(argv) {
-          return { ...argv, something: 'better' };
-        }
+        await run('--help');
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help']);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 3 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 4 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 5 }));
+        expectedWarnSpy.push([2], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(
+          await bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+        );
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 6 }));
+        expectedWarnSpy.push([2]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help'], configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 7 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help'], promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 8 }));
+        expectedWarnSpy.push([2], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(
+          '--help',
+          await bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+        );
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 9 }));
+        expectedWarnSpy.push([2]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
       });
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-      expect(result2).toStrictEqual(expect.objectContaining({ something: 'better' }));
+      await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
+        const run = bf_util.makeRunner({
+          commandModulePath,
+          configurationHooks: Promise.resolve({
+            configureExecutionPrologue() {
+              // eslint-disable-next-line no-console
+              console.warn(4);
+            },
+            configureExecutionEpilogue(argv) {
+              // eslint-disable-next-line no-console
+              console.warn(3);
+              return argv;
+            }
+          })
+        });
 
-      await run('--help', preExecutionContext);
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+        const expectedWarnSpy = [];
+        await run();
 
-      const result3 = await run(['--help'], {
-        execute: () => {
-          throw new bf.GracefulEarlyExitError();
-        },
-        program: {}
-      } as unknown as bf.PreExecutionContext);
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 1 }));
+        expectedWarnSpy.push([4], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-      expect(result3).toBeEmptyObject();
-      expect(logSpy).toHaveBeenCalledTimes(4);
+        await run('--help');
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
+        expectedWarnSpy.push([4], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help']);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 3 }));
+        expectedWarnSpy.push([4], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 4 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 5 }));
+        expectedWarnSpy.push([2], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(await bf.configureProgram(commandModulePath, configurationHooks));
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 6 }));
+        expectedWarnSpy.push([1]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help'], configurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 7 }));
+        expectedWarnSpy.push([1], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(['--help'], promisedConfigurationHooks);
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 8 }));
+        expectedWarnSpy.push([2], [3]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        await run(
+          '--help',
+          await bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+        );
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 9 }));
+        expectedWarnSpy.push([2]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+      });
     });
   });
 

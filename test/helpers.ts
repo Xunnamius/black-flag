@@ -16,7 +16,7 @@ export function getFixturePath(fixture: string | string[]) {
 
 export function expectedCommandsRegex(
   childCommands: string[],
-  parentFullName = 'black-flag'
+  parentFullName = require(`./fixtures/package.json`).name
 ) {
   return new RegExp(
     'Commands:\\n\\s+' +

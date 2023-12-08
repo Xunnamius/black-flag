@@ -259,6 +259,15 @@ export type ExecutionContext = {
      * `configureProgram` is called.
      */
     initialTerminalWidth: number;
+    /**
+     * If `true`, Black Flag is currently in the process of handling a graceful
+     * exit. Checking the value of this flag is useful in configuration hooks
+     * like `configureExecutionEpilogue`, which are still executed when a
+     * `GracefulEarlyExitError` is thrown.
+     *
+     * In almost every other case, this will always be `false`.
+     */
+    isGracefullyExiting: boolean;
 
     [key: string]: unknown;
   };

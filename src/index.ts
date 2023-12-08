@@ -5,7 +5,6 @@ import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
 import { createDebugLogger } from 'multiverse/rejoinder';
-
 import { discoverCommands } from 'universe/discover';
 
 import {
@@ -34,7 +33,10 @@ import type {
 
 import type { EmptyObject, Promisable } from 'type-fest';
 
-const rootDebugLogger = createDebugLogger({ namespace: pkgName });
+/**
+ * @internal
+ */
+export const rootDebugLogger = createDebugLogger({ namespace: pkgName });
 const debug = rootDebugLogger.extend('index');
 
 /**
@@ -131,7 +133,8 @@ export async function configureProgram<
       debug: rootDebugLogger,
       state: {
         rawArgv: [],
-        initialTerminalWidth: rootProgram.terminalWidth()
+        initialTerminalWidth: rootProgram.terminalWidth(),
+        isGracefullyExiting: false
       }
     })
   );
@@ -178,6 +181,10 @@ export async function configureProgram<
       // * of support exists for calling yargs::parse multiple times, but our
       // * unit tests don't lie. It doesn't work. So let's formalize this
       // * invariant.
+      // *
+      // * Since this error is thrown outside the primary try/catch block, this
+      // * assertion failure cannot be handled by
+      // * configureErrorHandlingEpilogue.
       throw new AssertionFailedError(
         ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
       );
@@ -210,15 +217,26 @@ export async function configureProgram<
       debug('calling ::parseAsync on root program');
 
       try {
-        deepestParseResultWrapper.result ||= await rootProgram.parseAsync(
-          argv,
-          wrapExecutionContext(context)
-        );
+        const result = await rootProgram.parseAsync(argv, wrapExecutionContext(context));
+        // * Note that we're doing something clever with how we use
+        // * deepestParseResultWrapper.result here and in discoverCommands. This
+        // * cleverness necessitates splitting this and the above line into two
+        // * separate statements. Combining them "breaks" the ||= operation. My
+        // * diagnosis is: it's because the `result` in
+        // * deepestParseResultWrapper.result gets resolved "too early".
+        // * Interestingly, this "bug" only shows itself when using makeRunner,
+        // * not runProgram or via manual execution. This is likely the result
+        // * of makeRunner, which is not an async function, having to use
+        // * Promise.resolve(...).then(...).
+        // *
+        // * This is likely a consequence of JavaScript's asynchronicity and the
+        // * event loop and not an actual "bug" :)
+        deepestParseResultWrapper.result ||= result;
       } catch (error) {
         if (isGracefulEarlyExitError(error)) {
           debug.message('caught graceful early exit "error" in try block');
           debug.warn(
-            'though runtime was gracefully interrupted, configureExecutionEpilogue will still be called'
+            'though runtime was gracefully interrupted, configureExecutionEpilogue will still be called (with context.isGracefullyExiting === true)'
           );
         } else {
           throw error;
@@ -228,8 +246,17 @@ export async function configureProgram<
       // ? If commands were auto-discovered, a handler was likely executed.
       // ? Return the result from the handler of the deepest command. If no
       // ? commands were auto-discovered, then return as is the result of
-      // ? calling `parseAsync` on the root program, falling back to `{}`.
-      const finalArgv = deepestParseResultWrapper.result || ({} as AnyArguments);
+      // ? calling `parseAsync` on the root program. If an error occurred while
+      // ? executing `parseAsync` and we've reached this point, then we must be
+      // ? attempting a graceful exit, so return a result that reflects that.
+      const finalArgv: AnyArguments = deepestParseResultWrapper.result || {
+        $0: '',
+        _: [],
+        [$executionContext]: asUnenumerable({
+          ...context,
+          isGracefullyExiting: true
+        })
+      };
 
       debug('final parsed argv: %O', finalArgv);
       debug('entering configureExecutionEpilogue');

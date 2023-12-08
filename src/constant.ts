@@ -39,7 +39,11 @@ export enum FrameworkExitCode {
    */
   NotImplemented = 2,
   /**
-   * The exit code used when a sanity check fails.
+   * The exit code used when a sanity check fails. If your CLI is spitting out
+   * this code, that's a hint to re-run things in debug mode (example:
+   * `DEBUG='*' npx jest`) since an error is being silently swallowed.
+   *
+   * In most cases, this exit code is indicative of improper use of Black Flag.
    */
   AssertionFailed = 3
 }
