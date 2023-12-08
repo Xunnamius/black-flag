@@ -21,11 +21,15 @@ Well-known exit codes shared across CLI implementations.
 
 • **AssertionFailed** = ``3``
 
-The exit code used when a sanity check fails.
+The exit code used when a sanity check fails. If your CLI is spitting out
+this code, that's a hint to re-run things in debug mode (example:
+`DEBUG='*' npx jest`) since an error is being silently swallowed.
+
+In most cases, this exit code is indicative of improper use of Black Flag.
 
 #### Defined in
 
-[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/0548d34/src/constant.ts#L44)
+[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L48)
 
 ___
 
@@ -37,7 +41,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 #### Defined in
 
-[src/constant.ts:36](https://github.com/Xunnamius/black-flag/blob/0548d34/src/constant.ts#L36)
+[src/constant.ts:36](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L36)
 
 ___
 
@@ -49,7 +53,7 @@ The exit code used when executing an unimplemented child program.
 
 #### Defined in
 
-[src/constant.ts:40](https://github.com/Xunnamius/black-flag/blob/0548d34/src/constant.ts#L40)
+[src/constant.ts:40](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L40)
 
 ___
 
@@ -61,4 +65,4 @@ The exit code used when execution succeeds and exits gracefully.
 
 #### Defined in
 
-[src/constant.ts:32](https://github.com/Xunnamius/black-flag/blob/0548d34/src/constant.ts#L32)
+[src/constant.ts:32](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L32)

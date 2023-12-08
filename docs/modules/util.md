@@ -55,7 +55,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/0548d34/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/error.ts#L21)
 
 ___
 
@@ -77,7 +77,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/0548d34/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/error.ts#L34)
 
 ___
 
@@ -105,8 +105,6 @@ require multiple calls to `runProgram(...)`.
 | :------ | :------ | :------ |
 | `options?` | `Object` | - |
 | `options.commandModulePath?` | `string` | **`See`** [runProgram](index.md#runprogram) |
-| `options.configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<[`ExecutionContext`](index.md#executioncontext)\>\> | **`See`** [runProgram](index.md#runprogram) Note: cannot be used with `configurationHooks`. |
-| `options.preExecutionContext?` | `Promisable`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<[`ExecutionContext`](index.md#executioncontext)\>\> | **`See`** [runProgram](index.md#runprogram) Node: cannot be used with `preExecutionContext`. |
 
 #### Returns
 
@@ -130,6 +128,10 @@ require multiple calls to `runProgram(...)`.
 
 `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
+**`See`**
+
+[runProgram](index.md#runprogram)
+
 #### Defined in
 
-[src/util.ts:21](https://github.com/Xunnamius/black-flag/blob/0548d34/src/util.ts#L21)
+[src/util.ts:35](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/util.ts#L35)
