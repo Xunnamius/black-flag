@@ -1330,9 +1330,9 @@ Flag, but are noted below nonetheless.
   Black Flag makes this a formal invariant that will throw an error.
 
 - All yargs instances used by Black Flag use the same `yargs::help(...)`
-  function (i.e. literally the same object in memory). This means descendant
-  commands and ancestor commands will always use the same `yargs::help(...)`
-  settings, thus preserving the vanilla yargs behavior.
+  function. This means descendant commands and ancestor commands will always use
+  the same `yargs::help(...)` settings, thus preserving the vanilla yargs
+  behavior.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. [You shouldn't be calling the
