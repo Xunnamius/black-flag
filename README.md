@@ -1317,8 +1317,8 @@ wearing a trench coat, you can muck around with the internal yargs instances
 directly if you want.
 
 For example, you can retrieve a mapping of all commands known to Black Flag and
-their corresponding yargs instances sorted in the order they will appear in help
-text:
+their corresponding yargs instances in the order they were encountered during
+auto-discovery (OS-specific):
 
 ```typescript
 import { runCommand, $executionContext } from 'black-flag';
