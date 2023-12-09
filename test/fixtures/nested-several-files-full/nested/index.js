@@ -10,7 +10,7 @@ const commandModule = {
   deprecated: true,
   name: 'n',
   command: '$0 test-positional',
-  usage: 'parent program usage text',
+  usage: 'USAGE: parent program usage text',
   description: 'parent program description text',
   handler: (argv) => {
     argv.handled_by = __filename;

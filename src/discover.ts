@@ -401,13 +401,14 @@ export async function discoverCommands(
             }
 
             if (
+              name.includes('|') ||
               name.includes('<') ||
               name.includes('>') ||
               name.includes('[') ||
               name.includes(']')
             ) {
               throw new AssertionFailedError(
-                ErrorMessage.InvalidCharacters(name, '<, >, [, or ]')
+                ErrorMessage.InvalidCharacters(name, '|, <, >, [, or ]')
               );
             }
           }
@@ -470,9 +471,8 @@ export async function discoverCommands(
   /**
    * Configures a parent (or parent-child) program. Specifically, this function:
    *
-   * - Disables built-in `--help` magic and replaces it with a custom solution
    * - Calls {@link configureProgram}
-   * - Calls {@link proxyParentToChild}
+   * - Calls {@link connectProgramToShadowProgramAndMaybeProxyParentToChild}
    *
    * And for parent-child programs (i.e. non-root parents) specifically:
    *
@@ -486,34 +486,16 @@ export async function discoverCommands(
   ): Promise<void> {
     const shadowProgram = await makeProgram({ isShadowClone: true });
 
-    // ? Swap out --help support for something that plays nice with the
-    // ? existence of child programs
-    const helpConfig = { description: defaultHelpTextDescription, boolean: true };
-    program.help(false).option('help', helpConfig);
-    shadowProgram.help(false).option('help', helpConfig);
-
-    const handler = config.handler;
-    config.handler = async (parsedArgv) => {
-      if (parsedArgv.help) {
-        debug(
-          '%O %O Program %O selected for special handling of %O command',
-          'non-shadow',
-          !!parentParentProgram ? 'parent-child' : 'pure parent (root)',
-          config.name,
-          'help'
-        );
-
-        program.showHelp('log');
-        throw new GracefulEarlyExitError();
-      } else {
-        return handler?.(parsedArgv);
-      }
-    };
-
     await configureProgram(program, config, fullName);
     await configureProgram(shadowProgram, config, fullName);
 
-    proxyParentToChild(program, config, fullName, shadowProgram, parentParentProgram);
+    connectProgramToShadowProgramAndMaybeProxyParentToChild(
+      program,
+      config,
+      fullName,
+      shadowProgram,
+      parentParentProgram
+    );
 
     debug(
       '%O was additionally configured as: %O',
@@ -526,8 +508,7 @@ export async function discoverCommands(
    * Configures a _pure_ child program. Specifically, this function:
    *
    * - Calls {@link configureProgram}
-   * - Calls {@link proxyParentToChild}
-   * - Enables built-in `--help` magic
+   * - Calls {@link connectProgramToShadowProgramAndMaybeProxyParentToChild}
    */
   async function configureChildProgram(
     program: AnyProgram,
@@ -540,12 +521,13 @@ export async function discoverCommands(
     await configureProgram(program, config, fullName);
     await configureProgram(shadowProgram, config, fullName);
 
-    proxyParentToChild(program, config, fullName, shadowProgram, parentProgram);
-
-    // ? Only child programs should use the built-in --help magic
-
-    program.help('help', defaultHelpTextDescription);
-    shadowProgram.help('help', defaultHelpTextDescription);
+    connectProgramToShadowProgramAndMaybeProxyParentToChild(
+      program,
+      config,
+      fullName,
+      shadowProgram,
+      parentProgram
+    );
 
     debug('%O was additionally configured as: %O', config.name, 'pure child');
   }
@@ -558,6 +540,8 @@ export async function discoverCommands(
    * - Configures usage help text template
    * - Configures script name
    * - Disables built-in exit-on-error behavior (we handle errors ourselves)
+   * - Updates the default `--help` description
+   * - Disables built-in help configuration (we use a global version instead)
    * - Allow output to span entire terminal width
    * - Disable built-in error/help reporting (we'll handle it ourselves)
    */
@@ -572,7 +556,12 @@ export async function discoverCommands(
 
     // ? Configure usage help text
 
-    program.usage(config.usage ?? DEFAULT_USAGE_TEXT);
+    const usageText = (config.usage ?? DEFAULT_USAGE_TEXT)
+      .replaceAll('$000', config.command)
+      .replaceAll('$1', config.description || '')
+      .trim();
+
+    program.usage(usageText);
 
     // ? Configure the script's name
 
@@ -594,6 +583,38 @@ export async function discoverCommands(
       showHelpOnFail = enabled;
       return program;
     };
+
+    // ? Use a slightly different default help text description
+
+    program.help_force('help', defaultHelpTextDescription);
+
+    // ? Make calls to yargs::help(...) apply across the entire hierarchy
+    // * Note that we don't actually rely on yargs's built-in help
+    // * functionality outside of yargs::getHelp(). However, we still
+    // * propagate yargs::help() configuration changes to ensure the
+    // * generated help text is accurate.
+
+    program.help = ((...args: Parameters<typeof program.help>) => {
+      const debug_ = debug.extend('help()');
+      debug_('recursively reconfiguring help options across entire hierarchy');
+
+      context.state.globalHelpOption =
+        typeof args[0] === 'string'
+          ? args[0]
+          : args[0] === true
+            ? context.state.globalHelpOption
+            : undefined;
+
+      // ? Reconfigure help options across all commands in the hierarchy
+      context.commands.forEach(({ program: program_, metadata }) => {
+        program_.help_force(...args);
+        metadata.shadow.help_force(...args);
+      });
+
+      debug_('new context.state.globalHelpOption: %O', context.state.globalHelpOption);
+
+      return program;
+    }) as unknown as typeof program.help;
 
     // ? Make yargs stop being so noisy when exceptional stuff happens
 
@@ -632,7 +653,7 @@ export async function discoverCommands(
    * - Enables strict mode and strict commands/options on `shadowProgram`
    * - Registers a proxy command + aliases linking `parentProgram` <=> `program`
    */
-  function proxyParentToChild(
+  function connectProgramToShadowProgramAndMaybeProxyParentToChild(
     program: AnyProgram,
     config: AnyConfiguration,
     fullName: string,
@@ -652,25 +673,41 @@ export async function discoverCommands(
         debug('entered non-shadow handler function for %O', config.name);
         assert(shadowArgv === undefined);
 
-        shadowArgv = parsedArgv;
-        const localArgv = await shadowProgram.parseAsync(
-          context.state.rawArgv,
-          wrapExecutionContext(context)
-        );
+        if (context.state.isHandlingHelpOption) {
+          debug(
+            '%O %O Program %O was selected to generate help text on behalf of its shadow (triggered by the %O option)',
+            'non-shadow',
+            !!parentProgram ? 'child/parent-child' : 'pure parent (root)',
+            config.name,
+            context.state.globalHelpOption
+          );
 
-        const isDeepestParseResult = !deepestParseResult.result;
-        deepestParseResult.result ??= localArgv;
+          // * Notice how the shadow program is NEVER the one to output help text,
+          // * only the non-shadow program does it
+          program.showHelp('log');
+          throw new GracefulEarlyExitError();
+        } else {
+          shadowArgv = parsedArgv;
 
-        debug_('is deepest parse result: %O', isDeepestParseResult);
-        debug_(
-          `%O Program::parseAsync result${
-            !isDeepestParseResult ? ' (discarded)' : ''
-          }: %O`,
-          'SHADOW',
-          localArgv
-        );
+          const localArgv = await shadowProgram.parseAsync(
+            context.state.rawArgv,
+            wrapExecutionContext(context)
+          );
 
-        debug('exited non-shadow handler function for %O', config.name);
+          const isDeepestParseResult = !deepestParseResult.result;
+          deepestParseResult.result ??= localArgv;
+
+          debug_('is deepest parse result: %O', isDeepestParseResult);
+          debug_(
+            `%O Program::parseAsync result${
+              !isDeepestParseResult ? ' (discarded)' : ''
+            }: %O`,
+            'SHADOW',
+            localArgv
+          );
+
+          debug('exited non-shadow handler function for %O', config.name);
+        }
       },
       [],
       config.deprecated

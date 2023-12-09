@@ -1,4 +1,5 @@
 import assert from 'node:assert';
+import { isPromise } from 'node:util/types';
 
 import { name as pkgName } from 'package';
 import { hideBin } from 'yargs/helpers';
@@ -134,7 +135,9 @@ export async function configureProgram<
       state: {
         rawArgv: [],
         initialTerminalWidth: rootProgram.terminalWidth(),
-        isGracefullyExiting: false
+        isGracefullyExiting: false,
+        isHandlingHelpOption: false,
+        globalHelpOption: 'help'
       }
     })
   );
@@ -194,7 +197,6 @@ export async function configureProgram<
 
     try {
       debug('raw argv: %O', argv_);
-
       debug('entering configureArguments');
 
       const argv = await configurationHooks.configureArguments(
@@ -209,6 +211,29 @@ export async function configureProgram<
           ErrorMessage.InvalidConfigureArgumentsReturnType()
         );
       }
+
+      if (context.state.globalHelpOption) {
+        const helpFlag = `${context.state.globalHelpOption.length > 1 ? '--' : '-'}${
+          context.state.globalHelpOption
+        }`;
+
+        const targetIndex = argv.indexOf(helpFlag);
+
+        if (targetIndex >= 0) {
+          context.state.isHandlingHelpOption = true;
+          argv.splice(targetIndex, 1);
+        } else {
+          context.state.isHandlingHelpOption = false;
+        }
+      } else {
+        context.state.globalHelpOption = undefined;
+      }
+
+      debug('context.state.globalHelpOption: %O', context.state.globalHelpOption);
+      debug(
+        'context.state.isHandlingHelpOption determination: %O',
+        context.state.isHandlingHelpOption
+      );
 
       debug('configured argv (initialRawArgv): %O', argv);
 
@@ -380,7 +405,7 @@ export async function makeProgram<
   const vanillaYargs = yargs() as unknown as Program<CustomCliArguments>;
 
   return new Proxy(vanillaYargs, {
-    get(target, property: keyof Program<CustomCliArguments>) {
+    get(target, property: keyof Program<CustomCliArguments>, proxy) {
       // ? What are command_deferred and command_finalize_deferred? Well,
       // ? when generating help text, yargs will enumerate commands and options
       // ? in the order that they were added to the instance. Unfortunately,
@@ -398,7 +423,7 @@ export async function makeProgram<
         return function (...args: Parameters<Program<CustomCliArguments>['command']>) {
           debug_('::command call was deferred for %O Program instance', descriptor);
           deferredCommandArgs.push(args);
-          return target;
+          return proxy;
         };
       }
 
@@ -433,6 +458,8 @@ export async function makeProgram<
           for (const args of deferredCommandArgs) {
             target.command(...args);
           }
+
+          return proxy;
         };
       }
 
@@ -443,10 +470,25 @@ export async function makeProgram<
             enabled,
             descriptor
           );
+
           target.strict(enabled);
           target.strictCommands(enabled);
           target.strictOptions(enabled);
+
+          return proxy;
         };
+      }
+
+      if (property === 'help_force') {
+        return function (...args: Parameters<typeof target.help>) {
+          debug_('forced help(...%O) for %O Program instance', args, descriptor);
+          target.help(...args);
+          return proxy;
+        };
+      }
+
+      if (property === 'parseSync') {
+        throw new AssertionFailedError(ErrorMessage.UseParseAsyncInstead());
       }
 
       if (
@@ -492,12 +534,21 @@ export async function makeProgram<
 
       if (value instanceof Function) {
         return function (...args: unknown[]) {
-          // ? "this-recovering" code
-          return value.apply(target, args);
+          // ? This is "this-recovering" code.
+          const returnValue = value.apply(target, args);
+          // ? Whenever we'd return a yargs instance, return a Black Flag
+          // ? instance instead.
+          return isPromise(returnValue)
+            ? returnValue.then((realReturnValue) => maybeReturnProxy(realReturnValue))
+            : maybeReturnProxy(returnValue);
         };
       }
 
       return value;
+
+      function maybeReturnProxy(returnValue: unknown) {
+        returnValue === target ? proxy : returnValue;
+      }
     }
   });
 }

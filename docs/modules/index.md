@@ -882,7 +882,7 @@ desired.
 Invokes the `preExecutionContext.execute()` function.
 
 **WARNING: reusing the same `preExecutionContext` with multiple invocations
-of `runProgram` will cause successive invocations fail.** This is because
+of `runProgram` will cause successive invocations to fail.** This is because
 yargs does not support calling `yargs::parseAsync` more than once. If this is
 unacceptable, do not pass `runProgram` a `preExecutionContext` property.
 
@@ -981,7 +981,7 @@ desired.
 Invokes the `preExecutionContext.execute(argv)` function.
 
 **WARNING: reusing the same `preExecutionContext` with multiple invocations
-of `runProgram` will cause successive invocations fail.** This is because
+of `runProgram` will cause successive invocations to fail.** This is because
 yargs does not support calling `yargs::parseAsync` more than once. If this is
 unacceptable, do not pass `runProgram` a `preExecutionContext` property.
 

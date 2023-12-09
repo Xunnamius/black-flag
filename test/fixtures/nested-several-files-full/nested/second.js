@@ -5,12 +5,12 @@
  * @type {Type.ChildConfig}
  */
 const commandModule = {
-  aliases: ['child-3'],
+  aliases: ['child-2'],
   builder: { 'child-option': { boolean: true } },
   deprecated: false,
-  name: 't',
+  name: 's',
   command: '$0 test-positional',
-  usage: 'child program usage text',
+  usage: 'USAGE: child program usage text',
   description: 'child program description text',
   handler: (argv) => {
     argv.handled_by = __filename;

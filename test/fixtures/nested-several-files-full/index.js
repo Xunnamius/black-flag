@@ -7,13 +7,14 @@
 const commandModule = {
   aliases: ['root'],
   builder: { option: { boolean: true } },
-  deprecated: false,
+  deprecated: true,
   name: 'nsf',
   command: '$0 test-positional',
-  usage: 'root program usage text',
+  usage: 'USAGE: root program usage text',
   description: 'root program description text',
-  handler: (argv) => {
+  handler: async (argv) => {
     argv.handled_by = __filename;
+    argv[(await import('universe/constant')).$executionContext].mutated_by = __filename;
   }
 };
 

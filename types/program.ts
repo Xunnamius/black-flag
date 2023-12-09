@@ -97,6 +97,17 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
      * @internal
      */
     strict_force: (enabled: boolean) => void;
+
+    /**
+     * Invokes `yargs::help` on behalf of the caller.
+     *
+     * This function allows you to bypass the global version of yargs::help that
+     * Black Flag exposes by default.
+     *
+     * @default true
+     * @internal
+     */
+    help_force: Program<CustomCliArguments>['help'];
   };
 
 /**
@@ -255,8 +266,8 @@ export type ExecutionContext = {
      */
     rawArgv: typeof process.argv;
     /**
-     * The detected width of the terminal. This value is determined when
-     * `configureProgram` is called.
+     * The detected width of the terminal. This value is determined by yargs
+     * when `configureProgram` is called.
      */
     initialTerminalWidth: number;
     /**
@@ -266,8 +277,33 @@ export type ExecutionContext = {
      * `GracefulEarlyExitError` is thrown.
      *
      * In almost every other case, this will always be `false`.
+     *
+     * @default false
      */
     isGracefullyExiting: boolean;
+    /**
+     * If `isHandlingHelpOption` is `true`, Black Flag is currently in the
+     * process of getting yargs to generate help text for a child command.
+     * Checking the value of this property is useful when you want to know if
+     * `--help` (or whatever your equivalent option is) was passed to the root
+     * command.
+     *
+     * We have to track this separately from yargs since we're stacking multiple
+     * yargs instances and they all want to be the one that handles generating
+     * help text.
+     *
+     * @default false
+     */
+    isHandlingHelpOption: boolean;
+    /**
+     * `globalHelpOption` caches the first argument passed to the `yargs::help`
+     * method of the root program. This property is used as part of a strategy
+     * to mimic yargs's short-circuiting when the `--help` parameter is
+     * given and should not be tampered with or relied upon.
+     *
+     * @default "help"
+     */
+    globalHelpOption: string | undefined;
 
     [key: string]: unknown;
   };

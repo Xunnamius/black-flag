@@ -217,7 +217,7 @@ export function makeExpect<const Details extends string[]>(
             if (typeof property === 'string' && property.startsWith('to')) {
               if (ALLOWED_MATCHERS.includes(property as any)) {
                 return function (expected: any) {
-                  // ? "this-recovering" code
+                  // ? This is "this-recovering" code.
                   return value.call(target, {
                     ...context,
                     [subject]: expected
@@ -233,7 +233,7 @@ export function makeExpect<const Details extends string[]>(
             }
 
             return function (...args: any[]) {
-              // ? "this-recovering" code
+              // ? This is "this-recovering" code.
               return value.apply(target, args);
             };
           }

@@ -8,9 +8,11 @@ export const $executionContext = Symbol('execution-context');
 
 /**
  * Hard-coded default program `usage` text provided to yargs instances via
- * `.usage(...)`.
+ * `.usage(...)` after string interpolation where "$000", "$0", and "$1" are
+ * replaced with a command's usage DSL, name (extracted from usage DSL), and
+ * description (respectively).
  */
-export const DEFAULT_USAGE_TEXT = 'Usage: $0';
+export const DEFAULT_USAGE_TEXT = 'Usage: $000\n\n$1';
 
 /**
  * These are `Program` instance properties that Black Flag will suppress upon

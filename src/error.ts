@@ -192,9 +192,12 @@ export const ErrorMessage = {
     return `method "${name}" can only be called on this program's shadow instance. See documentation for details`;
   },
   AssertionFailureCannotExecuteMultipleTimes() {
-    return 'yargs does not support safely calling "parse" more than once on the same instance. See documentation for details';
+    return 'yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
   },
   AssertionFailureBadParameterCombination() {
     return 'cannot provide both "configurationHooks" and "preExecutionContext" properties';
+  },
+  UseParseAsyncInstead() {
+    return '"parseSync" is not supported. Use "parseAsync" instead';
   }
 };

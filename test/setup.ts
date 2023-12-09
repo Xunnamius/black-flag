@@ -394,7 +394,7 @@ export async function withMockedExit(
 
       if (value instanceof Function) {
         return function (...args: unknown[]) {
-          // ? "this-recovering" code
+          // ? This is "this-recovering" code.
           return value.apply(target, args);
         };
       }
@@ -540,7 +540,7 @@ export async function withMockedOutput(
 
           if (value instanceof Function) {
             return function (...args: unknown[]) {
-              // ? "this-recovering" code
+              // ? This is "this-recovering" code.
               return value.apply(target, args);
             };
           }
