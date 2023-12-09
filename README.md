@@ -958,7 +958,7 @@ defaults:
 
 <!-- lint enable list-item-style -->
 
-Any default can be overridden on a command-by-command basis via the
+Any default can be overridden on a command-by-command basis via each command's
 [`builder`][7] function, which gives you direct access to the entire yargs API.
 Let's add one to `commands/index.js` along with a `handler` function and `usage`
 string:
@@ -1233,9 +1233,9 @@ Flag, but are noted below nonetheless.
   Therefore, this is effectively a non-issue with proper declarative use of
   Black Flag.
 
-- Though it would be trivial, yargs [middleware][37] isn't supported since the
-  functionality is mostly covered by configuration hooks ~~and I didn't notice
-  yargs had this feature until after I wrote Black Flag~~.
+- Yargs [middleware][37] isn't supported since the functionality is mostly
+  covered by configuration hooks ~~and I didn't notice yargs had this feature
+  until after I wrote Black Flag~~.
 
   If you have a yargs middleware function you want run with a specific command,
   pass it to `yargs::middleware` via that command's [`builder`][7] function. If
