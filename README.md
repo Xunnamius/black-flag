@@ -939,14 +939,12 @@ defaults:
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
 - `yargs::fail(...)`
   - Black Flag uses a custom failure handler
-- `yargs::help(false, ...).option('help', { boolean: true, ... })`
-  - Black Flag handles help text generation for parent commands. That is: _this
-    configuration is only applied to parent commands_
+- `yargs::help('help', customDescription)`
 - `yargs::scriptName(fullName)`
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::strict(true)`
-- `yargs::usage(...)`
+- `yargs::usage(defaultUsageText)`
   - Defaults to `Usage: ${command}\n\n${description}` where `command` and
     `description` are exports of your command file
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
