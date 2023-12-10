@@ -34,6 +34,10 @@ import type {
 
 import type { EmptyObject, Promisable } from 'type-fest';
 
+// ? We use it in some of the auto-generated documentation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { runProgram } from 'universe/util';
+
 /**
  * @internal
  */
@@ -58,8 +62,8 @@ const debug = rootDebugLogger.extend('index');
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
- * CLI. See `runProgram` for a wrapper function that handles exceptions and sets
- * the exit code for you.
+ * CLI. See {@link runProgram} for a wrapper function that handles exceptions
+ * and sets the exit code for you.
  */
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -76,8 +80,8 @@ export async function configureProgram<
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
- * CLI. See `runProgram` for a wrapper function that handles exceptions and sets
- * the exit code for you.
+ * CLI. See {@link runProgram} for a wrapper function that handles exceptions
+ * and sets the exit code for you.
  */
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -388,8 +392,8 @@ export async function configureProgram<
  * **You probably don't want to use this function.** If you want to make a new
  * `Program` instance with auto-discovered commands, configuration hooks,
  * metadata tracking, and support for other Black Flag features, you want
- * `runProgram` or `configureProgram`, both of which call `makeProgram`
- * internally.
+ * {@link runProgram} or {@link configureProgram}, both of which call
+ * `makeProgram` internally.
  *
  * Among other things, this function is sugar for `return (await
  * import('yargs/yargs')).default()`. Note that the returned yargs instance has
