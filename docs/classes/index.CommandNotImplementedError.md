@@ -39,7 +39,8 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 • **new CommandNotImplementedError**(): [`CommandNotImplementedError`](index.CommandNotImplementedError.md)
 
-Represents trying to execute a CLI command that has not yet been implemented.
+Represents trying to execute a CLI command that has not yet been
+implemented.
 
 #### Returns
 
@@ -51,7 +52,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:112](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L112)
+[src/error.ts:113](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L113)
 
 ## Properties
 
@@ -65,7 +66,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L108)
+[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L108)
 
 ___
 
@@ -135,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L66)
 
 ___
 

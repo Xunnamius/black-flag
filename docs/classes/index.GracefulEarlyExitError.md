@@ -40,7 +40,8 @@ termination of the program but with an exit code indicating success (`0`).
 
 • **new GracefulEarlyExitError**(): [`GracefulEarlyExitError`](index.GracefulEarlyExitError.md)
 
-Represents trying to execute a CLI command that has not yet been implemented.
+Represents an exceptional event that should result in the immediate
+termination of the program but with an exit code indicating success (`0`).
 
 #### Returns
 
@@ -52,7 +53,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L131)
+[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L133)
 
 ## Properties
 
@@ -66,7 +67,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:127](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L127)
+[src/error.ts:128](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L128)
 
 ___
 
@@ -136,7 +137,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L66)
 
 ___
 

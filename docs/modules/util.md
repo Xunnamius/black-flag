@@ -55,7 +55,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L21)
 
 ___
 
@@ -77,7 +77,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/d763fad/src/error.ts#L34)
 
 ___
 
@@ -134,4 +134,4 @@ require multiple calls to `runProgram(...)`.
 
 #### Defined in
 
-[src/util.ts:35](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/util.ts#L35)
+[src/util.ts:35](https://github.com/Xunnamius/black-flag/blob/d763fad/src/util.ts#L35)
