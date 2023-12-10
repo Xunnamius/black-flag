@@ -52,7 +52,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/error.ts#L131)
+[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L131)
 
 ## Properties
 
@@ -66,7 +66,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 #### Defined in
 
-[src/error.ts:127](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/error.ts#L127)
+[src/error.ts:127](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L127)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/error.ts#L66)
 
 ___
 

@@ -29,7 +29,7 @@ In most cases, this exit code is indicative of improper use of Black Flag.
 
 #### Defined in
 
-[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L48)
+[src/constant.ts:50](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/constant.ts#L50)
 
 ___
 
@@ -41,7 +41,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 #### Defined in
 
-[src/constant.ts:36](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L36)
+[src/constant.ts:38](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/constant.ts#L38)
 
 ___
 
@@ -53,7 +53,7 @@ The exit code used when executing an unimplemented child program.
 
 #### Defined in
 
-[src/constant.ts:40](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L40)
+[src/constant.ts:42](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/constant.ts#L42)
 
 ___
 
@@ -65,4 +65,4 @@ The exit code used when execution succeeds and exits gracefully.
 
 #### Defined in
 
-[src/constant.ts:32](https://github.com/Xunnamius/black-flag/blob/2d8712d/src/constant.ts#L32)
+[src/constant.ts:34](https://github.com/Xunnamius/black-flag/blob/c7ae0c7/src/constant.ts#L34)
