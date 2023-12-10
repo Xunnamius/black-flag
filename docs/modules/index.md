@@ -62,7 +62,7 @@ Represents the most generic form of [Arguments](index.md#arguments).
 
 #### Defined in
 
-[types/program.ts:12](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L12)
+[types/program.ts:16](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L16)
 
 ___
 
@@ -70,11 +70,11 @@ ___
 
 Ƭ **AnyConfiguration**: [`Configuration`](index.md#configuration)\<`Record`\<`string`, `unknown`\>\>
 
-The most generic implementation type of [Configuration](index.md#configuration).
+Represents the most generic implementation type of [Configuration](index.md#configuration).
 
 #### Defined in
 
-[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L9)
+[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L9)
 
 ___
 
@@ -86,7 +86,7 @@ Represents the most generic form of [Program](index.md#program).
 
 #### Defined in
 
-[types/program.ts:25](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L25)
+[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L29)
 
 ___
 
@@ -94,9 +94,9 @@ ___
 
 Ƭ **Arguments**\<`CustomCliArguments`\>: `_Arguments`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>
 
-Represents the shape of the parsed CLI arguments, plus `_` and `$0`, any
-(hidden) arguments/properties specific to Black Flag, and an indexer falling
-back to `unknown` for unrecognized arguments.
+Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
+arguments/properties specific to Black Flag, and an indexer falling back to
+`unknown` for unrecognized arguments.
 
 #### Type parameters
 
@@ -106,7 +106,7 @@ back to `unknown` for unrecognized arguments.
 
 #### Defined in
 
-[types/program.ts:19](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L19)
+[types/program.ts:23](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L23)
 
 ___
 
@@ -126,7 +126,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:121](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L121)
+[types/module.ts:129](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L129)
 
 ___
 
@@ -144,7 +144,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/error.ts#L48)
 
 ___
 
@@ -172,12 +172,12 @@ subtype of this interface.
 | `deprecated` | `string` \| `boolean` | If truthy, the command will be considered "deprecated" by yargs. If `deprecated` is a string, it will additionally be treated as a deprecation message and printed. **`Default`** ```ts false ``` |
 | `description` | `string` \| ``false`` | The description for the command in help text. If `false`, the command will be considered "hidden" by yargs. **`Default`** ```ts "" ``` |
 | `handler` | (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\> | A function called when this command is invoked. It will receive an object of parsed arguments. If `undefined`, a `CommandNotImplementedError` will be thrown. **`Default`** ```ts undefined ``` |
-| `name` | `string` | The name of the command. **Must not contain any spaces** or any characters that yargs does not consider valid for a command name. An error will be thrown if spaces are present. Defaults to the filename, excluding its extension, containing the configuration, or the directory name if the filename without extension is "index". |
-| `usage` | `string` | Set a usage message shown at the top of the command's help text. The string `$0` will be replaced with the _full name_ of the command. **`Default`** ```ts "Usage: $0" ``` |
+| `name` | `string` | The name of the command. **Must not contain any spaces** or any characters that yargs does not consider valid for a command name. An error will be thrown if known problematic characters are present. Defaults to the filename containing the configuration, excluding its extension, or the directory name (converted to [kebab case](https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case)) if the filename without extension is "index". |
+| `usage` | `string` | Set a usage message shown at the top of the command's help text. Several replacements are made to the `usage` string before it is output. In order: - `$000` will be replaced by the entire command itself (including full canonical name and parameters). - `$1` will be replaced by the description of the command. - `$0` will be replaced with the full canonical name of the command. **`Default`** ```ts "Usage: $000\n\n$1" ``` |
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L16)
 
 ___
 
@@ -214,7 +214,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:39](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L39)
+[types/configure.ts:39](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L39)
 
 ___
 
@@ -261,7 +261,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:72](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L72)
+[types/configure.ts:72](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L72)
 
 ___
 
@@ -295,7 +295,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:11](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L11)
+[types/configure.ts:11](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L11)
 
 ___
 
@@ -334,7 +334,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:55](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L55)
+[types/configure.ts:55](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L55)
 
 ___
 
@@ -377,7 +377,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:28](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L28)
+[types/configure.ts:28](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L28)
 
 ___
 
@@ -406,7 +406,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:87](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/configure.ts#L87)
+[types/configure.ts:87](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L87)
 
 ___
 
@@ -427,7 +427,7 @@ Represents a globally-accessible shared context object singleton.
 | `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `program`: [`AnyProgram`](index.md#anyprogram)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) (including shadow [Program](index.md#program) instances) as values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map, if there are any pairs, will always be the root program. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
 | `state` | \{ `[key: string]`: `unknown`; `globalHelpOption`: `string` \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv`  } | The current state of the execution environment. |
-| `state.globalHelpOption` | `string` \| `undefined` | `globalHelpOption` caches the first argument passed to the `yargs::help` method of the root program. This property is used as part of a strategy to mimic yargs's short-circuiting when the `--help` parameter is given and should not be tampered with or relied upon. **`Default`** ```ts "help" ``` |
+| `state.globalHelpOption` | `string` \| `undefined` | `globalHelpOption` caches the latest first argument passed to `yargs::help` method of any [Program](index.md#program). This property is used as part of a strategy to mimic yargs's short-circuiting when the `--help` parameter is given and should not be tampered with or relied upon. **`Default`** ```ts "help" ``` |
 | `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined by yargs when `configureProgram` is called. |
 | `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other case, this will always be `false`. **`Default`** ```ts false ``` |
 | `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. **`Default`** ```ts false ``` |
@@ -435,7 +435,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:234](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L234)
+[types/program.ts:222](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L222)
 
 ___
 
@@ -453,8 +453,8 @@ the parsed CLI input for the given root [Program](index.md#program).
 
 **This function throws whenever an exception occurs** (including exceptions
 representing a graceful exit), making it not ideal as an entry point for a
-CLI. See `runProgram` for a wrapper function that handles exceptions and sets
-the exit code for you.
+CLI. See [runProgram](index.md#runprogram) for a wrapper function that handles exceptions
+and sets the exit code for you.
 
 ##### Parameters
 
@@ -468,7 +468,7 @@ the exit code for you.
 
 #### Defined in
 
-[types/program.ts:200](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L200)
+[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L188)
 
 ___
 
@@ -492,7 +492,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:186](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L186)
+[types/program.ts:174](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L174)
 
 ___
 
@@ -500,8 +500,8 @@ ___
 
 Ƭ **ImportedConfigurationModule**\<`CustomCliArguments`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`\<`Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\>\> \| `Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\> & \{ `__esModule?`: ``false`` ; `default?`: [`ImportedConfigurationModule`](index.md#importedconfigurationmodule)\<`CustomCliArguments`\>  } \| \{ `__esModule`: ``true``  }
 
-The shape of a Configuration object imported from a CJS/ESM module external
-to the CLI framework (e.g. importing an auto-discovered config module from a
+Represents a Configuration object imported from a CJS/ESM module external to
+the CLI framework (e.g. importing an auto-discovered config module from a
 file).
 
 #### Type parameters
@@ -512,7 +512,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:130](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L130)
+[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L138)
 
 ___
 
@@ -532,7 +532,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:112](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L112)
+[types/module.ts:120](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L120)
 
 ___
 
@@ -551,7 +551,7 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:211](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L211)
+[types/program.ts:199](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L199)
 
 ___
 
@@ -573,7 +573,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:34](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L34)
+[types/program.ts:38](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L38)
 
 ___
 
@@ -592,12 +592,12 @@ and its corresponding [Configuration](index.md#configuration) object/file.
 | `filenameWithoutExtension` | `string` | The basename of `filepath` with the trailing extension trimmed. |
 | `filepath` | `string` | Absolute filesystem path to the configuration file used to configure the program. |
 | `parentDirName` | `string` | The basename of the direct parent directory containing `filepath`. |
-| `shadow` | [`AnyProgram`](index.md#anyprogram) | Each individual program is represented in memory as two distinct [Program](index.md#program) instances: the "actual" command instance and a clone of this instance, i.e. its "shadow". The actual command and its shadow clone are identical except the actual command is never set to strict mode while the shadow is set to strict mode by default. This facilitates the double-parsing necessary for both _dynamic options_ and _dynamic strictness_. Therefore: if you want to configure the instance responsible for proxying control to child programs, operate on the actual instance. On the other hand, if you want to configure the instance responsible for running a program's actual `handler` function, you should operate on `shadow`. With dynamic options, Black Flag can accurately parse the given arguments with the actual instance and then invoke the shadow clone afterwards, feeding its `builder` function a proper `argv` parameter. With dynamic strictness, Black Flag can set both parent and child (shadow) programs to strict mode while still facilitating the actual command hierarchy where ancestor commands are not aware of the syntax of their descendants, which vanilla yargs strict mode definitely does not support. |
+| `shadow` | [`AnyProgram`](index.md#anyprogram) | Each individual program is represented in memory as two distinct [Program](index.md#program) instances: the "actual" command instance and a clone of this instance, i.e. its "shadow" available here. Check [the docs](https://github.com/Xunnamius/black-flag#readme) for more details. |
 | `type` | ``"root"`` \| ``"parent-child"`` \| ``"child"`` | The "type" of [Configuration](index.md#configuration) that was loaded, indicating which interface to expect when interacting with `configuration`. The possibilities are: - **root**: implements `RootConfiguration` (the only pure `ParentConfiguration`) - **parent-child**: implements `ParentConfiguration`, `ChildConfiguration` - **child**: implements `ChildConfiguration` Note that "root" `type` configurations are unique in that there will only ever be one `RootConfiguration` instance, and it **MUST** be the first command module auto-discovered and loaded (invariant). |
 
 #### Defined in
 
-[types/program.ts:117](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/program.ts#L117)
+[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L121)
 
 ___
 
@@ -617,7 +617,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:103](https://github.com/Xunnamius/black-flag/blob/50cacc8/types/module.ts#L103)
+[types/module.ts:111](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L111)
 
 ## Variables
 
@@ -630,7 +630,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:7](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/constant.ts#L7)
+[src/constant.ts:7](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L7)
 
 ___
 
@@ -645,7 +645,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:15](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/constant.ts#L15)
+[src/constant.ts:15](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L15)
 
 ___
 
@@ -694,7 +694,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/error.ts#L161)
+[src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/error.ts#L161)
 
 ## Functions
 
@@ -741,7 +741,7 @@ and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:68](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/index.ts#L68)
+[src/index.ts:68](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L68)
 
 ▸ **configureProgram**\<`CustomContext`\>(`configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
@@ -774,7 +774,7 @@ and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:86](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/index.ts#L86)
+[src/index.ts:86](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L86)
 
 ___
 
@@ -816,7 +816,7 @@ The instance also exposes several new internal methods.
 
 #### Defined in
 
-[src/index.ts:404](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/index.ts#L404)
+[src/index.ts:404](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L404)
 
 ___
 
@@ -852,7 +852,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:150](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L150)
+[src/util.ts:150](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L150)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -885,7 +885,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:168](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L168)
+[src/util.ts:168](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L168)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -919,7 +919,7 @@ to the appropriate value and `undefined` is returned.
 
 #### Defined in
 
-[src/util.ts:189](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L189)
+[src/util.ts:189](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L189)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -951,7 +951,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:208](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L208)
+[src/util.ts:208](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L208)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -984,7 +984,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:226](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L226)
+[src/util.ts:226](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L226)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -1018,4 +1018,4 @@ to the appropriate value and `undefined` is returned.
 
 #### Defined in
 
-[src/util.ts:248](https://github.com/Xunnamius/black-flag/blob/50cacc8/src/util.ts#L248)
+[src/util.ts:248](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L248)

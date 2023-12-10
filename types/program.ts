@@ -6,15 +6,19 @@ import type { ConfigureArguments, ConfigureExecutionEpilogue } from 'types/confi
 import type { Configuration } from 'types/module';
 import type { $executionContext } from 'universe/constant';
 
+// ? We use it in some of the auto-generated documentation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { runProgram } from 'universe/util';
+
 /**
  * Represents the most generic form of {@link Arguments}.
  */
 export type AnyArguments = Arguments<Record<string, unknown>>;
 
 /**
- * Represents the shape of the parsed CLI arguments, plus `_` and `$0`, any
- * (hidden) arguments/properties specific to Black Flag, and an indexer falling
- * back to `unknown` for unrecognized arguments.
+ * Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
+ * arguments/properties specific to Black Flag, and an indexer falling back to
+ * `unknown` for unrecognized arguments.
  */
 export type Arguments<CustomCliArguments extends Record<string, unknown> = EmptyObject> =
   _Arguments<FrameworkArguments & CustomCliArguments>;
@@ -150,26 +154,10 @@ export type ProgramMetadata = {
   /**
    * Each individual program is represented in memory as two distinct
    * {@link Program} instances: the "actual" command instance and a clone of
-   * this instance, i.e. its "shadow". The actual command and its shadow clone
-   * are identical except the actual command is never set to strict mode while
-   * the shadow is set to strict mode by default.
+   * this instance, i.e. its "shadow" available here.
    *
-   * This facilitates the double-parsing necessary for both _dynamic options_
-   * and _dynamic strictness_.
-   *
-   * Therefore: if you want to configure the instance responsible for proxying
-   * control to child programs, operate on the actual instance. On the other
-   * hand, if you want to configure the instance responsible for running a
-   * program's actual `handler` function, you should operate on `shadow`.
-   *
-   * With dynamic options, Black Flag can accurately parse the given arguments
-   * with the actual instance and then invoke the shadow clone afterwards,
-   * feeding its `builder` function a proper `argv` parameter.
-   *
-   * With dynamic strictness, Black Flag can set both parent and child (shadow)
-   * programs to strict mode while still facilitating the actual command
-   * hierarchy where ancestor commands are not aware of the syntax of their
-   * descendants, which vanilla yargs strict mode definitely does not support.
+   * Check [the docs](https://github.com/Xunnamius/black-flag#readme) for more
+   * details.
    */
   shadow: AnyProgram;
 };
@@ -194,8 +182,8 @@ export type FrameworkArguments = {
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
- * CLI. See `runProgram` for a wrapper function that handles exceptions and sets
- * the exit code for you.
+ * CLI. See {@link runProgram} for a wrapper function that handles exceptions
+ * and sets the exit code for you.
  */
 export type Executor = (
   /**
@@ -222,8 +210,8 @@ export type PreExecutionContext<
    *
    * **This function throws whenever an exception occurs** (including exceptions
    * representing a graceful exit), making it not ideal as an entry point for a
-   * CLI. See `runProgram` for a wrapper function that handles exceptions and
-   * sets the exit code for you.
+   * CLI. See {@link runProgram} for a wrapper function that handles exceptions
+   * and sets the exit code for you.
    */
   execute: Executor;
 };
@@ -298,10 +286,10 @@ export type ExecutionContext = {
      */
     isHandlingHelpOption: boolean;
     /**
-     * `globalHelpOption` caches the first argument passed to the `yargs::help`
-     * method of the root program. This property is used as part of a strategy
-     * to mimic yargs's short-circuiting when the `--help` parameter is
-     * given and should not be tampered with or relied upon.
+     * `globalHelpOption` caches the latest first argument passed to
+     * `yargs::help` method of any {@link Program}. This property is used as
+     * part of a strategy to mimic yargs's short-circuiting when the `--help`
+     * parameter is given and should not be tampered with or relied upon.
      *
      * @default "help"
      */

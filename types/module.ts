@@ -4,7 +4,7 @@ import type { Options as _Options, Argv as _Program } from 'yargs';
 import type { Arguments, ExecutionContext, Program } from 'types/program';
 
 /**
- * The most generic implementation type of {@link Configuration}.
+ * Represents the most generic implementation type of {@link Configuration}.
  */
 export type AnyConfiguration = Configuration<Record<string, unknown>>;
 
@@ -79,18 +79,26 @@ export type Configuration<
   /**
    * The name of the command. **Must not contain any spaces** or any characters
    * that yargs does not consider valid for a command name. An error will be
-   * thrown if spaces are present.
+   * thrown if known problematic characters are present.
    *
-   * Defaults to the filename, excluding its extension, containing the
-   * configuration, or the directory name if the filename without extension is
-   * "index".
+   * Defaults to the filename containing the configuration, excluding its
+   * extension, or the directory name (converted to [kebab
+   * case](https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case)) if the
+   * filename without extension is "index".
    */
   name: string;
   /**
-   * Set a usage message shown at the top of the command's help text. The string
-   * `$0` will be replaced with the _full name_ of the command.
+   * Set a usage message shown at the top of the command's help text.
    *
-   * @default "Usage: $0"
+   * Several replacements are made to the `usage` string before it is output. In
+   * order:
+   *
+   * - `$000` will be replaced by the entire command itself (including full
+   *   canonical name and parameters).
+   * - `$1` will be replaced by the description of the command.
+   * - `$0` will be replaced with the full canonical name of the command.
+   *
+   * @default "Usage: $000\n\n$1"
    */
   usage: string;
 };
@@ -123,8 +131,8 @@ export type ChildConfiguration<
 > = Partial<Configuration<CustomCliArguments>>;
 
 /**
- * The shape of a Configuration object imported from a CJS/ESM module external
- * to the CLI framework (e.g. importing an auto-discovered config module from a
+ * Represents a Configuration object imported from a CJS/ESM module external to
+ * the CLI framework (e.g. importing an auto-discovered config module from a
  * file).
  */
 export type ImportedConfigurationModule<

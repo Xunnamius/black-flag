@@ -90,7 +90,7 @@ export interface ExtendedDebugger extends _InternalDebuggerNoExtends, DebuggerEx
 }
 
 /**
- * The shape of the new keys that are added to the {@link InternalDebugger}
+ * Represents the new keys that are added to the {@link InternalDebugger}
  * object. {@link InternalDebugger} + {@link DebuggerExtension} =
  * {@link ExtendedDebugger}.
  *
