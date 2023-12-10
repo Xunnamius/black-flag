@@ -1534,7 +1534,7 @@ Otherwise, the non-shadow will parse the given arguments before calling
 arguments, this time with the third `argv` parameter available to `builder`,
 before calling the root command's `handler` function, throwing an error, or, in
 this case, outputting help text. The result of calling `shadow::parseAsync`
-bubbles up to the root program<sup>R3🡒R2</sup> and communicated to the
+bubbles up to the root program<sup>R3🡒R2</sup> and is communicated to the
 user.<sup>R2🡒R1</sup>
 
 > The `myctl` command is _the_ root command, and as such is the only command
