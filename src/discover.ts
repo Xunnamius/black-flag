@@ -37,14 +37,14 @@ const defaultHelpTextDescription = 'Show help text';
 /**
  * An internal mapping between program instances and their shadow clones.
  *
- * @internal
+ * * Note that this WeakMap is shared across all Black Flag instances!
  */
-export const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
+const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
 
 /**
- * Recursively scans the filesystem for _JavaScript_ index files starting at
+ * Recursively scans the filesystem for valid index files starting at
  * `basePath`. Upon encountering such a file, it is imported along with each
- * sibling _JavaScript_ file in the same directory, treating the raw results as
+ * valid sibling file in the same directory, treating the raw results as
  * {@link ImportedConfigurationModule} objects. These are translated into
  * {@link Configuration} objects, which are then used to create and configure
  * corresponding {@link Program} instances. Finally, these generated
@@ -57,7 +57,6 @@ export const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
  * `create` program had its own child commands: `zone` and `account`. Then each
  * command could be invoked from the CLI like so:
  *
- * @example
  * ```text
  * root
  * root create
@@ -67,16 +66,17 @@ export const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
  * ```
  *
  * Note how the `create` program is both a child program/command _and_ a parent
- * program simultaneously. This is referred to internally (e.g. debugging
- * output) as a "parent-child".
+ * program simultaneously. This is referred to internally as a "parent-child".
  *
- * Supported extensions in precedence order: `.js`, `.mjs`, `.cjs`, `.ts`,
+ * What are considered "valid" files are those files with one of the following
+ * extensions (listed in precedence order): `.js`, `.mjs`, `.cjs`, `.ts`,
  * `.mts`, `.cts`.
  *
- * @returns An object with a `result` property containing the result of the very
- * first program that finishes executing. Due to the tree-like nature of
- * execution, `result` will not be available when the promise returned by
- * `discoverCommands` is resolved.
+ * @returns An object with a `result` property containing the result of the
+ * program that was executed. Due to the tree-like nature of execution, `result`
+ * will not be available when the promise returned by `discoverCommands` is
+ * resolved but it will be populated with a value when
+ * `PreExecutionContext::execute` is called.
  */
 export async function discoverCommands(
   basePath: string,

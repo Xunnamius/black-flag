@@ -48,10 +48,13 @@ const debug = rootDebugLogger.extend('index');
  * Command auto-discovery will occur at `commandModulePath`, if defined;
  * otherwise, command auto-discovery is disabled.
  *
- * If no commands are loaded, Black Flag will enter a "safe mode" fail state in
- * which a partially-initialized yargs instance is returned for
- * `PreExecutionContext::program`. Outside of a testing environment, it is not
- * ideal to run Black Flag in this way.
+ * If command auto-discovery is disabled, `PreExecutionContext::program` will be
+ * set to the return value of {@link makeProgram}; i.e. a semi-functional
+ * lightly-decorated yargs instance. It is therefore not useful to invoke this
+ * function with auto-discovery disabled outside of a testing environment.
+ *
+ * On the other hand, an exception will occur if no commands are loadable from
+ * the given `commandModulePath`, if defined.
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
@@ -65,11 +68,11 @@ export async function configureProgram<
   configurationHooks?: Promisable<ConfigureHooks<CustomContext>>
 ): Promise<PreExecutionContext<CustomContext>>;
 /**
- * Create and return a {@link PreExecutionContext} containing a fully-configured
- * {@link Program} instance with default configuration hooks and an
- * {@link Executor} function.
+ * Create and return a {@link PreExecutionContext} containing a semi-functional
+ * lightly-decorated yargs instance (the return value of {@link makeProgram}).
  *
- * When called in this form, command auto-discovery is disabled.
+ * When called in this form, command auto-discovery is disabled. It is therefore
+ * not useful to invoke this call signature outside of a testing environment.
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
@@ -163,10 +166,12 @@ export async function configureProgram<
   }
 
   if (!context.commands.size) {
-    debug.warn('black flag initialization failed: no commands were loaded');
+    debug.newline();
+    debug.error('BLACK FLAG INITIALIZATION FAILED! No commands were loaded!');
     debug.warn(
-      'black flag initialization failed: the yargs instance returned by this function is only partially initialized (safe mode)'
+      'black flag initialization failed: the yargs instance returned by this invocation of configureProgram is non-configured and only partially initialized. IT IS NOT SUITABLE FOR USE OUTSIDE OF A TESTING ENVIRONMENT!'
     );
+    debug.newline();
   }
 
   debug('entering configureExecutionPrologue');
@@ -377,20 +382,20 @@ export async function configureProgram<
 }
 
 /**
- * Returns an non-configured {@link Program} instance, which is just a
- * lightly-decorated yargs instance.
+ * Returns a non-configured "semi-broken" {@link Program} instance, which is
+ * just a lightly-decorated yargs instance.
  *
- * **If you want to make a new `Program` instance with auto-discovered commands,
- * configuration hooks, metadata tracking, and support for other Black Flag
- * features, you probably want `runProgram` or `configureProgram`, both of which
- * call `makeProgram` internally.**
+ * **You probably don't want to use this function.** If you want to make a new
+ * `Program` instance with auto-discovered commands, configuration hooks,
+ * metadata tracking, and support for other Black Flag features, you want
+ * `runProgram` or `configureProgram`, both of which call `makeProgram`
+ * internally.
  *
  * Among other things, this function is sugar for `return (await
  * import('yargs/yargs')).default()`. Note that the returned yargs instance has
  * its magical `::argv` property disabled via a [this-recovering `Proxy`
  * object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#no_private_property_forwarding).
- * The instance also exposes three new methods: `command_deferred`,
- * `command_finalize_deferred`, and `strict_force`.
+ * The instance also exposes several new internal methods.
  */
 export async function makeProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject

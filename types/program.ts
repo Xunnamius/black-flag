@@ -7,7 +7,7 @@ import type { Configuration } from 'types/module';
 import type { $executionContext } from 'universe/constant';
 
 /**
- * The most generic form of {@link Arguments}.
+ * Represents the most generic form of {@link Arguments}.
  */
 export type AnyArguments = Arguments<Record<string, unknown>>;
 
@@ -20,7 +20,7 @@ export type Arguments<CustomCliArguments extends Record<string, unknown> = Empty
   _Arguments<FrameworkArguments & CustomCliArguments>;
 
 /**
- * The most generic form of {@link Program}.
+ * Represents the most generic form of {@link Program}.
  */
 export type AnyProgram = Program<Record<string, unknown>>;
 
@@ -111,8 +111,8 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
   };
 
 /**
- * Meta information about a discovered {@link Program} instance and its
- * corresponding {@link Configuration} object/file.
+ * Represents the meta information about a discovered {@link Program} instance
+ * and its corresponding {@link Configuration} object/file.
  */
 export type ProgramMetadata = {
   /**
@@ -179,8 +179,9 @@ export type ProgramMetadata = {
  * end developer.
  *
  * Instead of using this type directly, your project's custom arguments (e.g.
- * `MyCustomArgs`) should be wrapped with the `Arguments` generic type (e.g.
- * `Arguments<MyCustomArgs>`), which will extend `FrameworkArguments` for you.
+ * `MyCustomArgs`) should be wrapped with the {@link Arguments} generic type
+ * (e.g. `Arguments<MyCustomArgs>`), which will extend `FrameworkArguments` for
+ * you.
  */
 export type FrameworkArguments = {
   [$executionContext]: ExecutionContext;
@@ -204,7 +205,8 @@ export type Executor = (
 ) => Promise<Awaited<ReturnType<ConfigureExecutionEpilogue>>>;
 
 /**
- * The pre-execution context that is the result of calling `configureProgram`.
+ * Represents the pre-execution context that is the result of calling
+ * `configureProgram`.
  */
 export type PreExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -227,7 +229,7 @@ export type PreExecutionContext<
 };
 
 /**
- * The globally-accessible shared context object.
+ * Represents a globally-accessible shared context object singleton.
  */
 export type ExecutionContext = {
   /**

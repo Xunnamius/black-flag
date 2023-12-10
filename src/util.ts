@@ -357,6 +357,9 @@ export async function runProgram<
   }
 }
 
+/**
+ * Type-guard for {@link PreExecutionContext}.
+ */
 export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext {
   return !!obj && typeof obj === 'object' && 'execute' in obj && 'program' in obj;
 }

@@ -107,7 +107,8 @@ export class CommandNotImplementedError extends CliError {
   // TODO: this prop should be added by makeNamedError or whatever other fn
   [$type] = ['CommandNotImplementedError', 'CliError'];
   /**
-   * Represents trying to execute a CLI command that has not yet been implemented.
+   * Represents trying to execute a CLI command that has not yet been
+   * implemented.
    */
   constructor() {
     super(ErrorMessage.NotImplemented(), {
@@ -126,7 +127,8 @@ export class GracefulEarlyExitError extends CliError {
   // TODO: this prop should be added by makeNamedError or whatever other fn
   [$type] = ['GracefulEarlyExitError', 'CliError'];
   /**
-   * Represents trying to execute a CLI command that has not yet been implemented.
+   * Represents an exceptional event that should result in the immediate
+   * termination of the program but with an exit code indicating success (`0`).
    */
   constructor() {
     super(ErrorMessage.GracefulEarlyExit(), { suggestedExitCode: FrameworkExitCode.Ok });

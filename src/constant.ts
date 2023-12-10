@@ -8,9 +8,9 @@ export const $executionContext = Symbol('execution-context');
 
 /**
  * Hard-coded default program `usage` text provided to yargs instances via
- * `.usage(...)` after string interpolation where "$000", "$0", and "$1" are
- * replaced with a command's usage DSL, name (extracted from usage DSL), and
- * description (respectively).
+ * `.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
+ * with a command's usage DSL (`command` export), name (`name` export), and
+ * description (`description` export) respectively.
  */
 export const DEFAULT_USAGE_TEXT = 'Usage: $000\n\n$1';
 
@@ -43,7 +43,7 @@ export enum FrameworkExitCode {
   /**
    * The exit code used when a sanity check fails. If your CLI is spitting out
    * this code, that's a hint to re-run things in debug mode (example:
-   * `DEBUG='*' npx jest`) since an error is being silently swallowed.
+   * `DEBUG='black-flag*' npx jest`) since an error is being suppressed.
    *
    * In most cases, this exit code is indicative of improper use of Black Flag.
    */
