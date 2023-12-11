@@ -1462,7 +1462,7 @@ allows Black Flag to make certain guarantees:
 
 With vanilla yargs strict mode, attempting to meet these guarantees would
 require disallowing any arguments unrecognized by the yargs instance doing the
-routing, even if the yargs instance being proxied to _does_ recognize said
+routing, even if the yargs instance being routed to _does_ recognize said
 arguments. This would break Black Flag's support for deep command hierarchies
 entirely.
 
