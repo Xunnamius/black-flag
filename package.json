@@ -97,7 +97,7 @@
     "@babel/eslint-parser": "^7.23.3",
     "@babel/plugin-proposal-export-default-from": "^7.23.3",
     "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "@babel/preset-env": "^7.23.5",
+    "@babel/preset-env": "^7.23.6",
     "@babel/preset-typescript": "^7.23.3",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
