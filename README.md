@@ -1509,7 +1509,7 @@ Positionals:
 It gets worse. What if the description of `subcmd`'s `root-positional` argument
 is _different_ than the root command's version, with an entirely different
 description and _functionality_ (such as _deleting something_)? Instead of being
-helpful, you've trapped your users in some labyrinthine foot-gun nightmare
+helpful, you've trapped your users in some labyrinthine footgun nightmare
 universe. Yikes!
 
 On the other hand, given the same configuration, Black Flag outputs the
