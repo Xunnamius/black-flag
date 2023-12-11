@@ -1491,8 +1491,8 @@ confusing that can be to an end-user.
 Even worse, the complete command string (`'$0 root-positional'`) is also dumped
 into output, potentially without any explanatory text.
 
-And what if the `subcmd` command has its own positional argument called
-`root-positional`?
+And even with explanatory text for `root-positional`, what if the `subcmd`
+command has its own positional argument called `root-positional`?
 
 ```text
 ...
