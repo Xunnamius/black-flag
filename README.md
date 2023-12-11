@@ -1462,7 +1462,7 @@ allows Black Flag to make certain guarantees:
 
 With vanilla yargs strict mode, attempting to meet these guarantees would
 require disallowing any arguments unrecognized by the yargs instance doing the
-proxying, even if the yargs instance being proxied to _does_ recognize said
+routing, even if the yargs instance being proxied to _does_ recognize said
 arguments. This would break Black Flag's support for deep command hierarchies
 entirely.
 
@@ -1471,7 +1471,7 @@ require allowing attempts to invoke non-existent sub-commands without throwing
 an error. This would result in a deeply flawed end-user experience.
 
 Hence the need for a distinct "routing instance" which allows parent commands to
-recursively proxy control to child commands in your hierarchy even when ancestor
+recursively route control to child commands in your hierarchy even when ancestor
 commands are not aware of the syntax accepted by their distant descendants—while
 still properly throwing an error when the end user tries to invoke a sub-command
 that does not exist.
