@@ -1256,9 +1256,9 @@ Flag, but are noted below nonetheless.
   [`builder`][7] function, [hoist][42] the async logic to work around this bug
   for now.
 
-- A bug in yargs\@17.7.2 causes `yargs::showHelp(...)` to erroneously print the
-  _second_ element in the [`aliases`][43] array of the [default command][44]
-  when said command also has sub-commands.
+- A [bug][43] in yargs\@17.7.2 causes `yargs::showHelp(...)` to erroneously
+  print the _second_ element in the [`aliases`][44] array of the [default
+  command][45] when said command also has sub-commands.
 
   Black Flag addresses this by using a "helper" instance to generate help text
   more consistently than vanilla yargs. For instance, the default help text for
@@ -1266,7 +1266,7 @@ Flag, but are noted below nonetheless.
   strings while the commands under `"Commands:"` are listed in alpha-sort order
   as their full canonical names _only_; unlike vanilla yargs, no positional
   arguments or aliases will be confusingly mixed into help text output unless
-  you [make it so][45].
+  you [make it so][43].
 
 - Currently, yargs (as of 17.7.2) [doesn't really support][36] calling
   `yargs::parse`/`yargs::parseAsync` [multiple times on the same instance][46]
@@ -1450,8 +1450,8 @@ with the helper instance on the first pass and feeds the result to the
 [`builder`][7] function of the effector clone on the second pass (via
 [`builder`'s new third parameter][6]).
 
-Similarly, hoisting routing responsibilities to the router instance allows Black
-Flag to make certain guarantees:
+In the same vein, hoisting routing responsibilities to the router instance
+allows Black Flag to make certain guarantees:
 
 - An end user trying to invoke a non-existent sub-command will cause an
   exception to be thrown. This is true even if the effector and helper instances
@@ -1475,6 +1475,50 @@ recursively proxy control to child commands in your hierarchy even when ancestor
 commands are not aware of the syntax accepted by their distant descendants—while
 still properly throwing an error when the end user tries to invoke a sub-command
 that does not exist.
+
+#### Generating Help Text
+
+When vanilla yargs is asked to generate help text for a [default command][45]
+that has aliases and/or top-level positional arguments, you get the following:
+
+![Vanilla yargs parseAsync help text example][52]
+
+This is not ideal output for several reasons. For one, the `"cmd"` alias of the
+root command is being reported alongside `subcmd` as if it were a sub-command
+when in actuality it's just an alias for the default command. Imagine how
+confusing that can be to an end-user.
+
+Even worse, the complete command string (`'$0 root-positional'`) is also dumped
+into output, potentially without any explanatory text.
+
+And what if the `subcmd` command has its own positional argument called
+`root-positional`?
+
+```text
+...
+Commands:
+  fake-name cmd root-positional     Root description                   [default]
+  fake-name subcmd root-positional  Sub description
+                                                  [aliases: sub, s] [deprecated]
+
+Positionals:
+  root-positional  Some description                                     [string]
+...
+```
+
+It gets worse. What if the description of `subcmd`'s `root-positional` argument
+is _different_ than the root command's version, with an entirely different
+description and _functionality_ (such as _deleting something_)? Instead of being
+helpful, you've trapped your users in some labyrinthine foot-gun nightmare
+universe. Yikes!
+
+On the other hand, given the same configuration, Black Flag outputs the
+following:
+
+![Black Flag runProgram help text example][53]
+
+> Note: in this example, `runProgram` is a function returned by
+> [`makeRunner`][15].
 
 #### Execution Flow Diagram
 
@@ -1620,7 +1664,7 @@ is then communicated to the user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][52]
+> The ascii art diagram was built using [https://asciiflow.com][54]
 
 ### Inspiration
 
@@ -1629,9 +1673,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][53], I realized the (irritatingly disparate 😖) structures of my
+another tool][55], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][54] to ["optimize" my workflows][55], I
+yargs. And, as I'm [always eager][56] to ["optimize" my workflows][57], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1835,17 +1879,19 @@ specification. Contributions of any kind welcome!
 [40]: ./docs/modules/index.md#configureexecutionprologue
 [41]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
 [42]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[43]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
-[44]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[45]: #generating-help-text
+[43]: #generating-help-text
+[44]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
+[45]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [46]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
 [47]: https://github.com/yargs/yargs/issues/1137
 [48]: https://github.com/yargs/yargs/issues/156
 [49]: #execution-flow-diagram
 [50]: ./docs/modules/index.md#programmetadata
 [51]: #irrelevant-differences
-[52]: https://asciiflow.com
-[53]: https://github.com/Xunnamius/xunnctl
-[54]: https://xkcd.com/1205
-[55]:
+[52]: ./example-1.png
+[53]: ./example-2.png
+[54]: https://asciiflow.com
+[55]: https://github.com/Xunnamius/xunnctl
+[56]: https://xkcd.com/1205
+[57]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
