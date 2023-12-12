@@ -1210,7 +1210,7 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 |      Term       | Description                                                                                                                                                                              |
 | :-------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |     command     | A "command" is a functional unit associated with a configuration file and represented internally as a trio of programs: effector, helper, and router.                                    |
-|     program     | A "program" is a yargs instance wrapped in a [Proxy][37] granting the instance an expanded set of feature.                                                                               |
+|     program     | A "program" is a yargs instance wrapped in a [Proxy][37] granting the instance an expanded set of features.                                                                              |
 |      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                          |
 | default command | A "default command" is [yargs parlance][38] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_. |
 
