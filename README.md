@@ -1267,7 +1267,7 @@ Flag, but are noted below nonetheless.
   [`builder`][7] function, [hoist][43] the async logic to work around this bug
   for now.
 
-- A [bug][44] in yargs\@17.7.2 causes `yargs::showHelp(...)` to erroneously
+- A [bug?][44] in yargs\@17.7.2 causes `yargs::showHelp(...)` to erroneously
   print the _second_ element in the [`aliases`][45] array of the [default
   command][37] when said command also has sub-commands.
 
@@ -1493,7 +1493,7 @@ that does not exist.
 
 #### Generating Help Text
 
-Effector instances are essentially yargs instances with registered [default
+Effector instances are essentially yargs instances with a registered [default
 command][37]. Unfortunately, when vanilla yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
