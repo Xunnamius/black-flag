@@ -1254,11 +1254,11 @@ Flag, but are noted below nonetheless.
   [muck around with][42] the relevant yargs instances manually in
   [`configureExecutionPrologue`][43].
 
-- Since vanilla yargs [lacks the ability][44] to modify or remove options added
-  by `yargs::option`, calling `yargs::help` will throw. CLI tools having a
-  `--help` option is almost sacred at this point, and there are few if any good
-  reasons not to output help text when `--help` is present in your arguments
-  list. Still, if you require the functionality of `yargs::help`, modify
+- By default, Black Flag enables the `--help` option same as vanilla yargs (but
+  excluding the help command). However, since vanilla yargs [lacks the
+  ability][44] to modify or remove options added by `yargs::option`, calling
+  `yargs::help` will throw. If you require the functionality of `yargs::help` to
+  disable or modify the `--help` option, update
   [`context.state.globalHelpOption`][45] directly in
   [`configureExecutionContext`][46].
 
