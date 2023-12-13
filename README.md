@@ -1294,8 +1294,9 @@ Flag, but are noted below nonetheless.
 - One of Black Flag's features is simple comprehensive error reporting via the
   [`configureErrorHandlingEpilogue`][13] configuration hook. Therefore, the
   `yargs::showHelpOnFail(...)` method will ignore the redundant "message"
-  parameter. If you want that functionality, use said hook to output an
-  "epilogue" message after yargs outputs an error message.
+  parameter. If you want that functionality, use said hook to output an epilogue
+  after yargs outputs an error message, or use
+  `yargs::epilogue`/`yargs::example`.
 
 - Since every auto-discovered command translates [into its own yargs
   instances][42], the [`command`][7] property, if exported by your command
@@ -1334,10 +1335,10 @@ Flag, but are noted below nonetheless.
   `git ls-files --full-name -p` or `git -p ls-files --full-name -p` with yargs.
   Black Flag makes this a formal invariant that will throw an error.
 
-- All yargs instances used by Black Flag use the same `yargs::help(...)`
-  function. This means descendant commands and ancestor commands will always use
-  the same `yargs::help(...)` settings, thus preserving the vanilla yargs
-  behavior in this way.
+- All effector and helper instances use the same `yargs::help(...)` function.
+  This means descendant commands and ancestor commands will always use the same
+  `yargs::help(...)` settings, thus preserving the vanilla yargs behavior in
+  this way.
 
   However, unlike the vanilla yargs implementation, Black Flag will only
   register a help _option_ and never a "help" _command_. After calling

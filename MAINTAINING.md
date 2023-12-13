@@ -79,7 +79,7 @@ semantic-release can be triggered locally by following these steps:
 > next step.
 
 ```bash
-# These command must be run from the project root. It is recommended to clone a
+# These commands must be run from the project root. It is recommended to clone a
 # fresh version of the repo to a temp directory and run these commands from
 # there.
 
