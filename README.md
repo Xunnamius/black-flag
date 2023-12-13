@@ -942,8 +942,8 @@ defaults:
 - `yargs::exitProcess(false)`
 - `yargs::wrap(yargs::terminalWidth())`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
-- `yargs::help('help', customDescription)`
-  - Black Flag handles generic help text generation, so this is mostly cosmetic
+- `yargs::help(false)::option('help', { description })`
+  - Black Flag supervises all help text generation, so this is just cosmetic
 - `yargs::fail(...)`
   - Black Flag uses a custom failure handler
 - `yargs::showHelpOnFail(true)`
@@ -1251,28 +1251,36 @@ Flag, but are noted below nonetheless.
   function or just call the middleware function right then and there. If you
   want the middleware to apply globally, invoke the function directly in
   [`configureArguments`][29]. If neither solution is desirable, you can also
-  [dangerously muck around with][42] the relevant yargs instances manually in
+  [muck around with][42] the relevant yargs instances manually in
   [`configureExecutionPrologue`][43].
+
+- Since vanilla yargs [lacks the ability][44] to modify or remove options added
+  by `yargs::option`, calling `yargs::help` will throw. CLI tools having a
+  `--help` option is almost sacred at this point, and there are few if any good
+  reasons not to output help text when `--help` is present in your arguments
+  list. Still, if you require the functionality of `yargs::help`, modify
+  [`context.state.globalHelpOption`][45] directly in
+  [`configureExecutionContext`][46].
 
 #### Irrelevant Differences
 
-- A [bug][44] in yargs\@17.7.2 prevents `yargs::showHelp(...)`/`--help` from
-  printing anything when using an async [`builder`][7] function (or
-  promise-returning function) for a [default command][39].
+- A [bug][47] in yargs\@17.7.2 prevents `yargs::showHelp`/`--help` from printing
+  anything when using an async [`builder`][7] function (or promise-returning
+  function) for a [default command][39].
 
   Black Flag addresses this with its types, in that attempting to pass an async
   builder will be flagged as problematic by intellisense. Moreover, Black Flag
   supports an asynchronous function as the value of `module.exports` in CJS
   code, and top-level await in ESM code, so if you really do need an async
-  [`builder`][7] function, [hoist][45] the async logic to work around this bug
+  [`builder`][7] function, [hoist][48] the async logic to work around this bug
   for now.
 
-- A [bug?][46] in yargs\@17.7.2 causes `yargs::showHelp(...)` to erroneously
-  print the _second_ element in the [`aliases`][47] array of the [default
-  command][39] when said command also has sub-commands.
+- A [bug?][49] in yargs\@17.7.2 causes `yargs::showHelp` to erroneously print
+  the _second_ element in the [`aliases`][50] array of the [default command][39]
+  when said command also has sub-commands.
 
-  Black Flag addresses this by using a "helper" instance to generate help text
-  [more consistently][46] than vanilla yargs. For instance, the default help
+  Black Flag addresses this by using a "helper" program to generate help text
+  [more consistently][49] than vanilla yargs. For instance, the default help
   text for a Black Flag command includes the full [`command`][7] and
   [`description`][7] strings while the commands under `"Commands:"` are listed
   in alpha-sort order as their full canonical names _only_; unlike vanilla
@@ -1280,9 +1288,9 @@ Flag, but are noted below nonetheless.
   text output unless you [make it so][42].
 
 - Currently, yargs (as of 17.7.2) [doesn't really support][36] calling
-  `yargs::parse`/`yargs::parseAsync` [multiple times on the same instance][48]
+  `yargs::parse`/`yargs::parseAsync` [multiple times on the same instance][51]
   if it's using the commands-based API. This might be a regression since, [among
-  other things][49], there are comments within yargs's source that indicate
+  other things][52], there are comments within yargs's source that indicate
   these functions were intended to be called multiple times.
 
   Black Flag addresses this in two ways. First, the [`runProgram`][8] helper
@@ -1293,10 +1301,9 @@ Flag, but are noted below nonetheless.
 
 - One of Black Flag's features is simple comprehensive error reporting via the
   [`configureErrorHandlingEpilogue`][13] configuration hook. Therefore, the
-  `yargs::showHelpOnFail(...)` method will ignore the redundant "message"
-  parameter. If you want that functionality, use said hook to output an epilogue
-  after yargs outputs an error message, or use
-  `yargs::epilogue`/`yargs::example`.
+  `yargs::showHelpOnFail` method will ignore the redundant "message" parameter.
+  If you want that functionality, use said hook to output an epilogue after
+  yargs outputs an error message, or use `yargs::epilogue`/`yargs::example`.
 
 - Since every auto-discovered command translates [into its own yargs
   instances][42], the [`command`][7] property, if exported by your command
@@ -1330,20 +1337,10 @@ Flag, but are noted below nonetheless.
   ```
 
   This limitation was inherited from yargs itself: vanilla yargs [never really
-  supported this functionality][50] in that you can't implement
+  supported this functionality][53] in that you can't implement
   `git -p ls-files --full-name` and have that mean something different than
   `git ls-files --full-name -p` or `git -p ls-files --full-name -p` with yargs.
   Black Flag makes this a formal invariant that will throw an error.
-
-- All effector and helper instances use the same `yargs::help(...)` function.
-  This means descendant commands and ancestor commands will always use the same
-  `yargs::help(...)` settings, thus preserving the vanilla yargs behavior in
-  this way.
-
-  However, unlike the vanilla yargs implementation, Black Flag will only
-  register a help _option_ and never a "help" _command_. After calling
-  `yargs::help(X)`, only the `--X` (or `-X` if it's only a single character)
-  argument will trigger help text.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. You shouldn't be calling the
@@ -1395,7 +1392,7 @@ Each of these six programs is actually _three_ yargs instances:
 1. The **effector** (`instances.effector`) yargs instance is responsible for
    second-pass arguments parsing and validation (and generating specific stderr
    help text), executing each command's actual [`handler`][7] function, and
-   ensuring the final parse result bubbles up to the router instance.
+   ensuring the final parse result bubbles up to the router program.
 
 2. The **helper** (`instances.helper`) yargs instance is responsible for
    generating generic stdout help text as well as first-pass arguments parsing
@@ -1407,7 +1404,7 @@ Each of these six programs is actually _three_ yargs instances:
    for ensuring exceptions and final parse results bubble up to the root Black
    Flag execution context ([`PreExecutionContext::execute`][11]) for handling.
 
-> See the [flow chart][51] below for a visual overview.
+> See the [flow chart][54] below for a visual overview.
 
 These three yargs instances representing the root command are accessible from
 the [`PreExecutionContext::root`][11] property. They are also always the first
@@ -1428,14 +1425,14 @@ await preExecutionContext.execute();
 
 Effector instances do the heavy lifting in that they actually execute their
 command's [`handler`][7]. These instances are accessible via the
-[`instances.helper`][52] property of each object in
+[`instances.helper`][55] property of each object in
 [`PreExecutionContext::commands`][11], and can be configured as typical yargs
 instances.
 
 Helper instances are "clones" of their respective effector instances and are
-accessible via the [`instances.helper`][52] property of each object in
+accessible via the [`instances.helper`][55] property of each object in
 [`PreExecutionContext::commands`][11]. These instances have been reconfigured to
-address [a couple bugs][53] in yargs help text output by excluding aliases from
+address [a couple bugs][56] in yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
 side-effect of this is that only effector instances recognize top-level
 positional arguments, which isn't a problem Black Flag users have to worry about
@@ -1443,17 +1440,17 @@ unless they're dangerously tampering with these instances directly.
 
 Router instances are partially-configured just enough to proxy control to other
 router instances or to helper instances and are accessible via the
-[`instances.router`][52] property of each object in
+[`instances.router`][55] property of each object in
 [`PreExecutionContext::commands`][11]. They cannot and _must not_ have any
 configured strictness or validation logic outside of the built-in invariant
 checks.
 
 Therefore: if you want to tamper with the yargs instance responsible for running
-a command's [`handler`][7], operate on the effector instance. If you want to
-tamper with a command's generic stdout help text, operate on the helper
-instance. If you want to tamper with validation and parsing, operate on both the
-helper and effector instances. If you want to tamper with the routing of control
-between commands, operate on the router instance.
+a command's [`handler`][7], operate on the effector program. If you want to
+tamper with a command's generic stdout help text, operate on the helper program.
+If you want to tamper with validation and parsing, operate on both the helper
+and effector instances. If you want to tamper with the routing of control
+between commands, operate on the router program.
 
 See [the docs][x-repo-docs] for more details on Black Flag's internals.
 
@@ -1462,12 +1459,12 @@ See [the docs][x-repo-docs] for more details on Black Flag's internals.
 The delegation of responsibility between helper and effector instances
 facilitates the double-parsing necessary for [dynamic options][6] support. In
 implementing dynamic options, Black Flag accurately parses the given arguments
-with the helper instance on the first pass and feeds the result to the
+with the helper program on the first pass and feeds the result to the
 [`builder`][7] function of the effector on the second pass (via [`builder`'s new
 third parameter][6]).
 
-In the same vein, hoisting routing responsibilities to the router instance
-allows Black Flag to make certain guarantees:
+In the same vein, hoisting routing responsibilities to the router program allows
+Black Flag to make certain guarantees:
 
 - An end user trying to invoke a non-existent sub-command will cause an
   exception to be thrown. This is true even if the effector and helper instances
@@ -1486,7 +1483,7 @@ Without vanilla yargs strict mode, attempting to meet these guarantees would
 require allowing attempts to invoke non-existent sub-commands without throwing
 an error. This would result in a deeply flawed end-user experience.
 
-Hence the need for a distinct "routing instance" which allows parent commands to
+Hence the need for a distinct _routing program_ which allows parent commands to
 recursively route control to child commands in your hierarchy even when ancestor
 commands are not aware of the syntax accepted by their distant descendants—while
 still properly throwing an error when the end user tries to invoke a sub-command
@@ -1499,7 +1496,7 @@ command][39]. Unfortunately, when vanilla yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
 
-![Vanilla yargs parseAsync help text example][54]
+![Vanilla yargs parseAsync help text example][57]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
 root command is being reported alongside `subcmd` as if it were a sub-command
@@ -1531,7 +1528,7 @@ with permanent effects.
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][55]
+![Black Flag runProgram help text example][58]
 
 > Note: in this example, `runProgram` is a function returned by
 > [`makeRunner`][15].
@@ -1680,7 +1677,7 @@ is then communicated to the user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][56]
+> The ascii art diagram was built using [https://asciiflow.com][59]
 
 ### Inspiration
 
@@ -1689,9 +1686,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][57], I realized the (irritatingly disparate 😖) structures of my
+another tool][60], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][58] to ["optimize" my workflows][59], I
+yargs. And, as I'm [always eager][61] to ["optimize" my workflows][62], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1897,20 +1894,23 @@ specification. Contributions of any kind welcome!
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
 [42]: #advanced-usage
 [43]: ./docs/modules/index.md#configureexecutionprologue
-[44]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
-[45]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[46]: #generating-help-text
-[47]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
-[48]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
-[49]: https://github.com/yargs/yargs/issues/1137
-[50]: https://github.com/yargs/yargs/issues/156
-[51]: #execution-flow-diagram
-[52]: ./docs/modules/index.md#programmetadata
-[53]: #irrelevant-differences
-[54]: ./example-1.png
-[55]: ./example-2.png
-[56]: https://asciiflow.com
-[57]: https://github.com/Xunnamius/xunnctl
-[58]: https://xkcd.com/1205
-[59]:
+[44]: https://github.com/yargs/yargs/issues/733
+[45]: ./docs/modules/index.md#executioncontext
+[46]: ./docs/modules/index.md#configureexecutioncontext
+[47]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
+[48]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
+[49]: #generating-help-text
+[50]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
+[51]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
+[52]: https://github.com/yargs/yargs/issues/1137
+[53]: https://github.com/yargs/yargs/issues/156
+[54]: #execution-flow-diagram
+[55]: ./docs/modules/index.md#programmetadata
+[56]: #irrelevant-differences
+[57]: ./example-1.png
+[58]: ./example-2.png
+[59]: https://asciiflow.com
+[60]: https://github.com/Xunnamius/xunnctl
+[61]: https://xkcd.com/1205
+[62]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
