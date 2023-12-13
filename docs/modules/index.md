@@ -43,13 +43,12 @@
 ### Variables
 
 - [$executionContext](index.md#$executioncontext)
-- [DEFAULT\_USAGE\_TEXT](index.md#default_usage_text)
 - [ErrorMessage](index.md#errormessage)
+- [defaultUsageText](index.md#defaultusagetext)
 
 ### Functions
 
 - [configureProgram](index.md#configureprogram)
-- [makeProgram](index.md#makeprogram)
 - [runProgram](index.md#runprogram)
 
 ## Type Aliases
@@ -62,7 +61,7 @@ Represents the most generic form of [Arguments](index.md#arguments).
 
 #### Defined in
 
-[types/program.ts:16](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L16)
+[types/program.ts:16](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L16)
 
 ___
 
@@ -74,7 +73,7 @@ Represents the most generic implementation type of [Configuration](index.md#conf
 
 #### Defined in
 
-[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L9)
+[types/module.ts:9](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L9)
 
 ___
 
@@ -86,7 +85,7 @@ Represents the most generic form of [Program](index.md#program).
 
 #### Defined in
 
-[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L29)
+[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L29)
 
 ___
 
@@ -106,7 +105,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:23](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L23)
+[types/program.ts:23](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L23)
 
 ___
 
@@ -126,7 +125,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:129](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L129)
+[types/module.ts:129](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L129)
 
 ___
 
@@ -140,11 +139,11 @@ Options available when constructing a new `CliError` object.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `suggestedExitCode?` | `number` | The exit code that will be returned when the program exits, given nothing else goes wrong in the interim. **`Default`** ```ts FrameworkExitCode.DefaultError ``` |
+| `suggestedExitCode?` | `number` | The exit code that will be returned when the application exits, given nothing else goes wrong in the interim. **`Default`** ```ts FrameworkExitCode.DefaultError ``` |
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/error.ts#L48)
 
 ___
 
@@ -177,7 +176,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L16)
 
 ___
 
@@ -214,7 +213,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:39](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L39)
+[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L44)
 
 ___
 
@@ -261,7 +260,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:72](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L72)
+[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L77)
 
 ___
 
@@ -295,7 +294,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:11](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L11)
+[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L16)
 
 ___
 
@@ -334,13 +333,13 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:55](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L55)
+[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L60)
 
 ___
 
 ### ConfigureExecutionPrologue
 
-Ƭ **ConfigureExecutionPrologue**\<`CustomContext`\>: (`program`: [`Program`](index.md#program), `context`: `CustomContext`) => `Promisable`\<`void`\>
+Ƭ **ConfigureExecutionPrologue**\<`CustomContext`\>: (`root`: [`Programs`](util.md#programs), `context`: `CustomContext`) => `Promisable`\<`void`\>
 
 #### Type parameters
 
@@ -350,7 +349,7 @@ ___
 
 #### Type declaration
 
-▸ (`program`, `context`): `Promisable`\<`void`\>
+▸ (`root`, `context`): `Promisable`\<`void`\>
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any
@@ -368,7 +367,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 | Name | Type |
 | :------ | :------ |
-| `program` | [`Program`](index.md#program) |
+| `root` | [`Programs`](util.md#programs) |
 | `context` | `CustomContext` |
 
 ##### Returns
@@ -377,7 +376,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:28](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L28)
+[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L33)
 
 ___
 
@@ -406,7 +405,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:87](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/configure.ts#L87)
+[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/configure.ts#L92)
 
 ___
 
@@ -424,18 +423,19 @@ Represents a globally-accessible shared context object singleton.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `program`: [`AnyProgram`](index.md#anyprogram)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) (including shadow [Program](index.md#program) instances) as values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map, if there are any pairs, will always be the root program. |
+| `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `programs`: [`Programs`](util.md#programs)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) as singular object values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map will always be the root command. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | \{ `[key: string]`: `unknown`; `globalHelpOption`: `string` \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv`  } | The current state of the execution environment. |
-| `state.globalHelpOption` | `string` \| `undefined` | `globalHelpOption` caches the latest first argument passed to `yargs::help` method of any [Program](index.md#program). This property is used as part of a strategy to mimic yargs's short-circuiting when the `--help` parameter is given and should not be tampered with or relied upon. **`Default`** ```ts "help" ``` |
+| `state` | \{ `[key: string]`: `unknown`; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
+| `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the now-defunct `yargs::help` method from vanilla yargs. Set this to the value you want using the `configureExecutionContext` configuration hook instead of calling said defunct function. Note: `name`, if provided, must be >= 1 character in length. Note: this property should not be accessed or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
 | `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined by yargs when `configureProgram` is called. |
-| `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other case, this will always be `false`. **`Default`** ```ts false ``` |
-| `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. **`Default`** ```ts false ``` |
-| `state.rawArgv` | typeof `process.argv` | A subset of the original argv returned by [ConfigureArguments](index.md#configurearguments). It is used internally to give the final command in the arguments list the chance to parse argv. Further, it is used to enforce the ordering invariant on chained child program invocations. That is: all non-positional arguments must appear _after_ the last command name in any arguments list parsed by this program. For example: - Good (satisfies invariant): `rootcmd subcmd subsubcmd --help` - Bad (violation of invariant): `rootcmd --help subcmd subsubcmd` Since it will be actively manipulated by each command in the arguments list, **do not rely on `rawArgv` for anything other than checking invariant satisfaction.** |
+| `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other context, this will _always_ be `false`. **`Default`** ```ts false ``` |
+| `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingHelpOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. Note: setting `isHandlingHelpOption` to `true` manually will cause Black Flag to output help text as if the user had specified `--help` (or an equivalent) as one of their arguments. **`Default`** ```ts false ``` |
+| `state.rawArgv` | typeof `process.argv` | A subset of the original argv returned by [ConfigureArguments](index.md#configurearguments). It is used internally to give the final command in the arguments list the chance to parse argv. Further, it is used to enforce the ordering invariant on chained child program invocations. That is: all non-positional arguments must appear _after_ the last command name in any arguments list parsed by this program. Since it will be actively manipulated by each command in the arguments list, **do not rely on `rawArgv` for anything other than checking invariant satisfaction.** |
+| `state.showHelpOnFail` | `boolean` | If `true`, Black Flag will dump help text to stderr when an error occurs. This is also set when `yargs::showHelpOnFail` is called. **`Default`** ```ts true ``` |
 
 #### Defined in
 
-[types/program.ts:222](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L222)
+[types/program.ts:246](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L246)
 
 ___
 
@@ -449,7 +449,8 @@ ___
 
 This function accepts an optional `rawArgv` array that defaults to
 `yargs::hideBin(process.argv)` and returns an arguments object representing
-the parsed CLI input for the given root [Program](index.md#program).
+the parsed and validated arguments object returned by the root router
+[Program](index.md#program) instance.
 
 **This function throws whenever an exception occurs** (including exceptions
 representing a graceful exit), making it not ideal as an entry point for a
@@ -468,7 +469,7 @@ and sets the exit code for you.
 
 #### Defined in
 
-[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L188)
+[types/program.ts:212](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L212)
 
 ___
 
@@ -492,7 +493,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:174](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L174)
+[types/program.ts:197](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L197)
 
 ___
 
@@ -512,7 +513,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L138)
+[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L138)
 
 ___
 
@@ -532,13 +533,13 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:120](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L120)
+[types/module.ts:120](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L120)
 
 ___
 
 ### PreExecutionContext
 
-Ƭ **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & \{ `execute`: [`Executor`](index.md#executor) ; `program`: [`Program`](index.md#program)  }
+Ƭ **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & \{ `execute`: [`Executor`](index.md#executor) ; `root`: [`Programs`](util.md#programs)  }
 
 Represents the pre-execution context that is the result of calling
 `configureProgram`.
@@ -551,13 +552,13 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:199](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L199)
+[types/program.ts:223](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L223)
 
 ___
 
 ### Program
 
-Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"``\> & \{ `command`: `_Program`\<`CustomCliArguments`\>[``"command"``] & (`command`: `string` \| `string`[], `description`: `string` \| ``false``, `builder`: \{ `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)\<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Argv`\<{}\> \| [`Program`](index.md#program)\<`CustomCliArguments`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `help_force`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"help"``] ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `strict_force`: (`enabled`: `boolean`) => `void` ; `version`: `_Program`\<`CustomCliArguments`\>[``"version"``] & (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
+Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"``\> & \{ `command`: `_Program`\<`CustomCliArguments`\>[``"command"``] & (`command`: `string`[], `description`: `string` \| ``false``, `builder`: \{ `[key: string]`: `_Options`;  } \| (`yargs`: [`Program`](index.md#program)\<`CustomCliArguments`\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Argv`\<{}\> \| [`Program`](index.md#program)\<`CustomCliArguments`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `version`: `_Program`\<`CustomCliArguments`\>[``"version"``] & (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -573,7 +574,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:38](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L38)
+[types/program.ts:38](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L38)
 
 ___
 
@@ -581,8 +582,8 @@ ___
 
 Ƭ **ProgramMetadata**: `Object`
 
-Represents the meta information about a discovered [Program](index.md#program) instance
-and its corresponding [Configuration](index.md#configuration) object/file.
+Represents the meta information about a discovered command and its
+corresponding [Configuration](index.md#configuration) object/file.
 
 #### Type declaration
 
@@ -590,14 +591,13 @@ and its corresponding [Configuration](index.md#configuration) object/file.
 | :------ | :------ | :------ |
 | `filename` | `string` | The basename of `filepath`. |
 | `filenameWithoutExtension` | `string` | The basename of `filepath` with the trailing extension trimmed. |
-| `filepath` | `string` | Absolute filesystem path to the configuration file used to configure the program. |
+| `filepath` | `string` | Absolute filesystem path to the loaded configuration file. |
 | `parentDirName` | `string` | The basename of the direct parent directory containing `filepath`. |
-| `shadow` | [`AnyProgram`](index.md#anyprogram) | Each individual program is represented in memory as two distinct [Program](index.md#program) instances: the "actual" command instance and a clone of this instance, i.e. its "shadow" available here. Check [the docs](https://github.com/Xunnamius/black-flag#readme) for more details. |
-| `type` | ``"root"`` \| ``"parent-child"`` \| ``"child"`` | The "type" of [Configuration](index.md#configuration) that was loaded, indicating which interface to expect when interacting with `configuration`. The possibilities are: - **root**: implements `RootConfiguration` (the only pure `ParentConfiguration`) - **parent-child**: implements `ParentConfiguration`, `ChildConfiguration` - **child**: implements `ChildConfiguration` Note that "root" `type` configurations are unique in that there will only ever be one `RootConfiguration` instance, and it **MUST** be the first command module auto-discovered and loaded (invariant). |
+| `type` | [`ProgramType`](util.md#programtype) | The "type" of [Configuration](index.md#configuration) that was loaded, indicating which interface to expect when interacting with `configuration`. The possibilities are: - **root**: implements `RootConfiguration` (the only pure `ParentConfiguration`) - **parent-child**: implements `ParentConfiguration`, `ChildConfiguration` - **child**: implements `ChildConfiguration` Note that "root" `type` configurations are unique in that there will only ever be one `RootConfiguration`, and it **MUST** be the first command module auto-discovered and loaded (invariant). |
 
 #### Defined in
 
-[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/program.ts#L121)
+[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/program.ts#L154)
 
 ___
 
@@ -617,7 +617,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:111](https://github.com/Xunnamius/black-flag/blob/5a95f1c/types/module.ts#L111)
+[types/module.ts:111](https://github.com/Xunnamius/black-flag/blob/f567ddd/types/module.ts#L111)
 
 ## Variables
 
@@ -630,22 +630,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:7](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L7)
-
-___
-
-### DEFAULT\_USAGE\_TEXT
-
-• `Const` **DEFAULT\_USAGE\_TEXT**: ``"Usage: $000\n\n$1"``
-
-Hard-coded default program `usage` text provided to yargs instances via
-`.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
-with a command's usage DSL (`command` export), name (`name` export), and
-description (`description` export) respectively.
-
-#### Defined in
-
-[src/constant.ts:15](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L15)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L5)
 
 ___
 
@@ -683,39 +668,47 @@ A collection of possible error and warning messages emitted by Black Flag.
 | `AssertionFailureExistenceInvariant` | () => `string` |
 | `AssertionFailureInvocationNotAllowed` | (`name`: `string`) => `string` |
 | `AssertionFailureNamingInvariant` | (`name`: `string`) => `string` |
+| `AssertionFailureNoConfigurationLoaded` | (`path`: `string`) => `string` |
 | `AssertionFailureOrderingInvariant` | () => `string` |
+| `AssertionFailureReachedTheUnreachable` | () => `string` |
+| `AssertionFailureUseParseAsyncInstead` | () => `string` |
 | `ConfigLoadFailure` | (`path`: `string`) => `string` |
 | `Generic` | () => `string` |
 | `GracefulEarlyExit` | () => `string` |
 | `InvalidCharacters` | (`str`: `string`, `violation`: `string`) => `string` |
 | `InvalidConfigureArgumentsReturnType` | () => `string` |
 | `InvalidConfigureExecutionContextReturnType` | () => `string` |
-| `UseParseAsyncInstead` | () => `string` |
 
 #### Defined in
 
-[src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/error.ts#L161)
+[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/error.ts#L163)
+
+___
+
+### defaultUsageText
+
+• `Const` **defaultUsageText**: ``"Usage: $000\n\n$1"``
+
+Hard-coded default command `usage` text provided to yargs instances via
+`.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
+with a command's usage DSL (`command` export), name (`name` export), and
+description (`description` export) respectively.
+
+#### Defined in
+
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L13)
 
 ## Functions
 
 ### configureProgram
 
-▸ **configureProgram**\<`CustomContext`\>(`commandModulePath?`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
+▸ **configureProgram**\<`CustomContext`\>(`commandModulePath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
 
-Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing a fully-configured
-[Program](index.md#program) instance with the provided configuration hooks and an
-[Executor](index.md#executor) function.
+Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing fully-configured
+[Program](index.md#program) instances and an [Executor](index.md#executor) entry point function.
 
-Command auto-discovery will occur at `commandModulePath`, if defined;
-otherwise, command auto-discovery is disabled.
-
-If command auto-discovery is disabled, `PreExecutionContext::program` will be
-set to the return value of [makeProgram](index.md#makeprogram); i.e. a semi-functional
-lightly-decorated yargs instance. It is therefore not useful to invoke this
-function with auto-discovery disabled outside of a testing environment.
-
-On the other hand, an exception will occur if no commands are loadable from
-the given `commandModulePath`, if defined.
+Command auto-discovery will occur at `commandModulePath`. An exception will
+occur if no commands are loadable from the given `commandModulePath`.
 
 **This function throws whenever an exception occurs** (including exceptions
 representing a graceful exit), making it not ideal as an entry point for a
@@ -732,7 +725,7 @@ and sets the exit code for you.
 
 | Name | Type |
 | :------ | :------ |
-| `commandModulePath?` | `string` |
+| `commandModulePath` | `string` |
 | `configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<`CustomContext`\>\> |
 
 #### Returns
@@ -741,82 +734,7 @@ and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:68](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L68)
-
-▸ **configureProgram**\<`CustomContext`\>(`configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
-
-Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing a semi-functional
-lightly-decorated yargs instance (the return value of [makeProgram](index.md#makeprogram)).
-
-When called in this form, command auto-discovery is disabled. It is therefore
-not useful to invoke this call signature outside of a testing environment.
-
-**This function throws whenever an exception occurs** (including exceptions
-representing a graceful exit), making it not ideal as an entry point for a
-CLI. See [runProgram](index.md#runprogram) for a wrapper function that handles exceptions
-and sets the exit code for you.
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `configurationHooks?` | `Promisable`\<[`ConfigureHooks`](index.md#configurehooks)\<`CustomContext`\>\> |
-
-#### Returns
-
-`Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
-
-#### Defined in
-
-[src/index.ts:86](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L86)
-
-___
-
-### makeProgram
-
-▸ **makeProgram**\<`CustomCliArguments`\>(`«destructured»?`): `Promise`\<[`Program`](index.md#program)\<`CustomCliArguments`\>\>
-
-Returns a non-configured "semi-broken" [Program](index.md#program) instance, which is
-just a lightly-decorated yargs instance.
-
-**You probably don't want to use this function.** If you want to make a new
-`Program` instance with auto-discovered commands, configuration hooks,
-metadata tracking, and support for other Black Flag features, you want
-[runProgram](index.md#runprogram) or [configureProgram](index.md#configureprogram), both of which call
-`makeProgram` internally.
-
-Among other things, this function is sugar for `return (await
-import('yargs/yargs')).default()`. Note that the returned yargs instance has
-its magical `::argv` property disabled via a [this-recovering `Proxy`
-object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy#no_private_property_forwarding).
-The instance also exposes several new internal methods.
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `isShadowClone` | `undefined` \| `boolean` |
-
-#### Returns
-
-`Promise`\<[`Program`](index.md#program)\<`CustomCliArguments`\>\>
-
-#### Defined in
-
-[src/index.ts:404](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/index.ts#L404)
+[src/index.ts:60](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/index.ts#L60)
 
 ___
 
@@ -844,7 +762,7 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | [commandModulePath?: string] |
+| `...args` | [commandModulePath: string] |
 
 #### Returns
 
@@ -852,7 +770,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:150](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L150)
+[src/util.ts:149](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L149)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -885,7 +803,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:168](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L168)
+[src/util.ts:167](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L167)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -919,7 +837,7 @@ to the appropriate value and `undefined` is returned.
 
 #### Defined in
 
-[src/util.ts:189](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L189)
+[src/util.ts:188](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L188)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -951,7 +869,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:208](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L208)
+[src/util.ts:207](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L207)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -984,7 +902,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:226](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L226)
+[src/util.ts:225](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L225)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -1018,4 +936,4 @@ to the appropriate value and `undefined` is returned.
 
 #### Defined in
 
-[src/util.ts:248](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/util.ts#L248)
+[src/util.ts:247](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/util.ts#L247)

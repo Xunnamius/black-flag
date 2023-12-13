@@ -29,7 +29,7 @@ In most cases, this exit code is indicative of improper use of Black Flag.
 
 #### Defined in
 
-[src/constant.ts:50](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L50)
+[src/constant.ts:50](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L50)
 
 ___
 
@@ -41,7 +41,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 #### Defined in
 
-[src/constant.ts:38](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L38)
+[src/constant.ts:38](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L38)
 
 ___
 
@@ -49,11 +49,11 @@ ___
 
 • **NotImplemented** = ``2``
 
-The exit code used when executing an unimplemented child program.
+The exit code used when executing an unimplemented child command.
 
 #### Defined in
 
-[src/constant.ts:42](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L42)
+[src/constant.ts:42](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L42)
 
 ___
 
@@ -65,4 +65,4 @@ The exit code used when execution succeeds and exits gracefully.
 
 #### Defined in
 
-[src/constant.ts:34](https://github.com/Xunnamius/black-flag/blob/5a95f1c/src/constant.ts#L34)
+[src/constant.ts:34](https://github.com/Xunnamius/black-flag/blob/f567ddd/src/constant.ts#L34)
