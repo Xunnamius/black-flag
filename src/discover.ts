@@ -1,9 +1,12 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { isNativeError } from 'node:util/types';
+import { isNativeError, isPromise } from 'node:util/types';
 
-import { makeProgram, wrapExecutionContext } from 'universe/index';
+import makeVanillaYargs from 'yargs/yargs';
+
+import { defaultUsageText } from 'universe/constant';
+import { wrapExecutionContext } from 'universe/index';
 
 import {
   AssertionFailedError,
@@ -16,10 +19,16 @@ import {
 
 import type {
   AnyArguments,
-  AnyProgram,
   Arguments,
+  EffectorProgram,
   ExecutionContext,
-  ProgramMetadata
+  HelperProgram,
+  Program,
+  ProgramDescriptor,
+  ProgramMetadata,
+  ProgramType,
+  Programs,
+  RouterProgram
 } from 'types/program';
 
 import type {
@@ -29,17 +38,8 @@ import type {
 } from 'types/module';
 
 import type { PackageJson } from 'type-fest';
-import { DEFAULT_USAGE_TEXT } from 'universe/constant';
 
 const hasSpacesRegExp = /\s+/;
-const defaultHelpTextDescription = 'Show help text';
-
-/**
- * An internal mapping between program instances and their shadow clones.
- *
- * * Note that this WeakMap is shared across all Black Flag instances!
- */
-const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
 
 /**
  * Recursively scans the filesystem for valid index files starting at
@@ -49,38 +49,21 @@ const shadowPrograms = new WeakMap<AnyProgram, AnyProgram>();
  * {@link Configuration} objects, which are then used to create and configure
  * corresponding {@link Program} instances. Finally, these generated
  * {@link Program} instances are wired together hierarchically as a well-ordered
- * tree of commands. This allows end users to invoke child programs through
- * their respective parent programs, starting with the root program.
- *
- * For example, suppose we had a root program called `root` with two child
- * commands in the same directory: `create` and `retrieve`. Further suppose the
- * `create` program had its own child commands: `zone` and `account`. Then each
- * command could be invoked from the CLI like so:
- *
- * ```text
- * root
- * root create
- * root create zone
- * root create account
- * root retrieve
- * ```
- *
- * Note how the `create` program is both a child program/command _and_ a parent
- * program simultaneously. This is referred to internally as a "parent-child".
+ * tree of commands. This allows end users to invoke child commands through
+ * their respective parent commands, starting with the root command.
  *
  * What are considered "valid" files are those files with one of the following
  * extensions (listed in precedence order): `.js`, `.mjs`, `.cjs`, `.ts`,
  * `.mts`, `.cts`.
  *
  * @returns An object with a `result` property containing the result of the
- * program that was executed. Due to the tree-like nature of execution, `result`
- * will not be available when the promise returned by `discoverCommands` is
- * resolved but it will be populated with a value when
+ * effector program that was executed. Due to the tree-like nature of execution,
+ * `result` will not be available when the promise returned by
+ * `discoverCommands` is resolved but it will be populated with a value when
  * `PreExecutionContext::execute` is called.
  */
 export async function discoverCommands(
   basePath: string,
-  rootProgram: AnyProgram,
   context: ExecutionContext
 ): Promise<{
   /**
@@ -89,13 +72,13 @@ export async function discoverCommands(
    *
    * This is necessary because, with our depth-first multi-yargs architecture,
    * the parse job done by shallower yargs instances in the chain must not
-   * mutate the result of the deepest call to `Program::parse*` in the execution
-   * chain.
+   * mutate the result of the deepest call to `Program::parseAsync` in the
+   * execution chain.
    */
   result: Arguments | undefined;
 }> {
-  // ! Invariant: first program to be discovered, if any, is the root program.
-  let alreadyLoadedRootProgram = false;
+  // ! Invariant: first command to be discovered, if any, is the root command.
+  let alreadyLoadedRootCommand = false;
 
   const debug = context.debug.extend('discover');
   const debug_load = debug.extend('load');
@@ -144,7 +127,9 @@ export async function discoverCommands(
     );
     debug_load.message('%O', context.commands);
   } else {
-    debug_load.warn('auto-discovery failed to find any loadable configuration!');
+    throw new AssertionFailedError(
+      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath)
+    );
   }
 
   return deepestParseResult;
@@ -152,22 +137,22 @@ export async function discoverCommands(
   async function discover(
     configPath: string,
     lineage: string[] = [],
-    previousParentProgram: AnyProgram | undefined = undefined
+    grandparentInstances: Programs | undefined = undefined
   ): Promise<void> {
-    const isRootProgram = !alreadyLoadedRootProgram;
-    const parentType = isRootProgram ? 'root' : 'parent-child';
+    const isRootCommand = !alreadyLoadedRootCommand;
+    const parentType: ProgramType = isRootCommand ? 'pure parent' : 'parent-child';
 
     const depth = lineage.length;
 
     debug('initial parent lineage: %O', lineage);
-    debug('is root program: %O', isRootProgram);
+    debug('is root (aka "pure parent") command: %O', isRootCommand);
 
-    const parentProgram = isRootProgram ? rootProgram : await makeProgram();
+    assert(grandparentInstances === undefined || !isRootCommand);
+
     const { configuration: parentConfig, metadata: parentMeta } = await loadConfiguration(
       ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
         path.join(configPath, `index.${extension}`)
       ),
-      parentProgram,
       context
     );
 
@@ -185,29 +170,39 @@ export async function discoverCommands(
     const parentConfigFullName = lineage.join(' ');
 
     debug('updated parent lineage: %O', lineage);
-    debug('program full name: %O', parentConfigFullName);
+    debug('command full name: %O', parentConfigFullName);
 
-    await (isRootProgram
-      ? configureRootProgram(parentProgram, parentConfig, parentConfigFullName)
-      : configureParentProgram(
-          parentProgram,
-          parentConfig,
-          parentConfigFullName,
-          previousParentProgram
-        ));
-
-    debug_load(
-      `discovered ${parentType} configuration (depth: %O) for program %O`,
-      depth,
-      parentConfigFullName
+    const parentInstances = await makeCommandInstances(
+      parentConfig,
+      parentConfigFullName,
+      parentType
     );
 
     context.commands.set(parentConfigFullName, {
-      program: parentProgram as AnyProgram,
+      programs: parentInstances,
       metadata: parentMeta
     });
 
-    debug(`added ${parentType} program to ExecutionContext::commands`);
+    debug(`added ${parentType} command mapping to ExecutionContext::commands`);
+
+    linkParentRouterToChildRouter(
+      parentInstances.router,
+      parentConfig,
+      parentConfigFullName,
+      grandparentInstances?.router
+    );
+
+    addChildCommandToParentHelper(
+      parentConfig,
+      parentConfigFullName,
+      grandparentInstances?.helper
+    );
+
+    debug_load(
+      `discovered ${parentType} configuration (depth: %O) for command %O`,
+      depth,
+      parentConfigFullName
+    );
 
     const configDir = await fs.opendir(configPath);
 
@@ -220,18 +215,17 @@ export async function discoverCommands(
       debug('saw potential child configuration file: %O', entryFullPath);
 
       if (entry.isDirectory()) {
-        debug('file is actually a directory, recursing...');
-        await discover(entryFullPath, lineage, parentProgram);
+        debug('file is actually a directory, recursing');
+        await discover(entryFullPath, lineage, parentInstances);
       } else if (isPotentialChildConfigOfCurrentParent) {
-        debug('attempting to load file...');
+        debug('attempting to load file');
 
-        const childProgram = await makeProgram();
         const { configuration: childConfig, metadata: childMeta } =
-          await loadConfiguration(entryFullPath, childProgram, context);
+          await loadConfiguration(entryFullPath, context);
 
         if (!childConfig) {
           debug.error(
-            `failed to load child configuration (depth: %O) due to missing or invalid file %O`,
+            `failed to load pure child configuration (depth: %O) due to missing or invalid file %O`,
             depth,
             entryFullPath
           );
@@ -241,27 +235,39 @@ export async function discoverCommands(
 
         const childConfigFullName = `${parentConfigFullName} ${childConfig.name}`;
 
-        debug('child full name (lineage): %O', childConfigFullName);
+        debug('pure child full name (lineage): %O', childConfigFullName);
 
-        await configureChildProgram(
-          childProgram,
+        const childInstances = await makeCommandInstances(
           childConfig,
           childConfigFullName,
-          parentProgram
-        );
-
-        debug_load(
-          `discovered child configuration (depth: %O) for command %O`,
-          depth + 1,
-          childConfigFullName
+          'pure child'
         );
 
         context.commands.set(childConfigFullName, {
-          program: childProgram as AnyProgram,
+          programs: childInstances,
           metadata: childMeta
         });
 
-        debug('added child program to ExecutionContext::commands');
+        debug(`added pure child command mapping to ExecutionContext::commands`);
+
+        linkParentRouterToChildRouter(
+          childInstances.router,
+          childConfig,
+          childConfigFullName,
+          parentInstances.router
+        );
+
+        addChildCommandToParentHelper(
+          childConfig,
+          childConfigFullName,
+          parentInstances.helper
+        );
+
+        debug_load(
+          `discovered pure child configuration (depth: %O) for command %O`,
+          depth + 1,
+          childConfigFullName
+        );
       } else {
         debug(
           'file was ignored (only non-index sibling JS files are considered at this stage)'
@@ -277,10 +283,9 @@ export async function discoverCommands(
    */
   async function loadConfiguration(
     configPath: string | string[],
-    program: AnyProgram,
     context: ExecutionContext
   ) {
-    const isRootProgram = !alreadyLoadedRootProgram;
+    const isRootProgram = !alreadyLoadedRootCommand;
 
     const debug_ = debug.extend('load-configuration');
     const maybeConfigPaths = [configPath]
@@ -296,27 +301,7 @@ export async function discoverCommands(
     while (maybeConfigPaths.length) {
       try {
         const maybeConfigPath = maybeConfigPaths.shift()!;
-        const meta = {
-          get shadow() {
-            const shadow = shadowPrograms.get(program);
-            assert(shadow !== undefined);
-            return shadow;
-          }
-        } as ProgramMetadata;
-
-        meta.filename = path.basename(maybeConfigPath);
-        meta.filenameWithoutExtension = meta.filename.split('.').slice(0, -1).join('.');
-        meta.filepath = maybeConfigPath;
-        meta.parentDirName = path.basename(path.dirname(maybeConfigPath));
-
-        const isParentProgram = meta.filenameWithoutExtension === 'index';
-
-        meta.type = isRootProgram ? 'root' : isParentProgram ? 'parent-child' : 'child';
-
-        debug_('attempting to load configuration file %O', meta.filename);
-
-        debug_('configuration file absolute path: %O', maybeConfigPath);
-        debug_('configuration file metadata: %O', meta);
+        debug_('attempting to load configuration file: %O', maybeConfigPath);
 
         let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
 
@@ -338,11 +323,29 @@ export async function discoverCommands(
         }
 
         if (maybeImportedConfig) {
-          let rawConfig: Partial<Configuration>;
+          const meta = {} as ProgramMetadata;
 
-          if (!maybeImportedConfig.__esModule) {
+          meta.filename = path.basename(maybeConfigPath);
+          meta.filenameWithoutExtension = meta.filename.split('.').slice(0, -1).join('.');
+          meta.filepath = maybeConfigPath;
+          meta.parentDirName = path.basename(path.dirname(maybeConfigPath));
+
+          const isParentProgram = meta.filenameWithoutExtension === 'index';
+
+          meta.type = isRootProgram
+            ? 'pure parent'
+            : isParentProgram
+              ? 'parent-child'
+              : 'pure child';
+
+          debug_('configuration file metadata: %O', meta);
+
+          // ? ESM <=> CJS interop
+          if ('default' in maybeImportedConfig && !maybeImportedConfig.__esModule) {
             maybeImportedConfig = maybeImportedConfig.default;
           }
+
+          let rawConfig: Partial<Configuration>;
 
           if (typeof maybeImportedConfig === 'function') {
             debug_('configuration returned a function');
@@ -364,7 +367,11 @@ export async function discoverCommands(
             // ? This property is trimmed below
             description: rawConfig.description ?? '',
             handler(...args) {
-              debug_('triggered shadow (real) handler function of %O', finalConfig.name);
+              debug_.extend('handler')(
+                'executing real handler function for %O',
+                finalConfig.name
+              );
+
               return (rawConfig.handler || defaultHandler)(...args);
             },
             name: (
@@ -376,7 +383,7 @@ export async function discoverCommands(
                   : meta.filenameWithoutExtension)
             ).trim(),
             // ? This property is trimmed below
-            usage: rawConfig.usage || DEFAULT_USAGE_TEXT
+            usage: rawConfig.usage || defaultUsageText
           };
 
           finalConfig.usage = capitalize(finalConfig.usage).trim();
@@ -387,7 +394,7 @@ export async function discoverCommands(
               : finalConfig.description;
 
           debug_.message('successfully loaded configuration object: %O', finalConfig);
-          debug_('validating loaded configuration object for correctness...');
+          debug_('validating loaded configuration object for correctness');
 
           for (const name of [finalConfig.name, ...finalConfig.aliases]) {
             if (hasSpacesRegExp.test(name)) {
@@ -400,15 +407,21 @@ export async function discoverCommands(
               throw new AssertionFailedError(ErrorMessage.InvalidCharacters(name, '$0'));
             }
 
+            if (name.includes('$1')) {
+              throw new AssertionFailedError(ErrorMessage.InvalidCharacters(name, '$1'));
+            }
+
             if (
               name.includes('|') ||
               name.includes('<') ||
               name.includes('>') ||
               name.includes('[') ||
-              name.includes(']')
+              name.includes(']') ||
+              name.includes('{') ||
+              name.includes('}')
             ) {
               throw new AssertionFailedError(
-                ErrorMessage.InvalidCharacters(name, '|, <, >, [, or ]')
+                ErrorMessage.InvalidCharacters(name, '|, <, >, [, ], {, or }')
               );
             }
           }
@@ -425,7 +438,7 @@ export async function discoverCommands(
 
           debug_('configuration is valid!');
 
-          alreadyLoadedRootProgram = true;
+          alreadyLoadedRootCommand = true;
 
           return { configuration: finalConfig, metadata: meta };
         }
@@ -443,253 +456,142 @@ export async function discoverCommands(
   }
 
   /**
-   * Configures the root (or _pure_ parent) program. Specifically, this
-   * function:
-   *
-   * - Calls {@link configureParentProgram}
-   * - Enables built-in `--version` support unless `package.json::version` is
-   *   not available
+   * Returns a {@link Programs} object with fully-configured programs.
    */
-  async function configureRootProgram(
-    program: AnyProgram,
-    config: AnyConfiguration,
-    fullName: string
-  ): Promise<void> {
-    await configureParentProgram(program, config, fullName);
-
-    const shadowProgram = shadowPrograms.get(program);
-    assert(shadowProgram !== undefined);
-
-    // ? Only the root program should recognize the --version flag
-
-    program.version(pkg.version || false);
-    shadowProgram.version(pkg.version || false);
-
-    debug('%O was additionally configured as: %O', config.name, 'root (pure parent)');
-  }
-
-  /**
-   * Configures a parent (or parent-child) program. Specifically, this function:
-   *
-   * - Calls {@link configureProgram}
-   * - Calls {@link connectProgramToShadowProgramAndMaybeProxyParentToChild}
-   *
-   * And for parent-child programs (i.e. non-root parents) specifically:
-   *
-   * - Registers a proxy command (including aliases) to `parentProgram`
-   */
-  async function configureParentProgram(
-    program: AnyProgram,
+  async function makeCommandInstances(
     config: AnyConfiguration,
     fullName: string,
-    parentParentProgram?: AnyProgram
-  ): Promise<void> {
-    const shadowProgram = await makeProgram({ isShadowClone: true });
+    type: ProgramType
+  ): Promise<Programs> {
+    const debug_ = debug.extend('make');
 
-    await configureProgram(program, config, fullName);
-    await configureProgram(shadowProgram, config, fullName);
+    if (type === 'pure parent' && config.aliases.length) {
+      debug_.warn(
+        'root command aliases will be ignored during routing and will not appear in help text: %O',
+        config.aliases
+      );
+    }
 
-    connectProgramToShadowProgramAndMaybeProxyParentToChild(
-      program,
-      config,
-      fullName,
-      shadowProgram,
-      parentParentProgram
-    );
+    const programs = {
+      effector: await makePartiallyConfiguredProgram('effector'),
+      helper: await makePartiallyConfiguredProgram('helper'),
+      router: await makePartiallyConfiguredProgram('router')
+    };
 
-    debug(
-      '%O was additionally configured as: %O',
-      config.name,
-      !!parentParentProgram ? 'parent-child' : 'pure parent (root)'
-    );
-  }
+    // * Only the root command should recognize the --version flag.
 
-  /**
-   * Configures a _pure_ child program. Specifically, this function:
-   *
-   * - Calls {@link configureProgram}
-   * - Calls {@link connectProgramToShadowProgramAndMaybeProxyParentToChild}
-   */
-  async function configureChildProgram(
-    program: AnyProgram,
-    config: AnyConfiguration,
-    fullName: string,
-    parentProgram: AnyProgram
-  ): Promise<void> {
-    const shadowProgram = await makeProgram({ isShadowClone: true });
+    if (type === 'pure parent') {
+      programs.helper.version(pkg.version || false);
+      programs.effector.version(pkg.version || false);
+    } else {
+      programs.helper.version(false);
+      programs.effector.version(false);
+    }
 
-    await configureProgram(program, config, fullName);
-    await configureProgram(shadowProgram, config, fullName);
+    // * Enable strict mode by default.
 
-    connectProgramToShadowProgramAndMaybeProxyParentToChild(
-      program,
-      config,
-      fullName,
-      shadowProgram,
-      parentProgram
-    );
+    programs.helper.strict(true);
+    programs.effector.strict(true);
 
-    debug('%O was additionally configured as: %O', config.name, 'pure child');
-  }
+    // * Configure usage help text.
 
-  /**
-   * Configures a program with settings universal to all program types.
-   * Specifically, this function:
-   *
-   * - Disables built-in `--version` support
-   * - Configures usage help text template
-   * - Configures script name
-   * - Disables built-in exit-on-error behavior (we handle errors ourselves)
-   * - Updates the default `--help` description
-   * - Disables built-in help configuration (we use a global version instead)
-   * - Allow output to span entire terminal width
-   * - Disable built-in error/help reporting (we'll handle it ourselves)
-   */
-  async function configureProgram(
-    program: AnyProgram,
-    config: AnyConfiguration,
-    fullName: string
-  ) {
-    // ? Only the root program should recognize the --version flag
-
-    program.version(false);
-
-    // ? Configure usage help text
-
-    const usageText = (config.usage ?? DEFAULT_USAGE_TEXT)
+    const usageText = (config.usage ?? defaultUsageText)
       .replaceAll('$000', config.command)
       .replaceAll('$1', config.description || '')
       .trim();
 
-    program.usage(usageText);
+    programs.helper.usage(usageText);
+    programs.effector.usage(usageText);
 
-    // ? Configure the script's name
+    // * Configure the script's name.
 
-    program.scriptName(fullName);
+    programs.helper.scriptName(fullName);
+    programs.effector.scriptName(fullName);
 
-    // ? Disable exit-on-error functionality
+    // * Allow output text to span the entire screen.
 
-    program.exitProcess(false);
+    programs.helper.wrap(context.state.initialTerminalWidth);
+    programs.effector.wrap(context.state.initialTerminalWidth);
 
-    // ? Allow output text to span the entire screen
+    // * Finish configuring custom error handling
 
-    program.wrap(context.state.initialTerminalWidth);
+    [programs.helper, programs.effector].forEach((program, index) => {
+      program.fail((message: string | null, error) => {
+        const debug_ = debug.extend('fail');
+        debug_.message(
+          'entered %O program failure handler for command %O',
+          index ? 'effector' : 'helper',
+          fullName
+        );
 
-    // ? We'll report on any errors manually
+        debug_('message: %O', message);
+        debug_('error.message (instanceof Error): %O', error?.message);
 
-    let showHelpOnFail = true;
-    program.showHelpOnFail(false);
-    program.showHelpOnFail = (enabled) => {
-      showHelpOnFail = enabled;
-      return program;
-    };
+        if (!error && context.state.showHelpOnFail) {
+          // ? If there's no error object, it's probably a yargs-specific error.
+          debug_('sending help text to stderr (triggered by yargs)');
+          // ! Notice the helper program is ALWAYS the one outputting help text.
+          programs.helper.showHelp('error');
+          // eslint-disable-next-line no-console
+          console.error();
+        }
 
-    // ? Use a slightly different default help text description
-
-    program.help_force('help', defaultHelpTextDescription);
-
-    // ? Make calls to yargs::help(...) apply across the entire hierarchy
-    // * Note that we don't actually rely on yargs's built-in help
-    // * functionality outside of yargs::getHelp(). However, we still
-    // * propagate yargs::help() configuration changes to ensure the
-    // * generated help text is accurate.
-
-    program.help = ((...args: Parameters<typeof program.help>) => {
-      const debug_ = debug.extend('help()');
-      debug_('recursively reconfiguring help options across entire hierarchy');
-
-      context.state.globalHelpOption =
-        typeof args[0] === 'string'
-          ? args[0]
-          : args[0] === true
-            ? context.state.globalHelpOption
-            : undefined;
-
-      // ? Reconfigure help options across all commands in the hierarchy
-      context.commands.forEach(({ program: program_, metadata }) => {
-        program_.help_force(...args);
-        metadata.shadow.help_force(...args);
+        if (isCliError(error)) {
+          debug_('re-throwing error as-is');
+          throw error;
+        } else {
+          debug_('re-throwing error/message wrapped with CliError');
+          throw new CliError(error || message);
+        }
       });
-
-      debug_('new context.state.globalHelpOption: %O', context.state.globalHelpOption);
-
-      return program;
-    }) as unknown as typeof program.help;
-
-    // ? Make yargs stop being so noisy when exceptional stuff happens
-
-    program.fail((message: string | null, error) => {
-      const debug_ = debug.extend('fail');
-      debug_.message('entered failure handler for %O', fullName);
-
-      debug_('message: %O', message);
-      debug_('error.message (instanceof Error): %O', error?.message);
-
-      if (!error && showHelpOnFail) {
-        debug_('showing help text via console.error...');
-        // ? If there's no error object, it's probably a yargs-specific error
-        program.showHelp('error');
-        // eslint-disable-next-line no-console
-        console.error();
-      }
-
-      if (isCliError(error)) {
-        debug_('re-throwing error as-is');
-        throw error;
-      } else {
-        debug_('re-throwing error/message wrapped with CliError');
-        throw new CliError(error || message);
-      }
     });
-  }
 
-  /**
-   * Adds a default command to `program` and a sub-command to `parentProgram`,
-   * if provided. Specifically, this function:
-   *
-   * - Registers a default command + aliases to `program`
-   * - Registering a mapping between `program` <=> `shadowProgram`
-   * - Disables strict mode and strict commands/options on `program`
-   * - Enables strict mode and strict commands/options on `shadowProgram`
-   * - Registers a proxy command + aliases linking `parentProgram` <=> `program`
-   */
-  function connectProgramToShadowProgramAndMaybeProxyParentToChild(
-    program: AnyProgram,
-    config: AnyConfiguration,
-    fullName: string,
-    shadowProgram: AnyProgram,
-    parentProgram?: AnyProgram
-  ) {
-    // ? Register a default command (and shadow-command)
+    // * Link router program to helper program
 
-    let shadowArgv: AnyArguments | undefined = undefined;
-    const debug_ = debug.extend('proxy:deep');
+    programs.router.command(
+      ['$0'],
+      '[routed-1]',
+      {},
+      async function () {
+        debug.extend('router')('control reserved; calling helper::parseAsync');
+        await programs.helper.parseAsync(
+          context.state.rawArgv,
+          wrapExecutionContext(context)
+        );
+      },
+      [],
+      false
+    );
 
-    program.command(
-      [config.command, ...config.aliases],
+    // * Link helper program to effector program
+
+    let firstPassArgv: AnyArguments | undefined = undefined;
+
+    programs.helper.command_deferred(
+      // ! This next line exists to address yargs bugs around help text output.
+      // ! See the docs for details.
+      [type !== 'pure child' ? config.name : '$0'],
       config.description,
       config.builder,
       async (parsedArgv) => {
-        debug('entered non-shadow handler function for %O', config.name);
-        assert(shadowArgv === undefined);
+        const debug_ = debug.extend('effector');
+        debug_('entered wrapper handler function for %O', config.name);
+        assert(firstPassArgv === undefined);
 
         if (context.state.isHandlingHelpOption) {
-          debug(
-            '%O %O Program %O was selected to generate help text on behalf of its shadow (triggered by the %O option)',
-            'non-shadow',
-            !!parentProgram ? 'child/parent-child' : 'pure parent (root)',
-            config.name,
-            context.state.globalHelpOption
+          debug_(
+            'sending help text to stdout (triggered by the %O option)',
+            /* istanbul ignore next */
+            context.state.globalHelpOption?.name || '???'
           );
 
-          // * Notice how the shadow program is NEVER the one to output help text,
-          // * only the non-shadow program does it
-          program.showHelp('log');
+          // ! Notice the helper program is ALWAYS the one outputting help text.
+          programs.helper.showHelp('log');
           throw new GracefulEarlyExitError();
         } else {
-          shadowArgv = parsedArgv;
+          firstPassArgv = parsedArgv;
 
-          const localArgv = await shadowProgram.parseAsync(
+          const localArgv = await programs.effector.parseAsync(
             context.state.rawArgv,
             wrapExecutionContext(context)
           );
@@ -699,104 +601,360 @@ export async function discoverCommands(
 
           debug_('is deepest parse result: %O', isDeepestParseResult);
           debug_(
-            `%O Program::parseAsync result${
+            `Program::parseAsync result${
               !isDeepestParseResult ? ' (discarded)' : ''
             }: %O`,
-            'SHADOW',
             localArgv
           );
 
-          debug('exited non-shadow handler function for %O', config.name);
+          debug_('exited wrapper handler function for %O', config.name);
         }
       },
       [],
       config.deprecated
     );
 
-    shadowProgram.command(
+    // * Configure effector to execute the real command handler via a "default
+    // * command" (yargs parlance) wrapper.
+
+    programs.effector.command(
       [config.command, ...config.aliases],
       config.description,
-      (yargs_, helpOrVersionSet) => {
-        debug('entered shadow builder function for %O', config.name);
-        assert(shadowArgv !== undefined);
+      (yargsInstance, helpOrVersionSet) => {
+        const debug_ = debug.extend('helper');
+        debug_('entered augmented (effector) builder function for %O', config.name);
+        assert(firstPassArgv !== undefined);
 
         try {
-          const yargs =
+          const returnedYargsInstance =
             typeof config.builder === 'function'
-              ? config.builder(yargs_, helpOrVersionSet, shadowArgv)
-              : yargs_.options(config.builder);
+              ? config.builder(yargsInstance, helpOrVersionSet, firstPassArgv)
+              : yargsInstance.options(config.builder);
 
-          debug('exited shadow builder function for %O', config.name);
-          return yargs;
+          debug_(
+            'exited augmented (effector) builder function for %O (no errors)',
+            config.name
+          );
+
+          return returnedYargsInstance;
+        } catch {
+          debug_(
+            'exited augmented (effector) builder function for %O (with error)',
+            config.name
+          );
         } finally {
-          shadowArgv = undefined;
+          firstPassArgv = undefined;
         }
+
+        return yargsInstance;
       },
       config.handler,
       [],
       config.deprecated
     );
 
-    shadowPrograms.set(program, shadowProgram);
+    // * Finished!
 
-    // ? Disable strict, strictCommands, and strictOptions modes for
-    // ? non-shadow; enable for actual
-
-    program.strict_force(false);
-    shadowProgram.strict_force(true);
-
-    // ? For child programs, register the same command with the parent, but use
-    // ? a proxy handler
-
-    parentProgram?.command_deferred(
-      [config.command.replace('$0', config.name), ...config.aliases],
-      config.description,
-      config.builder,
-      proxyHandler(program, config, fullName),
-      [],
-      config.deprecated
+    debug_(
+      'created and fully configured the effector, helper, and router programs for %O command %O',
+      type,
+      fullName
     );
+
+    return programs;
   }
 
   /**
-   * A proxy handler used to bridge nested commands between parent and child
-   * yargs instances, similar in intent to a reverse-proxy in networking.
+   * Returns a partially-configured {@link EffectorProgram} instance.
    */
-  function proxyHandler(
-    childProgram: AnyProgram,
-    childConfig: AnyConfiguration,
-    fullName: string
-  ) {
-    return async function (_parsed: Arguments) {
-      const debug_ = debug.extend('proxy');
-      const givenName = context.state.rawArgv.shift();
-      const acceptableNames = [childConfig.name, ...childConfig.aliases];
+  async function makePartiallyConfiguredProgram(
+    descriptor: 'effector'
+  ): Promise<EffectorProgram>;
+  /**
+   * Returns a partially-configured {@link HelperProgram} instance.
+   */
+  async function makePartiallyConfiguredProgram(
+    descriptor: 'helper'
+  ): Promise<HelperProgram>;
+  /**
+   * Returns a partially-configured {@link RouterProgram} instance.
+   */
+  async function makePartiallyConfiguredProgram(
+    descriptor: 'router'
+  ): Promise<RouterProgram>;
+  async function makePartiallyConfiguredProgram(
+    descriptor: ProgramDescriptor
+  ): Promise<unknown> {
+    const debug_ = debug.extend('make');
+    const deferredCommandArgs: Parameters<Program['command']>[] = [];
 
-      if (debug_.enabled) {
-        const splitName = fullName.split(' ');
-        debug_.message(
-          'entered proxy handler function bridging %O ==> %O',
-          splitName.slice(0, -1).join(' '),
-          splitName.at(-1)
-        );
-      }
+    debug_('creating new proto-%O program (awaiting configuration)', descriptor);
 
-      debug_('ordering invariant: %O must be one of: %O', givenName, acceptableNames);
+    const alphaSort = (await import('alpha-sort')).default;
+    const vanillaYargs = makeVanillaYargs();
 
-      const rawArgvSatisfiesArgumentOrderingInvariant =
-        givenName && acceptableNames.includes(givenName);
+    // * Disable built-in help functionality; we only want a --help option, not
+    // * a command, so we disable the yargs::help function at Proxy level too.
 
-      if (!rawArgvSatisfiesArgumentOrderingInvariant) {
-        debug_.error('ordering invariant violated!');
+    vanillaYargs.help(false);
 
-        throw new AssertionFailedError(ErrorMessage.AssertionFailureOrderingInvariant());
-      }
+    // * For router programs, disable just about everything. For other program
+    // * types, configure Black Flag's custom default help option.
 
-      debug_('invariant satisfied');
-      debug_('calling ::parseAsync on child program');
+    if (descriptor === 'router') {
+      vanillaYargs
+        .version(false)
+        .scriptName('[router]')
+        .usage('[router]')
+        .strict(false)
+        .exitProcess(false);
+    } else if (context.state.globalHelpOption) {
+      const { name, description } = context.state.globalHelpOption;
+      assert(name.length);
+      vanillaYargs.option(name, { description });
+    }
 
-      await childProgram.parseAsync(context.state.rawArgv, wrapExecutionContext(context));
+    // * Disable exit-on-error functionality.
+
+    vanillaYargs.exitProcess(false);
+
+    // * Begin configuring custom error handling
+
+    vanillaYargs.showHelpOnFail(false);
+    vanillaYargs.showHelpOnFail = (enabled) => {
+      context.state.showHelpOnFail = enabled;
+      return vanillaYargs;
     };
+
+    // * We defer the rest of the setup until we enter a scope with more
+    // * information available.
+
+    return new Proxy(vanillaYargs, {
+      get(target, property: keyof Program, proxy: Program) {
+        if (property === ('help' as keyof Program)) {
+          throw new AssertionFailedError(
+            ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+          );
+        }
+
+        if (property === 'parse') {
+          debug_.warn(
+            'bad function call: you should be using "parseAsync" instead of "parse"'
+          );
+        }
+
+        if (property === 'parseSync') {
+          throw new AssertionFailedError(
+            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+          );
+        }
+
+        if (property === 'argv') {
+          debug_.warn(
+            `discarded attempted access to disabled "argv" magic property on %O program`,
+            descriptor
+          );
+
+          // * Although it's tempting to do more, issuing a debug warning is
+          // * all that can be done here. Move along.
+
+          // ? Why go through all this trouble? Jest likes to make "deep
+          // ? cyclical copies" of objects from time to time, especially WHEN
+          // ? ERRORS ARE THROWN. These deep copies necessarily require
+          // ? recursively accessing every property of the object... including
+          // ? magic properties like ::argv, which causes ::parse to be called
+          // ? multiple times AFTER AN ERROR ALREADY OCCURRED, which leads to
+          // ? undefined behavior and heisenbugs. Yuck.
+          return void 'disabled by Black Flag (use parseAsync instead)';
+        }
+
+        if (descriptor === 'router') {
+          if (!['parse', 'parseAsync', 'command'].includes(property)) {
+            throw new AssertionFailedError(
+              ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+            );
+          }
+        } else {
+          // ? What are command_deferred and command_finalize_deferred? Well,
+          // ? when generating help text, yargs will enumerate commands and
+          // ? options in the order that they were added to the instance.
+          // ? Unfortunately, since we're relying on the filesystem to
+          // ? asynchronously reveal its contents to us, commands will be added
+          // ? in unpredictable OS-specific orders. We don't like that, we want
+          // ? our commands to always appear in the same order no matter what OS
+          // ? the CLI is invoked on. So, we replace ::command with
+          // ? ::command_deferred, which adds its parameters to an internal
+          // ? list, and ::command_finalize_deferred, which sorts said list and
+          // ? enumerates the result, calling the real ::command as it goes. As
+          // ? for preserving the sort order of options within the builder
+          // ? function, that's an exercise left to the end developer :)
+
+          if (property === 'command_deferred') {
+            return function (...args: Parameters<Program['command']>) {
+              debug_('::command call was deferred for %O program', descriptor);
+              deferredCommandArgs.push(args);
+              return proxy;
+            };
+          }
+
+          if (property === 'command_finalize_deferred') {
+            return function () {
+              debug_(
+                'began alpha-sorting deferred command calls for %O program',
+                descriptor
+              );
+
+              // ? Sort in alphabetical order with naturally sorted numbers
+              const sort = alphaSort({ natural: true });
+
+              deferredCommandArgs.sort(([firstCommands], [secondCommands]) => {
+                const firstCommand = [firstCommands].flat()[0];
+                const secondCommand = [secondCommands].flat()[0];
+
+                // ? If they do, then we accidentally called this on a child
+                // ? instead of a parent...
+                assert(!firstCommand.startsWith('$0'));
+                assert(!secondCommand.startsWith('$0'));
+
+                return sort(firstCommand, secondCommand);
+              });
+
+              debug_(
+                'calling ::command with %O deferred argument tuples for %O program',
+                deferredCommandArgs.length,
+                descriptor
+              );
+
+              for (const args of deferredCommandArgs) {
+                (target as unknown as Program).command(...args);
+              }
+
+              return proxy;
+            };
+          }
+        }
+
+        const value: unknown = target[property as keyof typeof target];
+
+        if (value instanceof Function) {
+          return function (...args: unknown[]) {
+            // ? This is "this-recovering" code.
+            const returnValue = value.apply(target, args);
+            // ? Whenever we'd return a yargs instance, return the wrapper
+            // ? program instead.
+            return isPromise(returnValue)
+              ? returnValue.then((realReturnValue) => maybeReturnProxy(realReturnValue))
+              : maybeReturnProxy(returnValue);
+          };
+        }
+
+        return value;
+
+        function maybeReturnProxy(returnValue: unknown) {
+          return returnValue === target ? proxy : returnValue;
+        }
+      }
+    });
+  }
+
+  /**
+   * Links `parentRouter` to `childRouter` such that calling
+   * `parentRouter::parseAsync` with the proper argument will result in
+   * execution control being handed off to `childRouter`.
+   *
+   * If `parentRouter` is undefined, this function is a no-op.
+   */
+  function linkParentRouterToChildRouter(
+    childRouter: RouterProgram,
+    childConfig: AnyConfiguration,
+    childFullName: string,
+    parentRouter?: RouterProgram
+  ) {
+    parentRouter?.command(
+      [childConfig.name, ...childConfig.aliases],
+      '[routed-2]',
+      {},
+      async function () {
+        const debug_ = debug.extend('router');
+        const givenName = context.state.rawArgv.shift();
+        const acceptableNames = [childConfig.name, ...childConfig.aliases];
+
+        if (debug_.enabled) {
+          const splitName = childFullName.split(' ');
+          debug_.message(
+            'entered router handler function bridging %O ==> %O',
+            splitName.slice(0, -1).join(' '),
+            splitName.at(-1)
+          );
+        }
+
+        debug_('ordering invariant: %O must be one of: %O', givenName, acceptableNames);
+
+        const rawArgvSatisfiesArgumentOrderingInvariant =
+          givenName && acceptableNames.includes(givenName);
+
+        if (!rawArgvSatisfiesArgumentOrderingInvariant) {
+          debug_.error('ordering invariant violated!');
+
+          throw new AssertionFailedError(
+            ErrorMessage.AssertionFailureOrderingInvariant()
+          );
+        }
+
+        debug_('invariant satisfied');
+        debug_("relinquishing control to child command's router program");
+
+        await childRouter.parseAsync(
+          context.state.rawArgv,
+          wrapExecutionContext(context)
+        );
+      },
+      [],
+      childConfig.deprecated
+    );
+
+    if (parentRouter) {
+      debug(
+        "linked child command %O's router program to its parent command's router program",
+        childFullName
+      );
+    }
+  }
+
+  /**
+   * Adds an entry to a parent command's helper program (via `command_deferred`)
+   * for purely cosmetic (help text output) purposes. Attempting to actually
+   * execute the handler for this entry, which should never happen with valid
+   * use of Black Flag, will throw.
+   *
+   * If `parentHelper` is undefined, this function is a no-op.
+   */
+  function addChildCommandToParentHelper(
+    childConfig: AnyConfiguration,
+    childFullName: string,
+    parentHelper?: HelperProgram
+  ) {
+    parentHelper?.command_deferred(
+      // ! We use config.name instead of config.command on purpose here to
+      // ! address yargs bugs around help text output. See the docs for details.
+      [childConfig.name, ...childConfig.aliases],
+      childConfig.description,
+      childConfig.builder,
+      async (_parsedArgv) => {
+        throw new AssertionFailedError(
+          ErrorMessage.AssertionFailureReachedTheUnreachable()
+        );
+      },
+      [],
+      childConfig.deprecated
+    );
+
+    if (parentHelper) {
+      debug(
+        "added an entry for child command %O to its parent command's helper program",
+        childFullName
+      );
+    }
   }
 }
 

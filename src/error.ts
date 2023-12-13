@@ -47,8 +47,8 @@ export function isGracefulEarlyExitError(
  */
 export type CliErrorOptions = {
   /**
-   * The exit code that will be returned when the program exits, given nothing
-   * else goes wrong in the interim.
+   * The exit code that will be returned when the application exits, given
+   * nothing else goes wrong in the interim.
    *
    * @default FrameworkExitCode.DefaultError
    */
@@ -120,7 +120,8 @@ makeNamedError(CommandNotImplementedError, 'CommandNotImplementedError');
 
 /**
  * Represents an exceptional event that should result in the immediate
- * termination of the program but with an exit code indicating success (`0`).
+ * termination of the application but with an exit code indicating success
+ * (`0`).
  */
 // TODO: replace with named-app-error (or whatever it's called now) class
 export class GracefulEarlyExitError extends CliError {
@@ -128,7 +129,8 @@ export class GracefulEarlyExitError extends CliError {
   [$type] = ['GracefulEarlyExitError', 'CliError'];
   /**
    * Represents an exceptional event that should result in the immediate
-   * termination of the program but with an exit code indicating success (`0`).
+   * termination of the application but with an exit code indicating success
+   * (`0`).
    */
   constructor() {
     super(ErrorMessage.GracefulEarlyExit(), { suggestedExitCode: FrameworkExitCode.Ok });
@@ -173,7 +175,7 @@ export const ErrorMessage = {
     return 'flags, switches, and other such parameters must appear after the final command name in your arguments list, not before';
   },
   AssertionFailureNamingInvariant(name: string) {
-    return `the ${name}::command must start with either "$0" or "$0 "`;
+    return `the ${name}'s command export must start with either "$0" or "$0 "`;
   },
   InvalidConfigureArgumentsReturnType() {
     return 'configureArguments must return typeof process.argv';
@@ -190,8 +192,11 @@ export const ErrorMessage = {
   InvalidCharacters(str: string, violation: string) {
     return `string "${str}" contains one or more illegal characters: ${violation}`;
   },
+  AssertionFailureNoConfigurationLoaded(path: string) {
+    return `auto-discovery failed to find any valid configuration files or directories at path: ${path}`;
+  },
   AssertionFailureInvocationNotAllowed(name: string) {
-    return `method "${name}" can only be called on this program's shadow instance. See documentation for details`;
+    return `invocation of method "${name}" is not allowed here. See documentation for details`;
   },
   AssertionFailureCannotExecuteMultipleTimes() {
     return 'yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
@@ -199,7 +204,10 @@ export const ErrorMessage = {
   AssertionFailureBadParameterCombination() {
     return 'cannot provide both "configurationHooks" and "preExecutionContext" properties';
   },
-  UseParseAsyncInstead() {
+  AssertionFailureUseParseAsyncInstead() {
     return '"parseSync" is not supported. Use "parseAsync" instead';
+  },
+  AssertionFailureReachedTheUnreachable() {
+    return 'an unreachable block of code was somehow reached';
   }
 };

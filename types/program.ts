@@ -6,7 +6,7 @@ import type { ConfigureArguments, ConfigureExecutionEpilogue } from 'types/confi
 import type { Configuration } from 'types/module';
 import type { $executionContext } from 'universe/constant';
 
-// ? We use it in some of the auto-generated documentation
+// ? Used by intellisense and in auto-generated documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { runProgram } from 'universe/util';
 
@@ -38,7 +38,7 @@ export type AnyProgram = Program<Record<string, unknown>>;
 export type Program<CustomCliArguments extends Record<string, unknown> = EmptyObject> =
   Omit<
     _Program<FrameworkArguments & CustomCliArguments>,
-    'command' | 'showHelpOnFail' | 'version'
+    'command' | 'showHelpOnFail' | 'version' | 'help'
   > & {
     // ? Adds custom overload signatures that fixes the lack of implementation
     // ? signature exposure in the Argv type exposed by yargs
@@ -48,7 +48,7 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
      */
     command: _Program<CustomCliArguments>['command'] & {
       (
-        command: string | string[],
+        command: string[],
         description: Configuration<CustomCliArguments>['description'],
         builder: Configuration<CustomCliArguments>['builder'],
         handler: Configuration<CustomCliArguments>['handler'],
@@ -60,7 +60,8 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
 
     /**
      * Like `yargs::showHelpOnFail`, but with no second `message` parameter. If
-     * you want to output some specific error message, use a configuration hook.
+     * you want to output some specific error message, use a configuration hook
+     * or `yargs::epilogue`.
      *
      * @see `yargs::showHelpOnFail`
      */
@@ -75,7 +76,7 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
 
     /**
      * Identical to `yargs::command` except its execution is enqueued and
-     * deferred until {@link Program[command_finalize_deferred]} is called.
+     * deferred until {@link Program.command_finalize_deferred} is called.
      *
      * @see `yargs::command`
      * @internal
@@ -83,40 +84,72 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
     command_deferred: Program<CustomCliArguments>['command'];
 
     /**
-     * @see {@link Program[command_deferred]}
+     * @see {@link Program.command_deferred}
      * @internal
      */
     command_finalize_deferred: () => void;
-
-    /**
-     * Invokes `yargs::strict(enabled)`, `yargs::strictCommands(enabled)`, and
-     * `yargs::strictOptions(enabled)` on behalf of the caller.
-     *
-     * This function allows you to bypass
-     * `DISALLOWED_NON_SHADOW_PROGRAM_METHODS` and disable strictness on
-     * non-shadow yargs instances. Note that **doing so will effectively break
-     * Black Flag and result in undefined behavior**.
-     *
-     * @default true
-     * @internal
-     */
-    strict_force: (enabled: boolean) => void;
-
-    /**
-     * Invokes `yargs::help` on behalf of the caller.
-     *
-     * This function allows you to bypass the global version of yargs::help that
-     * Black Flag exposes by default.
-     *
-     * @default true
-     * @internal
-     */
-    help_force: Program<CustomCliArguments>['help'];
   };
 
 /**
- * Represents the meta information about a discovered {@link Program} instance
- * and its corresponding {@link Configuration} object/file.
+ * Represents an "effector" {@link Program} instance.
+ */
+export type EffectorProgram<
+  CustomCliArguments extends Record<string, unknown> = EmptyObject
+> = Omit<
+  Program<CustomCliArguments>,
+  'command_deferred' | 'command_finalize_deferred' | 'parse' | 'parseSync' | 'argv'
+>;
+
+/**
+ * Represents an "helper" {@link Program} instance.
+ */
+export type HelperProgram<
+  CustomCliArguments extends Record<string, unknown> = EmptyObject
+> = Omit<
+  Program<CustomCliArguments>,
+  'command' | 'positional' | 'parse' | 'parseSync' | 'argv'
+>;
+
+/**
+ * Represents an "router" {@link Program} instance.
+ */
+export type RouterProgram<
+  CustomCliArguments extends Record<string, unknown> = EmptyObject
+> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command' | 'parsed'>;
+
+/**
+ * Represents valid {@link Configuration} module types that can be loaded.
+ */
+export type ProgramType = 'pure parent' | 'parent-child' | 'pure child';
+
+/**
+ * Represents the three program types that comprise any Black Flag command.
+ */
+export type ProgramDescriptor = 'effector' | 'helper' | 'router';
+
+/**
+ * Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
+ */
+export type DescriptorToProgram<
+  Descriptor extends ProgramDescriptor,
+  CustomCliArguments extends Record<string, unknown> = EmptyObject
+> = 'effector' extends Descriptor
+  ? EffectorProgram<CustomCliArguments>
+  : 'helper' extends Descriptor
+    ? HelperProgram<CustomCliArguments>
+    : RouterProgram<CustomCliArguments>;
+
+/**
+ * Represents the program types that represent every Black Flag command as
+ * aptly-named values in an object.
+ */
+export type Programs<CustomCliArguments extends Record<string, unknown> = EmptyObject> = {
+  [Descriptor in ProgramDescriptor]: DescriptorToProgram<Descriptor, CustomCliArguments>;
+};
+
+/**
+ * Represents the meta information about a discovered command and its
+ * corresponding {@link Configuration} object/file.
  */
 export type ProgramMetadata = {
   /**
@@ -130,13 +163,12 @@ export type ProgramMetadata = {
    * - **child**: implements `ChildConfiguration`
    *
    * Note that "root" `type` configurations are unique in that there will only
-   * ever be one `RootConfiguration` instance, and it **MUST** be the first
-   * command module auto-discovered and loaded (invariant).
+   * ever be one `RootConfiguration`, and it **MUST** be the first command
+   * module auto-discovered and loaded (invariant).
    */
-  type: 'root' | 'parent-child' | 'child';
+  type: ProgramType;
   /**
-   * Absolute filesystem path to the configuration file used to configure the
-   * program.
+   * Absolute filesystem path to the loaded configuration file.
    */
   filepath: string;
   /**
@@ -151,15 +183,6 @@ export type ProgramMetadata = {
    * The basename of the direct parent directory containing `filepath`.
    */
   parentDirName: string;
-  /**
-   * Each individual program is represented in memory as two distinct
-   * {@link Program} instances: the "actual" command instance and a clone of
-   * this instance, i.e. its "shadow" available here.
-   *
-   * Check [the docs](https://github.com/Xunnamius/black-flag#readme) for more
-   * details.
-   */
-  shadow: AnyProgram;
 };
 
 /**
@@ -178,7 +201,8 @@ export type FrameworkArguments = {
 /**
  * This function accepts an optional `rawArgv` array that defaults to
  * `yargs::hideBin(process.argv)` and returns an arguments object representing
- * the parsed CLI input for the given root {@link Program}.
+ * the parsed and validated arguments object returned by the root router
+ * {@link Program} instance.
  *
  * **This function throws whenever an exception occurs** (including exceptions
  * representing a graceful exit), making it not ideal as an entry point for a
@@ -200,9 +224,9 @@ export type PreExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
 > = CustomContext & {
   /**
-   * The root yargs {@link Program}.
+   * The root effector, helper, and router {@link Program} instances.
    */
-  program: Program;
+  root: Programs;
   /**
    * Execute `program`, parsing any available CLI arguments and running the
    * appropriate handler, and return the resulting final parsed arguments
@@ -222,14 +246,13 @@ export type PreExecutionContext<
 export type ExecutionContext = {
   /**
    * A Map consisting of auto-discovered {@link Program} instances and their
-   * associated {@link ProgramMetadata} (including shadow {@link Program}
-   * instances) as values with their respective _full names_ as keys.
+   * associated {@link ProgramMetadata} as singular object values with their
+   * respective _full names_ as keys.
    *
    * Note that key-value pairs will always be iterated in insertion order,
-   * implying the first pair in the Map, if there are any pairs, will always be
-   * the root program.
+   * implying the first pair in the Map will always be the root command.
    */
-  commands: Map<string, { program: AnyProgram; metadata: ProgramMetadata }>;
+  commands: Map<string, { programs: Programs; metadata: ProgramMetadata }>;
   /**
    * The {@link ExtendedDebugger} for the current runtime level.
    */
@@ -246,10 +269,6 @@ export type ExecutionContext = {
      * non-positional arguments must appear _after_ the last command name in any
      * arguments list parsed by this program.
      *
-     * For example:
-     *  - Good (satisfies invariant): `rootcmd subcmd subsubcmd --help`
-     *  - Bad (violation of invariant): `rootcmd --help subcmd subsubcmd`
-     *
      * Since it will be actively manipulated by each command in the arguments
      * list, **do not rely on `rawArgv` for anything other than checking
      * invariant satisfaction.**
@@ -262,11 +281,12 @@ export type ExecutionContext = {
     initialTerminalWidth: number;
     /**
      * If `true`, Black Flag is currently in the process of handling a graceful
-     * exit. Checking the value of this flag is useful in configuration hooks
-     * like `configureExecutionEpilogue`, which are still executed when a
-     * `GracefulEarlyExitError` is thrown.
+     * exit.
      *
-     * In almost every other case, this will always be `false`.
+     * Checking the value of this flag is useful in configuration hooks like
+     * `configureExecutionEpilogue`, which are still executed when a
+     * `GracefulEarlyExitError` is thrown. In almost every other context, this
+     * will _always_ be `false`.
      *
      * @default false
      */
@@ -274,26 +294,45 @@ export type ExecutionContext = {
     /**
      * If `isHandlingHelpOption` is `true`, Black Flag is currently in the
      * process of getting yargs to generate help text for a child command.
+     *
      * Checking the value of this property is useful when you want to know if
      * `--help` (or whatever your equivalent option is) was passed to the root
-     * command.
+     * command. The value of `isHandlingHelpOption` is also used to determine
+     * the value of `helpOrVersionSet` in commands' `builder` functions.
      *
      * We have to track this separately from yargs since we're stacking multiple
      * yargs instances and they all want to be the one that handles generating
      * help text.
      *
+     * Note: setting `isHandlingHelpOption` to `true` manually will cause Black
+     * Flag to output help text as if the user had specified `--help` (or an
+     * equivalent) as one of their arguments.
+     *
      * @default false
      */
     isHandlingHelpOption: boolean;
     /**
-     * `globalHelpOption` caches the latest first argument passed to
-     * `yargs::help` method of any {@link Program}. This property is used as
-     * part of a strategy to mimic yargs's short-circuiting when the `--help`
-     * parameter is given and should not be tampered with or relied upon.
+     * `globalHelpOption` replaces the now-defunct `yargs::help` method from
+     * vanilla yargs. Set this to the value you want using the
+     * `configureExecutionContext` configuration hook instead of calling said
+     * defunct function.
      *
-     * @default "help"
+     * Note: `name`, if provided, must be >= 1 character in length.
+     *
+     * Note: this property should not be accessed or mutated by end-developers
+     * outside of the `configureExecutionContext` configuration hook. Doing so
+     * will result in undefined behavior.
+     *
+     * @default { name: "help", description: defaultHelpTextDescription }
      */
-    globalHelpOption: string | undefined;
+    globalHelpOption: { name: string; description: string } | undefined;
+    /**
+     * If `true`, Black Flag will dump help text to stderr when an error occurs.
+     * This is also set when `yargs::showHelpOnFail` is called.
+     *
+     * @default true
+     */
+    showHelpOnFail: boolean;
 
     [key: string]: unknown;
   };

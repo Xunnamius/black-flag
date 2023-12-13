@@ -1,5 +1,3 @@
-import type { Argv } from 'yargs';
-
 /**
  * A symbol allowing access to the `ExecutionContext` object "hidden" within
  * each `Arguments` instance.
@@ -7,22 +5,24 @@ import type { Argv } from 'yargs';
 export const $executionContext = Symbol('execution-context');
 
 /**
- * Hard-coded default program `usage` text provided to yargs instances via
+ * Hard-coded default command `usage` text provided to yargs instances via
  * `.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
  * with a command's usage DSL (`command` export), name (`name` export), and
  * description (`description` export) respectively.
  */
-export const DEFAULT_USAGE_TEXT = 'Usage: $000\n\n$1';
+export const defaultUsageText = 'Usage: $000\n\n$1';
 
 /**
- * These are `Program` instance properties that Black Flag will suppress upon
- * invocation/access if and only if said program is not a shadow clone.
+ * Hard-coded default command `description` text provided used in string
+ * interpolation and elsewhere.
  */
-export const DISALLOWED_NON_SHADOW_PROGRAM_METHODS: readonly (keyof Argv)[] = [
-  'strict',
-  'strictCommands',
-  'strictOptions'
-];
+export const defaultHelpTextDescription = 'Show help text';
+
+/**
+ * Hard-coded default option name for dumping help text to stdout. For example:
+ * `--${defaultHelpOptionName}`.
+ */
+export const defaultHelpOptionName = 'help';
 
 /**
  * Well-known exit codes shared across CLI implementations.
@@ -37,7 +37,7 @@ export enum FrameworkExitCode {
    */
   DefaultError = 1,
   /**
-   * The exit code used when executing an unimplemented child program.
+   * The exit code used when executing an unimplemented child command.
    */
   NotImplemented = 2,
   /**

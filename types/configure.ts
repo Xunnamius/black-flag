@@ -1,7 +1,12 @@
 import type { Promisable } from 'type-fest';
 
-import type { Arguments, ExecutionContext, Program } from 'types/program';
+// ? Used by intellisense and in auto-generated documentation
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { Arguments, ExecutionContext, Program, Programs } from 'types/program';
 import type { $executionContext } from 'universe/constant';
+
+// ! Note that comments are repeated here: once for the exported type and once
+// ! for the exported amalgum type.
 
 /**
  * This function is called once towards the beginning of the execution of
@@ -27,7 +32,7 @@ export type ConfigureExecutionContext<
  */
 export type ConfigureExecutionPrologue<
   CustomContext extends ExecutionContext = ExecutionContext
-> = (program: Program, context: CustomContext) => Promisable<void>;
+> = (root: Programs, context: CustomContext) => Promisable<void>;
 
 /**
  * This function is called once towards the beginning of the execution of

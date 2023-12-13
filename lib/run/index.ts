@@ -27,8 +27,8 @@ export type RunReturnType = ExecaReturnValue &
  * Runs (executes) `file` with the given arguments (`args`) with respect to the
  * given `options`.
  *
- * Note that, by default, this function does NOT reject on a
- * non-zero exit code. Set `reject: true` to override this.
+ * Note that, by default, this function does NOT reject on a non-zero exit code.
+ * Set `reject: true` to override this.
  */
 export async function run(file: string, args?: string[], options?: RunOptions) {
   debug(`executing command: ${file}${args ? ` ${args.join(' ')}` : ''}`);
@@ -48,8 +48,8 @@ export async function run(file: string, args?: string[], options?: RunOptions) {
  * arguments (`args`) with respect to the given `options`. These parameters can
  * be overridden during individual invocations.
  *
- * Note that, by default, this function does NOT reject on a
- * non-zero exit code. Set `reject: true` to override this.
+ * Note that, by default, this function does NOT reject on a non-zero exit code.
+ * Set `reject: true` to override this.
  */
 export function runnerFactory(file: string, args?: string[], options?: RunOptions) {
   const factoryArgs = args;

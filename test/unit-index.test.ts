@@ -13,8 +13,6 @@ import * as bf_util from 'universe/exports/util';
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
-import { makeExpect } from 'multiverse/expect-with-context';
-import { exitCode } from 'process';
 import type { Arguments, ExecutionContext } from 'types/program';
 
 describe('::configureProgram', () => {
@@ -155,7 +153,7 @@ describe('::configureProgram', () => {
     });
   });
 
-  it('returns a non-strict "safe mode" instance if command auto-discovery is disabled or no commands were discovered', async () => {
+  it('returns a non-strict semi-broken instance if command auto-discovery is disabled or no commands were discovered', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
@@ -167,7 +165,7 @@ describe('::configureProgram', () => {
       expect(errorSpy.mock.calls).toHaveLength(1);
       expect(exitSpy.mock.calls).toStrictEqual([[0]]);
 
-      // ? "safe mode" instance is non-strict, so badness works by default
+      // ? semi-broken instance is non-strict, so badness works by default
       await expect(
         (await bf.configureProgram()).execute(['--bad'])
       ).resolves.toBeDefined();
@@ -185,7 +183,7 @@ describe('::configureProgram', () => {
       expect(logSpy.mock.calls).toHaveLength(1);
       expect(errorSpy.mock.calls).toHaveLength(1);
 
-      // ? "safe mode" instance is non-strict, so badness works by default
+      // ? semi-broken instance is non-strict, so badness works by default
       await expect(
         (await bf.configureProgram(getFixturePath('empty-dir'))).execute(['--bad'])
       ).resolves.toBeDefined();
@@ -284,7 +282,7 @@ describe('::configureProgram', () => {
   });
 
   // * Note that tests using getFixturePath and others that avoid black flag's
-  // * "safe mode" will not throw/reject when --help (a valid arg) is passed
+  // * semi-broken will not throw/reject when --help (a valid arg) is passed
   // * since normal black flag instances are properly configured.
   describe('::execute', () => {
     it('calls hideBin on process.argv only if no argv argument provided', async () => {
@@ -713,7 +711,8 @@ describe('::configureProgram', () => {
       });
     });
 
-    it.only('supports "aliases" export at parent, child, and root', async () => {
+    // TODO: extra attention: left off here before latest round of changes
+    it('supports "aliases" export at parent, child, and root', async () => {
       expect.hasAssertions();
 
       const run = await bf_util.makeRunner({
@@ -722,6 +721,8 @@ describe('::configureProgram', () => {
 
       await withMocks(async () => {
         const argv1 = await run('--help');
+        const argv2 = await run('n --help');
+        const argv3 = await run('n f --help');
       });
     });
 
@@ -793,7 +794,7 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
     });
 
-    it('ignores empty command configuration root directory (safe mode)', async () => {
+    it('ignores empty command configuration root directory (returns semi-broken instance)', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ logSpy, errorSpy, exitSpy, getExitCode }) => {
@@ -801,9 +802,10 @@ describe('::configureProgram', () => {
 
         expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Options:'));
         expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
+        expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
 
-        // ? Safe mode yargs instance is not configured properly, so we can test
-        // ? for the consequences of passing "--help" to it:
+        // ? The semi-broken yargs instance is not configured properly, so we
+        // ? can test for the consequences of passing "--help" to it:
 
         expect(getExitCode()).toBe(1);
         expect(exitSpy.mock.calls).toStrictEqual([[0]]);
@@ -986,7 +988,8 @@ describe('::configureProgram', () => {
       });
     });
 
-    it.only('supports --help with proper description and command full name across deep aliased hierarchies', async () => {
+    // TODO: extra attention:
+    it('supports --help with proper description and command full name across deep aliased hierarchies', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ logSpy }) => {
@@ -1034,7 +1037,8 @@ describe('::configureProgram', () => {
       });
     });
 
-    it.only('outputs the same command full name in error help text as in non-error help text when commands have aliases', async () => {
+    // TODO: extra attention:
+    it('outputs the same command full name in error help text as in non-error help text when commands have aliases', async () => {
       expect.hasAssertions();
       expect(true).toBeFalse();
       await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
@@ -1091,7 +1095,8 @@ describe('::configureProgram', () => {
       });
     });
 
-    it.only('supports using yargs::help to configure global help options across deep hierarchies', async () => {
+    // TODO: extra attention:
+    it('supports using yargs::help to configure global help options across deep hierarchies', async () => {
       expect.hasAssertions();
 
       // TODO: also supports help(false), help(''), help(true), help('help') (no
@@ -1219,14 +1224,6 @@ describe('::configureProgram', () => {
       // TODO: X.help() === Y.help() for all X,Y in context.commands
     });
 
-    it('accepts ::strict_force(false) calls', async () => {
-      expect.hasAssertions();
-    });
-
-    it('accepts ::help_force(...) calls', async () => {
-      expect.hasAssertions();
-    });
-
     it('does the right thing when the nearest package.json file is empty', async () => {
       expect.hasAssertions();
     });
@@ -1304,7 +1301,7 @@ describe('::runProgram and util::makeRunner', () => {
     }
   });
 
-  it('::runProgram supports "safe mode" and commandModulePath call signatures', async () => {
+  it('::runProgram supports semi-broken and commandModulePath call signatures', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
@@ -1378,7 +1375,7 @@ describe('::runProgram and util::makeRunner', () => {
   });
 
   describe('::makeRunner supports all call signatures', () => {
-    it('supports "safe mode" signatures', async () => {
+    it('supports semi-broken signatures', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ warnSpy, logSpy, getExitCode }) => {

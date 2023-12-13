@@ -1,10 +1,10 @@
-export { configureProgram, makeProgram } from 'universe/index';
+export { configureProgram } from 'universe/index';
 export { runProgram } from 'universe/util';
 
 export {
   $executionContext,
-  DEFAULT_USAGE_TEXT,
-  FrameworkExitCode
+  FrameworkExitCode,
+  defaultUsageText
 } from 'universe/constant';
 
 export {

@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 /**
- * Returns a `Program` instance's {@link PreExecutionContext}.
+ * Returns a {@link PreExecutionContext}.
  */
 export async function getProgram() {
   const preExecutionContext = await (

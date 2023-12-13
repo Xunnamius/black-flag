@@ -1,20 +1,18 @@
+import assert from 'node:assert';
+
 import { FrameworkExitCode } from 'universe/constant';
+import { rootDebugLogger } from 'universe/index';
+
 import {
   AssertionFailedError,
   ErrorMessage,
   isCliError,
   isGracefulEarlyExitError
 } from 'universe/error';
-import { rootDebugLogger } from 'universe/index';
 
-import type {
-  EmptyObject,
-  Promisable,
-  RequiredDeep,
-  UnionToIntersection
-} from 'type-fest';
-
+import type { EmptyObject, Promisable, UnionToIntersection } from 'type-fest';
 import type { ConfigureHooks } from 'types/configure';
+
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
 const debug = rootDebugLogger.extend('util');
@@ -36,25 +34,25 @@ export function makeRunner<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  options?: {
+  options: {
     /**
      * @see {@link runProgram}
      */
-    commandModulePath?: string | undefined;
+    commandModulePath: string;
   } & (
     | {
         /**
-         * @see {@link runProgram}
-         *
          * Note: cannot be used with `configurationHooks`.
+         *
+         * @see {@link runProgram}
          */
         configurationHooks?: Promisable<ConfigureHooks<ExecutionContext>>;
       }
     | {
         /**
-         * @see {@link runProgram}
+         * Note: cannot be used with `preExecutionContext`.
          *
-         * Node: cannot be used with `preExecutionContext`.
+         * @see {@link runProgram}
          */
         preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
       }
@@ -62,23 +60,23 @@ export function makeRunner<
 ) {
   return <
     T extends
-      | [commandModulePath?: string]
+      | [commandModulePath: string]
       | [
-          commandModulePath: string | undefined,
+          commandModulePath: string,
           configurationHooks: Promisable<ConfigureHooks<CustomContext>>
         ]
       | [
-          commandModulePath: string | undefined,
+          commandModulePath: string,
           preExecutionContext: PreExecutionContext<CustomContext>
         ]
-      | [commandModulePath: string | undefined, argv: string | string[]]
+      | [commandModulePath: string, argv: string | string[]]
       | [
-          commandModulePath: string | undefined,
+          commandModulePath: string,
           argv: string | string[],
           configurationHooks: Promisable<ConfigureHooks<CustomContext>>
         ]
       | [
-          commandModulePath: string | undefined,
+          commandModulePath: string,
           argv: string | string[],
           preExecutionContext: PreExecutionContext<CustomContext>
         ]
@@ -89,7 +87,7 @@ export function makeRunner<
     debug_('makeRunner was invoked');
 
     const { commandModulePath, configurationHooks, preExecutionContext } =
-      (options as UnionToIntersection<RequiredDeep<typeof options>> | undefined) || {};
+      options as UnionToIntersection<typeof options>;
 
     const parameters: unknown[] = [commandModulePath, ...args];
     const hasAdditionalConfig = !!(configurationHooks || preExecutionContext);
@@ -105,22 +103,23 @@ export function makeRunner<
         args.length === 0 ||
         (args.length === 1 && (typeof args[0] === 'string' || Array.isArray(args[0])))
       ) {
+        // * Must be call sig 1 or 4
         // ? When not provided, configurationHooks / PreExecutionContext are
         // ? used by default with respect to call signature.
         parameters.push(configurationHooks || preExecutionContext);
       } else {
         const lastArgument = Promise.resolve(
           args.at(-1) as Exclude<(typeof args)[0], string | string[]>
-        ).then(async (localConfigurationHooks) => {
-          if (configurationHooks && !isPreExecutionContext(localConfigurationHooks)) {
+        ).then(async (maybeConfigurationHooks) => {
+          if (configurationHooks && !isPreExecutionContext(maybeConfigurationHooks)) {
             const globalConfigurationHooks = await Promise.resolve(configurationHooks);
 
             // ? Custom config hooks at the runProgram level are merged with
-            // ? configurationHooks from the makeRunner level. Since either of these
-            // ? could be promises, we must act accordingly.
+            // ? configurationHooks from the makeRunner level. Since either of
+            // ? these could be promises, we must act accordingly.
             return {
               ...globalConfigurationHooks,
-              ...localConfigurationHooks
+              ...maybeConfigurationHooks
             };
           }
         });
@@ -152,7 +151,7 @@ export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  ...args: [commandModulePath?: string]
+  ...args: [commandModulePath: string]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the dynamically imported
@@ -170,7 +169,7 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
   ...args: [
-    commandModulePath: string | undefined,
+    commandModulePath: string,
     configurationHooks: Promisable<ConfigureHooks<CustomContext>>
   ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
@@ -191,7 +190,7 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
   ...args: [
-    commandModulePath: string | undefined,
+    commandModulePath: string,
     preExecutionContext: PreExecutionContext<CustomContext>
   ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
@@ -210,7 +209,7 @@ export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
-  ...args: [commandModulePath: string | undefined, argv: string | string[]]
+  ...args: [commandModulePath: string, argv: string | string[]]
 ): Promise<Arguments<CustomCliArguments>>;
 /**
  * Invokes the dynamically imported
@@ -228,7 +227,7 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
   ...args: [
-    commandModulePath: string | undefined,
+    commandModulePath: string,
     argv: string | string[],
     configurationHooks: Promisable<ConfigureHooks<CustomContext>>
   ]
@@ -250,7 +249,7 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
   ...args: [
-    commandModulePath: string | undefined,
+    commandModulePath: string,
     argv: string | string[],
     preExecutionContext: PreExecutionContext<CustomContext>
   ]
@@ -260,23 +259,20 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = EmptyObject
 >(
   ...args:
-    | [commandModulePath?: string]
+    | [commandModulePath: string]
     | [
-        commandModulePath: string | undefined,
+        commandModulePath: string,
         configurationHooks: Promisable<ConfigureHooks<CustomContext>>
       ]
+    | [commandModulePath: string, preExecutionContext: PreExecutionContext<CustomContext>]
+    | [commandModulePath: string, argv: string | string[]]
     | [
-        commandModulePath: string | undefined,
-        preExecutionContext: PreExecutionContext<CustomContext>
-      ]
-    | [commandModulePath: string | undefined, argv: string | string[]]
-    | [
-        commandModulePath: string | undefined,
+        commandModulePath: string,
         argv: string | string[],
         configurationHooks: Promisable<ConfigureHooks<CustomContext>>
       ]
     | [
-        commandModulePath: string | undefined,
+        commandModulePath: string,
         argv: string | string[],
         preExecutionContext: PreExecutionContext<CustomContext>
       ]
@@ -314,6 +310,8 @@ export async function runProgram<
     }
   } // * else, must be call sig 1
 
+  assert(!!configurationHooks !== !!preExecutionContext);
+
   try {
     debug_(
       preExecutionContext
@@ -347,7 +345,7 @@ export async function runProgram<
 
     if (isGracefulEarlyExitError(error)) {
       debug_.message('the exception resulted in a graceful exit');
-      return (preExecutionContext?.program.parsed || { argv: {} })
+      return (preExecutionContext?.root.router.parsed || { argv: {} })
         .argv as Arguments<CustomCliArguments>;
     }
 
