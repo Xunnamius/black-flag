@@ -95,8 +95,8 @@ configuration file is discovered and loaded automatically (so-called
 _auto-discovery_).
 
 By default, commands assume the name of their file or, for index files, their
-parent directory; the root command assumes the name of the project (via
-`package.json`).
+parent directory; the root command assumes the name of the project taken from
+the nearest `package.json` file.
 
 ```text
 my-cli-project
@@ -156,8 +156,8 @@ same yargs API you already know and love:
 export function builder(yargs, helpOrVersionSet, argv) {
   //                                             ^^^
   if (argv) {
-    // This will be used to validate any dynamic arguments and trigger the
-    // command's handler if validation succeeds
+    // This branch will be used to validate any dynamic arguments and trigger
+    // the command's handler if validation succeeds
     if (argv.lang === 'node') {
       yargs.options({
         lang: { choices: ['node'] },
@@ -172,10 +172,10 @@ export function builder(yargs, helpOrVersionSet, argv) {
       });
     }
   } else {
-    // This will be used for generic help text and first-pass parsing
+    // This branch will be used for generic help text and first-pass parsing
     //
-    // This else block is the best you'd be able to do when using vanilla yargs.
-    // But when using Black Flag, it's only the fallback :)
+    // This else block is the best you'd be able to do when using vanilla
+    // yargs. But with Black Flag, it's only the fallback :)
     yargs.options({
       lang: { choices: ['node', 'python'] },
       version: { string: true }
@@ -939,8 +939,8 @@ defaults:
 
 - `yargs::strict(true)`
 - `yargs::scriptName(fullName)`
-- `yargs::exitProcess(false)`
 - `yargs::wrap(yargs::terminalWidth())`
+- `yargs::exitProcess(false)`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
 - `yargs::help(false)::option('help', { description })`
   - Black Flag supervises all help text generation, so this is just cosmetic
@@ -1444,8 +1444,7 @@ Router instances are partially-configured just enough to proxy control to other
 router instances or to helper instances and are accessible via the
 [`instances.router`][54] property of each object in
 [`PreExecutionContext::commands`][11]. They cannot and _must not_ have any
-configured strictness or validation logic outside of the built-in invariant
-checks.
+configured strictness or validation logic.
 
 Therefore: if you want to tamper with the yargs instance responsible for running
 a command's [`handler`][7], operate on the effector program. If you want to
@@ -1876,7 +1875,8 @@ specification. Contributions of any kind welcome!
 [25]: #building-and-running-your-cli
 [26]: #features
 [27]: https://nodejs.org/api/packages.html#type
-[28]: https://github.com/Xunnamius/black-flag/blob/main/src/constant.ts#L15
+[28]:
+  https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
 [29]: #convention-over-configuration-
 [30]: https://www.npmjs.com/package/alpha-sort
 [31]:
