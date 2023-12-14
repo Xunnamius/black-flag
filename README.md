@@ -1254,13 +1254,14 @@ Flag, but are noted below nonetheless.
   [muck around with][42] the relevant yargs instances manually in
   [`configureExecutionPrologue`][43].
 
-- By default, Black Flag enables the `--help` option same as vanilla yargs (but
-  excluding the help command). However, since vanilla yargs [lacks the
-  ability][44] to modify or remove options added by `yargs::option`, calling
-  `yargs::help` will throw. If you require the functionality of `yargs::help` to
-  disable or modify the `--help` option, update
-  [`context.state.globalHelpOption`][45] directly in
+- By default, Black Flag enables the `--help` option same as vanilla yargs.
+  However, since vanilla yargs [lacks the ability][44] to modify or remove
+  options added by `yargs::option`, calling `yargs::help` will throw. If you
+  require the functionality of `yargs::help` to disable or modify the `--help`
+  option, update [`context.state.globalHelpOption`][45] directly in
   [`configureExecutionContext`][46].
+
+  > Black Flag enables a help _option_, never a help _command_.
 
 #### Irrelevant Differences
 
@@ -1307,7 +1308,8 @@ Flag, but are noted below nonetheless.
 
 - Since every auto-discovered command translates [into its own yargs
   instances][42], the [`command`][7] property, if exported by your command
-  file(s), must start with `"$0"` or an error will be thrown.
+  file(s), must start with `"$0"` or an error will be thrown. This is also
+  enforced by intellisense.
 
 - `yargs::check` and `yargs::global`, while they work as expected on commands
   and their direct sub-commands, do not necessarily apply "globally" across your
@@ -1315,11 +1317,11 @@ Flag, but are noted below nonetheless.
   in play when Black Flag executes][42]. This is not a problem for most projects
   and vanilla yargs already has a similar limitation with `yargs::check`.
 
-  However, if you want a uniform check to apply to every single yargs instance
-  across your entire command hierarchy, and using each command's [`builder`][7]
-  property doesn't sound appealing, you can leverage the
-  [`configureArguments`][29]/[`configureExecutionPrologue`][43] hook and
-  [command metadata][42].
+  However, if you want a uniform check or so-called "global" argument to apply
+  to every command across your entire hierarchy, and using each command's
+  [`builder`][7] property doesn't sound appealing, you can leverage the
+  [`configureArguments`][29] and/or [`configureExecutionPrologue`][43]
+  configuration hooks.
 
 - Due to the way Black Flag stacks yargs instances, arbitrary parameters cannot
   appear in the arguments list until after the final command name.
