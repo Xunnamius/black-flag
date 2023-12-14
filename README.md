@@ -488,7 +488,7 @@ commands. Specifically:
 
   ```typescript
   // Throwing this in your handler or elsewhere will cause Black Flag to exit
-  // immediately with a 0 exit code
+  // immediately with a 0 exit code.
   throw new GracefulEarlyExitError();
   ```
 
@@ -1648,8 +1648,9 @@ command.<sup>2->3A</sup> Black Flag notes the user asked to generate generic
 help text (by having passed the `--help` argument) before calling
 `router::parseAsync`.<sup>3A->4B</sup> `myctl remote`'s router detects that the
 given arguments refer to the current command and that we're only generating
-generic help text so calls `helper::getHelp`<sup>4B🡒5B</sup> and throws a
-`GracefulEarlyExitError` that bubbles up to the root command.<sup>R5B🡒R1</sup>
+generic help text so calls `helper::showHelp`<sup>4B🡒5B</sup> and throws a
+`GracefulEarlyExitError` that bubbles up to the root command<sup>R5B🡒R2</sup>
+where it is then communicated to the user.<sup>R2🡒R1</sup>
 
 > The `myctl remote` sub-command is a child command of the root `myctl` command,
 > but it also has its own child commands, making it a parent _and_ a child

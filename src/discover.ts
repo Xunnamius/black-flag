@@ -87,6 +87,20 @@ export async function discoverCommands(
     result: undefined
   };
 
+  debug('ensuring base path directory exists and is readable: "%O"', basePath);
+
+  try {
+    await fs.access(basePath, fs.constants.R_OK);
+    if (!(await fs.stat(basePath)).isDirectory()) {
+      throw new Error('path is not a directory');
+    }
+  } catch (error) {
+    debug.error('failed due to invalid base path "%O": %O', basePath, error);
+    throw new AssertionFailedError(
+      ErrorMessage.AssertionFailureBadConfigurationPath(basePath)
+    );
+  }
+
   debug('searching upwards for nearest package.json file starting at %O', basePath);
 
   const pkg = {
@@ -147,7 +161,10 @@ export async function discoverCommands(
     debug('initial parent lineage: %O', lineage);
     debug('is root (aka "pure parent") command: %O', isRootCommand);
 
-    assert(grandparentInstances === undefined || !isRootCommand);
+    assert(
+      grandparentInstances === undefined || !isRootCommand,
+      ErrorMessage.GuruMeditation()
+    );
 
     const { configuration: parentConfig, metadata: parentMeta } = await loadConfiguration(
       ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
@@ -185,7 +202,7 @@ export async function discoverCommands(
 
     debug(`added ${parentType} command mapping to ExecutionContext::commands`);
 
-    linkParentRouterToChildRouter(
+    linkChildRouterToParentRouter(
       parentInstances.router,
       parentConfig,
       parentConfigFullName,
@@ -250,7 +267,7 @@ export async function discoverCommands(
 
         debug(`added pure child command mapping to ExecutionContext::commands`);
 
-        linkParentRouterToChildRouter(
+        linkChildRouterToParentRouter(
           childInstances.router,
           childConfig,
           childConfigFullName,
@@ -372,7 +389,7 @@ export async function discoverCommands(
                 finalConfig.name
               );
 
-              return (rawConfig.handler || defaultHandler)(...args);
+              return (rawConfig.handler || defaultCommandHandler)(...args);
             },
             name: (
               rawConfig.name ||
@@ -513,38 +530,39 @@ export async function discoverCommands(
     programs.helper.wrap(context.state.initialTerminalWidth);
     programs.effector.wrap(context.state.initialTerminalWidth);
 
-    // * Finish configuring custom error handling
+    // * Finish configuring custom error handling for helper, which is
+    // * responsible for outputting help text to stderr
 
-    [programs.helper, programs.effector].forEach((program, index) => {
-      program.fail((message: string | null, error) => {
-        const debug_ = debug.extend('fail');
-        debug_.message(
-          'entered %O program failure handler for command %O',
-          index ? 'effector' : 'helper',
-          fullName
+    programs.helper.fail((message: string | null, error) => {
+      const debug_ = debug.extend('helper*');
+      debug_.message('entered privileged failure handler for command %O', fullName);
+
+      debug_('message: %O', message);
+      debug_('error.message: %O', error?.message);
+      debug_('error is native error: %O', isNativeError(error));
+
+      // TODO: probably better to check for instanceof YError ... maybe?
+      if (!error && context.state.showHelpOnFail) {
+        // ? If there's no error object, it's probably a yargs-specific error.
+        debug_('sending help text to stderr (triggered by yargs)');
+        // ! Notice the helper program is ALWAYS the one outputting help text.
+        programs.helper.showHelp('error');
+        // eslint-disable-next-line no-console
+        console.error();
+      }
+
+      if (isCliError(error)) {
+        debug_('exited privileged failure handler: re-throwing error as-is');
+        throw error;
+      } else {
+        debug_(
+          'exited privileged failure handler: re-throwing error/message wrapped with CliError'
         );
-
-        debug_('message: %O', message);
-        debug_('error.message (instanceof Error): %O', error?.message);
-
-        if (!error && context.state.showHelpOnFail) {
-          // ? If there's no error object, it's probably a yargs-specific error.
-          debug_('sending help text to stderr (triggered by yargs)');
-          // ! Notice the helper program is ALWAYS the one outputting help text.
-          programs.helper.showHelp('error');
-          // eslint-disable-next-line no-console
-          console.error();
-        }
-
-        if (isCliError(error)) {
-          debug_('re-throwing error as-is');
-          throw error;
-        } else {
-          debug_('re-throwing error/message wrapped with CliError');
-          throw new CliError(error || message);
-        }
-      });
+        throw new CliError(error || message);
+      }
     });
+
+    programs.effector.fail(false);
 
     // * Link router program to helper program
 
@@ -553,7 +571,7 @@ export async function discoverCommands(
       '[routed-1]',
       {},
       async function () {
-        debug.extend('router')('control reserved; calling helper::parseAsync');
+        debug.extend('router*')('control reserved; calling helper::parseAsync');
         await programs.helper.parseAsync(
           context.state.rawArgv,
           wrapExecutionContext(context)
@@ -568,15 +586,45 @@ export async function discoverCommands(
     let firstPassArgv: AnyArguments | undefined = undefined;
 
     programs.helper.command_deferred(
-      // ! This next line exists to address yargs bugs around help text output.
-      // ! See the docs for details.
-      [type !== 'pure child' ? config.name : '$0'],
+      // ! This next line excludes aliases and positionals in an attempt to
+      // ! address yargs bugs around help text output. See the docs for details.
+      ['$0'],
       config.description,
-      config.builder,
+      (yargsInstance, helpOrVersionSet) => {
+        const debug_ = debug.extend('helper');
+        debug_('entered wrapped builder function (first-pass) for %O', config.name);
+        assert(firstPassArgv === undefined, ErrorMessage.GuruMeditation());
+
+        try {
+          const returnedYargsInstance =
+            typeof config.builder === 'function'
+              ? config.builder(
+                  yargsInstance,
+                  context.state.isHandlingHelpOption || helpOrVersionSet
+                )
+              : yargsInstance.options(config.builder);
+
+          debug_(
+            'exited wrapped builder function (first-pass) for %O (no errors)',
+            config.name
+          );
+
+          return returnedYargsInstance;
+        } catch {
+          debug_(
+            'exited wrapped builder function (first-pass) for %O (with error)',
+            config.name
+          );
+        } finally {
+          firstPassArgv = undefined;
+        }
+
+        return yargsInstance;
+      },
       async (parsedArgv) => {
-        const debug_ = debug.extend('effector');
+        const debug_ = debug.extend('helper');
         debug_('entered wrapper handler function for %O', config.name);
-        assert(firstPassArgv === undefined);
+        assert(firstPassArgv === undefined, ErrorMessage.GuruMeditation());
 
         if (context.state.isHandlingHelpOption) {
           debug_(
@@ -587,6 +635,8 @@ export async function discoverCommands(
 
           // ! Notice the helper program is ALWAYS the one outputting help text.
           programs.helper.showHelp('log');
+
+          debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
         } else {
           firstPassArgv = parsedArgv;
@@ -621,25 +671,29 @@ export async function discoverCommands(
       [config.command, ...config.aliases],
       config.description,
       (yargsInstance, helpOrVersionSet) => {
-        const debug_ = debug.extend('helper');
-        debug_('entered augmented (effector) builder function for %O', config.name);
-        assert(firstPassArgv !== undefined);
+        const debug_ = debug.extend('effector');
+        debug_('entered wrapped builder function (second-pass) for %O', config.name);
+        assert(firstPassArgv !== undefined, ErrorMessage.GuruMeditation());
 
         try {
           const returnedYargsInstance =
             typeof config.builder === 'function'
-              ? config.builder(yargsInstance, helpOrVersionSet, firstPassArgv)
+              ? config.builder(
+                  yargsInstance,
+                  context.state.isHandlingHelpOption || helpOrVersionSet,
+                  firstPassArgv
+                )
               : yargsInstance.options(config.builder);
 
           debug_(
-            'exited augmented (effector) builder function for %O (no errors)',
+            'exited wrapped builder function (second-pass) for %O (no errors)',
             config.name
           );
 
           return returnedYargsInstance;
         } catch {
           debug_(
-            'exited augmented (effector) builder function for %O (with error)',
+            'exited wrapped builder function (second-pass) for %O (with error)',
             config.name
           );
         } finally {
@@ -688,7 +742,7 @@ export async function discoverCommands(
     const debug_ = debug.extend('make');
     const deferredCommandArgs: Parameters<Program['command']>[] = [];
 
-    debug_('creating new proto-%O program (awaiting configuration)', descriptor);
+    debug_('creating new proto-%O program (awaiting full configuration)', descriptor);
 
     const alphaSort = (await import('alpha-sort')).default;
     const vanillaYargs = makeVanillaYargs();
@@ -707,24 +761,21 @@ export async function discoverCommands(
         .scriptName('[router]')
         .usage('[router]')
         .strict(false)
-        .exitProcess(false);
+        .exitProcess(false)
+        .fail(false);
     } else if (context.state.globalHelpOption) {
       const { name, description } = context.state.globalHelpOption;
-      assert(name.length);
-      vanillaYargs.option(name, { description });
+      assert(name.length, ErrorMessage.GuruMeditation());
+      vanillaYargs.option(name, { boolean: true, description });
     }
 
     // * Disable exit-on-error functionality.
 
     vanillaYargs.exitProcess(false);
 
-    // * Begin configuring custom error handling
+    // * Begin configuring custom error handling.
 
     vanillaYargs.showHelpOnFail(false);
-    vanillaYargs.showHelpOnFail = (enabled) => {
-      context.state.showHelpOnFail = enabled;
-      return vanillaYargs;
-    };
 
     // * We defer the rest of the setup until we enter a scope with more
     // * information available.
@@ -769,7 +820,10 @@ export async function discoverCommands(
         }
 
         if (descriptor === 'router') {
-          if (!['parse', 'parseAsync', 'command'].includes(property)) {
+          if (
+            Object.hasOwn(vanillaYargs, property) &&
+            !['parse', 'parseAsync', 'command', 'parsed'].includes(property)
+          ) {
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureInvocationNotAllowed(property)
             );
@@ -811,12 +865,11 @@ export async function discoverCommands(
                 const firstCommand = [firstCommands].flat()[0];
                 const secondCommand = [secondCommands].flat()[0];
 
-                // ? If they do, then we accidentally called this on a child
-                // ? instead of a parent...
-                assert(!firstCommand.startsWith('$0'));
-                assert(!secondCommand.startsWith('$0'));
-
-                return sort(firstCommand, secondCommand);
+                return firstCommand.startsWith('$0')
+                  ? 1
+                  : secondCommand.startsWith('$0')
+                    ? -1
+                    : sort(firstCommand, secondCommand);
               });
 
               debug_(
@@ -829,6 +882,13 @@ export async function discoverCommands(
                 (target as unknown as Program).command(...args);
               }
 
+              return proxy;
+            };
+          }
+
+          if (property === 'showHelpOnFail') {
+            return function (enabled: boolean) {
+              context.state.showHelpOnFail = enabled;
               return proxy;
             };
           }
@@ -864,7 +924,7 @@ export async function discoverCommands(
    *
    * If `parentRouter` is undefined, this function is a no-op.
    */
-  function linkParentRouterToChildRouter(
+  function linkChildRouterToParentRouter(
     childRouter: RouterProgram,
     childConfig: AnyConfiguration,
     childFullName: string,
@@ -915,7 +975,7 @@ export async function discoverCommands(
 
     if (parentRouter) {
       debug(
-        "linked child command %O's router program to its parent command's router program",
+        "linked child command %O router program to its parent command's router program",
         childFullName
       );
     }
@@ -962,7 +1022,7 @@ export async function discoverCommands(
  * The default handler used when a {@link Configuration} is missing a
  * `handler` export.
  */
-function defaultHandler() {
+function defaultCommandHandler() {
   throw new CommandNotImplementedError();
 }
 

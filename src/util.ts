@@ -310,7 +310,10 @@ export async function runProgram<
     }
   } // * else, must be call sig 1
 
-  assert(!!configurationHooks !== !!preExecutionContext);
+  assert(
+    !preExecutionContext || !!configurationHooks !== !!preExecutionContext,
+    ErrorMessage.GuruMeditation()
+  );
 
   try {
     debug_(
@@ -345,7 +348,7 @@ export async function runProgram<
 
     if (isGracefulEarlyExitError(error)) {
       debug_.message('the exception resulted in a graceful exit');
-      return (preExecutionContext?.root.router.parsed || { argv: {} })
+      return (preExecutionContext?.programs.router.parsed || { argv: {} })
         .argv as Arguments<CustomCliArguments>;
     }
 

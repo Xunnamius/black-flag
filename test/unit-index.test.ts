@@ -16,181 +16,89 @@ import { withMocks } from 'testverse/setup';
 import type { Arguments, ExecutionContext } from 'types/program';
 
 describe('::configureProgram', () => {
-  it('returns PreExecutionContext', async () => {
+  it('returns PreExecutionContext with expected properties and values', async () => {
     expect.hasAssertions();
     await withMocks(async () => {
-      const { program, execute, commands, debug, state, ...rest } =
-        await bf.configureProgram();
+      const { programs, execute, commands, debug, state, ...rest } =
+        await bf.configureProgram(getFixturePath('one-file-index'));
 
-      expect(program).toBeObject();
+      expect(programs).toBeObject();
+      expect(programs).toContainAllKeys(['effector', 'helper', 'router']);
       expect(execute).toBeFunction();
       expect(commands).toBeDefined();
       expect(debug).toBeFunction();
       expect(state).toBeObject();
-      expect(state).toHaveProperty('rawArgv');
-      expect(state).toHaveProperty('initialTerminalWidth');
+      expect(state).toContainAllKeys([
+        'rawArgv',
+        'initialTerminalWidth',
+        'isGracefullyExiting',
+        'isHandlingHelpOption',
+        'globalHelpOption',
+        'showHelpOnFail'
+      ]);
       expect(rest).toBeEmpty();
     });
   });
 
-  it('creates new instance when called with 0 arguments', async () => {
+  it('uses default configuration hooks when none are provided', async () => {
     expect.hasAssertions();
 
-    await withMocks(async () => {
-      expect((await bf.configureProgram()).program).toBeObject();
-    });
-  });
-
-  it('creates executable instance with default configuration hooks when called with 0 arguments', async () => {
-    expect.hasAssertions();
-
-    await withMocks(async ({ logSpy, exitSpy, errorSpy }) => {
+    await withMocks(async ({ logSpy }) => {
       await expect(
-        (await bf.configureProgram()).execute(['--help'])
-      ).rejects.toBeDefined();
+        (await bf.configureProgram(getFixturePath('empty-index-file'))).execute([
+          '--help'
+        ])
+      ).resolves.toBeDefined();
 
-      expect(exitSpy).toHaveBeenCalled();
-      expect(errorSpy).toHaveBeenCalled();
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^[^-]+--help[^-]+--version[^-]+$/)]
       ]);
     });
   });
 
-  it('does not attempt command auto-discovery when called without commandModulePath', async () => {
+  it('returns "null" parse result when data is unavailable', async () => {
     expect.hasAssertions();
-
-    const discoverSpy = jest
-      .spyOn(discover, 'discoverCommands')
-      .mockImplementation(() => undefined as any);
-
-    await withMocks(async () => {
-      await bf.configureProgram();
-      await bf.configureProgram({});
-      expect(discoverSpy.mock.calls).toHaveLength(0);
-    });
-  });
-
-  it('attempts command auto-discovery when called with commandModulePath', async () => {
-    expect.hasAssertions();
-
-    const discoverSpy = jest
-      .spyOn(discover, 'discoverCommands')
-      .mockImplementation(() => undefined as any);
-
-    await withMocks(async () => {
-      await bf.configureProgram('/does-not-exist');
-      await bf.configureProgram('/does-not-exist', {});
-      expect(discoverSpy.mock.calls).toHaveLength(2);
-    });
-  });
-
-  it('supports alternative call signatures', async () => {
-    expect.hasAssertions();
-
-    const config: bf.ConfigureHooks = {
-      configureExecutionPrologue(program) {
-        program.usage('custom usage message');
-      }
-    };
-
-    const promisedConfig = Promise.resolve(config);
 
     await withMocks(async ({ logSpy }) => {
       await expect(
-        (await bf.configureProgram(getFixturePath('one-file-index'))).execute(['--help'])
-      ).resolves.toBeDefined();
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(/^Usage text for root program one-file-index\n/)]
-      ]);
-    });
-
-    await withMocks(async ({ logSpy }) => {
-      await expect(
-        (await bf.configureProgram(getFixturePath('one-file-index'), config)).execute([
+        (await bf.configureProgram(getFixturePath('empty-index-file'))).execute([
           '--help'
         ])
-      ).resolves.toBeDefined();
+      ).resolves.toStrictEqual({
+        $0: '<no parse result available>',
+        _: [],
+        [$executionContext]: expect.anything()
+      });
 
-      await expect(
-        (
-          await bf.configureProgram(getFixturePath('one-file-index'), promisedConfig)
-        ).execute(['--help'])
-      ).resolves.toBeDefined();
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [
-          expect.stringMatching(
-            /^Usage text for root program one-file-index\ncustom usage message\n/
-          )
-        ],
-        [
-          expect.stringMatching(
-            /^Usage text for root program one-file-index\ncustom usage message\n/
-          )
-        ]
-      ]);
-    });
-
-    await withMocks(async ({ logSpy, exitSpy, errorSpy }) => {
-      await expect(
-        (await bf.configureProgram(config)).execute(['--help'])
-      ).rejects.toBeDefined();
-
-      await expect(
-        (await bf.configureProgram(promisedConfig)).execute(['--help'])
-      ).rejects.toBeDefined();
-
-      expect(errorSpy).toHaveBeenCalled();
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(/^custom usage message\n/)],
-        [expect.stringMatching(/^custom usage message\n/)]
-      ]);
-
-      expect(exitSpy.mock.calls).toStrictEqual([[0], [0]]);
+      expect(logSpy).toHaveBeenCalled();
     });
   });
 
-  it('returns a non-strict semi-broken instance if command auto-discovery is disabled or no commands were discovered', async () => {
+  it('throws when called with undefined or non-existent commandModulePath', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
-      await expect(
-        (await bf.configureProgram()).execute(['--help'])
-      ).rejects.toBeDefined();
+    await withMocks(async () => {
+      // @ts-expect-error: testing bad call
+      await expect(bf.configureProgram()).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath(undefined)
+      });
 
-      expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(1);
-      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
+      await expect(bf.configureProgram('')).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath('')
+      });
 
-      // ? semi-broken instance is non-strict, so badness works by default
-      await expect(
-        (await bf.configureProgram()).execute(['--bad'])
-      ).resolves.toBeDefined();
+      await expect(bf.configureProgram('/does-not-exist')).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath('/does-not-exist')
+      });
 
-      expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(1);
-      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
-    });
+      // @ts-expect-error: testing bad call
+      await expect(bf.configureProgram({})).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath({})
+      });
 
-    await withMocks(async ({ logSpy, errorSpy, exitSpy }) => {
-      await expect(
-        (await bf.configureProgram(getFixturePath('empty-dir'))).execute(['--help'])
-      ).rejects.toBeDefined();
-
-      expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(1);
-
-      // ? semi-broken instance is non-strict, so badness works by default
-      await expect(
-        (await bf.configureProgram(getFixturePath('empty-dir'))).execute(['--bad'])
-      ).resolves.toBeDefined();
-
-      expect(logSpy.mock.calls).toHaveLength(1);
-      expect(errorSpy.mock.calls).toHaveLength(1);
-      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
+      await expect(bf.configureProgram('', {})).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath('')
+      });
     });
   });
 
@@ -203,11 +111,11 @@ describe('::configureProgram', () => {
       );
 
       expect(Array.from(context.commands.keys())).toStrictEqual([
-        'fake-name',
-        'fake-name nested',
-        'fake-name nested first',
-        'fake-name nested second',
-        'fake-name nested third'
+        'test',
+        'test nested',
+        'test nested first',
+        'test nested second',
+        'test nested third'
       ]);
     });
   });
@@ -257,7 +165,7 @@ describe('::configureProgram', () => {
         getFixturePath('empty-index-file-package-no-version')
       );
 
-      expect(Array.from(context.commands.keys())).toStrictEqual(['fake-name-no-version']);
+      expect(Array.from(context.commands.keys())).toStrictEqual(['test-no-version']);
 
       await expect(context.execute(['--help'])).resolves.toBeDefined();
 
@@ -272,7 +180,7 @@ describe('::configureProgram', () => {
 
     await withMocks(async () => {
       await expect(
-        bf.configureProgram(undefined, {
+        bf.configureProgram(getFixturePath('empty-index-file'), {
           configureExecutionContext: () => undefined as any
         })
       ).rejects.toMatchObject({
@@ -281,9 +189,6 @@ describe('::configureProgram', () => {
     });
   });
 
-  // * Note that tests using getFixturePath and others that avoid black flag's
-  // * semi-broken will not throw/reject when --help (a valid arg) is passed
-  // * since normal black flag instances are properly configured.
   describe('::execute', () => {
     it('calls hideBin on process.argv only if no argv argument provided', async () => {
       expect.hasAssertions();
@@ -653,16 +558,16 @@ describe('::configureProgram', () => {
         const context = await bf.configureProgram(getFixturePath('nested-depth'));
 
         expect(Array.from(context.commands.keys())).toStrictEqual([
-          'fake-name',
-          'fake-name good1',
-          'fake-name good1 good2',
-          'fake-name good1 good2 good',
-          'fake-name good1 good2 good command',
-          'fake-name good1 good2 good3',
-          'fake-name good1 good2 good3 command',
-          'fake-name good1 good',
-          'fake-name good1 good good',
-          'fake-name good1 good good command'
+          'test',
+          'test good1',
+          'test good1 good2',
+          'test good1 good2 good',
+          'test good1 good2 good command',
+          'test good1 good2 good3',
+          'test good1 good2 good3 command',
+          'test good1 good',
+          'test good1 good good',
+          'test good1 good good command'
         ]);
       });
     });
@@ -891,19 +796,15 @@ describe('::configureProgram', () => {
 
         expect(logSpy.mock.calls).toStrictEqual([
           [expect.stringMatching(expectedCommandsRegex(['good1']))],
+          [expect.stringMatching(expectedCommandsRegex(['good', 'good2'], 'test good1'))],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good2'], 'fake-name good1')
+              expectedCommandsRegex(['good', 'good3'], 'test good1 good2')
             )
           ],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good3'], 'fake-name good1 good2')
-            )
-          ],
-          [
-            expect.stringMatching(
-              expectedCommandsRegex(['command'], 'fake-name good1 good2 good3')
+              expectedCommandsRegex(['command'], 'test good1 good2 good3')
             )
           ],
           [expect.not.stringContaining('Commands:')]
@@ -922,11 +823,11 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name
 
         expect(logSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)]
+          [expect.stringMatching(/^Usage: test\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
         ]);
       });
     });
@@ -948,11 +849,11 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name from stdout
 
         expect(logSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)]
+          [expect.stringMatching(/^Usage: test\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
         ]);
 
         expect(getExitCode()).toBe(0);
@@ -967,19 +868,19 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name from stderr
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
+          [expect.stringMatching(/^Usage: test\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)],
           expect.anything(),
           expect.anything()
         ]);
@@ -1055,11 +956,11 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name from stdout
 
         expect(logSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)]
+          [expect.stringMatching(/^Usage: test\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
         ]);
 
         expect(getExitCode()).toBe(0);
@@ -1074,19 +975,19 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name from stderr
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
+          [expect.stringMatching(/^Usage: test\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
           expect.anything(),
           expect.anything(),
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)],
           expect.anything(),
           expect.anything()
         ]);
@@ -1119,19 +1020,15 @@ describe('::configureProgram', () => {
 
         expect(logSpy.mock.calls).toStrictEqual([
           [expect.stringMatching(expectedCommandsRegex(['good1']))],
+          [expect.stringMatching(expectedCommandsRegex(['good', 'good2'], 'test good1'))],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good2'], 'fake-name good1')
+              expectedCommandsRegex(['good', 'good3'], 'test good1 good2')
             )
           ],
           [
             expect.stringMatching(
-              expectedCommandsRegex(['good', 'good3'], 'fake-name good1 good2')
-            )
-          ],
-          [
-            expect.stringMatching(
-              expectedCommandsRegex(['command'], 'fake-name good1 good2 good3')
+              expectedCommandsRegex(['command'], 'test good1 good2 good3')
             )
           ],
           [expect.not.stringContaining('Commands:')]
@@ -1150,11 +1047,11 @@ describe('::configureProgram', () => {
         // * Make sure we're getting the correct command name
 
         expect(logSpy.mock.calls).toStrictEqual([
-          [expect.stringMatching(/^Usage: fake-name\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3\n/)],
-          [expect.stringMatching(/^Usage: fake-name good1 good2 good3 command\n/)]
+          [expect.stringMatching(/^Usage: test\n/)],
+          [expect.stringMatching(/^Usage: test good1\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
+          [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
         ]);
       });
     });

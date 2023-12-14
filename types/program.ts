@@ -46,7 +46,7 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
     /**
      * @see `yargs::command`
      */
-    command: _Program<CustomCliArguments>['command'] & {
+    command: {
       (
         command: string[],
         description: Configuration<CustomCliArguments>['description'],
@@ -70,7 +70,7 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
     /**
      * @see `yargs::version`
      */
-    version: _Program<CustomCliArguments>['version'] & {
+    version: {
       (version: string | false): Program<CustomCliArguments>;
     };
 
@@ -204,10 +204,9 @@ export type FrameworkArguments = {
  * the parsed and validated arguments object returned by the root router
  * {@link Program} instance.
  *
- * **This function throws whenever an exception occurs** (including exceptions
- * representing a graceful exit), making it not ideal as an entry point for a
- * CLI. See {@link runProgram} for a wrapper function that handles exceptions
- * and sets the exit code for you.
+ * **This function throws whenever an exception occurs**, making it not ideal as
+ * an entry point for a CLI. See {@link runProgram} for a wrapper function that
+ * handles exceptions and sets the exit code for you.
  */
 export type Executor = (
   /**
@@ -224,18 +223,18 @@ export type PreExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
 > = CustomContext & {
   /**
-   * The root effector, helper, and router {@link Program} instances.
+   * An object containing the effector, helper, and router {@link Program}
+   * instances belonging to the root command.
    */
-  root: Programs;
+  programs: Programs;
   /**
-   * Execute `program`, parsing any available CLI arguments and running the
-   * appropriate handler, and return the resulting final parsed arguments
+   * Execute the root command, parsing any available CLI arguments and running
+   * the appropriate handler, and return the resulting final parsed arguments
    * object.
    *
-   * **This function throws whenever an exception occurs** (including exceptions
-   * representing a graceful exit), making it not ideal as an entry point for a
-   * CLI. See {@link runProgram} for a wrapper function that handles exceptions
-   * and sets the exit code for you.
+   * **This function throws whenever an exception occurs**, making it not ideal
+   * as an entry point for a CLI. See {@link runProgram} for a wrapper function
+   * that handles exceptions and sets the exit code for you.
    */
   execute: Executor;
 };
@@ -312,12 +311,12 @@ export type ExecutionContext = {
      */
     isHandlingHelpOption: boolean;
     /**
-     * `globalHelpOption` replaces the now-defunct `yargs::help` method from
-     * vanilla yargs. Set this to the value you want using the
-     * `configureExecutionContext` configuration hook instead of calling said
-     * defunct function.
-     *
-     * Note: `name`, if provided, must be >= 1 character in length.
+     * `globalHelpOption` replaces the functionality of the disabled vanilla
+     * yargs `yargs::help` method. Set this to the value you want using the
+     * `configureExecutionContext` configuration hook (any other hook is run too
+     * late). `name`, if provided, must be >= 1 character in length. If `name`
+     * is exactly one character in length, the help option will take the form of
+     * `-${name}`, otherwise `--${name}`.
      *
      * Note: this property should not be accessed or mutated by end-developers
      * outside of the `configureExecutionContext` configuration hook. Doing so
@@ -328,7 +327,7 @@ export type ExecutionContext = {
     globalHelpOption: { name: string; description: string } | undefined;
     /**
      * If `true`, Black Flag will dump help text to stderr when an error occurs.
-     * This is also set when `yargs::showHelpOnFail` is called.
+     * This is also set when `Program::showHelpOnFail` is called.
      *
      * @default true
      */

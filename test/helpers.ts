@@ -1,15 +1,5 @@
 import path from 'node:path';
 
-/**
- * Returns a {@link PreExecutionContext}.
- */
-export async function getProgram() {
-  const preExecutionContext = await (
-    await import('universe/index.js')
-  ).configureProgram();
-  return preExecutionContext;
-}
-
 export function getFixturePath(fixture: string | string[]) {
   return path.join(__dirname, 'fixtures', ...[fixture].flat());
 }

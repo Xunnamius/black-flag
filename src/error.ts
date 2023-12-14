@@ -165,6 +165,21 @@ export const ErrorMessage = {
   Generic() {
     return 'an error occurred that caused this software to crash';
   },
+  GracefulEarlyExit() {
+    return 'execution is ending exceptionally early, which is not a bad thing!';
+  },
+  ConfigLoadFailure(path: string) {
+    return `failed to load configuration from file: ${path}`;
+  },
+  InvalidConfigureArgumentsReturnType() {
+    return 'configureArguments must return typeof process.argv';
+  },
+  InvalidConfigureExecutionContextReturnType() {
+    return 'configureExecutionContext must return ExecutionContext';
+  },
+  InvalidCharacters(str: string, violation: string) {
+    return `string "${str}" contains one or more illegal characters: ${violation}`;
+  },
   AssertionFailureConfigureExecutionEpilogue() {
     return 'configureExecutionEpilogue must return Arguments';
   },
@@ -177,23 +192,11 @@ export const ErrorMessage = {
   AssertionFailureNamingInvariant(name: string) {
     return `the ${name}'s command export must start with either "$0" or "$0 "`;
   },
-  InvalidConfigureArgumentsReturnType() {
-    return 'configureArguments must return typeof process.argv';
-  },
-  InvalidConfigureExecutionContextReturnType() {
-    return 'configureExecutionContext must return ExecutionContext';
-  },
-  GracefulEarlyExit() {
-    return 'execution is ending exceptionally early, which is not a bad thing!';
-  },
-  ConfigLoadFailure(path: string) {
-    return `failed to load configuration from file: ${path}`;
-  },
-  InvalidCharacters(str: string, violation: string) {
-    return `string "${str}" contains one or more illegal characters: ${violation}`;
-  },
   AssertionFailureNoConfigurationLoaded(path: string) {
     return `auto-discovery failed to find any valid configuration files or directories at path: ${path}`;
+  },
+  AssertionFailureBadConfigurationPath(path: unknown) {
+    return `auto-discovery failed because configuration module path is unreadable or does not exist: "${path}"`;
   },
   AssertionFailureInvocationNotAllowed(name: string) {
     return `invocation of method "${name}" is not allowed here. See documentation for details`;

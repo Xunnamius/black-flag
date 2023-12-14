@@ -52,10 +52,9 @@ const debug = rootDebugLogger.extend('index');
  * Command auto-discovery will occur at `commandModulePath`. An exception will
  * occur if no commands are loadable from the given `commandModulePath`.
  *
- * **This function throws whenever an exception occurs** (including exceptions
- * representing a graceful exit), making it not ideal as an entry point for a
- * CLI. See {@link runProgram} for a wrapper function that handles exceptions
- * and sets the exit code for you.
+ * **This function throws whenever an exception occurs**, making it not ideal as
+ * an entry point for a CLI. See {@link runProgram} for a wrapper function that
+ * handles exceptions and sets the exit code for you.
  */
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -166,22 +165,15 @@ export async function configureProgram<
 
       assert(
         context.state.globalHelpOption === undefined ||
-          context.state.globalHelpOption.name.length
+          context.state.globalHelpOption.name.length,
+        ErrorMessage.GuruMeditation()
       );
 
       if (context.state.globalHelpOption) {
-        const helpFlag = `${context.state.globalHelpOption.name.length > 1 ? '--' : '-'}${
-          context.state.globalHelpOption
-        }`;
-
+        const helpOption = context.state.globalHelpOption.name;
+        const helpFlag = `${helpOption.length > 1 ? '--' : '-'}${helpOption}`;
         const targetIndex = argv.indexOf(helpFlag);
-
-        if (targetIndex >= 0) {
-          context.state.isHandlingHelpOption = true;
-          argv.splice(targetIndex, 1);
-        } else {
-          context.state.isHandlingHelpOption = false;
-        }
+        context.state.isHandlingHelpOption = targetIndex >= 0;
       }
 
       debug(
@@ -216,9 +208,14 @@ export async function configureProgram<
         deepestParseResultWrapper.result ||= result;
       } catch (error) {
         if (isGracefulEarlyExitError(error)) {
-          debug.message('caught graceful early exit "error" in try block');
+          debug.message(
+            'caught graceful early exit "error" in PreExecutionContext::execute'
+          );
+
+          context.state.isGracefullyExiting = true;
+
           debug.warn(
-            'though runtime was gracefully interrupted, configureExecutionEpilogue will still be called (with context.isGracefullyExiting === true)'
+            'though runtime was gracefully interrupted, configureExecutionEpilogue will still be called and the program will exit normally'
           );
         } else {
           throw error;
@@ -226,19 +223,15 @@ export async function configureProgram<
       }
 
       // ? Return the result from the handler of the deepest command. Otherwise,
-      // ? if an error occurred while executing `parseAsync` and we've reached
-      // ? this point, then we must be attempting a graceful exit, so return a
-      // ? result that reflects that.
+      // ? return a "null result" indicating that no parse data is available.
       const finalArgv: AnyArguments = deepestParseResultWrapper.result || {
-        $0: '',
+        $0: '<no parse result available>',
         _: [],
-        [$executionContext]: asUnenumerable({
-          ...context,
-          isGracefullyExiting: true
-        })
+        [$executionContext]: asUnenumerable(context)
       };
 
       debug('final parsed argv: %O', finalArgv);
+      debug('context.state.isGracefullyExiting: %O', context.state.isGracefullyExiting);
       debug('entering configureExecutionEpilogue');
 
       const result = await finalConfigurationHooks.configureExecutionEpilogue(
@@ -318,21 +311,21 @@ export async function configureProgram<
   debug('finalizing deferred command registrations');
 
   context.commands.forEach((command, fullName) => {
-    debug('calling helper::command_finalize_deferred for %O', fullName);
+    debug('calling helper::command_finalize_deferred for command %O', fullName);
     command.programs.helper.command_finalize_deferred();
   });
 
   debug('configureProgram invocation succeeded');
 
   return {
-    root: rootInstances,
+    programs: rootInstances,
     execute: parseAndExecuteWithErrorHandling,
     ...asEnumerable(context)
   };
 
   function getRootCommand() {
     const root = context.commands.get(context.commands.keys().next().value);
-    assert(root !== undefined);
+    assert(root !== undefined, ErrorMessage.GuruMeditation());
     return root;
   }
 }
