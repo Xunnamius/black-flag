@@ -152,34 +152,40 @@ same yargs API you already know and love:
 ```typescript
 // File: my-cli-project/commands/init.ts
 
-// "argv" is a new third argument for builder functions
+// "argv" is a new third argument for builders    vvv
 export function builder(yargs, helpOrVersionSet, argv) {
-  //                                             ^^^
+  //                                              ^^^
+
+  // This first conditional branch will be used to validate any dynamic
+  // arguments and trigger the command's handler if validation succeeds
+
+  //   vvv
   if (argv) {
-    // This branch will be used to validate any dynamic arguments and trigger
-    // the command's handler if validation succeeds
+    // ^^^
     if (argv.lang === 'node') {
-      yargs.options({
+      return {
         lang: { choices: ['node'] },
         version: { choices: ['19.8', '20.9', '21.1'] }
-      });
+      };
     } else {
-      yargs.options({
+      // Note how we can return a literal options object instead of calling
+      // yargs.options(...), but we still can if we want to:
+      return yargs.options({
         lang: { choices: ['python'] },
         version: {
           choices: ['3.10', '3.11', '3.12']
         }
       });
     }
-  } else {
-    // This branch will be used for generic help text and first-pass parsing
-    //
-    // This else block is the best you'd be able to do when using vanilla
-    // yargs. But with Black Flag, it's only the fallback :)
-    yargs.options({
+  }
+  // This else branch will be used for generic help text and first-pass parsing
+  else {
+    // This next line is the best you'd be able to do when using vanilla yargs.
+    // But with Black Flag, it's only the fallback :)
+    return {
       lang: { choices: ['node', 'python'] },
       version: { string: true }
-    });
+    };
   }
 }
 
@@ -230,26 +236,35 @@ The complete `my-cli-project/commands/init.ts` file could look like this:
 
 import type { Configuration } from 'black-flag';
 
-// Types are also available vv
+// Types are also available vvv
 const configuration: Configuration = {
-  //                        ^^
+  //                        ^^^
 
   // ALL OF THESE ARE OPTIONAL! Black Flag would still accept this file even if
-  // if were completely blank.
+  // if were completely blank
 
   // An array of yargs aliases for this command. Defaults to []
   aliases: [],
 
-  // Can be a yargs builder function or a yargs options object. Defaults to {}
-  // Note: cannot be async as of yargs 17.7.2
+  // Can be a yargs options object or a builder function like below
+  // Defaults to {}
   builder(yargs, helpOrVersionSet, argv) {
-    //...
-    return yargs;
+    // We are never forced to return anything...
+    // return yargs;
+    // ... but we can if we want:
+    return yargs.boolean('verbose');
+    // We can also just return an options object too:
+    return {
+      verbose: {
+        boolean: true,
+        description: '...'
+      }
+    };
   },
 
   // Always a string. All commands must begin with "$0". Defaults to "$0". The
   // given value is also used to replace "$000" during string interpolation for
-  // the usage option.
+  // the usage option
   command: '$0 [positional-arg-1] [positional-arg-2]',
 
   // If true, this command will be considered deprecated. Defaults to false
@@ -276,7 +291,7 @@ const configuration: Configuration = {
   // present, will be replaced by the value of the command option. Afterwards,
   // "$1" and then "$0", if present, will be replaced by the description and
   // name options. Defaults to "Usage: $000\n\n$1". Will be trimmed before being
-  // output.
+  // output
   usage: 'This is neat.'
 };
 
@@ -392,7 +407,7 @@ export const configureExecutionPrologue: ConfigureExecutionPrologue = async (
   { effector, helper, router }, // <== This is: root yargs instances (see below)
   context
 ) => {
-  // Typically unnecessary (and suboptimal) to use this hook. Configure commands
+  // Typically unnecessary and suboptimal to use this hook. Configure commands
   // (including the root command) declaratively using the simple declarative
   // filesystem-based API instead. Otherwise, at this point, you're just using
   // yargs but with extra steps.
@@ -479,7 +494,7 @@ commands. Specifically:
     // But you can suggest an exit code by throwing a CliError
     throw new CliError('something bad happened', { suggestedExitCode: 5 });
     // You can even wrap other errors with it
-    throw new CliError(error);
+    throw new CliError(error, { suggestedExitCode: 9 });
   }
   ```
 
@@ -515,9 +530,9 @@ await runProgram('./commands', {
 ```typescript
 // File: my-cli-project/commands/index.ts
 
-export function builder(yargs) {
-  // Turn off outputting help text when a parsing error occurs for this command
-  yargs.showHelpOnFail(false);
+export function builder(blackFlag) {
+  // Turn off outputting help text when an error occurs for this command
+  blackFlag.showHelpOnFail(false);
 }
 ```
 
@@ -687,7 +702,8 @@ DEBUG='myctl*' myctl
 > enabled.
 
 It is also possible to get meaningful debug output from your commands
-themselves. Just use [debug][18] in your command files:
+themselves. Just include the [debug][18] package in your `package.json`
+dependencies and import it in your command files:
 
 ```typescript
 // File: my-cli-project/commands/index.ts
@@ -766,7 +782,7 @@ const name = basename(dirname(__filename));
  */
 module.exports = {
   description: `description for program ${name}`,
-  builder: (yargs) => yargs.option(name, { count: true }),
+  builder: (blackFlag) => blackFlag.option(name, { count: true }),
   handler: (argv) => (argv.handled_by = __filename)
 };
 ```
@@ -970,8 +986,8 @@ to `commands/index.js` along with a `handler` function and `usage` string:
  *
  * @type {import('black-flag').RootConfiguration['builder']}
  */
-export function builder(yargs) {
-  return yargs.strict(false);
+export function builder(blackFlag) {
+  return blackFlag.strict(false);
 }
 
 /**
@@ -1314,8 +1330,9 @@ Flag, but are noted below nonetheless.
 - `yargs::check` and `yargs::global`, while they work as expected on commands
   and their direct sub-commands, do not necessarily apply "globally" across your
   entire command hierarchy since [there are several _distinct_ yargs instances
-  in play when Black Flag executes][41]. This is not a problem for most projects
-  and vanilla yargs already has a similar limitation with `yargs::check`.
+  in play when Black Flag executes][41]. This will not be a problem for most
+  projects as vanilla yargs already has a similar limitation with
+  `yargs::check`.
 
   However, if you want a uniform check or so-called "global" argument to apply
   to every command across your entire hierarchy, and using each command's
@@ -1392,14 +1409,14 @@ commands: Map(6) {
 Each of these six programs is actually _three_ yargs instances:
 
 1. The **effector** (`instances.effector`) yargs instance is responsible for
-   second-pass arguments parsing and validation (and generating specific stderr
-   help text), executing each command's actual [`handler`][7] function, and
-   ensuring the final parse result bubbles up to the router program.
+   second-pass arguments parsing and validation, executing each command's actual
+   [`handler`][7] function, and ensuring the final parse result bubbles up to
+   the router program.
 
 2. The **helper** (`instances.helper`) yargs instance is responsible for
-   generating generic stdout help text as well as first-pass arguments parsing
-   and partial validation. Said parse result is used as the `argv` third
-   parameter passed to the [`builder`][7] functions of effector instances.
+   generating all help text as well as first-pass arguments parsing and partial
+   validation. Said parse result is used as the `argv` third parameter passed to
+   the [`builder`][7] functions of effector instances.
 
 3. The **router** (`instances.router`) yargs instance is responsible for
    proxying control to the other router instances and to helper instances, and
