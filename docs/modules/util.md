@@ -38,7 +38,7 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:126](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L126)
+[types/program.ts:126](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L126)
 
 ___
 
@@ -56,7 +56,7 @@ Represents an "effector" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:89](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L89)
+[types/program.ts:89](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L89)
 
 ___
 
@@ -74,7 +74,7 @@ Represents an "helper" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:99](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L99)
+[types/program.ts:99](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L99)
 
 ___
 
@@ -86,7 +86,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L121)
+[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L121)
 
 ___
 
@@ -98,7 +98,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:116](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L116)
+[types/program.ts:116](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L116)
 
 ___
 
@@ -117,7 +117,7 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:139](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L139)
+[types/program.ts:139](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L139)
 
 ___
 
@@ -135,7 +135,7 @@ Represents an "router" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:109](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L109)
+[types/program.ts:109](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L109)
 
 ## Functions
 
@@ -181,7 +181,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L21)
 
 ___
 
@@ -203,7 +203,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L34)
 
 ___
 
@@ -264,4 +264,4 @@ See [runProgram](index.md#runprogram) for more details on this.
 
 #### Defined in
 
-[src/util.ts:38](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L38)
+[src/util.ts:38](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L38)

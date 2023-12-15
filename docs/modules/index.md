@@ -66,7 +66,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L17)
 
 ___
 
@@ -86,7 +86,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L134)
+[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L134)
 
 ___
 
@@ -104,7 +104,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L48)
 
 ___
 
@@ -127,7 +127,7 @@ subtype of this interface.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `aliases` | `string`[] | An array of `command` aliases [as interpreted](https://github.com/yargs/yargs/pull/647) by [yargs](https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases). Note that positional arguments defined in aliases are ignored. **`Default`** ```ts [] ``` |
-| `builder` | \{ `[key: string]`: `_Options`;  } \| \<T\>(`blackFlag`: `Omit`\<`T`, ``"parseAsync"`` \| ``"fail"``\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `void` \| `T` \| \{ `[key: string]`: `_Options`;  } \| `_Program` | An object containing yargs options configuration or a function that will receive the current Black Flag program. Unlike with vanilla yargs, you do not need to return the program instance; returning `undefined`/`void` is equivalent. If you return something other than the received program, such as an object of options, it will be passed to `yargs::options` for you. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
+| `builder` | \{ `[key: string]`: `_Options`;  } \| \<T\>(`blackFlag`: `Omit`\<`T`, ``"parseAsync"`` \| ``"fail"``\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `void` \| `T` \| \{ `[key: string]`: `_Options`;  } \| `_Program` | An object containing yargs options configuration or a function that will receive the current Black Flag program. Unlike with vanilla yargs, you do not need to return anything at all; "returning" `undefined`/`void` is equivalent. If you return something other than the received program, such as an object of options, it will be passed to `yargs::options` for you. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
 | `command` | ``"$0"`` \| \`$0 $\{string}\` | The command as interpreted by yargs. May contain positional arguments. It is usually unnecessary to change or use this property. **`Default`** ```ts "$0" ``` |
 | `deprecated` | `string` \| `boolean` | If truthy, the command will be considered "deprecated" by yargs. If `deprecated` is a string, it will additionally be treated as a deprecation message and printed. **`Default`** ```ts false ``` |
 | `description` | `string` \| ``false`` | The description for the command in help text. If `false`, the command will be considered "hidden" by yargs. **`Default`** ```ts "" ``` |
@@ -137,7 +137,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L16)
 
 ___
 
@@ -162,11 +162,11 @@ definition for details.
 | `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)\<`CustomContext`\> | This function is called once at the very end of the error handling process after an error has occurred. Note that this function is _always_ called whenever there is an error, regardless of which other functions have already been called. The only exceptions to this are if (1) the error occurs within `configureErrorHandlingEpilogue` itself or (2) the error is an instance of `GracefulEarlyExitError`. This function is also called even after yargs internally handles and reports an argument parsing/validation error. |
 | `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](index.md#executioncontext) singleton. |
 | `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\<`CustomContext`\> | This function is called once after CLI argument parsing completes and either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown. The value returned by this function is used as the return value of the `PreExecutionContext::execute` method. This function will _not_ be called when yargs argument validation fails. This function is the complement of [ConfigureExecutionPrologue](index.md#configureexecutionprologue). |
-| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the yargs instances that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](index.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by Program.parseAsync et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). |
+| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](index.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by Program.parseAsync et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). |
 
 #### Defined in
 
-[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L92)
+[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L92)
 
 ___
 
@@ -203,7 +203,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L44)
+[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L44)
 
 ___
 
@@ -250,7 +250,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L77)
+[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L77)
 
 ___
 
@@ -284,7 +284,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L16)
+[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L16)
 
 ___
 
@@ -323,7 +323,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L60)
+[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L60)
 
 ___
 
@@ -343,8 +343,8 @@ ___
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any
-have been executed, and should apply any final configurations to the yargs
-instances that constitute the command line interface.
+have been executed, and should apply any final configurations to the programs
+that constitute the command line interface.
 
 All commands and sub-commands known to Black Flag are available in the
 [ExecutionContext.commands](index.md#commands) map, which can be accessed from the
@@ -366,7 +366,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L33)
+[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L33)
 
 ___
 
@@ -397,7 +397,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:240](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L240)
+[types/program.ts:240](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L240)
 
 ___
 
@@ -430,7 +430,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[types/program.ts:206](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L206)
+[types/program.ts:206](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L206)
 
 ___
 
@@ -454,7 +454,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:192](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L192)
+[types/program.ts:192](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L192)
 
 ___
 
@@ -474,7 +474,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L143)
+[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L143)
 
 ___
 
@@ -494,7 +494,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:125](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L125)
+[types/module.ts:125](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L125)
 
 ___
 
@@ -513,7 +513,7 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:217](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L217)
+[types/program.ts:217](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L217)
 
 ___
 
@@ -535,7 +535,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L28)
+[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L28)
 
 ___
 
@@ -558,7 +558,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L149)
+[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L149)
 
 ___
 
@@ -578,7 +578,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:116](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L116)
+[types/module.ts:116](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L116)
 
 ## Variables
 
@@ -591,7 +591,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/constant.ts#L5)
 
 ___
 
@@ -642,7 +642,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L163)
+[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L163)
 
 ___
 
@@ -650,14 +650,14 @@ ___
 
 • `Const` **defaultUsageText**: ``"Usage: $000\n\n$1"``
 
-Hard-coded default command `usage` text provided to yargs instances via
+Hard-coded default command `usage` text provided to programs via
 `.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
 with a command's usage DSL (`command` export), name (`name` export), and
 description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/constant.ts#L13)
 
 ## Functions
 
@@ -694,7 +694,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/index.ts#L59)
 
 ___
 
@@ -731,7 +731,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:163](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L163)
+[src/util.ts:163](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L163)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -765,7 +765,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:182](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L182)
+[src/util.ts:182](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L182)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -800,7 +800,7 @@ returned.
 
 #### Defined in
 
-[src/util.ts:204](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L204)
+[src/util.ts:204](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L204)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -833,7 +833,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:224](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L224)
+[src/util.ts:224](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L224)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -867,7 +867,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:243](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L243)
+[src/util.ts:243](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L243)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -902,4 +902,4 @@ returned.
 
 #### Defined in
 
-[src/util.ts:266](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L266)
+[src/util.ts:266](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L266)
