@@ -34,11 +34,11 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 | Name | Type |
 | :------ | :------ |
 | `Descriptor` | extends [`ProgramDescriptor`](util.md#programdescriptor) |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Defined in
 
-[types/program.ts:135](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L135)
+[types/program.ts:126](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L126)
 
 ___
 
@@ -52,11 +52,11 @@ Represents an "effector" [Program](index.md#program) instance.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Defined in
 
-[types/program.ts:98](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L98)
+[types/program.ts:89](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L89)
 
 ___
 
@@ -70,11 +70,11 @@ Represents an "helper" [Program](index.md#program) instance.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Defined in
 
-[types/program.ts:108](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L108)
+[types/program.ts:99](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L99)
 
 ___
 
@@ -86,7 +86,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:130](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L130)
+[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L121)
 
 ___
 
@@ -98,7 +98,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:125](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L125)
+[types/program.ts:116](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L116)
 
 ___
 
@@ -113,11 +113,11 @@ aptly-named values in an object.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Defined in
 
-[types/program.ts:148](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L148)
+[types/program.ts:139](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L139)
 
 ___
 
@@ -131,11 +131,11 @@ Represents an "router" [Program](index.md#program) instance.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Defined in
 
-[types/program.ts:118](https://github.com/Xunnamius/black-flag/blob/6d30d4b/types/program.ts#L118)
+[types/program.ts:109](https://github.com/Xunnamius/black-flag/blob/680d301/types/program.ts#L109)
 
 ## Functions
 
@@ -181,7 +181,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/680d301/src/error.ts#L21)
 
 ___
 
@@ -203,7 +203,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/680d301/src/error.ts#L34)
 
 ___
 
@@ -218,12 +218,18 @@ parameters at initialization.
 This is useful when unit/integration testing your CLI, which will likely
 require multiple calls to `runProgram(...)`.
 
+Note: when an exception (e.g. bad arguments) occurs in the low-order
+`runProgram` function, `undefined` will be returned unless you've configured
+Black Flag to return something else. **The promise will not reject and no
+exception will be thrown.** Keep this in mind when writing your unit tests.
+See [runProgram](index.md#runprogram) for more details on this.
+
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
 | `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `EmptyObject` |
+| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
 
@@ -231,6 +237,8 @@ require multiple calls to `runProgram(...)`.
 | :------ | :------ | :------ |
 | `options` | `Object` | - |
 | `options.commandModulePath` | `string` | **`See`** [runProgram](index.md#runprogram) |
+| `options.configurationHooks?` | `Promisable`\<[`ConfigurationHooks`](index.md#configurationhooks)\<[`ExecutionContext`](index.md#executioncontext)\>\> | Note: cannot be used with `preExecutionContext`. **`See`** [runProgram](index.md#runprogram) |
+| `options.preExecutionContext?` | `Promisable`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<[`ExecutionContext`](index.md#executioncontext)\>\> | Note: cannot be used with `configurationHooks`. **`See`** [runProgram](index.md#runprogram) |
 
 #### Returns
 
@@ -242,7 +250,7 @@ require multiple calls to `runProgram(...)`.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends [commandModulePath: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, preExecutionContext: PreExecutionContext\<CustomContext\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigureHooks\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: PreExecutionContext\<CustomContext\>] |
+| `T` | extends [commandModulePath: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] \| [commandModulePath: string, preExecutionContext: PreExecutionContext\<CustomContext\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: PreExecutionContext\<CustomContext\>] |
 
 ##### Parameters
 
@@ -254,10 +262,6 @@ require multiple calls to `runProgram(...)`.
 
 `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-**`See`**
-
-[runProgram](index.md#runprogram)
-
 #### Defined in
 
-[src/util.ts:33](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/util.ts#L33)
+[src/util.ts:37](https://github.com/Xunnamius/black-flag/blob/680d301/src/util.ts#L37)
