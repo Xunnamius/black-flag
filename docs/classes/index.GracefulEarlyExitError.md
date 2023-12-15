@@ -55,7 +55,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/4a3d649/src/error.ts#L135)
+[src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/error.ts#L135)
 
 ## Properties
 
@@ -69,7 +69,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:129](https://github.com/Xunnamius/black-flag/blob/4a3d649/src/error.ts#L129)
+[src/error.ts:129](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/error.ts#L129)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/4a3d649/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/6d30d4b/src/error.ts#L66)
 
 ___
 
