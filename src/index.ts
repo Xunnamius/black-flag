@@ -64,9 +64,10 @@ export async function configureProgram<
 ): Promise<PreExecutionContext<CustomContext>> {
   debug('configureProgram was invoked');
 
-  const finalConfigurationHooks = ((await configurationHooks) || {}) as Required<
-    ConfigurationHooks<CustomContext>
-  >;
+  const finalConfigurationHooks = Object.assign(
+    {},
+    ((await configurationHooks) || {}) as Required<ConfigurationHooks<CustomContext>>
+  );
 
   finalConfigurationHooks.configureArguments ??= (rawArgv) => rawArgv;
   finalConfigurationHooks.configureExecutionPrologue ??= noopConfigurationHook;

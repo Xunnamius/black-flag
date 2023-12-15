@@ -75,7 +75,7 @@ export function makeRunner<
         ]
       | [
           commandModulePath: string,
-          preExecutionContext: PreExecutionContext<CustomContext>
+          preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
         ]
       | [commandModulePath: string, argv: string | string[]]
       | [
@@ -86,7 +86,7 @@ export function makeRunner<
       | [
           commandModulePath: string,
           argv: string | string[],
-          preExecutionContext: PreExecutionContext<CustomContext>
+          preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
         ]
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
@@ -117,7 +117,9 @@ export function makeRunner<
         // ? used by default with respect to call signature.
         parameters.push(configurationHooks || preExecutionContext);
       } else {
-        const lastParameter = Promise.resolve(
+        // ? Otherwise, the call sig ends with a ConfigurationHooks or
+        // ? PreExecutionContext instance.
+        parameters[parameters.length - 1] = Promise.resolve(
           args.at(-1) as Exclude<(typeof args)[0], string | string[]>
         ).then(async (lastArgument) => {
           if (configurationHooks && !isPreExecutionContext(lastArgument)) {
@@ -135,8 +137,6 @@ export function makeRunner<
 
           return lastArgument;
         });
-
-        parameters[args.length] = lastParameter;
       }
     }
 
@@ -206,7 +206,7 @@ export async function runProgram<
 >(
   ...args: [
     commandModulePath: string,
-    preExecutionContext: PreExecutionContext<CustomContext>
+    preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
   ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
@@ -269,7 +269,7 @@ export async function runProgram<
   ...args: [
     commandModulePath: string,
     argv: string | string[],
-    preExecutionContext: PreExecutionContext<CustomContext>
+    preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
   ]
 ): Promise<Arguments<CustomCliArguments>>;
 export async function runProgram<
@@ -282,7 +282,10 @@ export async function runProgram<
         commandModulePath: string,
         configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
       ]
-    | [commandModulePath: string, preExecutionContext: PreExecutionContext<CustomContext>]
+    | [
+        commandModulePath: string,
+        preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
+      ]
     | [commandModulePath: string, argv: string | string[]]
     | [
         commandModulePath: string,
@@ -292,7 +295,7 @@ export async function runProgram<
     | [
         commandModulePath: string,
         argv: string | string[],
-        preExecutionContext: PreExecutionContext<CustomContext>
+        preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
       ]
 ): Promise<Arguments<CustomCliArguments> | undefined> {
   const debug_ = debug.extend('runProgram');
@@ -309,22 +312,24 @@ export async function runProgram<
 
     if (args[2]) {
       // * Must be call sig 5 or 6
-      if (isPreExecutionContext(args[2])) {
+      const argument2 = await args[2];
+      if (isPreExecutionContext(argument2)) {
         // * Must be call sig 6
-        preExecutionContext = args[2];
+        preExecutionContext = argument2;
       } else {
         // * Must be call sig 5
-        configurationHooks = await args[2];
+        configurationHooks = argument2;
       }
     }
   } else if (args[1]) {
     // * Must be call sig 2 or 3
-    if (isPreExecutionContext(args[1])) {
+    const argument1 = await args[1];
+    if (isPreExecutionContext(argument1)) {
       // * Must be call sig 3
-      preExecutionContext = args[1];
+      preExecutionContext = argument1;
     } else {
       // * Must be call sig 2
-      configurationHooks = await args[1];
+      configurationHooks = argument1;
     }
   } // * else, must be call sig 1
 
@@ -380,5 +385,5 @@ export async function runProgram<
  * Type-guard for {@link PreExecutionContext}.
  */
 export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext {
-  return !!obj && typeof obj === 'object' && 'execute' in obj && 'program' in obj;
+  return !!obj && typeof obj === 'object' && 'execute' in obj && 'programs' in obj;
 }

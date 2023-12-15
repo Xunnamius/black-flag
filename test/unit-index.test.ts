@@ -1314,6 +1314,25 @@ describe('::runProgram and util::makeRunner', () => {
       expect(logSpy).toHaveBeenCalledTimes(9);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2]]);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+      await bf.runProgram(
+        commandModulePath,
+        '--help',
+        bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+      );
+
+      expect(logSpy).toHaveBeenCalledTimes(10);
+      expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2], [2]]);
+      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+      await bf.runProgram(
+        commandModulePath,
+        bf.configureProgram(commandModulePath, configurationHooks)
+      );
+
+      expect(logSpy).toHaveBeenCalledTimes(11);
+      expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2], [2], [1]]);
+      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
     });
   });
 
@@ -1346,6 +1365,31 @@ describe('::runProgram and util::makeRunner', () => {
         expect(logSpy).toHaveBeenCalledTimes(2);
         expect(warnSpy).toHaveBeenCalledTimes(2);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await expect(
+          bf_util.makeRunner({
+            commandModulePath,
+            configurationHooks: promisedConfigurationHooks
+          })(['--one-file-log-handler'])
+        ).resolves.toBeDefined();
+
+        expect(logSpy).toHaveBeenCalledTimes(3);
+        expect(warnSpy).toHaveBeenCalledTimes(3);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await expect(
+          bf_util.makeRunner({
+            commandModulePath,
+            preExecutionContext: bf.configureProgram(
+              commandModulePath,
+              promisedConfigurationHooks
+            )
+          })(['--one-file-log-handler'])
+        ).resolves.toBeDefined();
+
+        expect(logSpy).toHaveBeenCalledTimes(4);
+        expect(warnSpy).toHaveBeenCalledTimes(4);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       });
     });
 
@@ -1364,42 +1408,36 @@ describe('::runProgram and util::makeRunner', () => {
         await run('--help');
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(['--help']);
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 3 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(configurationHooks);
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 4 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1]]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(promisedConfigurationHooks);
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 5 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2]]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(await bf.configureProgram(commandModulePath, configurationHooks));
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 6 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1]]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(['--help'], configurationHooks);
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 7 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1]]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
@@ -1416,6 +1454,32 @@ describe('::runProgram and util::makeRunner', () => {
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 9 }));
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(
+          '--help',
+          bf.configureProgram(commandModulePath, promisedConfigurationHooks)
+        );
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 10 }));
+        expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2], [2]]);
+        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+
+        await run(bf.configureProgram(commandModulePath, configurationHooks));
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 11 }));
+
+        expect(warnSpy.mock.calls).toStrictEqual([
+          [1],
+          [2],
+          [1],
+          [1],
+          [2],
+          [2],
+          [2],
+          [1]
+        ]);
+
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       });
     });
@@ -1589,6 +1653,57 @@ describe('::runProgram and util::makeRunner', () => {
         expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
         expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
       });
+
+      await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
+        const run1 = bf_util.makeRunner({
+          commandModulePath,
+          preExecutionContext: bf.configureProgram(commandModulePath, {
+            configureExecutionPrologue() {
+              // eslint-disable-next-line no-console
+              console.warn(5);
+            },
+            configureExecutionEpilogue(argv) {
+              // eslint-disable-next-line no-console
+              console.warn(6);
+              return argv;
+            }
+          })
+        });
+
+        const run2 = bf_util.makeRunner({
+          commandModulePath,
+          preExecutionContext: await bf.configureProgram(commandModulePath, {
+            configureExecutionPrologue() {
+              // eslint-disable-next-line no-console
+              console.warn(5);
+            },
+            configureExecutionEpilogue(argv) {
+              // eslint-disable-next-line no-console
+              console.warn(6);
+              return argv;
+            }
+          })
+        });
+
+        const expectedWarnSpy = [];
+
+        await run1();
+        await run2();
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
+        expectedWarnSpy.push([5], [5], [6], [6]);
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.Ok);
+
+        // ? Test that we can't invoke PreExecutionContext::execute >1 times
+
+        await run1('--help');
+        await run2('--help');
+
+        expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
+        expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
+        expect(getExitCode()).toStrictEqual(FrameworkExitCode.AssertionFailed);
+      });
     });
   });
 
@@ -1597,6 +1712,7 @@ describe('::runProgram and util::makeRunner', () => {
     const commandModulePath = getFixturePath('one-file-log-handler');
 
     expect(() =>
+      // @ts-expect-error: testing illegal parameter
       bf_util.makeRunner({
         commandModulePath,
         configurationHooks: {},
@@ -1608,18 +1724,26 @@ describe('::runProgram and util::makeRunner', () => {
   it('exits with FrameworkExitCode.Ok upon success', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ getExitCode }) => {
-      await bf.runProgram();
+    await withMocks(async ({ getExitCode, logSpy }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'));
+
+      expect(logSpy).toHaveBeenCalledTimes(1);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
     });
 
-    await withMocks(async ({ getExitCode }) => {
-      const run = bf_util.makeRunner();
+    await withMocks(async ({ getExitCode, logSpy }) => {
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('one-file-log-handler')
+      });
 
       await run();
+
+      expect(logSpy).toHaveBeenCalledTimes(1);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
       await run();
+
+      expect(logSpy).toHaveBeenCalledTimes(2);
       expect(getExitCode()).toBe(FrameworkExitCode.Ok);
     });
   });
@@ -1682,14 +1806,18 @@ describe('::runProgram and util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(undefined, { configureArguments: () => undefined as any });
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments: () => undefined as any
+      });
 
       expect(getExitCode()).toBe(FrameworkExitCode.AssertionFailed);
       expect(errorSpy).toHaveBeenCalled();
     });
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      const run = bf_util.makeRunner();
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('one-file-log-handler')
+      });
 
       await run({ configureArguments: () => undefined as any });
 
@@ -1702,7 +1830,7 @@ describe('::runProgram and util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(undefined, {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
           throw 'problems!';
         }
@@ -1717,7 +1845,7 @@ describe('::runProgram and util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(undefined, {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
           throw new Error('problems!');
         }
@@ -1732,7 +1860,7 @@ describe('::runProgram and util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(undefined, {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
           throw new CliError('problems!', { suggestedExitCode: 5 });
         }
@@ -1749,7 +1877,7 @@ describe('::CliError', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(undefined, {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
           throw new CliError(new Error('problems!'));
         }
