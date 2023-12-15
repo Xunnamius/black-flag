@@ -21,10 +21,10 @@ import {
   defaultHelpTextDescription
 } from 'universe/constant';
 
-import type { ConfigureHooks } from 'types/configure';
+import type { ConfigurationHooks } from 'types/configure';
 
 import type {
-  AnyArguments,
+  Arguments,
   ExecutionContext,
   Executor,
   PreExecutionContext,
@@ -60,12 +60,12 @@ export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
   commandModulePath: string,
-  configurationHooks?: Promisable<ConfigureHooks<CustomContext>>
+  configurationHooks?: Promisable<ConfigurationHooks<CustomContext>>
 ): Promise<PreExecutionContext<CustomContext>> {
   debug('configureProgram was invoked');
 
   const finalConfigurationHooks = ((await configurationHooks) || {}) as Required<
-    ConfigureHooks<CustomContext>
+    ConfigurationHooks<CustomContext>
   >;
 
   finalConfigurationHooks.configureArguments ??= (rawArgv) => rawArgv;
@@ -222,7 +222,7 @@ export async function configureProgram<
 
       // ? Return the result from the handler of the deepest command. Otherwise,
       // ? return a "null result" indicating that no parse data is available.
-      const finalArgv: AnyArguments = deepestParseResultWrapper.result || {
+      const finalArgv: Arguments = deepestParseResultWrapper.result || {
         $0: '<no parse result available>',
         _: [],
         [$executionContext]: asUnenumerable(context)
@@ -284,8 +284,8 @@ export async function configureProgram<
           message = `${error}`;
         }
 
-        debug_error('final error message: %O', message);
-        debug_error('final exit code: %O', exitCode);
+        debug_error('penultimate error message: %O', message);
+        debug_error('penultimate exit code: %O', exitCode);
 
         debug_error('entering configureErrorHandlingEpilogue');
 
@@ -309,7 +309,7 @@ export async function configureProgram<
   debug('finalizing deferred command registrations');
 
   context.commands.forEach((command, fullName) => {
-    debug('calling helper::command_finalize_deferred for command %O', fullName);
+    debug('calling HelperProgram::command_finalize_deferred for command %O', fullName);
     command.programs.helper.command_finalize_deferred();
   });
 

@@ -89,7 +89,9 @@ export type ConfigureErrorHandlingEpilogue<
  * An object containing zero or more configuration hooks. See each hook type
  * definition for details.
  */
-export type ConfigureHooks<CustomContext extends ExecutionContext = ExecutionContext> = {
+export type ConfigurationHooks<
+  CustomContext extends ExecutionContext = ExecutionContext
+> = {
   /**
    * This function is called once towards the beginning of the execution of
    * `configureProgram` and should return what will become the global

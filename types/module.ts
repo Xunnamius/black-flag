@@ -1,4 +1,4 @@
-import type { EmptyObject, Promisable } from 'type-fest';
+import type { Promisable } from 'type-fest';
 import type { Options as _Options, Argv as _Program } from 'yargs';
 
 import type {
@@ -9,17 +9,12 @@ import type {
 } from 'types/program';
 
 /**
- * Represents the most generic implementation type of {@link Configuration}.
- */
-export type AnyConfiguration = Configuration<Record<string, unknown>>;
-
-/**
  * A replacement for the `CommandModule` type that comes with yargs.
  * Auto-discovered configuration modules must implement this interface or a
  * subtype of this interface.
  */
 export type Configuration<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = {
   /**
    * An array of `command` aliases [as
@@ -119,7 +114,7 @@ export type Configuration<
  * files that will eventually get imported via auto-discovery.
  */
 export type RootConfiguration<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Partial<ParentConfiguration<CustomCliArguments>>;
 
 /**
@@ -128,7 +123,7 @@ export type RootConfiguration<
  * module files that will eventually get imported via auto-discovery.
  */
 export type ParentConfiguration<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Partial<Configuration<CustomCliArguments>>;
 
 /**
@@ -137,7 +132,7 @@ export type ParentConfiguration<
  * files that will eventually get imported via auto-discovery.
  */
 export type ChildConfiguration<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Partial<Configuration<CustomCliArguments>>;
 
 /**
@@ -146,7 +141,7 @@ export type ChildConfiguration<
  * file).
  */
 export type ImportedConfigurationModule<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = (
   | ((
       context: ExecutionContext

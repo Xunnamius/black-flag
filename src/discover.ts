@@ -30,11 +30,7 @@ import type {
   RouterProgram
 } from 'types/program';
 
-import type {
-  AnyConfiguration,
-  Configuration,
-  ImportedConfigurationModule
-} from 'types/module';
+import type { Configuration, ImportedConfigurationModule } from 'types/module';
 
 import type { PackageJson } from 'type-fest';
 
@@ -66,13 +62,14 @@ export async function discoverCommands(
   context: ExecutionContext
 ): Promise<{
   /**
-   * Stores the result of the latest call to `Program::parseAsync`, hence the
-   * need for passing around a reference to the object containing this result.
+   * Stores the result of the latest call to `EffectorProgram::parseAsync`,
+   * hence the need for passing around a reference to the object containing this
+   * result.
    *
    * This is necessary because, with our depth-first multi-yargs architecture,
    * the parse job done by shallower yargs instances in the chain must not
-   * mutate the result of the deepest call to `Program::parseAsync` in the
-   * execution chain.
+   * mutate the result of the deepest call to `EffectorProgram::parseAsync` in
+   * the execution chain.
    */
   result: Arguments | undefined;
 }> {
@@ -475,7 +472,7 @@ export async function discoverCommands(
    * Returns a {@link Programs} object with fully-configured programs.
    */
   async function makeCommandInstances(
-    config: AnyConfiguration,
+    config: Configuration,
     fullName: string,
     type: ProgramType
   ): Promise<Programs> {
@@ -570,7 +567,7 @@ export async function discoverCommands(
       '[routed-1]',
       {},
       async function () {
-        debug.extend('router*')('control reserved; calling helper::parseAsync');
+        debug.extend('router*')('control reserved; calling HelperProgram::parseAsync');
         await programs.helper.parseAsync(
           context.state.rawArgv,
           wrapExecutionContext(context)
@@ -616,9 +613,9 @@ export async function discoverCommands(
           const isDeepestParseResult = !deepestParseResult.result;
           deepestParseResult.result ??= localArgv;
 
-          debug_('is deepest parse result: %O', isDeepestParseResult);
+          debug_('is deepest effector parse result: %O', isDeepestParseResult);
           debug_(
-            `Program::parseAsync result${
+            `EffectorProgram::parseAsync result${
               !isDeepestParseResult ? ' (discarded)' : ''
             }: %O`,
             localArgv
@@ -857,14 +854,14 @@ export async function discoverCommands(
 
   /**
    * Links `parentRouter` to `childRouter` such that calling
-   * `parentRouter::parseAsync` with the proper argument will result in
+   * `RouterProgram::parseAsync` with the proper argument will result in
    * execution control being handed off to `childRouter`.
    *
    * If `parentRouter` is undefined, this function is a no-op.
    */
   function linkChildRouterToParentRouter(
     childRouter: RouterProgram,
-    childConfig: AnyConfiguration,
+    childConfig: Configuration,
     childFullName: string,
     parentRouter?: RouterProgram
   ) {
@@ -928,7 +925,7 @@ export async function discoverCommands(
    * If `parentHelper` is undefined, this function is a no-op.
    */
   function addChildCommandToParentHelper(
-    childConfig: AnyConfiguration,
+    childConfig: Configuration,
     childFullName: string,
     parentHelper?: HelperProgram
   ) {
@@ -961,7 +958,7 @@ export async function discoverCommands(
    */
   function makeVanillaYargsBuilder(
     program: EffectorProgram | HelperProgram,
-    config: AnyConfiguration,
+    config: Configuration,
     pass: 'first-pass' | 'second-pass'
     // eslint-disable-next-line @typescript-eslint/ban-types
   ): Extract<Parameters<Program['command']>[2], Function> {
@@ -996,11 +993,13 @@ export async function discoverCommands(
           `exited wrapped builder function (${pass}) for %O (no errors)`,
           config.name
         );
-      } catch {
+      } catch (error) {
         debug_.warn(
           `exited wrapped builder function (${pass}) for %O (with error)`,
           config.name
         );
+
+        throw error;
       } finally {
         context.state.firstPassArgv = undefined;
       }

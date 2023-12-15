@@ -1,4 +1,3 @@
-import type { EmptyObject } from 'type-fest';
 import type { ArgumentsCamelCase as _Arguments, Argv as _Program } from 'yargs';
 
 import type { ExtendedDebugger } from 'multiverse/rejoinder';
@@ -11,22 +10,13 @@ import type { $executionContext } from 'universe/constant';
 import type { runProgram } from 'universe/util';
 
 /**
- * Represents the most generic form of {@link Arguments}.
- */
-export type AnyArguments = Arguments<Record<string, unknown>>;
-
-/**
  * Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
  * arguments/properties specific to Black Flag, and an indexer falling back to
  * `unknown` for unrecognized arguments.
  */
-export type Arguments<CustomCliArguments extends Record<string, unknown> = EmptyObject> =
-  _Arguments<FrameworkArguments & CustomCliArguments>;
-
-/**
- * Represents the most generic form of {@link Program}.
- */
-export type AnyProgram = Program<Record<string, unknown>>;
+export type Arguments<
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+> = _Arguments<FrameworkArguments & CustomCliArguments>;
 
 /**
  * Represents a pre-configured yargs instance ready for argument parsing and
@@ -35,68 +25,69 @@ export type AnyProgram = Program<Record<string, unknown>>;
  * `Program` is essentially a drop-in replacement for the `Argv` type exported
  * by yargs but with several differences and should be preferred.
  */
-export type Program<CustomCliArguments extends Record<string, unknown> = EmptyObject> =
-  Omit<
-    _Program<FrameworkArguments & CustomCliArguments>,
-    'command' | 'showHelpOnFail' | 'version' | 'help' | 'exitProcess' | 'commandDir'
-  > & {
-    // ? Adds custom overload signatures that fixes the lack of implementation
-    // ? signature exposure in the Argv type exposed by yargs
+export type Program<
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+> = Omit<
+  _Program<FrameworkArguments & CustomCliArguments>,
+  'command' | 'showHelpOnFail' | 'version' | 'help' | 'exitProcess' | 'commandDir'
+> & {
+  // ? Adds custom overload signatures that fixes the lack of implementation
+  // ? signature exposure in the Argv type exposed by yargs
 
-    /**
-     * @see `yargs::command`
-     */
-    command: {
-      (
-        command: string[],
-        description: Configuration<CustomCliArguments>['description'],
-        builder:
-          | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
-          | Record<string, never>,
-        handler: Configuration<CustomCliArguments>['handler'],
-        // ? configureArguments already handles this use case, so...
-        middlewares: [],
-        deprecated: Configuration<CustomCliArguments>['deprecated']
-      ): Program<CustomCliArguments>;
-    };
-
-    /**
-     * Like `yargs::showHelpOnFail`, but with no second `message` parameter. If
-     * you want to output some specific error message, use a configuration hook
-     * or `yargs::epilogue`.
-     *
-     * @see `yargs::showHelpOnFail`
-     */
-    showHelpOnFail: (enabled: boolean) => Program<CustomCliArguments>;
-
-    /**
-     * @see `yargs::version`
-     */
-    version: {
-      (version: string | false): Program<CustomCliArguments>;
-    };
-
-    /**
-     * Identical to `yargs::command` except its execution is enqueued and
-     * deferred until {@link Program.command_finalize_deferred} is called.
-     *
-     * @see `yargs::command`
-     * @internal
-     */
-    command_deferred: Program<CustomCliArguments>['command'];
-
-    /**
-     * @see {@link Program.command_deferred}
-     * @internal
-     */
-    command_finalize_deferred: () => void;
+  /**
+   * @see `yargs::command`
+   */
+  command: {
+    (
+      command: string[],
+      description: Configuration<CustomCliArguments>['description'],
+      builder:
+        | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
+        | Record<string, never>,
+      handler: Configuration<CustomCliArguments>['handler'],
+      // ? configureArguments already handles this use case, so...
+      middlewares: [],
+      deprecated: Configuration<CustomCliArguments>['deprecated']
+    ): Program<CustomCliArguments>;
   };
+
+  /**
+   * Like `yargs::showHelpOnFail`, but with no second `message` parameter. If
+   * you want to output some specific error message, use a configuration hook
+   * or `yargs::epilogue`.
+   *
+   * @see `yargs::showHelpOnFail`
+   */
+  showHelpOnFail: (enabled: boolean) => Program<CustomCliArguments>;
+
+  /**
+   * @see `yargs::version`
+   */
+  version: {
+    (version: string | false): Program<CustomCliArguments>;
+  };
+
+  /**
+   * Identical to `yargs::command` except its execution is enqueued and
+   * deferred until {@link Program.command_finalize_deferred} is called.
+   *
+   * @see `yargs::command`
+   * @internal
+   */
+  command_deferred: Program<CustomCliArguments>['command'];
+
+  /**
+   * @see {@link Program.command_deferred}
+   * @internal
+   */
+  command_finalize_deferred: () => void;
+};
 
 /**
  * Represents an "effector" {@link Program} instance.
  */
 export type EffectorProgram<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Omit<
   Program<CustomCliArguments>,
   'command_deferred' | 'command_finalize_deferred' | 'parse' | 'parseSync' | 'argv'
@@ -106,7 +97,7 @@ export type EffectorProgram<
  * Represents an "helper" {@link Program} instance.
  */
 export type HelperProgram<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Omit<
   Program<CustomCliArguments>,
   'command' | 'positional' | 'parse' | 'parseSync' | 'argv'
@@ -116,7 +107,7 @@ export type HelperProgram<
  * Represents an "router" {@link Program} instance.
  */
 export type RouterProgram<
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command' | 'parsed'>;
 
 /**
@@ -134,7 +125,7 @@ export type ProgramDescriptor = 'effector' | 'helper' | 'router';
  */
 export type DescriptorToProgram<
   Descriptor extends ProgramDescriptor,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = 'effector' extends Descriptor
   ? EffectorProgram<CustomCliArguments>
   : 'helper' extends Descriptor
@@ -145,7 +136,9 @@ export type DescriptorToProgram<
  * Represents the program types that represent every Black Flag command as
  * aptly-named values in an object.
  */
-export type Programs<CustomCliArguments extends Record<string, unknown> = EmptyObject> = {
+export type Programs<
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+> = {
   [Descriptor in ProgramDescriptor]: DescriptorToProgram<Descriptor, CustomCliArguments>;
 };
 
@@ -343,7 +336,7 @@ export type ExecutionContext = {
      *
      * @default undefined
      */
-    firstPassArgv: AnyArguments | undefined;
+    firstPassArgv: Arguments | undefined;
 
     [key: string]: unknown;
   };

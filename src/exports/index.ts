@@ -17,16 +17,15 @@ export {
 } from 'universe/error';
 
 export type {
+  ConfigurationHooks,
   ConfigureArguments,
   ConfigureErrorHandlingEpilogue,
   ConfigureExecutionContext,
   ConfigureExecutionEpilogue,
-  ConfigureExecutionPrologue,
-  ConfigureHooks
+  ConfigureExecutionPrologue
 } from 'types/configure';
 
 export type {
-  AnyConfiguration,
   ChildConfiguration,
   Configuration,
   ImportedConfigurationModule,
@@ -35,8 +34,6 @@ export type {
 } from 'types/module';
 
 export type {
-  AnyArguments,
-  AnyProgram,
   Arguments,
   ExecutionContext,
   Executor,

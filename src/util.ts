@@ -10,8 +10,8 @@ import {
   isGracefulEarlyExitError
 } from 'universe/error';
 
-import type { EmptyObject, Promisable, UnionToIntersection } from 'type-fest';
-import type { ConfigureHooks } from 'types/configure';
+import type { Promisable } from 'type-fest';
+import type { ConfigurationHooks } from 'types/configure';
 
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
@@ -28,11 +28,15 @@ const debug = rootDebugLogger.extend('util');
  * This is useful when unit/integration testing your CLI, which will likely
  * require multiple calls to `runProgram(...)`.
  *
- * @see {@link runProgram}
+ * Note: when an exception (e.g. bad arguments) occurs in the low-order
+ * `runProgram` function, `undefined` will be returned unless you've configured
+ * Black Flag to return something else. **The promise will not reject and no
+ * exception will be thrown.** Keep this in mind when writing your unit tests.
+ * See {@link runProgram} for more details on this.
  */
 export function makeRunner<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   options: {
     /**
@@ -42,28 +46,32 @@ export function makeRunner<
   } & (
     | {
         /**
-         * Note: cannot be used with `configurationHooks`.
-         *
-         * @see {@link runProgram}
-         */
-        configurationHooks?: Promisable<ConfigureHooks<ExecutionContext>>;
-      }
-    | {
-        /**
          * Note: cannot be used with `preExecutionContext`.
          *
          * @see {@link runProgram}
          */
+        configurationHooks?: Promisable<ConfigurationHooks<ExecutionContext>>;
+        preExecutionContext?: undefined;
+      }
+    | {
+        /**
+         * Note: cannot be used with `configurationHooks`.
+         *
+         * @see {@link runProgram}
+         */
         preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
+        configurationHooks?: undefined;
       }
   )
 ) {
+  debug.extend('makeRunner')('returning curried runProgram function');
+
   return <
     T extends
       | [commandModulePath: string]
       | [
           commandModulePath: string,
-          configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+          configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
         ]
       | [
           commandModulePath: string,
@@ -73,7 +81,7 @@ export function makeRunner<
       | [
           commandModulePath: string,
           argv: string | string[],
-          configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+          configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
         ]
       | [
           commandModulePath: string,
@@ -83,11 +91,12 @@ export function makeRunner<
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
   ) => {
-    const debug_ = debug.extend('makeRunner');
-    debug_('makeRunner was invoked');
+    const debug_ = debug.extend('runProgram*');
+    debug_('runProgram wrapper (curried) was invoked');
 
-    const { commandModulePath, configurationHooks, preExecutionContext } =
-      options as UnionToIntersection<typeof options>;
+    const { commandModulePath, configurationHooks, preExecutionContext } = options as {
+      [P in keyof typeof options]: NonNullable<(typeof options)[P]>;
+    };
 
     const parameters: unknown[] = [commandModulePath, ...args];
     const hasAdditionalConfig = !!(configurationHooks || preExecutionContext);
@@ -99,36 +108,39 @@ export function makeRunner<
         );
       }
 
-      if (
-        args.length === 0 ||
-        (args.length === 1 && (typeof args[0] === 'string' || Array.isArray(args[0])))
-      ) {
-        // * Must be call sig 1 or 4
+      const isCallSig1 = args.length === 0;
+      const isCallSig4 =
+        args.length === 1 && (typeof args[0] === 'string' || Array.isArray(args[0]));
+
+      if (isCallSig1 || isCallSig4) {
         // ? When not provided, configurationHooks / PreExecutionContext are
         // ? used by default with respect to call signature.
         parameters.push(configurationHooks || preExecutionContext);
       } else {
-        const lastArgument = Promise.resolve(
+        const lastParameter = Promise.resolve(
           args.at(-1) as Exclude<(typeof args)[0], string | string[]>
-        ).then(async (maybeConfigurationHooks) => {
-          if (configurationHooks && !isPreExecutionContext(maybeConfigurationHooks)) {
-            const globalConfigurationHooks = await Promise.resolve(configurationHooks);
+        ).then(async (lastArgument) => {
+          if (configurationHooks && !isPreExecutionContext(lastArgument)) {
+            const highOrderConfigurationHooks = await Promise.resolve(configurationHooks);
+            const lowOrderConfigurationHooks = lastArgument;
 
             // ? Custom config hooks at the runProgram level are merged with
             // ? configurationHooks from the makeRunner level. Since either of
             // ? these could be promises, we must act accordingly.
             return {
-              ...globalConfigurationHooks,
-              ...maybeConfigurationHooks
+              ...highOrderConfigurationHooks,
+              ...lowOrderConfigurationHooks
             };
           }
+
+          return lastArgument;
         });
 
-        parameters[args.length] = lastArgument;
+        parameters[args.length] = lastParameter;
       }
     }
 
-    debug_('makeRunner invocation succeeded');
+    debug_('calling runProgram with the following arguments: %O', parameters);
 
     return runProgram<CustomContext, CustomCliArguments>(
       ...(parameters as Parameters<typeof runProgram<CustomContext, CustomCliArguments>>)
@@ -140,8 +152,9 @@ export function makeRunner<
  * Invokes the dynamically imported `configureProgram().execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
@@ -149,7 +162,7 @@ export function makeRunner<
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
@@ -158,19 +171,20 @@ export async function runProgram<
  * `configureProgram(configurationHooks).execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
-    configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+    configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
   ]
 ): Promise<Arguments<CustomCliArguments> | undefined>;
 /**
@@ -182,12 +196,13 @@ export async function runProgram<
  * unacceptable, do not pass `runProgram` a `preExecutionContext` property.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
@@ -198,8 +213,9 @@ export async function runProgram<
  * Invokes the dynamically imported `configureProgram().execute(argv)` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
@@ -207,7 +223,7 @@ export async function runProgram<
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string, argv: string | string[]]
 ): Promise<Arguments<CustomCliArguments>>;
@@ -216,20 +232,21 @@ export async function runProgram<
  * `configureProgram(configurationHooks).execute(argv)` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
     argv: string | string[],
-    configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+    configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
   ]
 ): Promise<Arguments<CustomCliArguments>>;
 /**
@@ -241,12 +258,13 @@ export async function runProgram<
  * unacceptable, do not pass `runProgram` a `preExecutionContext` property.
  *
  * This function is suitable for a CLI entry point since it will **never throw
- * no matter what.** Instead, when an error is caught, `process.exitCode` is set
- * to the appropriate value and `undefined` is returned.
+ * or reject no matter what.** Instead, when an error is caught,
+ * `process.exitCode` is set to the appropriate value and `undefined` is
+ * returned.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
@@ -256,20 +274,20 @@ export async function runProgram<
 ): Promise<Arguments<CustomCliArguments>>;
 export async function runProgram<
   CustomContext extends ExecutionContext,
-  CustomCliArguments extends Record<string, unknown> = EmptyObject
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args:
     | [commandModulePath: string]
     | [
         commandModulePath: string,
-        configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+        configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
       ]
     | [commandModulePath: string, preExecutionContext: PreExecutionContext<CustomContext>]
     | [commandModulePath: string, argv: string | string[]]
     | [
         commandModulePath: string,
         argv: string | string[],
-        configurationHooks: Promisable<ConfigureHooks<CustomContext>>
+        configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
       ]
     | [
         commandModulePath: string,
@@ -282,7 +300,7 @@ export async function runProgram<
 
   const commandModulePath = args[0];
   let argv: string | string[] | undefined = undefined;
-  let configurationHooks: ConfigureHooks<CustomContext> | undefined = undefined;
+  let configurationHooks: ConfigurationHooks<CustomContext> | undefined = undefined;
   let preExecutionContext: PreExecutionContext<CustomContext> | undefined = undefined;
 
   if (typeof args[1] === 'string' || Array.isArray(args[1])) {

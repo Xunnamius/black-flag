@@ -193,7 +193,7 @@ describe('::configureProgram', () => {
 
       await withMocks(
         async () => {
-          const config: bf.ConfigureHooks = {
+          const config: bf.ConfigurationHooks = {
             configureArguments(argv) {
               expect(argv).toStrictEqual(['3']);
               succeeded++;
@@ -374,7 +374,7 @@ describe('::configureProgram', () => {
       const callOrder: string[] = [];
 
       await withMocks(async ({ logSpy, errorSpy }) => {
-        const config: bf.ConfigureHooks = {
+        const config: bf.ConfigurationHooks = {
           configureArguments(argv) {
             callOrder.push('configureArguments');
             return argv;
@@ -520,9 +520,10 @@ describe('::configureProgram', () => {
     it('throws if configureExecutionEpilogue returns falsy', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram({
-        configureExecutionEpilogue: () => undefined as any
-      });
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-no-strict'),
+        { configureExecutionEpilogue: () => undefined as any }
+      );
 
       await withMocks(async ({ errorSpy }) => {
         await expect(execute(['--vex'])).rejects.toMatchObject({
@@ -536,7 +537,7 @@ describe('::configureProgram', () => {
     it('throws if invoked more than once', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram();
+      const { execute } = await bf.configureProgram(getFixturePath('one-file-no-strict'));
 
       await withMocks(async () => {
         await expect(execute()).resolves.toBeDefined();
@@ -546,23 +547,39 @@ describe('::configureProgram', () => {
       });
     });
 
-    it("does the right thing when a command's builder throws", async () => {
+    it('does the right thing when a command builder throws on first pass', async () => {
       expect.hasAssertions();
 
       const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-builder')
+        getFixturePath('one-file-throws-builder-1')
       );
 
       await withMocks(async ({ errorSpy }) => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('error thrown in builder')]
+          [expect.stringContaining('error #1 thrown in builder')]
         ]);
       });
     });
 
-    it("does the right thing when a command's handler throws", async () => {
+    it('does the right thing when a command builder throws on second pass', async () => {
+      expect.hasAssertions();
+
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-throws-builder-2')
+      );
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(execute()).rejects.toBeDefined();
+
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('error #2 thrown in builder')]
+        ]);
+      });
+    });
+
+    it('does the right thing when a command handler throws', async () => {
       expect.hasAssertions();
 
       const { execute } = await bf.configureProgram(
@@ -1213,7 +1230,7 @@ describe('::configureProgram', () => {
 describe('::runProgram and util::makeRunner', () => {
   const commandModulePath = getFixturePath('one-file-log-handler');
 
-  const configurationHooks: bf.ConfigureHooks = {
+  const configurationHooks: bf.ConfigurationHooks = {
     configureExecutionPrologue() {
       // eslint-disable-next-line no-console
       console.warn(1);
@@ -1227,11 +1244,11 @@ describe('::runProgram and util::makeRunner', () => {
     }
   });
 
-  it('::runProgram supports semi-broken and commandModulePath call signatures', async () => {
+  it('::runProgram supports all call signatures', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
-      await bf.runProgram();
+      await bf.runProgram(getFixturePath('one-file-no-strict'));
 
       expect(logSpy).toHaveBeenCalledTimes(0);
       expect(warnSpy).toHaveBeenCalledTimes(0);
@@ -1301,33 +1318,19 @@ describe('::runProgram and util::makeRunner', () => {
   });
 
   describe('::makeRunner supports all call signatures', () => {
-    it('supports semi-broken signatures', async () => {
+    it('supports high-order function signatures', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ warnSpy, logSpy, getExitCode }) => {
-        await expect(bf_util.makeRunner()()).resolves.toBeDefined();
-
-        expect(logSpy).toHaveBeenCalledTimes(0);
-        expect(warnSpy).toHaveBeenCalledTimes(0);
-        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-
-        await expect(bf_util.makeRunner({ configurationHooks })()).resolves.toBeDefined();
-
-        expect(logSpy).toHaveBeenCalledTimes(0);
-        expect(warnSpy).toHaveBeenCalledTimes(1);
-        expect(getExitCode()).toBe(FrameworkExitCode.Ok);
-
         await expect(
           bf_util.makeRunner({
-            preExecutionContext: await bf.configureProgram(
-              commandModulePath,
-              configurationHooks
-            )
-          })(['--log-handler'])
+            commandModulePath,
+            configurationHooks
+          })(['--one-file-log-handler'])
         ).resolves.toBeDefined();
 
         expect(logSpy).toHaveBeenCalledTimes(1);
-        expect(warnSpy).toHaveBeenCalledTimes(2);
+        expect(warnSpy).toHaveBeenCalledTimes(1);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await expect(
@@ -1337,16 +1340,16 @@ describe('::runProgram and util::makeRunner', () => {
               commandModulePath,
               promisedConfigurationHooks
             )
-          })(['--log-handler'])
+          })(['--one-file-log-handler'])
         ).resolves.toBeDefined();
 
         expect(logSpy).toHaveBeenCalledTimes(2);
-        expect(warnSpy).toHaveBeenCalledTimes(3);
+        expect(warnSpy).toHaveBeenCalledTimes(2);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       });
     });
 
-    it('supports commandModulePath signatures', async () => {
+    it('supports low-order function signatures', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
@@ -1355,7 +1358,6 @@ describe('::runProgram and util::makeRunner', () => {
         await run();
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 1 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([]);
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
@@ -1404,9 +1406,7 @@ describe('::runProgram and util::makeRunner', () => {
         await run(['--help'], promisedConfigurationHooks);
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 8 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2]]);
-
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
 
         await run(
@@ -1415,14 +1415,12 @@ describe('::runProgram and util::makeRunner', () => {
         );
 
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 9 }));
-
         expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2]]);
-
         expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       });
     });
 
-    it('supports local args overwriting given defaults', async () => {
+    it('supports low-order args overwriting high-order defaults', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
