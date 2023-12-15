@@ -15,7 +15,7 @@ import type { $executionContext } from 'universe/constant';
  */
 export type ConfigureExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
-> = (context: ExecutionContext) => Promisable<CustomContext>;
+> = (context: ExecutionContext) => Promisable<CustomContext | ExecutionContext>;
 
 /**
  * This function is called once towards the end of the execution of

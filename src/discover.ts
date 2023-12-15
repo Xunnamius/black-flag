@@ -858,13 +858,15 @@ export async function discoverCommands(
                 descriptor
               );
 
-              // ? Sort in alphabetical order with naturally sorted numbers
+              // ? Sort in alphabetical order with naturally sorted numbers.
               const sort = alphaSort({ natural: true });
 
               deferredCommandArgs.sort(([firstCommands], [secondCommands]) => {
                 const firstCommand = [firstCommands].flat()[0];
                 const secondCommand = [secondCommands].flat()[0];
 
+                // ? Ensure the root command is added first (though it probably
+                // ? doesn't matter either way).
                 return firstCommand.startsWith('$0')
                   ? 1
                   : secondCommand.startsWith('$0')

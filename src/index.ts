@@ -64,25 +64,18 @@ export async function configureProgram<
 ): Promise<PreExecutionContext<CustomContext>> {
   debug('configureProgram was invoked');
 
-  const finalConfigurationHooks = Object.assign(
-    {
-      configureExecutionContext(context) {
-        return context as CustomContext;
-      },
-      configureArguments(rawArgv) {
-        return rawArgv;
-      },
-      configureExecutionPrologue: noopConfigurationHook,
-      configureExecutionEpilogue(argv) {
-        return argv;
-      },
-      configureErrorHandlingEpilogue({ message }) {
-        // eslint-disable-next-line no-console
-        console.error(message);
-      }
-    } as Required<ConfigureHooks<CustomContext>>,
-    await configurationHooks
-  );
+  const finalConfigurationHooks = ((await configurationHooks) || {}) as Required<
+    ConfigureHooks<CustomContext>
+  >;
+
+  finalConfigurationHooks.configureExecutionContext ??= (context) => context;
+  finalConfigurationHooks.configureArguments ??= (rawArgv) => rawArgv;
+  finalConfigurationHooks.configureExecutionPrologue ??= noopConfigurationHook;
+  finalConfigurationHooks.configureExecutionEpilogue ??= (argv) => argv;
+  finalConfigurationHooks.configureErrorHandlingEpilogue ??= ({ message }) => {
+    // eslint-disable-next-line no-console
+    console.error(message);
+  };
 
   debug('command module auto-discovery path: %O', commandModulePath);
   debug('configuration hooks: %O', finalConfigurationHooks);
