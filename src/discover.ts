@@ -67,9 +67,9 @@ export async function discoverCommands(
    * result.
    *
    * This is necessary because, with our depth-first multi-yargs architecture,
-   * the parse job done by shallower yargs instances in the chain must not
-   * mutate the result of the deepest call to `EffectorProgram::parseAsync` in
-   * the execution chain.
+   * the parse job done by shallower programs in the chain must not mutate the
+   * result of the deepest call to `EffectorProgram::parseAsync` in the
+   * execution chain.
    */
   result: Arguments | undefined;
 }> {
@@ -147,7 +147,7 @@ export async function discoverCommands(
   async function discover(
     configPath: string,
     lineage: string[] = [],
-    grandparentInstances: Programs | undefined = undefined
+    grandparentPrograms: Programs | undefined = undefined
   ): Promise<void> {
     const isRootCommand = !alreadyLoadedRootCommand;
     const parentType: ProgramType = isRootCommand ? 'pure parent' : 'parent-child';
@@ -158,7 +158,7 @@ export async function discoverCommands(
     debug('is root (aka "pure parent") command: %O', isRootCommand);
 
     assert(
-      grandparentInstances === undefined || !isRootCommand,
+      grandparentPrograms === undefined || !isRootCommand,
       ErrorMessage.GuruMeditation()
     );
 
@@ -185,30 +185,30 @@ export async function discoverCommands(
     debug('updated parent lineage: %O', lineage);
     debug('command full name: %O', parentConfigFullName);
 
-    const parentInstances = await makeCommandInstances(
+    const parentPrograms = await makeCommandPrograms(
       parentConfig,
       parentConfigFullName,
       parentType
     );
 
     context.commands.set(parentConfigFullName, {
-      programs: parentInstances,
+      programs: parentPrograms,
       metadata: parentMeta
     });
 
     debug(`added ${parentType} command mapping to ExecutionContext::commands`);
 
     linkChildRouterToParentRouter(
-      parentInstances.router,
+      parentPrograms.router,
       parentConfig,
       parentConfigFullName,
-      grandparentInstances?.router
+      grandparentPrograms?.router
     );
 
     addChildCommandToParentHelper(
       parentConfig,
       parentConfigFullName,
-      grandparentInstances?.helper
+      grandparentPrograms?.helper
     );
 
     debug_load(
@@ -229,7 +229,7 @@ export async function discoverCommands(
 
       if (entry.isDirectory()) {
         debug('file is actually a directory, recursing');
-        await discover(entryFullPath, lineage, parentInstances);
+        await discover(entryFullPath, lineage, parentPrograms);
       } else if (isPotentialChildConfigOfCurrentParent) {
         debug('attempting to load file');
 
@@ -250,30 +250,30 @@ export async function discoverCommands(
 
         debug('pure child full name (lineage): %O', childConfigFullName);
 
-        const childInstances = await makeCommandInstances(
+        const childPrograms = await makeCommandPrograms(
           childConfig,
           childConfigFullName,
           'pure child'
         );
 
         context.commands.set(childConfigFullName, {
-          programs: childInstances,
+          programs: childPrograms,
           metadata: childMeta
         });
 
         debug(`added pure child command mapping to ExecutionContext::commands`);
 
         linkChildRouterToParentRouter(
-          childInstances.router,
+          childPrograms.router,
           childConfig,
           childConfigFullName,
-          parentInstances.router
+          parentPrograms.router
         );
 
         addChildCommandToParentHelper(
           childConfig,
           childConfigFullName,
-          parentInstances.helper
+          parentPrograms.helper
         );
 
         debug_load(
@@ -471,7 +471,7 @@ export async function discoverCommands(
   /**
    * Returns a {@link Programs} object with fully-configured programs.
    */
-  async function makeCommandInstances(
+  async function makeCommandPrograms(
     config: Configuration,
     fullName: string,
     type: ProgramType

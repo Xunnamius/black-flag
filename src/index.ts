@@ -115,11 +115,11 @@ export async function configureProgram<
 
   const deepestParseResultWrapper = await discoverCommands(commandModulePath, context);
 
-  const { programs: rootInstances } = getRootCommand();
+  const { programs: rootPrograms } = getRootCommand();
 
   debug('entering configureExecutionPrologue');
 
-  await finalConfigurationHooks.configureExecutionPrologue(rootInstances, context);
+  await finalConfigurationHooks.configureExecutionPrologue(rootPrograms, context);
 
   debug('exited configureExecutionPrologue');
 
@@ -187,7 +187,7 @@ export async function configureProgram<
       debug('calling ::parseAsync on root program');
 
       try {
-        const result = await rootInstances.router.parseAsync(
+        const result = await rootPrograms.router.parseAsync(
           argv,
           wrapExecutionContext(context)
         );
@@ -257,7 +257,7 @@ export async function configureProgram<
 
       debug_error.error('caught fatal error (type %O): %O', typeof error, error);
 
-      const argv = (rootInstances.router.parsed || { argv: {} }).argv as Parameters<
+      const argv = (rootPrograms.router.parsed || { argv: {} }).argv as Parameters<
         typeof finalConfigurationHooks.configureErrorHandlingEpilogue
       >[1];
 
@@ -317,7 +317,7 @@ export async function configureProgram<
   debug('configureProgram invocation succeeded');
 
   return {
-    programs: rootInstances,
+    programs: rootPrograms,
     execute: parseAndExecuteWithErrorHandling,
     ...asEnumerable(context)
   };

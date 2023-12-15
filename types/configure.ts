@@ -20,8 +20,8 @@ export type ConfigureExecutionContext<
 /**
  * This function is called once towards the end of the execution of
  * `configureProgram`, after all commands have been discovered but before any
- * have been executed, and should apply any final configurations to the yargs
- * instances that constitute the command line interface.
+ * have been executed, and should apply any final configurations to the programs
+ * that constitute the command line interface.
  *
  * All commands and sub-commands known to Black Flag are available in the
  * {@link ExecutionContext.commands} map, which can be accessed from the
@@ -101,8 +101,8 @@ export type ConfigurationHooks<
   /**
    * This function is called once towards the end of the execution of
    * `configureProgram`, after all commands have been discovered but before any
-   * have been executed, and should apply any final configurations to the yargs
-   * instances that constitute the command line interface.
+   * have been executed, and should apply any final configurations to the
+   * programs that constitute the command line interface.
    *
    * All commands and sub-commands known to Black Flag are available in the
    * {@link ExecutionContext.commands} map, which can be accessed from the

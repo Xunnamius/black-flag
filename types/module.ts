@@ -29,7 +29,7 @@ export type Configuration<
   /**
    * An object containing yargs options configuration or a function that will
    * receive the current Black Flag program. Unlike with vanilla yargs, you do
-   * not need to return the program instance; returning `undefined`/`void` is
+   * not need to return anything at all; "returning" `undefined`/`void` is
    * equivalent. If you return something other than the received program, such
    * as an object of options, it will be passed to `yargs::options` for you.
    *
