@@ -976,9 +976,9 @@ defaults:
 
 <!-- lint enable list-item-style -->
 
-Any default can be tweaked or overridden on via each command's [`builder`][7]
-function, which gives you direct access to the entire yargs API. Let's add one
-to `commands/index.js` along with a `handler` function and `usage` string:
+Any default can be tweaked or overridden via each command's [`builder`][7]
+function, which gives you direct access to the yargs API. Let's add one to
+`commands/index.js` along with a `handler` function and `usage` string:
 
 ```javascript
 /**
@@ -1397,42 +1397,42 @@ await runCommand('./commands', {
 
 ```javascript
 commands: Map(6) {
-  'myctl' => { instances: [Object], metadata: [Object] },
-  'myctl init' => { instances: [Object], metadata: [Object] },
-  'myctl remote' => { instances: [Object], metadata: [Object] },
-  'myctl remote add' => { instances: [Object], metadata: [Object] },
-  'myctl remote remove' => { instances: [Object], metadata: [Object] },
-  'myctl remote show' => { instances: [Object], metadata: [Object] }
+  'myctl' => { programs: [Object], metadata: [Object] },
+  'myctl init' => { programs: [Object], metadata: [Object] },
+  'myctl remote' => { programs: [Object], metadata: [Object] },
+  'myctl remote add' => { programs: [Object], metadata: [Object] },
+  'myctl remote remove' => { programs: [Object], metadata: [Object] },
+  'myctl remote show' => { programs: [Object], metadata: [Object] }
 }
 ```
 
-Each of these six programs is actually _three_ yargs instances:
+Each of these six commands is actually _three_ programs:
 
-1. The **effector** (`instances.effector`) yargs instance is responsible for
+1. The **effector** (`programs.effector`) programs is responsible for
    second-pass arguments parsing and validation, executing each command's actual
    [`handler`][7] function, and ensuring the final parse result bubbles up to
    the router program.
 
-2. The **helper** (`instances.helper`) yargs instance is responsible for
-   generating all help text as well as first-pass arguments parsing and partial
-   validation. Said parse result is used as the `argv` third parameter passed to
-   the [`builder`][7] functions of effector instances.
+2. The **helper** (`programs.helper`) programs is responsible for generating all
+   help text as well as first-pass arguments parsing and partial validation.
+   Said parse result is used as the `argv` third parameter passed to the
+   [`builder`][7] functions of effectors.
 
-3. The **router** (`instances.router`) yargs instance is responsible for
-   proxying control to the other router instances and to helper instances, and
-   for ensuring exceptions and final parse results bubble up to the root Black
-   Flag execution context ([`PreExecutionContext::execute`][11]) for handling.
+3. The **router** (`programs.router`) programs is responsible for proxying
+   control to other routers and to helpers, and for ensuring exceptions and
+   final parse results bubble up to the root Black Flag execution context
+   ([`PreExecutionContext::execute`][11]) for handling.
 
 > See the [flow chart][53] below for a visual overview.
 
-These three yargs instances representing the root command are accessible from
-the [`PreExecutionContext::root`][11] property. They are also always the first
-item in the `PreExecutionContext::commands` map.
+These three programs representing the root command are accessible from the
+[`PreExecutionContext::root`][11] property. They are also always the first item
+in the `PreExecutionContext::commands` map.
 
 ```typescript
 const preExecutionContext = configureProgram('./commands', {
   configureExecutionEpilogue(_argv, { commands }) {
-    assert(preExecutionContext.root === commands.get('myctl').instances);
+    assert(preExecutionContext.root === commands.get('myctl').programs);
     assert(
       preExecutionContext.root === commands.get(Array.from(commands.keys())[0])
     );
@@ -1442,51 +1442,49 @@ const preExecutionContext = configureProgram('./commands', {
 await preExecutionContext.execute();
 ```
 
-Effector instances do the heavy lifting in that they actually execute their
-command's [`handler`][7]. These instances are accessible via the
-[`instances.helper`][54] property of each object in
-[`PreExecutionContext::commands`][11], and can be configured as typical yargs
-instances.
+Effectors do the heavy lifting in that they actually execute their command's
+[`handler`][7]. They are accessible via the [`programs.effector`][54] property
+of each object in [`PreExecutionContext::commands`][11], and can be configured
+as one might a typical yargs instance.
 
-Helper instances are "clones" of their respective effector instances and are
-accessible via the [`instances.helper`][54] property of each object in
+Helpers are "clones" of their respective effectors and are accessible via the
+[`programs.helper`][54] property of each object in
 [`PreExecutionContext::commands`][11]. These instances have been reconfigured to
 address [a couple bugs][55] in yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
-side-effect of this is that only effector instances recognize top-level
-positional arguments, which isn't a problem Black Flag users have to worry about
-unless they're dangerously tampering with these instances directly.
+side-effect of this is that only effectors recognize top-level positional
+arguments, which isn't a problem Black Flag users have to worry about unless
+they're dangerously tampering with these programs directly.
 
-Router instances are partially-configured just enough to proxy control to other
-router instances or to helper instances and are accessible via the
-[`instances.router`][54] property of each object in
-[`PreExecutionContext::commands`][11]. They cannot and _must not_ have any
-configured strictness or validation logic.
+Routers are partially-configured just enough to proxy control to other routers
+or to helpers and are accessible via the [`programs.router`][54] property of
+each object in [`PreExecutionContext::commands`][11]. They cannot and _must not_
+have any configured strictness or validation logic.
 
-Therefore: if you want to tamper with the yargs instance responsible for running
-a command's [`handler`][7], operate on the effector program. If you want to
-tamper with a command's generic stdout help text, operate on the helper program.
-If you want to tamper with validation and parsing, operate on both the helper
-and effector instances. If you want to tamper with the routing of control
-between commands, operate on the router program.
+Therefore: if you want to tamper with the program responsible for running a
+command's [`handler`][7], operate on the effector program. If you want to tamper
+with a command's generic stdout help text, operate on the helper program. If you
+want to tamper with validation and parsing, operate on both the helper and
+effectors. If you want to tamper with the routing of control between commands,
+operate on the router program.
 
 See [the docs][x-repo-docs] for more details on Black Flag's internals.
 
 #### Motivation
 
-The delegation of responsibility between helper and effector instances
-facilitates the double-parsing necessary for [dynamic options][6] support. In
-implementing dynamic options, Black Flag accurately parses the given arguments
-with the helper program on the first pass and feeds the result to the
-[`builder`][7] function of the effector on the second pass (via [`builder`'s new
-third parameter][6]).
+The delegation of responsibility between helper and effectors facilitates the
+double-parsing necessary for [dynamic options][6] support. In implementing
+dynamic options, Black Flag accurately parses the given arguments with the
+helper program on the first pass and feeds the result to the [`builder`][7]
+function of the effector on the second pass (via [`builder`'s new third
+parameter][6]).
 
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
 
 - An end user trying to invoke a non-existent sub-command will cause an
-  exception to be thrown. This is true even if the effector and helper instances
-  have been set to non-strict mode (`yargs::strict(false)`).
+  exception to be thrown. This is true even if the effector and helpers have
+  been set to non-strict mode (`yargs::strict(false)`).
 
 - The right command gets to generate help text. To this end, passing `--help` or
   an equivalent argument is effectively ignored by routers.
@@ -1509,7 +1507,7 @@ that does not exist.
 
 #### Generating Help Text
 
-Effector instances are essentially yargs instances with a registered [default
+Effectors are essentially yargs instances with a registered [default
 command][38]. Unfortunately, when vanilla yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
@@ -1637,11 +1635,11 @@ the `myctl` example from the previous sections.
 
 Suppose the user executes `myctl --version`.<sup>🡒1</sup> Black Flag (using
 `runProgram`) calls your configuration hooks, discovers all available commands,
-and creates three yargs instances per discovered command: the "router",
-"helper", and "effector". If there was an error during discovery/configuration
-or hook execution, the error handling hook would execute before the process
-exited with the appropriate code.<sup>1🡒R1</sup> This is how all errors that
-bubble up are handled. Otherwise, Black Flag calls the root
+and creates three programs per discovered command: the "router", "helper", and
+"effector". If there was an error during discovery/configuration or hook
+execution, the error handling hook would execute before the process exited with
+the appropriate code.<sup>1🡒R1</sup> This is how all errors that bubble up are
+handled. Otherwise, Black Flag calls the root
 `RouterProgram::parseAsync`.<sup>1🡒2</sup> The router detects that the given
 arguments refer to the current command and so calls
 `HelperProgram::parseAsync`.<sup>2🡒3B</sup> If the helper throws (e.g. due to a
@@ -1662,7 +1660,7 @@ Suppose instead the user executes `myctl remote --help`.<sup>🡒1</sup> Black F
 (using `runProgram`) sets everything up and calls `RouterProgram::parseAsync`
 the same as the previous example.<sup>1🡒2</sup> However, this time the router
 detects that the given arguments refer to a sub-command and so relinquishes
-control to the trio of yargs instances representing the `myctl remote`
+control to the trio of programs representing the `myctl remote`
 command.<sup>2->3A</sup> Black Flag notes the user asked to generate generic
 help text (by having passed the `--help` argument) before calling
 `RouterProgram::parseAsync`.<sup>3A->4B</sup> `myctl remote`'s router detects
@@ -1680,12 +1678,12 @@ Finally, suppose the user executes `myctl remote remove origin`.<sup>🡒1</sup>
 Black Flag (using `runProgram`) sets everything up and calls the root
 `RouterProgram::parseAsync` the same as the previous example.<sup>1🡒2</sup> The
 router detects that the given arguments refer to a sub-command and so
-relinquishes control to the trio of yargs instances representing the
-`myctl remote` command.<sup>2->3A</sup> The parent-child router detects that the
-given arguments refer to a sub-command and so relinquishes control to the trio
-of yargs instances representing the `myctl remote show`
-command.<sup>3A->4B->5A</sup> `myctl remote show`'s router detects that the
-given arguments refer to the current command<sup>5A->6B</sup> and so calls
+relinquishes control to the trio of programs representing the `myctl remote`
+command.<sup>2->3A</sup> The parent-child router detects that the given
+arguments refer to a sub-command and so relinquishes control to the trio of
+programs representing the `myctl remote show` command.<sup>3A->4B->5A</sup>
+`myctl remote show`'s router detects that the given arguments refer to the
+current command<sup>5A->6B</sup> and so calls
 `HelperProgram::parseAsync`.<sup>6B🡒7</sup> If the helper throws (e.g. due to a
 validation error), the exception bubbles up to the root command.<sup>R7🡒R1</sup>
 Otherwise, the helper will parse the given arguments before calling
