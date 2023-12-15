@@ -183,9 +183,6 @@ export const ErrorMessage = {
   AssertionFailureConfigureExecutionEpilogue() {
     return 'configureExecutionEpilogue must return Arguments';
   },
-  AssertionFailureExistenceInvariant() {
-    return 'existence variant violated: failed to acquire first parse result';
-  },
   AssertionFailureOrderingInvariant() {
     return 'flags, switches, and other such parameters must appear after the final command name in your arguments list, not before';
   },

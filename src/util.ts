@@ -13,6 +13,7 @@ import {
 import type { Promisable } from 'type-fest';
 import type { ConfigurationHooks } from 'types/configure';
 
+import { isNativeError } from 'node:util/types';
 import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
 
 const debug = rootDebugLogger.extend('util');
@@ -365,7 +366,9 @@ export async function runProgram<
 
     process.exitCode = isCliError(error)
       ? error.suggestedExitCode
-      : FrameworkExitCode.DefaultError;
+      : isAssertionSystemError(error)
+        ? FrameworkExitCode.AssertionFailed
+        : FrameworkExitCode.DefaultError;
 
     debug_.error('exit code set to %O', process.exitCode);
 
@@ -386,4 +389,24 @@ export async function runProgram<
  */
 export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext {
   return !!obj && typeof obj === 'object' && 'execute' in obj && 'programs' in obj;
+}
+
+/**
+ * Type-guard for Node's "ERR_ASSERTION" so-called `SystemError`.
+ */
+function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoException & {
+  generatedMessage: boolean;
+  code: 'ERR_ASSERTION';
+  actual?: unknown;
+  expected?: unknown;
+  operator: string;
+} {
+  return (
+    isNativeError(error) &&
+    'code' in error &&
+    error.code === 'ERR_ASSERTION' &&
+    'actual' in error &&
+    'expected' in error &&
+    'operator' in error
+  );
 }
