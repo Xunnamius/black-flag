@@ -66,7 +66,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L17)
 
 ___
 
@@ -86,7 +86,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/44a6572/types/module.ts#L134)
+[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L134)
 
 ___
 
@@ -104,7 +104,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/44a6572/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L48)
 
 ___
 
@@ -137,7 +137,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/44a6572/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L16)
 
 ___
 
@@ -166,7 +166,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L92)
+[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L92)
 
 ___
 
@@ -203,7 +203,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L44)
+[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L44)
 
 ___
 
@@ -250,7 +250,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L77)
+[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L77)
 
 ___
 
@@ -284,7 +284,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L16)
+[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L16)
 
 ___
 
@@ -323,7 +323,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L60)
+[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L60)
 
 ___
 
@@ -366,7 +366,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/44a6572/types/configure.ts#L33)
+[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/configure.ts#L33)
 
 ___
 
@@ -397,7 +397,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:240](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L240)
+[types/program.ts:240](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L240)
 
 ___
 
@@ -430,7 +430,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[types/program.ts:206](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L206)
+[types/program.ts:206](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L206)
 
 ___
 
@@ -454,7 +454,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:192](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L192)
+[types/program.ts:192](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L192)
 
 ___
 
@@ -474,7 +474,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/44a6572/types/module.ts#L143)
+[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L143)
 
 ___
 
@@ -494,7 +494,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:125](https://github.com/Xunnamius/black-flag/blob/44a6572/types/module.ts#L125)
+[types/module.ts:125](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L125)
 
 ___
 
@@ -513,7 +513,7 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:217](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L217)
+[types/program.ts:217](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L217)
 
 ___
 
@@ -535,7 +535,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L28)
+[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L28)
 
 ___
 
@@ -558,7 +558,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/44a6572/types/program.ts#L149)
+[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/program.ts#L149)
 
 ___
 
@@ -578,7 +578,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:116](https://github.com/Xunnamius/black-flag/blob/44a6572/types/module.ts#L116)
+[types/module.ts:116](https://github.com/Xunnamius/black-flag/blob/ea418fc/types/module.ts#L116)
 
 ## Variables
 
@@ -591,7 +591,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/44a6572/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/constant.ts#L5)
 
 ___
 
@@ -627,7 +627,6 @@ A collection of possible error and warning messages emitted by Black Flag.
 | `AssertionFailureBadParameterCombination` | () => `string` |
 | `AssertionFailureCannotExecuteMultipleTimes` | () => `string` |
 | `AssertionFailureConfigureExecutionEpilogue` | () => `string` |
-| `AssertionFailureExistenceInvariant` | () => `string` |
 | `AssertionFailureInvocationNotAllowed` | (`name`: `string`) => `string` |
 | `AssertionFailureNamingInvariant` | (`name`: `string`) => `string` |
 | `AssertionFailureNoConfigurationLoaded` | (`path`: `string`) => `string` |
@@ -643,7 +642,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/44a6572/src/error.ts#L163)
+[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/error.ts#L163)
 
 ___
 
@@ -658,7 +657,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/44a6572/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/constant.ts#L13)
 
 ## Functions
 
@@ -695,7 +694,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/44a6572/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/index.ts#L59)
 
 ___
 
@@ -732,7 +731,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:162](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L162)
+[src/util.ts:163](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L163)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -766,7 +765,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:181](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L181)
+[src/util.ts:182](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L182)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -801,7 +800,7 @@ returned.
 
 #### Defined in
 
-[src/util.ts:203](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L203)
+[src/util.ts:204](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L204)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -834,7 +833,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:223](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L223)
+[src/util.ts:224](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L224)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -868,7 +867,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:242](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L242)
+[src/util.ts:243](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L243)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -903,4 +902,4 @@ returned.
 
 #### Defined in
 
-[src/util.ts:265](https://github.com/Xunnamius/black-flag/blob/44a6572/src/util.ts#L265)
+[src/util.ts:266](https://github.com/Xunnamius/black-flag/blob/ea418fc/src/util.ts#L266)
