@@ -1642,32 +1642,35 @@ and creates three yargs instances per discovered command: the "router",
 or hook execution, the error handling hook would execute before the process
 exited with the appropriate code.<sup>1🡒R1</sup> This is how all errors that
 bubble up are handled. Otherwise, Black Flag calls the root
-`router::parseAsync`.<sup>1🡒2</sup> The router detects that the given arguments
-refer to the current command and so calls `helper::parseAsync`.<sup>2🡒3B</sup>
-If the helper throws (e.g. due to a validation error), the exception bubbles up
-to the root command.<sup>R3B🡒R1</sup> Otherwise, the helper will parse the given
-arguments before calling `effector::parseAsync`.<sup>3B🡒4A</sup> The effector
-will re-parse the given arguments, this time with the third `argv` parameter
+`RouterProgram::parseAsync`.<sup>1🡒2</sup> The router detects that the given
+arguments refer to the current command and so calls
+`HelperProgram::parseAsync`.<sup>2🡒3B</sup> If the helper throws (e.g. due to a
+validation error), the exception bubbles up to the root
+command.<sup>R3B🡒R1</sup> Otherwise, the helper will parse the given arguments
+before calling `EffectorProgram::parseAsync`.<sup>3B🡒4A</sup> The effector will
+re-parse the given arguments, this time with the third `argv` parameter
 available to `builder`, before calling the current command's `handler` function,
 throwing an error, or, in this case, outputting version text. The result of
-calling `effector::parseAsync` bubbles up to the root command<sup>R4A🡒R2</sup>
-where it is then communicated to the user.<sup>R2🡒R1</sup>
+calling `EffectorProgram::parseAsync` bubbles up to the root
+command<sup>R4A🡒R2</sup> where it is then communicated to the
+user.<sup>R2🡒R1</sup>
 
 > The `myctl` command is _the_ root command, and as such is the only command
 > that doesn't have a parent command, making it a "pure parent".
 
 Suppose instead the user executes `myctl remote --help`.<sup>🡒1</sup> Black Flag
-(using `runProgram`) sets everything up and calls `router::parseAsync` the same
-as the previous example.<sup>1🡒2</sup> However, this time the router detects
-that the given arguments refer to a sub-command and so relinquishes control to
-the trio of yargs instances representing the `myctl remote`
+(using `runProgram`) sets everything up and calls `RouterProgram::parseAsync`
+the same as the previous example.<sup>1🡒2</sup> However, this time the router
+detects that the given arguments refer to a sub-command and so relinquishes
+control to the trio of yargs instances representing the `myctl remote`
 command.<sup>2->3A</sup> Black Flag notes the user asked to generate generic
 help text (by having passed the `--help` argument) before calling
-`router::parseAsync`.<sup>3A->4B</sup> `myctl remote`'s router detects that the
-given arguments refer to the current command and that we're only generating
-generic help text so calls `helper::showHelp`<sup>4B🡒5B</sup> and throws a
-`GracefulEarlyExitError` that bubbles up to the root command<sup>R5B🡒R2</sup>
-where it is then communicated to the user.<sup>R2🡒R1</sup>
+`RouterProgram::parseAsync`.<sup>3A->4B</sup> `myctl remote`'s router detects
+that the given arguments refer to the current command and that we're only
+generating generic help text so calls `HelperProgram::showHelp`<sup>4B🡒5B</sup>
+and throws a `GracefulEarlyExitError` that bubbles up to the root
+command<sup>R5B🡒R2</sup> where it is then communicated to the
+user.<sup>R2🡒R1</sup>
 
 > The `myctl remote` sub-command is a child command of the root `myctl` command,
 > but it also has its own child commands, making it a parent _and_ a child
@@ -1675,22 +1678,23 @@ where it is then communicated to the user.<sup>R2🡒R1</sup>
 
 Finally, suppose the user executes `myctl remote remove origin`.<sup>🡒1</sup>
 Black Flag (using `runProgram`) sets everything up and calls the root
-`router::parseAsync` the same as the previous example.<sup>1🡒2</sup> The router
-detects that the given arguments refer to a sub-command and so relinquishes
-control to the trio of yargs instances representing the `myctl remote`
-command.<sup>2->3A</sup> The parent-child router detects that the given
-arguments refer to a sub-command and so relinquishes control to the trio of
-yargs instances representing the `myctl remote show`
+`RouterProgram::parseAsync` the same as the previous example.<sup>1🡒2</sup> The
+router detects that the given arguments refer to a sub-command and so
+relinquishes control to the trio of yargs instances representing the
+`myctl remote` command.<sup>2->3A</sup> The parent-child router detects that the
+given arguments refer to a sub-command and so relinquishes control to the trio
+of yargs instances representing the `myctl remote show`
 command.<sup>3A->4B->5A</sup> `myctl remote show`'s router detects that the
 given arguments refer to the current command<sup>5A->6B</sup> and so calls
-`helper::parseAsync`.<sup>6B🡒7</sup> If the helper throws (e.g. due to a
+`HelperProgram::parseAsync`.<sup>6B🡒7</sup> If the helper throws (e.g. due to a
 validation error), the exception bubbles up to the root command.<sup>R7🡒R1</sup>
 Otherwise, the helper will parse the given arguments before calling
-`effector::parseAsync`.<sup>7🡒8</sup> The effector will re-parse the given
-arguments, this time with the third `argv` parameter available to `builder`,
-before calling the current command's `handler` function. The result of calling
-`effector::parseAsync` bubbles up to the root command<sup>R8🡒R2</sup> where it
-is then communicated to the user.<sup>R2🡒R1</sup>
+`EffectorProgram::parseAsync`.<sup>7🡒8</sup> The effector will re-parse the
+given arguments, this time with the third `argv` parameter available to
+`builder`, before calling the current command's `handler` function. The result
+of calling `EffectorProgram::parseAsync` bubbles up to the root
+command<sup>R8🡒R2</sup> where it is then communicated to the
+user.<sup>R2🡒R1</sup>
 
 > The `myctl remote show` sub-command is a child command of the parent-child
 > `myctl remote` command. It has no children itself, making it a "pure child"
