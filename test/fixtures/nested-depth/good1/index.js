@@ -9,8 +9,8 @@ const name = basename(dirname(__filename));
  */
 module.exports = {
   description: `description for parent program ${name}`,
-  builder: (yargs) => {
-    return yargs.option(name, { count: true });
+  builder: (blackFlag) => {
+    return blackFlag.option(name, { count: true });
   },
   handler: (argv) => {
     argv.handled_by = __filename;

@@ -1,16 +1,16 @@
 // @ts-check
-/// <reference path="../../../index.d.ts"/>
+/// <reference path="../index.d.ts"/>
 
 const { dirname, basename } = require('node:path');
 const name = basename(dirname(__filename));
 
 /**
- * @type {Type.ParentConfig}
+ * @type {Type.RootConfig}
  */
 module.exports = {
-  description: `description for parent program ${name}`,
+  usage: `usage text for root program ${name}`,
   builder: (blackFlag) => {
-    return blackFlag.option(name, { count: true });
+    return blackFlag.strict(false);
   },
   handler: (argv) => {
     argv.handled_by = __filename;

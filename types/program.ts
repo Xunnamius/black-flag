@@ -38,7 +38,7 @@ export type AnyProgram = Program<Record<string, unknown>>;
 export type Program<CustomCliArguments extends Record<string, unknown> = EmptyObject> =
   Omit<
     _Program<FrameworkArguments & CustomCliArguments>,
-    'command' | 'showHelpOnFail' | 'version' | 'help'
+    'command' | 'showHelpOnFail' | 'version' | 'help' | 'exitProcess' | 'commandDir'
   > & {
     // ? Adds custom overload signatures that fixes the lack of implementation
     // ? signature exposure in the Argv type exposed by yargs
@@ -50,7 +50,9 @@ export type Program<CustomCliArguments extends Record<string, unknown> = EmptyOb
       (
         command: string[],
         description: Configuration<CustomCliArguments>['description'],
-        builder: Configuration<CustomCliArguments>['builder'],
+        builder:
+          | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
+          | Record<string, never>,
         handler: Configuration<CustomCliArguments>['handler'],
         // ? configureArguments already handles this use case, so...
         middlewares: [],
@@ -271,6 +273,8 @@ export type ExecutionContext = {
      * Since it will be actively manipulated by each command in the arguments
      * list, **do not rely on `rawArgv` for anything other than checking
      * invariant satisfaction.**
+     *
+     * @default []
      */
     rawArgv: typeof process.argv;
     /**
@@ -332,6 +336,14 @@ export type ExecutionContext = {
      * @default true
      */
     showHelpOnFail: boolean;
+    /**
+     * Allows helper and effector programs to keep track of pre-pared arguments.
+     *
+     * Note: this property should not be accessed or mutated by end-developers.
+     *
+     * @default undefined
+     */
+    firstPassArgv: AnyArguments | undefined;
 
     [key: string]: unknown;
   };

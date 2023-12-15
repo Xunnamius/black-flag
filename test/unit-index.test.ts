@@ -33,7 +33,8 @@ describe('::configureProgram', () => {
         'isGracefullyExiting',
         'isHandlingHelpOption',
         'globalHelpOption',
-        'showHelpOnFail'
+        'showHelpOnFail',
+        'firstPassArgv'
       ]);
       expect(rest).toBeEmpty();
     });
@@ -178,6 +179,10 @@ describe('::configureProgram', () => {
         message: expect.stringMatching(/ExecutionContext/)
       });
     });
+  });
+
+  it('throws when calling disallowed methods on programs', async () => {
+    expect.hasAssertions();
   });
 
   describe('::execute', () => {
@@ -473,6 +478,26 @@ describe('::configureProgram', () => {
           ]
         ]);
       });
+    });
+
+    it('passes the correct programs into builder', async () => {
+      expect.hasAssertions();
+    });
+
+    it('supports returning program from builder', async () => {
+      expect.hasAssertions();
+    });
+
+    it('supports returning undefined from builder', async () => {
+      expect.hasAssertions();
+    });
+
+    it('allows returning a plain object from builder instead of program', async () => {
+      expect.hasAssertions();
+    });
+
+    it('supports calling showHelpOnFail', async () => {
+      expect.hasAssertions();
     });
 
     it('throws if configureArguments returns falsy', async () => {

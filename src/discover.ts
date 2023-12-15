@@ -18,7 +18,6 @@ import {
 } from 'universe/error';
 
 import type {
-  AnyArguments,
   Arguments,
   EffectorProgram,
   ExecutionContext,
@@ -583,48 +582,16 @@ export async function discoverCommands(
 
     // * Link helper program to effector program
 
-    let firstPassArgv: AnyArguments | undefined = undefined;
-
     programs.helper.command_deferred(
       // ! This next line excludes aliases and positionals in an attempt to
       // ! address yargs bugs around help text output. See the docs for details.
       ['$0'],
       config.description,
-      (yargsInstance, helpOrVersionSet) => {
-        const debug_ = debug.extend('helper');
-        debug_('entered wrapped builder function (first-pass) for %O', config.name);
-        assert(firstPassArgv === undefined, ErrorMessage.GuruMeditation());
-
-        try {
-          const returnedYargsInstance =
-            typeof config.builder === 'function'
-              ? config.builder(
-                  yargsInstance,
-                  context.state.isHandlingHelpOption || helpOrVersionSet
-                )
-              : yargsInstance.options(config.builder);
-
-          debug_(
-            'exited wrapped builder function (first-pass) for %O (no errors)',
-            config.name
-          );
-
-          return returnedYargsInstance;
-        } catch {
-          debug_(
-            'exited wrapped builder function (first-pass) for %O (with error)',
-            config.name
-          );
-        } finally {
-          firstPassArgv = undefined;
-        }
-
-        return yargsInstance;
-      },
+      makeVanillaYargsBuilder(programs.helper, config, 'first-pass'),
       async (parsedArgv) => {
         const debug_ = debug.extend('helper');
         debug_('entered wrapper handler function for %O', config.name);
-        assert(firstPassArgv === undefined, ErrorMessage.GuruMeditation());
+        assert(context.state.firstPassArgv === undefined, ErrorMessage.GuruMeditation());
 
         if (context.state.isHandlingHelpOption) {
           debug_(
@@ -639,7 +606,7 @@ export async function discoverCommands(
           debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
         } else {
-          firstPassArgv = parsedArgv;
+          context.state.firstPassArgv = parsedArgv;
 
           const localArgv = await programs.effector.parseAsync(
             context.state.rawArgv,
@@ -670,38 +637,7 @@ export async function discoverCommands(
     programs.effector.command(
       [config.command, ...config.aliases],
       config.description,
-      (yargsInstance, helpOrVersionSet) => {
-        const debug_ = debug.extend('effector');
-        debug_('entered wrapped builder function (second-pass) for %O', config.name);
-        assert(firstPassArgv !== undefined, ErrorMessage.GuruMeditation());
-
-        try {
-          const returnedYargsInstance =
-            typeof config.builder === 'function'
-              ? config.builder(
-                  yargsInstance,
-                  context.state.isHandlingHelpOption || helpOrVersionSet,
-                  firstPassArgv
-                )
-              : yargsInstance.options(config.builder);
-
-          debug_(
-            'exited wrapped builder function (second-pass) for %O (no errors)',
-            config.name
-          );
-
-          return returnedYargsInstance;
-        } catch {
-          debug_(
-            'exited wrapped builder function (second-pass) for %O (with error)',
-            config.name
-          );
-        } finally {
-          firstPassArgv = undefined;
-        }
-
-        return yargsInstance;
-      },
+      makeVanillaYargsBuilder(programs.effector, config, 'second-pass'),
       config.handler,
       [],
       config.deprecated
@@ -1001,7 +937,7 @@ export async function discoverCommands(
       // ! address yargs bugs around help text output. See the docs for details.
       [childConfig.name, ...childConfig.aliases],
       childConfig.description,
-      childConfig.builder,
+      makeVanillaYargsBuilder(parentHelper, childConfig, 'first-pass'),
       async (_parsedArgv) => {
         throw new AssertionFailedError(
           ErrorMessage.AssertionFailureReachedTheUnreachable()
@@ -1017,6 +953,60 @@ export async function discoverCommands(
         childFullName
       );
     }
+  }
+
+  /**
+   * Returns a builder function consumable by a vanilla yargs instance or that
+   * acts as an adapter to Black Flag's more powerful builder API.
+   */
+  function makeVanillaYargsBuilder(
+    program: EffectorProgram | HelperProgram,
+    config: AnyConfiguration,
+    pass: 'first-pass' | 'second-pass'
+    // eslint-disable-next-line @typescript-eslint/ban-types
+  ): Extract<Parameters<Program['command']>[2], Function> {
+    return (vanillaYargs, helpOrVersionSet) => {
+      const debug_ = debug.extend(pass === 'first-pass' ? 'helper' : 'effector');
+      debug_(`entered wrapped builder function (${pass}) for %O`, config.name);
+
+      assert(
+        pass === 'first-pass'
+          ? context.state.firstPassArgv === undefined
+          : context.state.firstPassArgv !== undefined,
+        ErrorMessage.GuruMeditation()
+      );
+
+      try {
+        const blackFlagBuilderResult =
+          typeof config.builder === 'function'
+            ? config.builder(
+                program,
+                context.state.isHandlingHelpOption || helpOrVersionSet,
+                context.state.firstPassArgv
+              )
+            : config.builder;
+
+        if (blackFlagBuilderResult && blackFlagBuilderResult !== program) {
+          // ? Record<string, never> is really yargs.Options but why import it?
+          // ? Our Proxy always returns a program, so TS can stop worrying!
+          vanillaYargs.options(blackFlagBuilderResult as Record<string, never>);
+        }
+
+        debug_(
+          `exited wrapped builder function (${pass}) for %O (no errors)`,
+          config.name
+        );
+      } catch {
+        debug_.warn(
+          `exited wrapped builder function (${pass}) for %O (with error)`,
+          config.name
+        );
+      } finally {
+        context.state.firstPassArgv = undefined;
+      }
+
+      return vanillaYargs;
+    };
   }
 }
 

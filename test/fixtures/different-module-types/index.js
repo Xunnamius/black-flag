@@ -6,7 +6,7 @@
  * @type {Type.ConfigModule}
  */
 module.exports = async (context) => {
-  const {dirname, basename } = require('node:path');
+  const { dirname, basename } = require('node:path');
   const name = basename(dirname(__filename));
 
   /**
@@ -15,8 +15,8 @@ module.exports = async (context) => {
   const commandModule = {
     usage: `usage text for root program ${name}`,
     description: `description for root program ${name}`,
-    builder: (yargs) => {
-      return yargs.option(name, { count: true });
+    builder: (blackFlag) => {
+      return blackFlag.option(name, { count: true });
     },
     handler: (argv) => {
       argv.handled_by = __filename;

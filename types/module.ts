@@ -1,7 +1,12 @@
 import type { EmptyObject, Promisable } from 'type-fest';
 import type { Options as _Options, Argv as _Program } from 'yargs';
 
-import type { Arguments, ExecutionContext, Program } from 'types/program';
+import type {
+  Arguments,
+  EffectorProgram,
+  ExecutionContext,
+  HelperProgram
+} from 'types/program';
 
 /**
  * Represents the most generic implementation type of {@link Configuration}.
@@ -28,7 +33,10 @@ export type Configuration<
   aliases: string[];
   /**
    * An object containing yargs options configuration or a function that will
-   * receive and return the current yargs instance.
+   * receive the current Black Flag program. Unlike with vanilla yargs, you do
+   * not need to return the program instance; returning `undefined`/`void` is
+   * equivalent. If you return something other than the received program, such
+   * as an object of options, it will be passed to `yargs::options` for you.
    *
    * **If `builder` is a function, it cannot be async or return a promise** due
    * to a yargs bug present at time of writing. However, a {@link Configuration}
@@ -39,11 +47,13 @@ export type Configuration<
    */
   builder:
     | { [key: string]: _Options }
-    | ((
-        yargs: Program<CustomCliArguments>,
+    | (<
+        T extends EffectorProgram<CustomCliArguments> | HelperProgram<CustomCliArguments>
+      >(
+        blackFlag: Omit<T, 'parseAsync' | 'fail'>,
         helpOrVersionSet: boolean,
         argv?: Arguments<CustomCliArguments>
-      ) => Program<CustomCliArguments> | _Program);
+      ) => void | T | { [key: string]: _Options } | _Program);
   /**
    * The command as interpreted by yargs. May contain positional arguments.
    *

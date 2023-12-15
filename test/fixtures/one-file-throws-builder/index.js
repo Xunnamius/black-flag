@@ -9,7 +9,7 @@ const name = basename(dirname(__filename));
  */
 module.exports = {
   usage: `usage text for root program ${name}`,
-  builder: (_yargs) => {
+  builder: (_blackFlag) => {
     throw new Error('error thrown in builder');
   },
   handler: (argv) => {

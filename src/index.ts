@@ -68,10 +68,14 @@ export async function configureProgram<
     ConfigureHooks<CustomContext>
   >;
 
-  finalConfigurationHooks.configureExecutionContext ??= (context) => context;
   finalConfigurationHooks.configureArguments ??= (rawArgv) => rawArgv;
   finalConfigurationHooks.configureExecutionPrologue ??= noopConfigurationHook;
   finalConfigurationHooks.configureExecutionEpilogue ??= (argv) => argv;
+
+  finalConfigurationHooks.configureExecutionContext ??= (context) => {
+    return context as CustomContext;
+  };
+
   finalConfigurationHooks.configureErrorHandlingEpilogue ??= ({ message }) => {
     // eslint-disable-next-line no-console
     console.error(message);
@@ -91,7 +95,8 @@ export async function configureProgram<
         isGracefullyExiting: false,
         isHandlingHelpOption: false,
         globalHelpOption: { name: 'help', description: defaultHelpTextDescription },
-        showHelpOnFail: true
+        showHelpOnFail: true,
+        firstPassArgv: undefined
       }
     })
   );

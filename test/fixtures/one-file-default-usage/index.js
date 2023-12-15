@@ -11,8 +11,8 @@ module.exports = {
   name: 'custom-name',
   description: 'custom-description',
   command: '$0 <custom-param-1|custom-param-2> [custom-param-3..]',
-  builder: (yargs) => {
-    return yargs.option(name, { boolean: true });
+  builder: (blackFlag) => {
+    return blackFlag.option(name, { boolean: true });
   },
   handler: (argv) => {
     argv.handled_by = __filename;
