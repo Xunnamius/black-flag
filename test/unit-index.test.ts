@@ -495,20 +495,6 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
     });
 
-    it('returns NullArguments after graceful exit', async () => {
-      expect.hasAssertions();
-
-      await withMocks(async ({ logSpy }) => {
-        await expect(
-          (await bf.configureProgram(getFixturePath('empty-index-file'))).execute([
-            '--help'
-          ])
-        ).resolves.toStrictEqual(nullArguments);
-
-        expect(logSpy).toHaveBeenCalled();
-      });
-    });
-
     it('supports calling showHelpOnFail(boolean)', async () => {
       expect.hasAssertions();
 
@@ -621,6 +607,50 @@ describe('::configureProgram', () => {
         expect(errorSpy.mock.calls).toStrictEqual([
           [expect.stringContaining('error thrown in handler')]
         ]);
+      });
+    });
+
+    it('returns NullArguments if builder or handler throws GracefulEarlyExitError, otherwise throws normally', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(
+              getFixturePath('one-file-throws-builder-1-graceful')
+            )
+          ).execute()
+        ).resolves.toStrictEqual(nullArguments);
+
+        await expect(
+          (
+            await bf.configureProgram(
+              getFixturePath('one-file-throws-builder-2-graceful')
+            )
+          ).execute()
+        ).resolves.toStrictEqual(nullArguments);
+
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-throws-handler-graceful'))
+          ).execute()
+        ).resolves.toStrictEqual(nullArguments);
+
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('empty-index-file'), {
+              configureArguments() {
+                throw new bf.GracefulEarlyExitError();
+              }
+            })
+          ).execute(['--help'])
+        ).rejects.toMatchObject({ message: ErrorMessage.GracefulEarlyExit() });
+
+        await expect(
+          (await bf.configureProgram(getFixturePath('empty-index-file'))).execute()
+        ).rejects.toMatchObject({ message: ErrorMessage.NotImplemented() });
+
+        expect(errorSpy).toHaveBeenCalledTimes(1);
       });
     });
   });

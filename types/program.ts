@@ -214,9 +214,16 @@ export type FrameworkArguments = {
  * the parsed and validated arguments object returned by the root router
  * {@link Program} instance.
  *
- * **This function throws whenever an exception occurs**, making it not ideal as
- * an entry point for a CLI. See {@link runProgram} for a wrapper function that
- * handles exceptions and sets the exit code for you.
+ * **This function throws whenever\* an exception occurs**, making it not ideal
+ * as an entry point for a CLI. See {@link runProgram} for a wrapper function
+ * that handles exceptions and sets the exit code for you.
+ *
+ * Note: when the special `GracefulEarlyExitError` exception is thrown _from
+ * within a command's handler or builder_, `Executor` will set
+ * `context.state.deepestParseResult` to `NullArguments` and
+ * `context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
+ * not** re-throw the exception in this special case, returning `NullArguments`
+ * instead.
  */
 export type Executor = (
   /**
@@ -242,9 +249,16 @@ export type PreExecutionContext<
    * the appropriate handler, and return the resulting final parsed arguments
    * object.
    *
-   * **This function throws whenever an exception occurs**, making it not ideal
-   * as an entry point for a CLI. See {@link runProgram} for a wrapper function
-   * that handles exceptions and sets the exit code for you.
+   * **This function throws whenever\* an exception occurs**, making it not
+   * ideal as an entry point for a CLI. See {@link runProgram} for a wrapper
+   * function that handles exceptions and sets the exit code for you.
+   *
+   * Note: when the special `GracefulEarlyExitError` exception is thrown _from
+   * within a command's handler or builder_, `Executor` will set
+   * `context.state.deepestParseResult` to `NullArguments` and
+   * `context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
+   * not** re-throw the exception in this special case, returning
+   * `NullArguments` instead.
    */
   execute: Executor;
 };
