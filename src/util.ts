@@ -162,7 +162,8 @@ export function makeRunner<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
+ * `process.exitCode` is set to the appropriate value and `undefined` (if
+ * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
  * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
@@ -184,7 +185,8 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
+ * `process.exitCode` is set to the appropriate value and `undefined` (if
+ * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
  * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
@@ -212,8 +214,8 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
- * returned.
+ * `process.exitCode` is set to the appropriate value and `NullArguments` (if
+ * `execute` threw) is returned.
  *
  * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
  */
@@ -232,7 +234,8 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
+ * `process.exitCode` is set to the appropriate value and `undefined` (if
+ * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
  * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
@@ -254,7 +257,8 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
+ * `process.exitCode` is set to the appropriate value and `undefined` (if
+ * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
  * returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
@@ -283,7 +287,7 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` is
+ * `process.exitCode` is set to the appropriate value and `NullArguments` is
  * returned.
  *
  * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
