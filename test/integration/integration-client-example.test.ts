@@ -3,8 +3,11 @@
 
 // * These tests verify that an auto-discovered Black Flag command actually
 // * works as advertized. That is: this file tests the examples present in the
-// * README.md file.
+// * README.md file, including support for importing both CJS and ESM modules.
 
 // TODO: good fable candidate here
 
-test.todo('this');
+it('supports both CJS and ESM configuration files', async () => {
+  expect.hasAssertions();
+  // TODO: also supports something like module.exports.default = undefined
+});

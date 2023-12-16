@@ -441,7 +441,7 @@ export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext 
 /**
  * Type-guard for Node's "ERR_ASSERTION" so-called `SystemError`.
  */
-function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoException & {
+export function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoException & {
   generatedMessage: boolean;
   code: 'ERR_ASSERTION';
   actual?: unknown;

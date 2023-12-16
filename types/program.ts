@@ -74,8 +74,11 @@ export type Program<
 
   /**
    * Like `yargs::showHelpOnFail`, but with no second `message` parameter. If
-   * you want to output some specific error message, use a configuration hook
-   * or `yargs::epilogue`.
+   * you want to output some specific error message, use a configuration hook or
+   * `yargs::epilogue`.
+   *
+   * Invoking this method will affect all programs in your command hierarchy,
+   * not just the program on which it was invoked.
    *
    * @see `yargs::showHelpOnFail`
    */

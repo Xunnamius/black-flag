@@ -4,7 +4,6 @@
 // * These tests ensure all exports function as expected.
 
 import assert from 'node:assert';
-import path from 'node:path';
 
 import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import { CliError, ErrorMessage } from 'universe/error';
@@ -259,16 +258,18 @@ describe('::configureProgram', () => {
     it('returns parsed arguments object', async () => {
       expect.hasAssertions();
 
-      const fixturePath = getFixturePath('one-file-loose');
-
       await withMocks(async () => {
         await expect(
-          (await bf.configureProgram(fixturePath)).execute(['arg1', '-2', '--arg3'])
+          (await bf.configureProgram(getFixturePath('one-file-loose'))).execute([
+            'arg1',
+            '-2',
+            '--arg3'
+          ])
         ).resolves.toStrictEqual({
           $0: 'test',
           _: ['arg1', -2],
           arg3: true,
-          handled_by: path.join(fixturePath, 'index.js'),
+          handled_by: getFixturePath(['one-file-loose', 'index.js']),
           [$executionContext]: expect.anything()
         } satisfies Arguments);
       });
@@ -413,7 +414,7 @@ describe('::configureProgram', () => {
         expect(logSpy.mock.calls).toStrictEqual([
           [
             expect.stringMatching(
-              /^Usage: custom-name <custom-param-1\|custom-param-2> \[custom-param-3\.\.]\n\nCustom-description/
+              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
             )
           ]
         ]);
@@ -430,7 +431,27 @@ describe('::configureProgram', () => {
         expect(errorSpy.mock.calls).toStrictEqual([
           [
             expect.stringMatching(
-              /^Usage: custom-name <custom-param-1\|custom-param-2> \[custom-param-3\.\.]\n\nCustom-description/
+              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
+            )
+          ],
+          [],
+          ['Not enough non-option arguments: got 0, need at least 1']
+        ]);
+      });
+
+      await withMocks(async ({ logSpy, errorSpy }) => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-default-usage'))).execute([
+            'custom-param',
+            '--bad'
+          ])
+        ).rejects.toBeDefined();
+
+        expect(logSpy.mock.calls).toHaveLength(0);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [
+            expect.stringMatching(
+              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
             )
           ],
           [],
@@ -597,20 +618,69 @@ describe('::configureProgram', () => {
 
     it('supports returning program from builder', async () => {
       expect.hasAssertions();
+
+      await withMocks(async () => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-builder-program'))).execute(
+            ['--option', '5']
+          )
+        ).resolves.toStrictEqual(expect.objectContaining({ option: 5 }));
+      });
     });
 
     it('supports returning undefined from builder', async () => {
       expect.hasAssertions();
+
+      await withMocks(async () => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-builder-undefined'))
+          ).execute(['--option', '5'])
+        ).resolves.toStrictEqual(expect.objectContaining({ option: 5 }));
+      });
     });
 
     it('allows returning a plain object from builder instead of program', async () => {
       expect.hasAssertions();
+
+      await withMocks(async () => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-builder-object'))).execute([
+            '--option',
+            '5'
+          ])
+        ).resolves.toStrictEqual(expect.objectContaining({ option: 5 }));
+      });
     });
 
-    it('supports calling showHelpOnFail(boolean)', async () => {
+    it('supports calling showHelpOnFail(boolean) or using context', async () => {
       expect.hasAssertions();
 
-      // TODO: false and then back to true again
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-index'), {
+              configureExecutionPrologue({ helper }) {
+                helper.showHelpOnFail(false);
+              }
+            })
+          ).execute(['--bad'])
+        ).rejects.toBeDefined();
+
+        expect(errorSpy.mock.calls).toStrictEqual([[expect.stringContaining('bad')]]);
+
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-index'), {
+              configureExecutionPrologue({ helper }) {
+                helper.showHelpOnFail(true);
+              }
+            })
+          ).execute(['--bad'])
+        ).rejects.toBeDefined();
+
+        expect(errorSpy).toHaveReturnedTimes(4);
+      });
     });
 
     it('throws when execution fails', async () => {
@@ -1531,6 +1601,8 @@ describe('<command module auto-discovery>', () => {
   it('supports "command" export at parent, child, and root', async () => {
     expect.hasAssertions();
 
+    expect(true).toBeFalse();
+
     await withMocks(async () => {
       const argv = await bf.runProgram(
         getFixturePath('nested-several-files-full'),
@@ -1584,8 +1656,10 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('supports grandchild commands with positional arguments', async () => {
+  it('supports root, child, and grandchild commands with positional arguments', async () => {
     expect.hasAssertions();
+
+    // TODO: use .positional() too
   });
 
   it('supports files, directories, and package names with spaces and other invalid characters', async () => {
@@ -1978,11 +2052,15 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('enables strictness constraints on helpers and effectors by default', async () => {
+  it('enables strictness constraints on effectors (and not helpers) by default', async () => {
     expect.hasAssertions();
   });
 
-  it('allows custom strictness settings on helpers and effectors', async () => {
+  it('allows yargs::strictX method calls on effectors that are ignored on helpers', async () => {
+    expect.hasAssertions();
+  });
+
+  it('allows yargs::demandX method calls on effectors that are ignored on helpers', async () => {
     expect.hasAssertions();
   });
 
@@ -2014,11 +2092,6 @@ describe('<command module auto-discovery>', () => {
 
   it('sets context.state.isGracefullyExiting to true in the configureErrorHandlingEpilogue hook when exiting gracefully', async () => {
     expect.hasAssertions();
-  });
-
-  it('supports both CJS and ESM configuration files', async () => {
-    expect.hasAssertions();
-    // TODO: also supports something like module.exports.default = undefined
   });
 
   it('supports both empty ("") and false (or "hidden") Configuration::description values', async () => {

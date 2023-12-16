@@ -488,7 +488,9 @@ export async function discoverCommands(
 
     // * Enable strict mode by default.
 
-    programs.helper.strict(true);
+    // ? Note that the strictX and demandX functions are permanently disabled on
+    // ? helper programs. The effector will handle the stricter validation step.
+    //programs.helper.strict(true);
     programs.effector.strict(true);
 
     // * Configure usage help text.
@@ -511,39 +513,11 @@ export async function discoverCommands(
     programs.helper.wrap(context.state.initialTerminalWidth);
     programs.effector.wrap(context.state.initialTerminalWidth);
 
-    // * Finish configuring custom error handling for helper, which is
-    // * responsible for outputting help text to stderr
+    // * Finish configuring custom error handling, which is responsible for
+    // * outputting help text to stderr before rethrowing a wrapped error.
 
-    programs.helper.fail((message: string | null, error) => {
-      const debug_ = debug.extend('helper*');
-      debug_.message('entered privileged failure handler for command %O', fullName);
-
-      debug_('message: %O', message);
-      debug_('error.message: %O', error?.message);
-      debug_('error is native error: %O', isNativeError(error));
-
-      // TODO: probably better to check for instanceof YError ... maybe?
-      if (!error && context.state.showHelpOnFail) {
-        // ? If there's no error object, it's probably a yargs-specific error.
-        debug_('sending help text to stderr (triggered by yargs)');
-        // ! Notice the helper program is ALWAYS the one outputting help text.
-        programs.helper.showHelp('error');
-        // eslint-disable-next-line no-console
-        console.error();
-      }
-
-      if (isCliError(error)) {
-        debug_('exited privileged failure handler: re-throwing error as-is');
-        throw error;
-      } else {
-        debug_(
-          'exited privileged failure handler: re-throwing error/message wrapped with CliError'
-        );
-        throw new CliError(error || message);
-      }
-    });
-
-    programs.effector.fail(false);
+    programs.helper.fail(customFailHandler('helper'));
+    programs.effector.fail(customFailHandler('effector'));
 
     // * Link router program to helper program
 
@@ -636,6 +610,39 @@ export async function discoverCommands(
     );
 
     return programs;
+
+    function customFailHandler(descriptor: ProgramDescriptor) {
+      return function (message?: string | null, error?: Error) {
+        const debug_ = debug.extend(`${descriptor}*`);
+        debug_.message('entered failure handler for command %O', fullName);
+
+        debug_('message: %O', message);
+        debug_('error.message: %O', error?.message);
+        debug_('error is native error: %O', isNativeError(error));
+
+        // ! Is there a better to differentiate between Yargs-specific errors and
+        // ! third-party errors? Or is this the best yargs will allow?
+        if (!error && context.state.showHelpOnFail) {
+          // ? If a failure happened but error is not defined, it was *probably*
+          // ? a yargs-specific errors (e.g. argument validation).
+          debug_('sending help text to stderr (triggered by yargs)');
+          // ! Notice the helper program is ALWAYS the one outputting help text.
+          programs.helper.showHelp('error');
+          // eslint-disable-next-line no-console
+          console.error();
+        }
+
+        if (isCliError(error)) {
+          debug_('exited failure handler: re-throwing error as-is');
+          throw error;
+        } else {
+          debug_(
+            'exited failure handler: re-throwing error/message wrapped with CliError'
+          );
+          throw new CliError(error || message || ErrorMessage.GuruMeditation());
+        }
+      };
+    }
   }
 
   /**
@@ -689,6 +696,13 @@ export async function discoverCommands(
       vanillaYargs.option(name, { boolean: true, description });
     }
 
+    // * For helper programs, disable strictness here since it cannot be done
+    // * elsewhere as easily.
+
+    if (descriptor === 'helper') {
+      vanillaYargs.strict(false);
+    }
+
     // * Disable exit-on-error functionality.
 
     vanillaYargs.exitProcess(false);
@@ -725,7 +739,7 @@ export async function discoverCommands(
 
         if (property === ('argv' as keyof Program)) {
           debug_.warn(
-            `discarded attempted access to disabled "argv" magic property on %O program`,
+            `discarded attempted access to disabled "${property}" magic property on %O program`,
             descriptor
           );
 
@@ -740,6 +754,23 @@ export async function discoverCommands(
           // ? multiple times AFTER AN ERROR ALREADY OCCURRED, which leads to
           // ? undefined behavior and heisenbugs. Yuck.
           return void 'disabled by Black Flag (use parseAsync instead)';
+        }
+
+        if (
+          descriptor === 'helper' &&
+          (property.startsWith('strict') || property.startsWith('demand'))
+        ) {
+          // * Although it's tempting to do more, issuing a debug warning is
+          // * all that can be done here. Move along.
+
+          return function () {
+            debug_(
+              `discarded attempted access to disabled method "${property}" on %O program`,
+              descriptor
+            );
+
+            return proxy;
+          };
         }
 
         if (descriptor === 'router') {

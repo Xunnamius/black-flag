@@ -37,7 +37,8 @@ import type { Promisable } from 'type-fest';
 
 // ? Used by intellisense and in auto-generated documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe/util';
+import { isNativeError } from 'node:util/types';
+import { isAssertionSystemError, type runProgram } from 'universe/util';
 
 /**
  * @internal
@@ -228,7 +229,7 @@ export async function configureProgram<
       }
 
       debug('final execution context: %O', asEnumerable(context));
-      debug('execution complete');
+      debug('execution complete (no errors)');
       debug.newline();
 
       return result;
@@ -243,8 +244,7 @@ export async function configureProgram<
       debug_error('final parsed argv: %O', finalArgv);
 
       if (isGracefulEarlyExitError(error)) {
-        debug.message('caught graceful early exit "error" in catch block');
-        debug.warn('error will be forwarded to top-level error handler');
+        debug.message('caught (and released) graceful early exit "error" in catch block');
       } else {
         // ? Ensure [$executionContext] always exists
         finalArgv[$executionContext] ??= asUnenumerable(context);
@@ -259,10 +259,14 @@ export async function configureProgram<
           exitCode = error.suggestedExitCode;
         } else if (error) {
           message = `${error}`;
+
+          if (isAssertionSystemError(error)) {
+            exitCode = FrameworkExitCode.AssertionFailed;
+          }
         }
 
-        debug_error('penultimate error message: %O', message);
-        debug_error('penultimate exit code: %O', exitCode);
+        debug_error('theoretical error message: %O', message);
+        debug_error('theoretical exit code: %O', exitCode);
 
         debug_error('entering configureErrorHandlingEpilogue');
 
@@ -275,10 +279,18 @@ export async function configureProgram<
         debug_error('exited configureErrorHandlingEpilogue');
 
         debug_error('final execution context: %O', asEnumerable(context));
-        debug_error('error handling complete');
-        debug_error.newline();
+
+        if (!isCliError(error)) {
+          debug_error('wrapping error with CliError');
+
+          // eslint-disable-next-line no-ex-assign
+          error = new CliError(isNativeError(error) ? error : message, {
+            suggestedExitCode: exitCode
+          });
+        }
       }
 
+      debug_error.warn('forwarding error to top-level error handler');
       throw error;
     }
   };

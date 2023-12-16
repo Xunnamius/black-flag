@@ -8,11 +8,9 @@ const name = basename(dirname(__filename));
  * @type {Type.RootConfig}
  */
 module.exports = {
-  name: 'custom-name',
-  description: 'custom-description',
-  command: '$0 <custom1|custom2> [custom3..]',
+  usage: `usage text for root program ${name}`,
   builder: (blackFlag) => {
-    return blackFlag.option(name, { boolean: true });
+    return blackFlag.option('option', { number: true });
   },
   handler: (argv) => {
     argv.handled_by = __filename;
