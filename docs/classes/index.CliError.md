@@ -71,7 +71,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/1ffdd7c/src/error.ts#L73)
+[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/838105e/src/error.ts#L73)
 
 • **new CliError**(`cause`, `options`, `message`, `superOptions`): [`CliError`](index.CliError.md)
 
@@ -97,7 +97,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/1ffdd7c/src/error.ts#L78)
+[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/838105e/src/error.ts#L78)
 
 ## Properties
 
@@ -107,7 +107,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/1ffdd7c/src/error.ts#L68)
+[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/838105e/src/error.ts#L68)
 
 ___
 
@@ -177,7 +177,7 @@ NonNullable.suggestedExitCode
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/1ffdd7c/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/838105e/src/error.ts#L66)
 
 ___
 
