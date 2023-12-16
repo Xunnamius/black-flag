@@ -38,13 +38,13 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:126](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L126)
+[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L141)
 
 ___
 
 ### EffectorProgram
 
-Ƭ **EffectorProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"command_deferred"`` \| ``"command_finalize_deferred"`` \| ``"parse"`` \| ``"parseSync"`` \| ``"argv"``\>
+Ƭ **EffectorProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"command_deferred"`` \| ``"command_finalize_deferred"``\>
 
 Represents an "effector" [Program](index.md#program) instance.
 
@@ -56,13 +56,13 @@ Represents an "effector" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:89](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L89)
+[types/program.ts:110](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L110)
 
 ___
 
 ### HelperProgram
 
-Ƭ **HelperProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"command"`` \| ``"positional"`` \| ``"parse"`` \| ``"parseSync"`` \| ``"argv"``\>
+Ƭ **HelperProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"command"`` \| ``"positional"``\>
 
 Represents an "helper" [Program](index.md#program) instance.
 
@@ -74,7 +74,7 @@ Represents an "helper" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:99](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L99)
+[types/program.ts:117](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L117)
 
 ___
 
@@ -86,7 +86,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L121)
+[types/program.ts:136](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L136)
 
 ___
 
@@ -98,7 +98,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:116](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L116)
+[types/program.ts:131](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L131)
 
 ___
 
@@ -117,13 +117,13 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:139](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L139)
+[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L154)
 
 ___
 
 ### RouterProgram
 
-Ƭ **RouterProgram**\<`CustomCliArguments`\>: `Pick`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"parseAsync"`` \| ``"command"`` \| ``"parsed"``\>
+Ƭ **RouterProgram**\<`CustomCliArguments`\>: `Pick`\<[`Program`](index.md#program)\<`CustomCliArguments`\>, ``"parseAsync"`` \| ``"command"`` \| ``"fail"``\>
 
 Represents an "router" [Program](index.md#program) instance.
 
@@ -135,7 +135,7 @@ Represents an "router" [Program](index.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:109](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L109)
+[types/program.ts:124](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L124)
 
 ## Functions
 
@@ -181,7 +181,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/error.ts#L21)
 
 ___
 
@@ -203,26 +203,28 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/error.ts#L34)
 
 ___
 
 ### makeRunner
 
-▸ **makeRunner**\<`CustomContext`, `CustomCliArguments`\>(`options`): \<T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **makeRunner**\<`CustomContext`, `CustomCliArguments`\>(`options`): \<T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-A factory function that returns a [runProgram](index.md#runprogram) function that can be
-called multiple times while only having to provide a subset of the required
-parameters at initialization.
+A high-order factory function that returns a "low-order" [runProgram](index.md#runprogram)
+function that can be called multiple times while only having to provide a
+subset of the required parameters at initialization.
 
 This is useful when unit/integration testing your CLI, which will likely
 require multiple calls to `runProgram(...)`.
 
 Note: when an exception (e.g. bad arguments) occurs in the low-order
-`runProgram` function, `undefined` will be returned unless you've configured
-Black Flag to return something else. **The promise will not reject and no
-exception will be thrown.** Keep this in mind when writing your unit tests.
-See [runProgram](index.md#runprogram) for more details on this.
+function, `undefined` will be returned if `configureProgram` threw or
+`NullArguments` if `execute` threw. Otherwise, upon success, `Arguments` is
+returned as expected. That is: **the promise returned by the low-order
+function will never reject and no exception will ever be thrown.** Keep this
+in mind when writing your unit tests and see [runProgram](index.md#runprogram) for more
+details.
 
 #### Type parameters
 
@@ -244,7 +246,7 @@ See [runProgram](index.md#runprogram) for more details on this.
 
 `fn`
 
-▸ \<`T`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ \<`T`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 ##### Type parameters
 
@@ -260,8 +262,8 @@ See [runProgram](index.md#runprogram) for more details on this.
 
 ##### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 #### Defined in
 
-[src/util.ts:38](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L38)
+[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L45)

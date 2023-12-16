@@ -66,7 +66,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L17)
 
 ___
 
@@ -86,7 +86,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L134)
+[types/module.ts:141](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/module.ts#L141)
 
 ___
 
@@ -104,7 +104,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/error.ts#L48)
 
 ___
 
@@ -127,7 +127,7 @@ subtype of this interface.
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `aliases` | `string`[] | An array of `command` aliases [as interpreted](https://github.com/yargs/yargs/pull/647) by [yargs](https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases). Note that positional arguments defined in aliases are ignored. **`Default`** ```ts [] ``` |
-| `builder` | \{ `[key: string]`: `_Options`;  } \| \<T\>(`blackFlag`: `Omit`\<`T`, ``"parseAsync"`` \| ``"fail"``\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `void` \| `T` \| \{ `[key: string]`: `_Options`;  } \| `_Program` | An object containing yargs options configuration or a function that will receive the current Black Flag program. Unlike with vanilla yargs, you do not need to return anything at all; "returning" `undefined`/`void` is equivalent. If you return something other than the received program, such as an object of options, it will be passed to `yargs::options` for you. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
+| `builder` | \{ `[key: string]`: `_Options`;  } \| \<T\>(`blackFlag`: `Omit`\<`T`, ``"parseAsync"`` \| ``"fail"`` \| ``"command"`` \| ``"command_deferred"`` \| ``"command_finalize_deferred"``\>, `helpOrVersionSet`: `boolean`, `argv?`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `void` \| `T` \| \{ `[key: string]`: `_Options`;  } \| `_Program` | An object containing yargs options configuration or a function that will receive the current Black Flag program. Unlike with vanilla yargs, you do not need to return anything at all; "returning" `undefined`/`void` is equivalent. If you return something other than the received program, such as an object of options, it will be passed to `yargs::options` for you. **If `builder` is a function, it cannot be async or return a promise** due to a yargs bug present at time of writing. However, a [Configuration](index.md#configuration) module can export an async function, so hoist any async logic out of the builder function to work around this bug for now. **`Default`** ```ts {} ``` |
 | `command` | ``"$0"`` \| \`$0 $\{string}\` | The command as interpreted by yargs. May contain positional arguments. It is usually unnecessary to change or use this property. **`Default`** ```ts "$0" ``` |
 | `deprecated` | `string` \| `boolean` | If truthy, the command will be considered "deprecated" by yargs. If `deprecated` is a string, it will additionally be treated as a deprecation message and printed. **`Default`** ```ts false ``` |
 | `description` | `string` \| ``false`` | The description for the command in help text. If `false`, the command will be considered "hidden" by yargs. **`Default`** ```ts "" ``` |
@@ -137,7 +137,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/module.ts#L16)
 
 ___
 
@@ -166,7 +166,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L92)
+[types/configure.ts:92](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L92)
 
 ___
 
@@ -203,7 +203,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L44)
+[types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L44)
 
 ___
 
@@ -250,7 +250,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L77)
+[types/configure.ts:77](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L77)
 
 ___
 
@@ -284,7 +284,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L16)
+[types/configure.ts:16](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L16)
 
 ___
 
@@ -323,7 +323,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L60)
+[types/configure.ts:60](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L60)
 
 ___
 
@@ -366,7 +366,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/configure.ts#L33)
+[types/configure.ts:33](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/configure.ts#L33)
 
 ___
 
@@ -386,9 +386,10 @@ Represents a globally-accessible shared context object singleton.
 | :------ | :------ | :------ |
 | `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `programs`: [`Programs`](util.md#programs)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) as singular object values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map will always be the root command. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | \{ `[key: string]`: `unknown`; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
-| `state.firstPassArgv` | [`Arguments`](index.md#arguments) \| `undefined` | Allows helper and effector programs to keep track of pre-pared arguments. Note: this property should not be accessed or mutated by end-developers. **`Default`** ```ts undefined ``` |
-| `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the functionality of the disabled vanilla yargs `yargs::help` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the help option will take the form of `-${name}`, otherwise `--${name}`. Note: this property should not be accessed or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
+| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
+| `state.deepestParseResult` | [`Arguments`](index.md#arguments) \| `undefined` | Stores the result of the latest call to `EffectorProgram::parseAsync`. This is necessary because, with our depth-first multi-yargs architecture, the parse job done by shallower programs in the chain must not mutate the result of the deepest call to `EffectorProgram::parseAsync` in the execution chain. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
+| `state.firstPassArgv` | [`Arguments`](index.md#arguments) \| `undefined` | Allows helper and effector programs to keep track of pre-pared arguments. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
+| `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the functionality of the disabled vanilla yargs `yargs::help` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the help option will take the form of `-${name}`, otherwise `--${name}`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
 | `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined by yargs when `configureProgram` is called. |
 | `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other context, this will _always_ be `false`. **`Default`** ```ts false ``` |
 | `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingHelpOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. Note: setting `isHandlingHelpOption` to `true` manually will cause Black Flag to output help text as if the user had specified `--help` (or an equivalent) as one of their arguments. **`Default`** ```ts false ``` |
@@ -397,17 +398,17 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:240](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L240)
+[types/program.ts:255](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L255)
 
 ___
 
 ### Executor
 
-Ƭ **Executor**: (`rawArgv?`: `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``]) => `Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+Ƭ **Executor**: (`rawArgv?`: `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``]) => `Promise`\<[`Arguments`](index.md#arguments)\>
 
 #### Type declaration
 
-▸ (`rawArgv?`): `Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+▸ (`rawArgv?`): `Promise`\<[`Arguments`](index.md#arguments)\>
 
 This function accepts an optional `rawArgv` array that defaults to
 `yargs::hideBin(process.argv)` and returns an arguments object representing
@@ -426,11 +427,11 @@ handles exceptions and sets the exit code for you.
 
 ##### Returns
 
-`Promise`\<`Awaited`\<`ReturnType`\<[`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\>\>\>
+`Promise`\<[`Arguments`](index.md#arguments)\>
 
 #### Defined in
 
-[types/program.ts:206](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L206)
+[types/program.ts:221](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L221)
 
 ___
 
@@ -454,7 +455,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:192](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L192)
+[types/program.ts:207](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L207)
 
 ___
 
@@ -474,7 +475,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L143)
+[types/module.ts:150](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/module.ts#L150)
 
 ___
 
@@ -494,7 +495,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:125](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L125)
+[types/module.ts:132](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/module.ts#L132)
 
 ___
 
@@ -513,13 +514,13 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:217](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L217)
+[types/program.ts:232](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L232)
 
 ___
 
 ### Program
 
-Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `version`: (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
+Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `version`: (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -535,7 +536,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L28)
+[types/program.ts:40](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L40)
 
 ___
 
@@ -558,7 +559,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/program.ts#L149)
+[types/program.ts:164](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/program.ts#L164)
 
 ___
 
@@ -578,7 +579,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:116](https://github.com/Xunnamius/black-flag/blob/f6eddfb/types/module.ts#L116)
+[types/module.ts:123](https://github.com/Xunnamius/black-flag/blob/74f8d53/types/module.ts#L123)
 
 ## Variables
 
@@ -591,7 +592,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/constant.ts#L5)
 
 ___
 
@@ -642,7 +643,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/error.ts#L163)
+[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/error.ts#L163)
 
 ___
 
@@ -657,7 +658,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/constant.ts#L13)
 
 ## Functions
 
@@ -694,15 +695,16 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/index.ts#L59)
 
 ___
 
 ### runProgram
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
-Invokes the dynamically imported `configureProgram().execute()` function.
+Invokes the dynamically imported
+`configureProgram(commandModulePath).execute()` function.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
@@ -727,16 +729,19 @@ desired.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+
+`undefined` if `configureProgram` throws, `NullArguments` if
+`execute` throws, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:163](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L163)
+[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L174)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
-Invokes the dynamically imported
-`configureProgram(configurationHooks).execute()` function.
+Invokes the dynamically imported `configureProgram(commandModulePath,
+configurationHooks).execute()` function.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
@@ -761,13 +766,16 @@ desired.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+
+`undefined` if `configureProgram` throws, `NullArguments` if
+`execute` throws, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:182](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L182)
+[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L196)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the `preExecutionContext.execute()` function.
 
@@ -796,15 +804,18 @@ returned.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+
+`NullArguments` if `execute` throws or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:204](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L204)
+[src/util.ts:220](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L220)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-Invokes the dynamically imported `configureProgram().execute(argv)` function.
+Invokes the dynamically imported
+`configureProgram(commandModulePath).execute(argv)` function.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
@@ -829,16 +840,19 @@ desired.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+
+`undefined` if `configureProgram` throws, `NullArguments` if
+`execute` throws, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:224](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L224)
+[src/util.ts:244](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L244)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-Invokes the dynamically imported
-`configureProgram(configurationHooks).execute(argv)` function.
+Invokes the dynamically imported `configureProgram(commandModulePath,
+configurationHooks).execute(argv)` function.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
@@ -863,13 +877,16 @@ desired.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+
+`undefined` if `configureProgram` throws, `NullArguments` if
+`execute` throws, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:243](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L243)
+[src/util.ts:266](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L266)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the `preExecutionContext.execute(argv)` function.
 
@@ -898,8 +915,10 @@ returned.
 
 #### Returns
 
-`Promise`\<[`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+`Promise`\<`NullArguments` \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+
+`NullArguments` if `execute` throws or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:266](https://github.com/Xunnamius/black-flag/blob/f6eddfb/src/util.ts#L266)
+[src/util.ts:291](https://github.com/Xunnamius/black-flag/blob/74f8d53/src/util.ts#L291)
