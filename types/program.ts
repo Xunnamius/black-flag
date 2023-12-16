@@ -1,7 +1,7 @@
 import type { ArgumentsCamelCase as _Arguments, Argv as _Program } from 'yargs';
 
 import type { ExtendedDebugger } from 'multiverse/rejoinder';
-import type { ConfigureArguments, ConfigureExecutionEpilogue } from 'types/configure';
+import type { ConfigureArguments } from 'types/configure';
 import type { Configuration } from 'types/module';
 import type { $executionContext } from 'universe/constant';
 
@@ -210,9 +210,9 @@ export type FrameworkArguments = {
 
 /**
  * This function accepts an optional `rawArgv` array that defaults to
- * `yargs::hideBin(process.argv)` and returns an arguments object representing
- * the parsed and validated arguments object returned by the root router
- * {@link Program} instance.
+ * `yargs::hideBin(process.argv)` and returns an `Arguments` object representing
+ * the arguments parsed and validated by yargs (i.e.
+ * `context.state.deepestParseResult`).
  *
  * **This function throws whenever\* an exception occurs**, making it not ideal
  * as an entry point for a CLI. See {@link runProgram} for a wrapper function
@@ -243,7 +243,7 @@ export type PreExecutionContext<
    * An object containing the effector, helper, and router {@link Program}
    * instances belonging to the root command.
    */
-  programs: Programs;
+  rootPrograms: Programs;
   /**
    * Execute the root command, parsing any available CLI arguments and running
    * the appropriate handler, and return the resulting final parsed arguments

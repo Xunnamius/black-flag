@@ -15,6 +15,7 @@ import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
 import type { Arguments, ExecutionContext, NullArguments } from 'types/program';
+import { isPreExecutionContext } from 'universe/util';
 
 const nullArguments: NullArguments = {
   $0: '<NullArguments: no parse result available due to exception>',
@@ -30,11 +31,11 @@ describe('::configureProgram', () => {
   it('returns PreExecutionContext with expected properties and values', async () => {
     expect.hasAssertions();
     await withMocks(async () => {
-      const { programs, execute, commands, debug, state, ...rest } =
+      const { rootPrograms, execute, commands, debug, state, ...rest } =
         await bf.configureProgram(getFixturePath('one-file-index'));
 
-      expect(programs).toBeObject();
-      expect(programs).toContainAllKeys(['effector', 'helper', 'router']);
+      expect(rootPrograms).toBeObject();
+      expect(rootPrograms).toContainAllKeys(['effector', 'helper', 'router']);
       expect(execute).toBeFunction();
       expect(commands).toBeDefined();
       expect(debug).toBeFunction();
@@ -53,12 +54,28 @@ describe('::configureProgram', () => {
     });
   });
 
-  it('uses default configuration hooks when none are provided', async () => {
-    expect.hasAssertions();
-  });
-
   it('uses default configuration hooks when provided hooks are explicitly undefined', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy }) => {
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), {
+            configureArguments: undefined,
+            configureErrorHandlingEpilogue: undefined,
+            configureExecutionContext: undefined,
+            configureExecutionEpilogue: undefined,
+            configureExecutionPrologue: undefined
+          })
+        ).execute(['--bad'])
+      ).rejects.toBeDefined();
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        [],
+        ['Unknown argument: bad']
+      ]);
+    });
   });
 
   it('throws when called with undefined or non-existent commandModulePath', async () => {
@@ -178,6 +195,10 @@ describe('::configureProgram', () => {
 
   it('throws when calling disallowed methods or properties on programs', async () => {
     expect.hasAssertions();
+
+    await bf.configureProgram(getFixturePath('one-file-no-strict'), {
+      configureExecutionPrologue() {}
+    });
   });
 
   describe('::execute', () => {
@@ -1318,6 +1339,19 @@ describe('::CliError', () => {
   });
 });
 
+describe('::isPreExecutionContext', () => {
+  it('returns true iff obj is PreExecutionContext', async () => {
+    expect.hasAssertions();
+
+    const preExecutionContext = await bf.configureProgram(
+      getFixturePath('one-file-no-strict')
+    );
+
+    expect(isPreExecutionContext(preExecutionContext)).toBeTrue();
+    expect(isPreExecutionContext({})).toBeFalse();
+  });
+});
+
 describe('<command module auto-discovery>', () => {
   it('discovers deeply nested commands files and nothing else', async () => {
     expect.hasAssertions();
@@ -1909,7 +1943,7 @@ describe('<command module auto-discovery>', () => {
     // TODO: use choices
   });
 
-  it('ensures PreExecutionContext::programs is PreExecutionContext.commands[0].programs', async () => {
+  it('ensures PreExecutionContext::rootPrograms is PreExecutionContext.commands[0].programs', async () => {
     expect.hasAssertions();
   });
 

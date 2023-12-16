@@ -1,8 +1,6 @@
 import type { Promisable } from 'type-fest';
 
-// ? Used by intellisense and in auto-generated documentation
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Arguments, ExecutionContext, Program, Programs } from 'types/program';
+import type { Arguments, ExecutionContext, Programs } from 'types/program';
 import type { $executionContext } from 'universe/constant';
 
 // ! Note that comments are repeated here: once for the exported type and once
@@ -26,13 +24,13 @@ export type ConfigureExecutionContext<
  * All commands and sub-commands known to Black Flag are available in the
  * {@link ExecutionContext.commands} map, which can be accessed from the
  * `context` parameter or from the {@link Arguments} object returned by
- * {@link Program.parseAsync} et al.
+ * `Program::parseAsync` et al.
  *
  * This function is the complement of {@link ConfigureExecutionEpilogue}.
  */
 export type ConfigureExecutionPrologue<
   CustomContext extends ExecutionContext = ExecutionContext
-> = (root: Programs, context: CustomContext) => Promisable<void>;
+> = (rootPrograms: Programs, context: CustomContext) => Promisable<void>;
 
 /**
  * This function is called once towards the beginning of the execution of
@@ -107,7 +105,7 @@ export type ConfigurationHooks<
    * All commands and sub-commands known to Black Flag are available in the
    * {@link ExecutionContext.commands} map, which can be accessed from the
    * `context` parameter or from the {@link Arguments} object returned by
-   * {@link Program.parseAsync} et al.
+   * `Program::parseAsync` et al.
    *
    * This function is the complement of {@link ConfigureExecutionEpilogue}.
    */

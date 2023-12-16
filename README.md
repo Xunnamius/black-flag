@@ -1432,9 +1432,10 @@ in the `PreExecutionContext::commands` map.
 ```typescript
 const preExecutionContext = configureProgram('./commands', {
   configureExecutionEpilogue(_argv, { commands }) {
-    assert(preExecutionContext.root === commands.get('myctl').programs);
+    assert(preExecutionContext.rootPrograms === commands.get('myctl').programs);
     assert(
-      preExecutionContext.root === commands.get(Array.from(commands.keys())[0])
+      preExecutionContext.rootPrograms ===
+        commands.get(Array.from(commands.keys())[0])
     );
   }
 });

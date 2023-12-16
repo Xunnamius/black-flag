@@ -293,7 +293,7 @@ export async function configureProgram<
   debug('configureProgram invocation succeeded');
 
   return {
-    programs: rootPrograms,
+    rootPrograms,
     execute: parseAndExecuteWithErrorHandling,
     ...asEnumerable(context)
   };
