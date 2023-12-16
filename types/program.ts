@@ -123,7 +123,7 @@ export type HelperProgram<
  */
 export type RouterProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command' | 'fail'>;
+> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command'>;
 
 /**
  * Represents valid {@link Configuration} module types that can be loaded.

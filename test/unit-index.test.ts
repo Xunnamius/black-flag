@@ -4,9 +4,11 @@
 // * These tests ensure all exports function as expected.
 
 import assert from 'node:assert';
+import path from 'node:path';
 
 import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import { CliError, ErrorMessage } from 'universe/error';
+import { isPreExecutionContext } from 'universe/util';
 
 import * as bf from 'universe/exports/index';
 import * as bf_util from 'universe/exports/util';
@@ -15,7 +17,7 @@ import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
 import type { Arguments, ExecutionContext, NullArguments } from 'types/program';
-import { isPreExecutionContext } from 'universe/util';
+import type { Argv } from 'yargs';
 
 const nullArguments: NullArguments = {
   $0: '<NullArguments: no parse result available due to exception>',
@@ -179,6 +181,18 @@ describe('::configureProgram', () => {
     });
   });
 
+  it('returns program instances instead of vanilla yargs instances from proxied methods', async () => {
+    expect.assertions(3);
+
+    await bf.configureProgram(getFixturePath('one-file-no-strict'), {
+      configureExecutionPrologue({ effector, helper, router }) {
+        expect(effector.boolean('key')).toBe(effector);
+        expect(helper.options({ option: { boolean: true } })).toBe(helper);
+        expect(router.command(['x'], false, {}, () => {}, [], false)).toBe(router);
+      }
+    });
+  });
+
   it('throws when configureExecutionContext returns falsy', async () => {
     expect.hasAssertions();
 
@@ -194,14 +208,72 @@ describe('::configureProgram', () => {
   });
 
   it('throws when calling disallowed methods or properties on programs', async () => {
-    expect.hasAssertions();
+    expect.assertions(15);
 
     await bf.configureProgram(getFixturePath('one-file-no-strict'), {
-      configureExecutionPrologue() {}
+      configureExecutionPrologue({ effector, helper, router }) {
+        const asYargs = (o: unknown): Argv => o as Argv;
+
+        expect(() => asYargs(effector).help(false)).toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+        );
+        expect(() => asYargs(helper).help(false)).toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+        );
+        expect(() => asYargs(router).help(false)).toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+        );
+
+        expect(() => asYargs(effector).parseSync()).toThrow(
+          ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        );
+        expect(() => asYargs(helper).parseSync()).toThrow(
+          ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        );
+        expect(() => asYargs(router).parseSync()).toThrow(
+          ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        );
+
+        expect(asYargs(effector).argv).toBeUndefined();
+        expect(asYargs(helper).argv).toBeUndefined();
+        expect(asYargs(router).argv).toBeUndefined();
+
+        expect(() => asYargs(effector).showHelpOnFail(false)).not.toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+        );
+        expect(() => asYargs(helper).showHelpOnFail(false)).not.toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+        );
+        expect(() => asYargs(router).showHelpOnFail(false)).toThrow(
+          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+        );
+
+        expect(asYargs(effector).parsed).toBeFalse();
+        expect(asYargs(helper).parsed).toBeFalse();
+        expect(asYargs(router).parsed).toBeUndefined();
+      }
     });
   });
 
   describe('::execute', () => {
+    it('returns parsed arguments object', async () => {
+      expect.hasAssertions();
+
+      const fixturePath = getFixturePath('one-file-loose');
+
+      await withMocks(async () => {
+        await expect(
+          (await bf.configureProgram(fixturePath)).execute(['arg1', '-2', '--arg3'])
+        ).resolves.toStrictEqual({
+          $0: 'test',
+          _: ['arg1', -2],
+          arg3: true,
+          handled_by: path.join(fixturePath, 'index.js'),
+          [$executionContext]: expect.anything()
+        } satisfies Arguments);
+      });
+    });
+
     it('calls hideBin on process.argv only if no argv argument provided', async () => {
       expect.hasAssertions();
 
@@ -496,12 +568,31 @@ describe('::configureProgram', () => {
       });
     });
 
-    it('calls builder twice (once per helper/effector program)', async () => {
+    it('calls builder twice, passes correct programs and third parameter on second pass', async () => {
       expect.hasAssertions();
-    });
 
-    it('passes the correct programs into builder', async () => {
-      expect.hasAssertions();
+      const { execute, rootPrograms } = await bf.configureProgram(
+        getFixturePath('one-file-verbose-builder')
+      );
+
+      await withMocks(async ({ logSpy }) => {
+        await expect(execute(['--option'])).resolves.toBeDefined();
+
+        expect(logSpy.mock.calls).toStrictEqual([
+          ['builder called', expect.anything(), false, undefined],
+          [
+            'builder called',
+            expect.anything(),
+            false,
+            expect.objectContaining({ option: true })
+          ]
+        ]);
+
+        // ? Jest will get VERY ANGRY if we combine the below and the above
+
+        expect(logSpy.mock.calls[0][1]).toBe(rootPrograms.helper);
+        expect(logSpy.mock.calls[1][1]).toBe(rootPrograms.effector);
+      });
     });
 
     it('supports returning program from builder', async () => {

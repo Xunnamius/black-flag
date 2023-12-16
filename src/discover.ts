@@ -744,7 +744,7 @@ export async function discoverCommands(
 
         if (descriptor === 'router') {
           if (isSymbolOrOwnProperty && !['parseAsync', 'command'].includes(property)) {
-            typeof target[property as keyof typeof target] === 'function'
+            return typeof target[property as keyof typeof target] === 'function'
               ? function () {
                   throw new AssertionFailedError(
                     ErrorMessage.AssertionFailureInvocationNotAllowed(property)
@@ -977,9 +977,9 @@ export async function discoverCommands(
             : config.builder;
 
         if (blackFlagBuilderResult && blackFlagBuilderResult !== program) {
-          // ? Record<string, never> is really yargs.Options but why import it?
-          // ? Our Proxy always returns a program, so TS can stop worrying!
-          vanillaYargs.options(blackFlagBuilderResult as Record<string, never>);
+          vanillaYargs.options(
+            blackFlagBuilderResult as Parameters<typeof vanillaYargs.options>[0]
+          );
         }
 
         debug_(

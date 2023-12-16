@@ -1426,8 +1426,8 @@ Each of these six commands is actually _three_ programs:
 > See the [flow chart][53] below for a visual overview.
 
 These three programs representing the root command are accessible from the
-[`PreExecutionContext::root`][11] property. They are also always the first item
-in the `PreExecutionContext::commands` map.
+[`PreExecutionContext::rootPrograms`][11] property. They are also always the
+first item in the `PreExecutionContext::commands` map.
 
 ```typescript
 const preExecutionContext = configureProgram('./commands', {
