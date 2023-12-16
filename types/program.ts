@@ -19,6 +19,18 @@ export type Arguments<
 > = _Arguments<FrameworkArguments & CustomCliArguments>;
 
 /**
+ * Represents an empty or "null" `Arguments` object devoid of useful data.
+ *
+ * This result type is fed to certain configuration hooks and returned by
+ * various `Arguments`-returning functions when an exceptional event prevents
+ * yargs from returning a real `Arguments` parse result.
+ */
+export type NullArguments = {
+  $0: '<NullArguments: no parse result available due to exception>';
+  _: [];
+} & FrameworkArguments;
+
+/**
  * Represents a pre-configured yargs instance ready for argument parsing and
  * execution.
  *
@@ -29,7 +41,16 @@ export type Program<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 > = Omit<
   _Program<FrameworkArguments & CustomCliArguments>,
-  'command' | 'showHelpOnFail' | 'version' | 'help' | 'exitProcess' | 'commandDir'
+  | 'command'
+  | 'showHelpOnFail'
+  | 'version'
+  | 'help'
+  | 'exitProcess'
+  | 'commandDir'
+  | 'parse'
+  | 'parsed'
+  | 'parseSync'
+  | 'argv'
 > & {
   // ? Adds custom overload signatures that fixes the lack of implementation
   // ? signature exposure in the Argv type exposed by yargs
@@ -88,27 +109,21 @@ export type Program<
  */
 export type EffectorProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<
-  Program<CustomCliArguments>,
-  'command_deferred' | 'command_finalize_deferred' | 'parse' | 'parseSync' | 'argv'
->;
+> = Omit<Program<CustomCliArguments>, 'command_deferred' | 'command_finalize_deferred'>;
 
 /**
  * Represents an "helper" {@link Program} instance.
  */
 export type HelperProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<
-  Program<CustomCliArguments>,
-  'command' | 'positional' | 'parse' | 'parseSync' | 'argv'
->;
+> = Omit<Program<CustomCliArguments>, 'command' | 'positional'>;
 
 /**
  * Represents an "router" {@link Program} instance.
  */
 export type RouterProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command' | 'parsed'>;
+> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command' | 'fail'>;
 
 /**
  * Represents valid {@link Configuration} module types that can be loaded.
@@ -208,7 +223,7 @@ export type Executor = (
    * @default hideBin(process.argv)
    */
   rawArgv?: Parameters<ConfigureArguments>[0]
-) => Promise<Awaited<ReturnType<ConfigureExecutionEpilogue>>>;
+) => Promise<Arguments>;
 
 /**
  * Represents the pre-execution context that is the result of calling
@@ -315,9 +330,9 @@ export type ExecutionContext = {
      * is exactly one character in length, the help option will take the form of
      * `-${name}`, otherwise `--${name}`.
      *
-     * Note: this property should not be accessed or mutated by end-developers
-     * outside of the `configureExecutionContext` configuration hook. Doing so
-     * will result in undefined behavior.
+     * Note: this property should not be relied upon or mutated by
+     * end-developers outside of the `configureExecutionContext` configuration
+     * hook. Doing so will result in undefined behavior.
      *
      * @default { name: "help", description: defaultHelpTextDescription }
      */
@@ -332,11 +347,26 @@ export type ExecutionContext = {
     /**
      * Allows helper and effector programs to keep track of pre-pared arguments.
      *
-     * Note: this property should not be accessed or mutated by end-developers.
+     * Note: this property should not be relied upon or mutated by
+     * end-developers.
      *
      * @default undefined
      */
     firstPassArgv: Arguments | undefined;
+    /**
+     * Stores the result of the latest call to `EffectorProgram::parseAsync`.
+     *
+     * This is necessary because, with our depth-first multi-yargs architecture,
+     * the parse job done by shallower programs in the chain must not mutate the
+     * result of the deepest call to `EffectorProgram::parseAsync` in the
+     * execution chain.
+     *
+     * Note: this property should not be relied upon or mutated by
+     * end-developers.
+     *
+     * @default undefined
+     */
+    deepestParseResult: Arguments | undefined;
 
     [key: string]: unknown;
   };

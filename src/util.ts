@@ -14,7 +14,12 @@ import type { Promisable } from 'type-fest';
 import type { ConfigurationHooks } from 'types/configure';
 
 import { isNativeError } from 'node:util/types';
-import type { Arguments, ExecutionContext, PreExecutionContext } from 'types/program';
+import type {
+  Arguments,
+  ExecutionContext,
+  NullArguments,
+  PreExecutionContext
+} from 'types/program';
 
 const debug = rootDebugLogger.extend('util');
 
@@ -22,18 +27,20 @@ const debug = rootDebugLogger.extend('util');
 // * mad if we don't.
 
 /**
- * A factory function that returns a {@link runProgram} function that can be
- * called multiple times while only having to provide a subset of the required
- * parameters at initialization.
+ * A high-order factory function that returns a "low-order" {@link runProgram}
+ * function that can be called multiple times while only having to provide a
+ * subset of the required parameters at initialization.
  *
  * This is useful when unit/integration testing your CLI, which will likely
  * require multiple calls to `runProgram(...)`.
  *
  * Note: when an exception (e.g. bad arguments) occurs in the low-order
- * `runProgram` function, `undefined` will be returned unless you've configured
- * Black Flag to return something else. **The promise will not reject and no
- * exception will be thrown.** Keep this in mind when writing your unit tests.
- * See {@link runProgram} for more details on this.
+ * function, `undefined` will be returned if `configureProgram` threw or
+ * `NullArguments` if `execute` threw. Otherwise, upon success, `Arguments` is
+ * returned as expected. That is: **the promise returned by the low-order
+ * function will never reject and no exception will ever be thrown.** Keep this
+ * in mind when writing your unit tests and see {@link runProgram} for more
+ * details.
  */
 export function makeRunner<
   CustomContext extends ExecutionContext,
@@ -150,7 +157,8 @@ export function makeRunner<
 }
 
 /**
- * Invokes the dynamically imported `configureProgram().execute()` function.
+ * Invokes the dynamically imported
+ * `configureProgram(commandModulePath).execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -159,6 +167,9 @@ export function makeRunner<
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
+ *
+ * @returns `undefined` if `configureProgram` throws, `NullArguments` if
+ * `execute` throws, or `Arguments` otherwise.
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,10 +177,10 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string]
-): Promise<Arguments<CustomCliArguments> | undefined>;
+): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
- * Invokes the dynamically imported
- * `configureProgram(configurationHooks).execute()` function.
+ * Invokes the dynamically imported `configureProgram(commandModulePath,
+ * configurationHooks).execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -178,6 +189,9 @@ export async function runProgram<
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
+ *
+ * @returns `undefined` if `configureProgram` throws, `NullArguments` if
+ * `execute` throws, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -187,7 +201,7 @@ export async function runProgram<
     commandModulePath: string,
     configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
   ]
-): Promise<Arguments<CustomCliArguments> | undefined>;
+): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the `preExecutionContext.execute()` function.
  *
@@ -200,6 +214,8 @@ export async function runProgram<
  * or reject no matter what.** Instead, when an error is caught,
  * `process.exitCode` is set to the appropriate value and `undefined` is
  * returned.
+ *
+ * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -209,9 +225,10 @@ export async function runProgram<
     commandModulePath: string,
     preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
   ]
-): Promise<Arguments<CustomCliArguments> | undefined>;
+): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
- * Invokes the dynamically imported `configureProgram().execute(argv)` function.
+ * Invokes the dynamically imported
+ * `configureProgram(commandModulePath).execute(argv)` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -220,6 +237,9 @@ export async function runProgram<
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
+ *
+ * @returns `undefined` if `configureProgram` throws, `NullArguments` if
+ * `execute` throws, or `Arguments` otherwise.
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -227,10 +247,10 @@ export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string, argv: string | string[]]
-): Promise<Arguments<CustomCliArguments>>;
+): Promise<NullArguments | Arguments<CustomCliArguments>>;
 /**
- * Invokes the dynamically imported
- * `configureProgram(configurationHooks).execute(argv)` function.
+ * Invokes the dynamically imported `configureProgram(commandModulePath,
+ * configurationHooks).execute(argv)` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -239,6 +259,9 @@ export async function runProgram<
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
+ *
+ * @returns `undefined` if `configureProgram` throws, `NullArguments` if
+ * `execute` throws, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -249,7 +272,7 @@ export async function runProgram<
     argv: string | string[],
     configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
   ]
-): Promise<Arguments<CustomCliArguments>>;
+): Promise<NullArguments | Arguments<CustomCliArguments>>;
 /**
  * Invokes the `preExecutionContext.execute(argv)` function.
  *
@@ -262,6 +285,8 @@ export async function runProgram<
  * or reject no matter what.** Instead, when an error is caught,
  * `process.exitCode` is set to the appropriate value and `undefined` is
  * returned.
+ *
+ * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -272,7 +297,7 @@ export async function runProgram<
     argv: string | string[],
     preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
   ]
-): Promise<Arguments<CustomCliArguments>>;
+): Promise<NullArguments | Arguments<CustomCliArguments>>;
 export async function runProgram<
   CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
@@ -298,7 +323,7 @@ export async function runProgram<
         argv: string | string[],
         preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
       ]
-): Promise<Arguments<CustomCliArguments> | undefined> {
+): Promise<NullArguments | Arguments<CustomCliArguments> | undefined> {
   const debug_ = debug.extend('runProgram');
   debug_('runProgram was invoked');
 
@@ -352,17 +377,27 @@ export async function runProgram<
 
     debug_('invoking preExecutionContext.execute');
 
+    const executeArguments = Array.isArray(argv)
+      ? argv
+      : typeof argv === 'string'
+        ? argv.split(' ')
+        : undefined;
+
     const parsedArgv = (await preExecutionContext.execute(
-      Array.isArray(argv) ? argv : typeof argv === 'string' ? argv.split(' ') : undefined
+      executeArguments
     )) as Arguments<CustomCliArguments>;
 
     process.exitCode = FrameworkExitCode.Ok;
 
     debug_('runProgram invocation succeeded');
-
     return parsedArgv;
   } catch (error) {
-    debug_.error('handling irrecoverable exception: %O', `${error}`);
+    debug_.error(
+      `handling irrecoverable exception from ${
+        preExecutionContext ? '::execute' : '::configureProgram'
+      }: %O`,
+      `${error}`
+    );
 
     process.exitCode = isCliError(error)
       ? error.suggestedExitCode
@@ -373,9 +408,17 @@ export async function runProgram<
     debug_.error('exit code set to %O', process.exitCode);
 
     if (isGracefulEarlyExitError(error)) {
-      debug_.message('the exception resulted in a graceful exit');
-      return (preExecutionContext?.programs.router.parsed || { argv: {} })
-        .argv as Arguments<CustomCliArguments>;
+      if (preExecutionContext) {
+        debug_.message(
+          'the exception resulted in a graceful exit (maybe with parse result)'
+        );
+        return preExecutionContext.state
+          .deepestParseResult as Arguments<CustomCliArguments>;
+      } else {
+        debug_.message(
+          'the exception resulted in a graceful exit (WITHOUT parse result)'
+        );
+      }
     }
 
     debug_('runProgram invocation "succeeded" (via error handler)');

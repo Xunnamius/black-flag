@@ -24,9 +24,9 @@ import {
 import type { ConfigurationHooks } from 'types/configure';
 
 import type {
-  Arguments,
   ExecutionContext,
   Executor,
+  NullArguments,
   PreExecutionContext,
   // ? Used by intellisense and in auto-generated documentation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -97,7 +97,8 @@ export async function configureProgram<
         isHandlingHelpOption: false,
         globalHelpOption: { name: 'help', description: defaultHelpTextDescription },
         showHelpOnFail: true,
-        firstPassArgv: undefined
+        firstPassArgv: undefined,
+        deepestParseResult: undefined
       }
     })
   );
@@ -113,7 +114,7 @@ export async function configureProgram<
     'to save space, ExecutionContext will be unenumerable from this point on'
   );
 
-  const deepestParseResultWrapper = await discoverCommands(commandModulePath, context);
+  await discoverCommands(commandModulePath, context);
 
   const { programs: rootPrograms } = getRootCommand();
 
@@ -187,24 +188,8 @@ export async function configureProgram<
       debug('calling ::parseAsync on root program');
 
       try {
-        const result = await rootPrograms.router.parseAsync(
-          argv,
-          wrapExecutionContext(context)
-        );
-        // * Note that we're doing something clever with how we use
-        // * deepestParseResultWrapper.result here and in discoverCommands. This
-        // * cleverness necessitates splitting this and the above line into two
-        // * separate statements. Combining them "breaks" the ||= operation. My
-        // * diagnosis is: it's because the `result` in
-        // * deepestParseResultWrapper.result gets resolved "too early".
-        // * Interestingly, this "bug" only shows itself when using makeRunner,
-        // * not runProgram or via manual execution. This is likely the result
-        // * of makeRunner, which is not an async function, having to use
-        // * Promise.resolve(...).then(...).
-        // *
-        // * This is likely a consequence of JavaScript's asynchronicity and the
-        // * event loop and not an actual "bug" :)
-        deepestParseResultWrapper.result ||= result;
+        // * Note how we discard the result of RouterProgram::parseAsync
+        await rootPrograms.router.parseAsync(argv, wrapExecutionContext(context));
       } catch (error) {
         if (isGracefulEarlyExitError(error)) {
           debug.message(
@@ -221,13 +206,8 @@ export async function configureProgram<
         }
       }
 
-      // ? Return the result from the handler of the deepest command. Otherwise,
-      // ? return a "null result" indicating that no parse data is available.
-      const finalArgv: Arguments = deepestParseResultWrapper.result || {
-        $0: '<no parse result available>',
-        _: [],
-        [$executionContext]: asUnenumerable(context)
-      };
+      context.state.deepestParseResult ||= makeNullParseResult(context);
+      const finalArgv = context.state.deepestParseResult;
 
       debug('final parsed argv: %O', finalArgv);
       debug('context.state.isGracefullyExiting: %O', context.state.isGracefullyExiting);
@@ -257,21 +237,17 @@ export async function configureProgram<
 
       debug_error.error('caught fatal error (type %O): %O', typeof error, error);
 
-      const argv = (rootPrograms.router.parsed || { argv: {} }).argv as Parameters<
-        typeof finalConfigurationHooks.configureErrorHandlingEpilogue
-      >[1];
+      context.state.deepestParseResult ||= makeNullParseResult(context);
+      const finalArgv = context.state.deepestParseResult;
 
-      debug_error(
-        'potentially-parsed argv (may be incomplete due to error state): %O',
-        argv
-      );
+      debug_error('final parsed argv: %O', finalArgv);
 
       if (isGracefulEarlyExitError(error)) {
         debug.message('caught graceful early exit "error" in catch block');
         debug.warn('error will be forwarded to top-level error handler');
       } else {
         // ? Ensure [$executionContext] always exists
-        argv[$executionContext] ??= asUnenumerable(context);
+        finalArgv[$executionContext] ??= asUnenumerable(context);
 
         let message = ErrorMessage.Generic();
         let exitCode = FrameworkExitCode.DefaultError;
@@ -292,7 +268,7 @@ export async function configureProgram<
 
         await finalConfigurationHooks.configureErrorHandlingEpilogue(
           { message, error, exitCode },
-          argv,
+          finalArgv,
           context
         );
 
@@ -336,6 +312,18 @@ export async function configureProgram<
  */
 export function wrapExecutionContext(context: ExecutionContext) {
   return { [$executionContext]: context };
+}
+
+/**
+ * Creates a `NullArguments` instance.
+ */
+function makeNullParseResult(context: ExecutionContext): NullArguments {
+  debug.warn('generated a NullArguments parse result');
+  return {
+    $0: '<NullArguments: no parse result available due to exception>',
+    _: [],
+    [$executionContext]: asUnenumerable(context)
+  };
 }
 
 /**

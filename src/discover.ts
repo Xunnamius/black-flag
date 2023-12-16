@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { isNativeError, isPromise } from 'node:util/types';
+import { isNativeError, isPromise, isSymbolObject } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
 
@@ -18,7 +18,6 @@ import {
 } from 'universe/error';
 
 import type {
-  Arguments,
   EffectorProgram,
   ExecutionContext,
   HelperProgram,
@@ -60,28 +59,12 @@ const hasSpacesRegExp = /\s+/;
 export async function discoverCommands(
   basePath: string,
   context: ExecutionContext
-): Promise<{
-  /**
-   * Stores the result of the latest call to `EffectorProgram::parseAsync`,
-   * hence the need for passing around a reference to the object containing this
-   * result.
-   *
-   * This is necessary because, with our depth-first multi-yargs architecture,
-   * the parse job done by shallower programs in the chain must not mutate the
-   * result of the deepest call to `EffectorProgram::parseAsync` in the
-   * execution chain.
-   */
-  result: Arguments | undefined;
-}> {
+): Promise<void> {
   // ! Invariant: first command to be discovered, if any, is the root command.
   let alreadyLoadedRootCommand = false;
 
   const debug = context.debug.extend('discover');
   const debug_load = debug.extend('load');
-
-  const deepestParseResult: Awaited<ReturnType<typeof discoverCommands>> = {
-    result: undefined
-  };
 
   debug('ensuring base path directory exists and is readable: "%O"', basePath);
 
@@ -142,7 +125,9 @@ export async function discoverCommands(
     );
   }
 
-  return deepestParseResult;
+  return;
+
+  // *** *** ***
 
   async function discover(
     configPath: string,
@@ -610,14 +595,16 @@ export async function discoverCommands(
             wrapExecutionContext(context)
           );
 
-          const isDeepestParseResult = !deepestParseResult.result;
-          deepestParseResult.result ??= localArgv;
+          assert(
+            context.state.deepestParseResult === undefined,
+            ErrorMessage.GuruMeditation()
+          );
 
-          debug_('is deepest effector parse result: %O', isDeepestParseResult);
+          context.state.deepestParseResult = localArgv;
+
           debug_(
-            `EffectorProgram::parseAsync result${
-              !isDeepestParseResult ? ' (discarded)' : ''
-            }: %O`,
+            'context.state.deepestParseResult set to EffectorProgram::parseAsync result: %O',
+
             localArgv
           );
 
@@ -715,25 +702,28 @@ export async function discoverCommands(
 
     return new Proxy(vanillaYargs, {
       get(target, property: keyof Program, proxy: Program) {
+        const isSymbolOrOwnProperty =
+          isSymbolObject(property) ||
+          Object.hasOwn(vanillaYargs, property) ||
+          Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property);
+
         if (property === ('help' as keyof Program)) {
-          throw new AssertionFailedError(
-            ErrorMessage.AssertionFailureInvocationNotAllowed(property)
-          );
+          return function () {
+            throw new AssertionFailedError(
+              ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+            );
+          };
         }
 
-        if (property === 'parse') {
-          debug_.warn(
-            'bad function call: you should be using "parseAsync" instead of "parse"'
-          );
+        if (property === ('parseSync' as keyof Program)) {
+          return function () {
+            throw new AssertionFailedError(
+              ErrorMessage.AssertionFailureUseParseAsyncInstead()
+            );
+          };
         }
 
-        if (property === 'parseSync') {
-          throw new AssertionFailedError(
-            ErrorMessage.AssertionFailureUseParseAsyncInstead()
-          );
-        }
-
-        if (property === 'argv') {
+        if (property === ('argv' as keyof Program)) {
           debug_.warn(
             `discarded attempted access to disabled "argv" magic property on %O program`,
             descriptor
@@ -753,13 +743,14 @@ export async function discoverCommands(
         }
 
         if (descriptor === 'router') {
-          if (
-            Object.hasOwn(vanillaYargs, property) &&
-            !['parse', 'parseAsync', 'command', 'parsed'].includes(property)
-          ) {
-            throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureInvocationNotAllowed(property)
-            );
+          if (isSymbolOrOwnProperty && !['parseAsync', 'command'].includes(property)) {
+            typeof target[property as keyof typeof target] === 'function'
+              ? function () {
+                  throw new AssertionFailedError(
+                    ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+                  );
+                }
+              : void 'disabled by Black Flag (do not access routers directly)';
           }
         } else {
           // ? What are command_deferred and command_finalize_deferred? Well,
@@ -829,9 +820,11 @@ export async function discoverCommands(
           }
         }
 
+        // ! This line (and any line like it) has to be gated behind the if
+        // ! statements above or terrrrrible things will happen!
         const value: unknown = target[property as keyof typeof target];
 
-        if (value instanceof Function) {
+        if (isSymbolOrOwnProperty && typeof value === 'function') {
           return function (...args: unknown[]) {
             // ? This is "this-recovering" code.
             const returnValue = value.apply(target, args);
@@ -964,7 +957,7 @@ export async function discoverCommands(
   ): Extract<Parameters<Program['command']>[2], Function> {
     return (vanillaYargs, helpOrVersionSet) => {
       const debug_ = debug.extend(pass === 'first-pass' ? 'helper' : 'effector');
-      debug_(`entered wrapped builder function (${pass}) for %O`, config.name);
+      debug_(`entered wrapper builder function (${pass}) for %O`, config.name);
 
       assert(
         pass === 'first-pass'
@@ -990,12 +983,12 @@ export async function discoverCommands(
         }
 
         debug_(
-          `exited wrapped builder function (${pass}) for %O (no errors)`,
+          `exited wrapper builder function (${pass}) for %O (no errors)`,
           config.name
         );
       } catch (error) {
         debug_.warn(
-          `exited wrapped builder function (${pass}) for %O (with error)`,
+          `exited wrapper builder function (${pass}) for %O (with error)`,
           config.name
         );
 

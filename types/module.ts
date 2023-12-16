@@ -45,7 +45,14 @@ export type Configuration<
     | (<
         T extends EffectorProgram<CustomCliArguments> | HelperProgram<CustomCliArguments>
       >(
-        blackFlag: Omit<T, 'parseAsync' | 'fail'>,
+        blackFlag: Omit<
+          T,
+          | 'parseAsync'
+          | 'fail'
+          | 'command'
+          | 'command_deferred'
+          | 'command_finalize_deferred'
+        >,
         helpOrVersionSet: boolean,
         argv?: Arguments<CustomCliArguments>
       ) => void | T | { [key: string]: _Options } | _Program);

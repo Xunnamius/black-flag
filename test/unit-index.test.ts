@@ -14,7 +14,17 @@ import * as bf_util from 'universe/exports/util';
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
-import type { Arguments, ExecutionContext } from 'types/program';
+import type { Arguments, ExecutionContext, NullArguments } from 'types/program';
+
+const nullArguments: NullArguments = {
+  $0: '<NullArguments: no parse result available due to exception>',
+  _: [],
+  [$executionContext]: expect.objectContaining({
+    commands: expect.any(Map),
+    debug: expect.anything(),
+    state: expect.any(Object)
+  })
+};
 
 describe('::configureProgram', () => {
   it('returns PreExecutionContext with expected properties and values', async () => {
@@ -36,7 +46,8 @@ describe('::configureProgram', () => {
         'isHandlingHelpOption',
         'globalHelpOption',
         'showHelpOnFail',
-        'firstPassArgv'
+        'firstPassArgv',
+        'deepestParseResult'
       ]);
       expect(rest).toBeEmpty();
     });
@@ -48,24 +59,6 @@ describe('::configureProgram', () => {
 
   it('uses default configuration hooks when provided hooks are explicitly undefined', async () => {
     expect.hasAssertions();
-  });
-
-  it('returns "null" parse result when data is unavailable', async () => {
-    expect.hasAssertions();
-
-    await withMocks(async ({ logSpy }) => {
-      await expect(
-        (await bf.configureProgram(getFixturePath('empty-index-file'))).execute([
-          '--help'
-        ])
-      ).resolves.toStrictEqual({
-        $0: '<no parse result available>',
-        _: [],
-        [$executionContext]: expect.anything()
-      });
-
-      expect(logSpy).toHaveBeenCalled();
-    });
   });
 
   it('throws when called with undefined or non-existent commandModulePath', async () => {
@@ -502,10 +495,38 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
     });
 
-    it('supports calling showHelpOnFail(false)', async () => {
+    it('returns NullArguments after graceful exit', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ logSpy }) => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('empty-index-file'))).execute([
+            '--help'
+          ])
+        ).resolves.toStrictEqual(nullArguments);
+
+        expect(logSpy).toHaveBeenCalled();
+      });
+    });
+
+    it('supports calling showHelpOnFail(boolean)', async () => {
       expect.hasAssertions();
 
       // TODO: false and then back to true again
+    });
+
+    it('throws when execution fails', async () => {
+      expect.hasAssertions();
+
+      const { execute } = await bf.configureProgram(getFixturePath('one-file-index'));
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(execute(['--x-bad-x'])).rejects.toMatchObject({
+          message: expect.stringMatching('x-bad-x')
+        });
+
+        expect(errorSpy).toHaveBeenCalled();
+      });
     });
 
     it('throws if configureArguments returns falsy', async () => {
@@ -1330,7 +1351,6 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  // TODO: extra attention: left off here before latest round of changes
   it('supports "aliases" export at parent, child, and root', async () => {
     expect.hasAssertions();
 
@@ -1607,7 +1627,6 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  // TODO: extra attention:
   it('supports --help with description and command in usage text across deep aliased hierarchies', async () => {
     expect.hasAssertions();
 
@@ -1656,7 +1675,6 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  // TODO: extra attention:
   it('outputs the same command full name in error help text as in non-error help text when commands have aliases', async () => {
     expect.hasAssertions();
     expect(true).toBeFalse();
