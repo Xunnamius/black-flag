@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { FrameworkExitCode } from 'universe/constant';
-import { rootDebugLogger } from 'universe/index';
+import { getRootDebugLogger } from 'universe/index';
 
 import {
   AssertionFailedError,
@@ -21,7 +21,7 @@ import type {
   PreExecutionContext
 } from 'types/program';
 
-const debug = rootDebugLogger.extend('util');
+const debug = getRootDebugLogger().extend('util');
 
 // * Lots of repeated un-DRY-ed types in this file. Why? Because typedoc gets
 // * mad if we don't.
@@ -230,7 +230,8 @@ export async function runProgram<
 ): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the dynamically imported
- * `configureProgram(commandModulePath).execute(argv)` function.
+ * `configureProgram(commandModulePath).execute(argv)` function. If `argv` is a
+ * string, `argv = argv.split(' ')` is applied first.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -253,7 +254,8 @@ export async function runProgram<
 ): Promise<NullArguments | Arguments<CustomCliArguments>>;
 /**
  * Invokes the dynamically imported `configureProgram(commandModulePath,
- * configurationHooks).execute(argv)` function.
+ * configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
+ * argv.split(' ')` is applied first.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
@@ -278,7 +280,8 @@ export async function runProgram<
   ]
 ): Promise<NullArguments | Arguments<CustomCliArguments>>;
 /**
- * Invokes the `preExecutionContext.execute(argv)` function.
+ * Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
+ * string, `argv = argv.split(' ')` is applied first.
  *
  * **WARNING: reusing the same `preExecutionContext` with multiple invocations
  * of `runProgram` will cause successive invocations to fail.** This is because
@@ -436,6 +439,31 @@ export async function runProgram<
  */
 export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext {
   return !!obj && typeof obj === 'object' && 'execute' in obj && 'rootPrograms' in obj;
+}
+
+/**
+ * Type-guard for {@link NullArguments}.
+ */
+export function isNullArguments(obj: unknown): obj is NullArguments {
+  return (
+    isArguments(obj) &&
+    obj.$0 === '<NullArguments: no parse result available due to exception>' &&
+    obj._.length === 0
+  );
+}
+
+/**
+ * Type-guard for {@link Arguments}.
+ */
+export function isArguments(obj: unknown): obj is Arguments {
+  return (
+    !!obj &&
+    typeof obj === 'object' &&
+    '$0' in obj &&
+    typeof obj.$0 === 'string' &&
+    '_' in obj &&
+    Array.isArray(obj._)
+  );
 }
 
 /**

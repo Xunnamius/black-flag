@@ -1,19 +1,13 @@
 export { configureProgram } from 'universe/index';
 export { runProgram } from 'universe/util';
 
-export {
-  $executionContext,
-  FrameworkExitCode,
-  defaultUsageText
-} from 'universe/constant';
+export { $executionContext, FrameworkExitCode } from 'universe/constant';
 
 export {
-  AssertionFailedError,
   CliError,
-  CommandNotImplementedError,
-  ErrorMessage,
   GracefulEarlyExitError,
-  type CliErrorOptions
+  isCliError,
+  isGracefulEarlyExitError
 } from 'universe/error';
 
 export type {
@@ -33,13 +27,4 @@ export type {
   RootConfiguration
 } from 'types/module';
 
-export type {
-  Arguments,
-  ExecutionContext,
-  Executor,
-  FrameworkArguments,
-  NullArguments,
-  PreExecutionContext,
-  Program,
-  ProgramMetadata
-} from 'types/program';
+export type { Arguments, NullArguments } from 'types/program';

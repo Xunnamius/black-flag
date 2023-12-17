@@ -1879,10 +1879,10 @@ specification. Contributions of any kind welcome!
 [9]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
 [10]: ./docs/modules/index.md#configureProgram
-[11]: ./docs/modules/index.md#preexecutioncontext
+[11]: ./docs/modules/util.md#preexecutioncontext
 [12]: https://en.wikipedia.org/wiki/Convention_over_configuration
 [13]: ./docs/modules/index.md#configureerrorhandlingepilogue
-[14]: ./docs/classes/index.AssertionFailedError.md
+[14]: ./docs/classes/util.AssertionFailedError.md
 [15]: ./docs/modules/util.md#makerunner
 [16]: ./docs/enums/index.FrameworkExitCode.md
 [17]: #built-in-debug-integration-for-runtime-insights-
@@ -1908,7 +1908,7 @@ specification. Contributions of any kind welcome!
 [35]: https://github.com/yargs/yargs/issues/2191
 [36]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[37]: ./docs/modules/index.md#program
+[37]: ./docs/modules/util.md#program
 [38]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [39]:
   https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
@@ -1927,7 +1927,7 @@ specification. Contributions of any kind welcome!
 [51]: https://github.com/yargs/yargs/issues/1137
 [52]: https://github.com/yargs/yargs/issues/156
 [53]: #execution-flow-diagram
-[54]: ./docs/modules/index.md#programmetadata
+[54]: ./docs/modules/util.md#programmetadata
 [55]: #irrelevant-differences
 [56]: ./example-1.png
 [57]: ./example-2.png
