@@ -6,7 +6,7 @@
  */
 const commandModule = {
   aliases: ['parent', 'p'],
-  builder: { option: { boolean: true } },
+  builder: { option2: { boolean: true } },
   deprecated: true,
   name: 'n',
   command: '$0 test-positional',

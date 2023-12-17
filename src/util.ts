@@ -438,7 +438,13 @@ export async function runProgram<
  * Type-guard for {@link PreExecutionContext}.
  */
 export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext {
-  return !!obj && typeof obj === 'object' && 'execute' in obj && 'rootPrograms' in obj;
+  return (
+    !!obj &&
+    typeof obj === 'object' &&
+    'execute' in obj &&
+    'rootPrograms' in obj &&
+    'executionContext' in obj
+  );
 }
 
 /**

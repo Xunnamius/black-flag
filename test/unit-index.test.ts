@@ -29,12 +29,13 @@ describe('::configureProgram', () => {
   it('returns PreExecutionContext with expected properties and values', async () => {
     expect.hasAssertions();
     await withMocks(async () => {
-      const { rootPrograms, execute, commands, debug, state, ...rest } =
+      const { rootPrograms, execute, commands, debug, state, executionContext, ...rest } =
         await bf.configureProgram(getFixturePath('one-file-index'));
 
       expect(rootPrograms).toBeObject();
       expect(rootPrograms).toContainAllKeys(['effector', 'helper', 'router']);
       expect(execute).toBeFunction();
+      expect(executionContext).toBeObject();
       expect(commands).toBeDefined();
       expect(debug).toBeFunction();
       expect(state).toBeObject();
@@ -1670,24 +1671,67 @@ describe('<command module auto-discovery>', () => {
 
   it('supports "builder" export at parent, child, and root', async () => {
     expect.hasAssertions();
-  });
 
-  it('supports "command" export at parent, child, and root', async () => {
-    expect.hasAssertions();
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
 
-    expect(true).toBeFalse();
+    await withMocks(async ({ logSpy }) => {
+      const rootResult = await run('--help');
+      const parentResult = await run('n --help');
+      const childResult = await run('n f --help');
 
-    await withMocks(async () => {
-      const argv = await bf.runProgram(
-        getFixturePath('nested-several-files-full'),
-        'positional-arg'
-      );
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+      expect(bf_util.isNullArguments(childResult)).toBeTrue();
 
-      expect(argv).toContainEntries([
-        ['testPositional', 'positional-arg'],
-        ['test-positional', 'positional-arg']
+      expect(logSpy.mock.calls[0]).toStrictEqual([
+        expect.stringMatching(/\s+--option\s+Some description\s+\[boolean](\n|$)/)
+      ]);
+
+      expect(logSpy.mock.calls[1]).toStrictEqual([
+        expect.stringMatching(/\s+--option2\s+\[boolean](\n|$)/)
+      ]);
+
+      expect(logSpy.mock.calls[2]).toStrictEqual([
+        expect.stringMatching(/\s+--child-option1\s+\[boolean](\n|$)/)
       ]);
     });
+  });
+
+  it('supports "command" export (with positional arguments) at parent, child, and root', async () => {
+    expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
+
+    await withMocks(async () => {
+      const rootResult = await run('positional');
+      const parentResult = await run('n positional');
+      const childResult = await run('n f positional');
+
+      expect(rootResult).toContainEntries([
+        ['test-positional', 'positional'],
+        ['testPositional', 'positional']
+      ]);
+
+      expect(parentResult).toContainEntries([
+        ['test-positional', 'positional'],
+        ['testPositional', 'positional']
+      ]);
+
+      expect(childResult).toContainEntries([
+        ['test-positional', 'positional'],
+        ['testPositional', 'positional']
+      ]);
+    });
+  });
+
+  it('supports root, child, and grandchild commands with configured positional arguments', async () => {
+    expect.hasAssertions();
+
+    // TODO: use .positional()
   });
 
   it('throws when "command" export is invalid', async () => {
@@ -1708,10 +1752,49 @@ describe('<command module auto-discovery>', () => {
 
   it('supports "handler" export at parent, child, and root', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
+
+    await withMocks(async () => {
+      const rootResult = await run('positional');
+      const parentResult = await run('n positional');
+      const childResult = await run('n f positional');
+
+      expect(rootResult).toContainEntry([
+        'handled_by',
+        getFixturePath(['nested-several-files-full', 'index.js'])
+      ]);
+
+      expect(parentResult).toContainEntry([
+        'handled_by',
+        getFixturePath(['nested-several-files-full', 'nested', 'index.js'])
+      ]);
+
+      expect(childResult).toContainEntry([
+        'handled_by',
+        getFixturePath(['nested-several-files-full', 'nested', 'first.js'])
+      ]);
+    });
   });
 
   it('supports "name" export at parent, child, and root', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
+
+    await withMocks(async () => {
+      const rootResult = await run('positional');
+      const parentResult = await run('parent positional');
+      const childResult = await run('parent child-1 positional');
+
+      expect(rootResult).toContainEntry(['$0', 'nsf']);
+      expect(parentResult).toContainEntry(['$0', 'nsf n']);
+      expect(childResult).toContainEntry(['$0', 'nsf n f']);
+    });
   });
 
   it('supports "usage" export at parent, child, and root', async () => {
@@ -1728,12 +1811,18 @@ describe('<command module auto-discovery>', () => {
 
   it('supports random additions to the ExecutionContext from handlers', async () => {
     expect.hasAssertions();
-  });
 
-  it('supports root, child, and grandchild commands with positional arguments', async () => {
-    expect.hasAssertions();
+    const { execute, executionContext } = await bf.configureProgram(
+      getFixturePath('nested-several-files-full')
+    );
 
-    // TODO: use .positional() too
+    await withMocks(async () => {
+      await execute(['positional']);
+      expect(executionContext).toContainEntry([
+        'mutated_by',
+        getFixturePath(['nested-several-files-full', 'index.js'])
+      ]);
+    });
   });
 
   it('supports files, directories, and package names with spaces and other invalid characters', async () => {

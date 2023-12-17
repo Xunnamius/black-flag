@@ -264,6 +264,13 @@ export type PreExecutionContext<
    * `NullArguments` instead.
    */
   execute: Executor;
+  /**
+   * A reference to the global context singleton passed to all other
+   * configuration hooks, command builders, and command handlers. This object
+   * recursively contains some of the same entries as its enclosing
+   * `PreExecutionContext`.
+   */
+  executionContext: CustomContext;
 };
 
 /**

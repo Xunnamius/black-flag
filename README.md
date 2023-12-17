@@ -394,7 +394,7 @@ export const configureExecutionContext: ConfigureExecutionContext = async (
   // You can add some state shared between all your command handlers and
   // configuration hooks here.
   context.somethingDifferent = 'cool';
-  return context; // <== This is: the "context" used literally everywhere else
+  return context; // <== This is: what will become the "context" used elsewhere
 };
 
 /**

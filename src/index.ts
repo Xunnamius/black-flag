@@ -250,7 +250,7 @@ export async function configureProgram<
         debug.message('caught (and released) graceful early exit "error" in catch block');
       } else {
         // ? Ensure [$executionContext] always exists
-        finalArgv[$executionContext] ??= asUnenumerable(context);
+        finalArgv[$executionContext] ??= context;
 
         let message = ErrorMessage.Generic();
         let exitCode = FrameworkExitCode.DefaultError;
@@ -310,6 +310,7 @@ export async function configureProgram<
   return {
     rootPrograms,
     execute: parseAndExecuteWithErrorHandling,
+    executionContext: context,
     ...asEnumerable(context)
   };
 
@@ -337,7 +338,7 @@ function makeNullParseResult(context: ExecutionContext): NullArguments {
   return {
     $0: '<NullArguments: no parse result available due to exception>',
     _: [],
-    [$executionContext]: asUnenumerable(context)
+    [$executionContext]: context
   };
 }
 
