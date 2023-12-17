@@ -119,7 +119,7 @@ export type EffectorProgram<
  */
 export type HelperProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<Program<CustomCliArguments>, 'command' | 'positional'>;
+> = Omit<Program<CustomCliArguments>, 'command'>;
 
 /**
  * Represents an "router" {@link Program} instance.

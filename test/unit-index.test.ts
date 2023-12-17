@@ -1767,7 +1767,40 @@ describe('<command module auto-discovery>', () => {
   it('supports root, child, and grandchild commands with explicitly-configured positional arguments', async () => {
     expect.hasAssertions();
 
-    // TODO: use .positional()
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-positionals')
+    });
+
+    // * It's interesting, because HelperProgram will never have positional
+    // * arguments, but it still needs to support having yargs::positional
+    // * called on it so a single builder can be run on both HelperPrograms and
+    // * EffectorPrograms, and so the correct help text gets generated.
+    // * Thankfully, yargs allows calling yargs::positional on a yargs instance
+    // * even if it has no positional arguments! Yay!
+
+    await withMocks(async ({ logSpy }) => {
+      await run('--help');
+      await run('nested --help');
+      await run('nested child --help');
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /Positionals:\n\s+dummy-positional1\s+Dummy description1\n\n/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /Positionals:\n\s+dummy-positional2\s+Dummy description2\n\n/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /Positionals:\n\s+dummy-positional3\s+Dummy description3\n\n/
+          )
+        ]
+      ]);
+    });
   });
 
   it('throws when "command" export is invalid', async () => {
