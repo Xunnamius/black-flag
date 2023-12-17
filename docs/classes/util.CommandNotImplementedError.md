@@ -1,8 +1,8 @@
-[black-flag](../README.md) / [index](../modules/index.md) / CommandNotImplementedError
+[black-flag](../README.md) / [util](../modules/util.md) / CommandNotImplementedError
 
 # Class: CommandNotImplementedError
 
-[index](../modules/index.md).CommandNotImplementedError
+[util](../modules/util.md).CommandNotImplementedError
 
 Represents trying to execute a CLI command that has not yet been implemented.
 
@@ -16,35 +16,35 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 ### Constructors
 
-- [constructor](index.CommandNotImplementedError.md#constructor)
+- [constructor](util.CommandNotImplementedError.md#constructor)
 
 ### Properties
 
-- [[$type]](index.CommandNotImplementedError.md#[$type])
-- [cause](index.CommandNotImplementedError.md#cause)
-- [message](index.CommandNotImplementedError.md#message)
-- [name](index.CommandNotImplementedError.md#name)
-- [stack](index.CommandNotImplementedError.md#stack)
-- [suggestedExitCode](index.CommandNotImplementedError.md#suggestedexitcode)
-- [prepareStackTrace](index.CommandNotImplementedError.md#preparestacktrace)
-- [stackTraceLimit](index.CommandNotImplementedError.md#stacktracelimit)
+- [[$type]](util.CommandNotImplementedError.md#[$type])
+- [cause](util.CommandNotImplementedError.md#cause)
+- [message](util.CommandNotImplementedError.md#message)
+- [name](util.CommandNotImplementedError.md#name)
+- [stack](util.CommandNotImplementedError.md#stack)
+- [suggestedExitCode](util.CommandNotImplementedError.md#suggestedexitcode)
+- [prepareStackTrace](util.CommandNotImplementedError.md#preparestacktrace)
+- [stackTraceLimit](util.CommandNotImplementedError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](index.CommandNotImplementedError.md#capturestacktrace)
+- [captureStackTrace](util.CommandNotImplementedError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new CommandNotImplementedError**(): [`CommandNotImplementedError`](index.CommandNotImplementedError.md)
+• **new CommandNotImplementedError**(): [`CommandNotImplementedError`](util.CommandNotImplementedError.md)
 
 Represents trying to execute a CLI command that has not yet been
 implemented.
 
 #### Returns
 
-[`CommandNotImplementedError`](index.CommandNotImplementedError.md)
+[`CommandNotImplementedError`](util.CommandNotImplementedError.md)
 
 #### Overrides
 
@@ -52,7 +52,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:113](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L113)
+[src/error.ts:113](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L113)
 
 ## Properties
 
@@ -66,7 +66,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L108)
+[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L108)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L66)
 
 ___
 

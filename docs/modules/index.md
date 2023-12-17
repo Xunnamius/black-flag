@@ -10,16 +10,13 @@
 
 ### Classes
 
-- [AssertionFailedError](../classes/index.AssertionFailedError.md)
 - [CliError](../classes/index.CliError.md)
-- [CommandNotImplementedError](../classes/index.CommandNotImplementedError.md)
 - [GracefulEarlyExitError](../classes/index.GracefulEarlyExitError.md)
 
 ### Type Aliases
 
 - [Arguments](index.md#arguments)
 - [ChildConfiguration](index.md#childconfiguration)
-- [CliErrorOptions](index.md#clierroroptions)
 - [Configuration](index.md#configuration)
 - [ConfigurationHooks](index.md#configurationhooks)
 - [ConfigureArguments](index.md#configurearguments)
@@ -27,33 +24,27 @@
 - [ConfigureExecutionContext](index.md#configureexecutioncontext)
 - [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue)
 - [ConfigureExecutionPrologue](index.md#configureexecutionprologue)
-- [ExecutionContext](index.md#executioncontext)
-- [Executor](index.md#executor)
-- [FrameworkArguments](index.md#frameworkarguments)
 - [ImportedConfigurationModule](index.md#importedconfigurationmodule)
 - [NullArguments](index.md#nullarguments)
 - [ParentConfiguration](index.md#parentconfiguration)
-- [PreExecutionContext](index.md#preexecutioncontext)
-- [Program](index.md#program)
-- [ProgramMetadata](index.md#programmetadata)
 - [RootConfiguration](index.md#rootconfiguration)
 
 ### Variables
 
 - [$executionContext](index.md#$executioncontext)
-- [ErrorMessage](index.md#errormessage)
-- [defaultUsageText](index.md#defaultusagetext)
 
 ### Functions
 
 - [configureProgram](index.md#configureprogram)
+- [isCliError](index.md#isclierror)
+- [isGracefulEarlyExitError](index.md#isgracefulearlyexiterror)
 - [runProgram](index.md#runprogram)
 
 ## Type Aliases
 
 ### Arguments
 
-Ƭ **Arguments**\<`CustomCliArguments`\>: `_Arguments`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>
+Ƭ **Arguments**\<`CustomCliArguments`\>: `_Arguments`\<[`FrameworkArguments`](util.md#frameworkarguments) & `CustomCliArguments`\>
 
 Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
 arguments/properties specific to Black Flag, and an indexer falling back to
@@ -67,7 +58,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/program.ts#L17)
 
 ___
 
@@ -87,25 +78,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:152](https://github.com/Xunnamius/black-flag/blob/faba99e/types/module.ts#L152)
-
-___
-
-### CliErrorOptions
-
-Ƭ **CliErrorOptions**: `Object`
-
-Options available when constructing a new `CliError` object.
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `suggestedExitCode?` | `number` | The exit code that will be returned when the application exits, given nothing else goes wrong in the interim. **`Default`** ```ts FrameworkExitCode.DefaultError ``` |
-
-#### Defined in
-
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L48)
+[types/module.ts:152](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/module.ts#L152)
 
 ___
 
@@ -138,7 +111,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/faba99e/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/module.ts#L16)
 
 ___
 
@@ -153,7 +126,7 @@ definition for details.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -161,13 +134,13 @@ definition for details.
 | :------ | :------ | :------ |
 | `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `PreExecutionContext::execute` and should return a `process.argv`-like array. This is where yargs middleware and other argument pre-processing can be implemented. |
 | `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)\<`CustomContext`\> | This function is called once at the very end of the error handling process after an error has occurred. Note that this function is _always_ called whenever there is an error, regardless of which other functions have already been called. The only exceptions to this are if (1) the error occurs within `configureErrorHandlingEpilogue` itself or (2) the error is an instance of `GracefulEarlyExitError`. This function is also called even after yargs internally handles and reports an argument parsing/validation error. |
-| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](index.md#executioncontext) singleton. |
+| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](util.md#executioncontext) singleton. |
 | `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\<`CustomContext`\> | This function is called once after CLI argument parsing completes and either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown. The value returned by this function is used as the return value of the `PreExecutionContext::execute` method. This function will _not_ be called when yargs argument validation fails. This function is the complement of [ConfigureExecutionPrologue](index.md#configureexecutionprologue). |
-| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](index.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). |
+| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](util.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). |
 
 #### Defined in
 
-[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L90)
+[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L90)
 
 ___
 
@@ -179,7 +152,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -204,19 +177,19 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L42)
+[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L42)
 
 ___
 
 ### ConfigureErrorHandlingEpilogue
 
-Ƭ **ConfigureErrorHandlingEpilogue**\<`CustomContext`\>: (`meta`: \{ `error`: `unknown` ; `exitCode`: `number` ; `message`: `string`  }, `argv`: `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  }, `context`: `CustomContext`) => `Promisable`\<`void`\>
+Ƭ **ConfigureErrorHandlingEpilogue**\<`CustomContext`\>: (`meta`: \{ `error`: `unknown` ; `exitCode`: `number` ; `message`: `string`  }, `argv`: `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](util.md#executioncontext)  }, `context`: `CustomContext`) => `Promisable`\<`void`\>
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -242,7 +215,7 @@ an argument parsing/validation error.
 | `meta.error` | `unknown` |
 | `meta.exitCode` | `number` |
 | `meta.message` | `string` |
-| `argv` | `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](index.md#executioncontext)  } |
+| `argv` | `Omit`\<`Partial`\<[`Arguments`](index.md#arguments)\>, typeof [`$executionContext`](index.md#$executioncontext)\> & \{ `[$executionContext]`: [`ExecutionContext`](util.md#executioncontext)  } |
 | `context` | `CustomContext` |
 
 ##### Returns
@@ -251,19 +224,19 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L75)
+[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L75)
 
 ___
 
 ### ConfigureExecutionContext
 
-Ƭ **ConfigureExecutionContext**\<`CustomContext`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`\<`CustomContext`\>
+Ƭ **ConfigureExecutionContext**\<`CustomContext`\>: (`context`: [`ExecutionContext`](util.md#executioncontext)) => `Promisable`\<`CustomContext`\>
 
 #### Type parameters
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -271,13 +244,13 @@ ___
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return what will become the global
-[ExecutionContext](index.md#executioncontext) singleton.
+[ExecutionContext](util.md#executioncontext) singleton.
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `context` | [`ExecutionContext`](index.md#executioncontext) |
+| `context` | [`ExecutionContext`](util.md#executioncontext) |
 
 ##### Returns
 
@@ -285,7 +258,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L14)
+[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L14)
 
 ___
 
@@ -297,7 +270,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -324,7 +297,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L58)
+[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L58)
 
 ___
 
@@ -336,7 +309,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
@@ -348,7 +321,7 @@ have been executed, and should apply any final configurations to the programs
 that constitute the command line interface.
 
 All commands and sub-commands known to Black Flag are available in the
-[ExecutionContext.commands](index.md#commands) map, which can be accessed from the
+[ExecutionContext.commands](util.md#commands) map, which can be accessed from the
 `context` parameter or from the [Arguments](index.md#arguments) object returned by
 `Program::parseAsync` et al.
 
@@ -367,109 +340,13 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/faba99e/types/configure.ts#L31)
-
-___
-
-### ExecutionContext
-
-Ƭ **ExecutionContext**: `Object`
-
-Represents a globally-accessible shared context object singleton.
-
-#### Index signature
-
-▪ [key: `string`]: `unknown`
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](index.md#programmetadata) ; `programs`: [`Programs`](util.md#programs)  }\> | A Map consisting of auto-discovered [Program](index.md#program) instances and their associated [ProgramMetadata](index.md#programmetadata) as singular object values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map will always be the root command. |
-| `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
-| `state.deepestParseResult` | [`Arguments`](index.md#arguments) \| `undefined` | Stores the result of the latest call to `EffectorProgram::parseAsync`. This is necessary because, with our depth-first multi-yargs architecture, the parse job done by shallower programs in the chain must not mutate the result of the deepest call to `EffectorProgram::parseAsync` in the execution chain. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
-| `state.firstPassArgv` | [`Arguments`](index.md#arguments) \| `undefined` | Allows helper and effector programs to keep track of pre-pared arguments. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
-| `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the functionality of the disabled vanilla yargs `yargs::help` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the help option will take the form of `-${name}`, otherwise `--${name}`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
-| `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined by yargs when `configureProgram` is called. |
-| `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other context, this will _always_ be `false`. **`Default`** ```ts false ``` |
-| `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingHelpOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. Note: setting `isHandlingHelpOption` to `true` manually will cause Black Flag to output help text as if the user had specified `--help` (or an equivalent) as one of their arguments. **`Default`** ```ts false ``` |
-| `state.rawArgv` | typeof `process.argv` | A subset of the original argv returned by [ConfigureArguments](index.md#configurearguments). It is used internally to give the final command in the arguments list the chance to parse argv. Further, it is used to enforce the ordering invariant on chained child program invocations. That is: all non-positional arguments must appear _after_ the last command name in any arguments list parsed by this program. Since it will be actively manipulated by each command in the arguments list, **do not rely on `rawArgv` for anything other than checking invariant satisfaction.** **`Default`** ```ts [] ``` |
-| `state.showHelpOnFail` | `boolean` | If `true`, Black Flag will dump help text to stderr when an error occurs. This is also set when `Program::showHelpOnFail` is called. **`Default`** ```ts true ``` |
-
-#### Defined in
-
-[types/program.ts:272](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L272)
-
-___
-
-### Executor
-
-Ƭ **Executor**: (`rawArgv?`: `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``]) => `Promise`\<[`Arguments`](index.md#arguments)\>
-
-#### Type declaration
-
-▸ (`rawArgv?`): `Promise`\<[`Arguments`](index.md#arguments)\>
-
-This function accepts an optional `rawArgv` array that defaults to
-`yargs::hideBin(process.argv)` and returns an `Arguments` object representing
-the arguments parsed and validated by yargs (i.e.
-`context.state.deepestParseResult`).
-
-**This function throws whenever\* an exception occurs**, making it not ideal
-as an entry point for a CLI. See [runProgram](index.md#runprogram) for a wrapper function
-that handles exceptions and sets the exit code for you.
-
-Note: when the special `GracefulEarlyExitError` exception is thrown _from
-within a command's handler or builder_, `Executor` will set
-`context.state.deepestParseResult` to `NullArguments` and
-`context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
-not** re-throw the exception in this special case, returning `NullArguments`
-instead.
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `rawArgv?` | `Parameters`\<[`ConfigureArguments`](index.md#configurearguments)\>[``0``] |
-
-##### Returns
-
-`Promise`\<[`Arguments`](index.md#arguments)\>
-
-#### Defined in
-
-[types/program.ts:231](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L231)
-
-___
-
-### FrameworkArguments
-
-Ƭ **FrameworkArguments**: `Object`
-
-Represents the CLI arguments/properties added by Black Flag rather than the
-end developer.
-
-Instead of using this type directly, your project's custom arguments (e.g.
-`MyCustomArgs`) should be wrapped with the [Arguments](index.md#arguments) generic type
-(e.g. `Arguments<MyCustomArgs>`), which will extend `FrameworkArguments` for
-you.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `[$executionContext]` | [`ExecutionContext`](index.md#executioncontext) |
-
-#### Defined in
-
-[types/program.ts:210](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L210)
+[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/configure.ts#L31)
 
 ___
 
 ### ImportedConfigurationModule
 
-Ƭ **ImportedConfigurationModule**\<`CustomCliArguments`\>: (`context`: [`ExecutionContext`](index.md#executioncontext)) => `Promisable`\<`Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\>\> \| `Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\> & \{ `__esModule?`: ``false`` ; `default?`: [`ImportedConfigurationModule`](index.md#importedconfigurationmodule)\<`CustomCliArguments`\>  } \| \{ `__esModule`: ``true``  }
+Ƭ **ImportedConfigurationModule**\<`CustomCliArguments`\>: (`context`: [`ExecutionContext`](util.md#executioncontext)) => `Promisable`\<`Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\>\> \| `Partial`\<[`RootConfiguration`](index.md#rootconfiguration)\<`CustomCliArguments`\> \| [`ParentConfiguration`](index.md#parentconfiguration)\<`CustomCliArguments`\> \| [`ChildConfiguration`](index.md#childconfiguration)\<`CustomCliArguments`\>\> & \{ `__esModule?`: ``false`` ; `default?`: [`ImportedConfigurationModule`](index.md#importedconfigurationmodule)\<`CustomCliArguments`\>  } \| \{ `__esModule`: ``true``  }
 
 Represents a Configuration object imported from a CJS/ESM module external to
 the CLI framework (e.g. importing an auto-discovered config module from a
@@ -483,13 +360,13 @@ file).
 
 #### Defined in
 
-[types/module.ts:161](https://github.com/Xunnamius/black-flag/blob/faba99e/types/module.ts#L161)
+[types/module.ts:161](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/module.ts#L161)
 
 ___
 
 ### NullArguments
 
-Ƭ **NullArguments**: \{ `$0`: ``"<NullArguments: no parse result available due to exception>"`` ; `_`: []  } & [`FrameworkArguments`](index.md#frameworkarguments)
+Ƭ **NullArguments**: \{ `$0`: ``"<NullArguments: no parse result available due to exception>"`` ; `_`: []  } & [`FrameworkArguments`](util.md#frameworkarguments)
 
 Represents an empty or "null" `Arguments` object devoid of useful data.
 
@@ -499,7 +376,7 @@ yargs from returning a real `Arguments` parse result.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L28)
+[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/program.ts#L28)
 
 ___
 
@@ -519,71 +396,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/faba99e/types/module.ts#L143)
-
-___
-
-### PreExecutionContext
-
-Ƭ **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & \{ `execute`: [`Executor`](index.md#executor) ; `rootPrograms`: [`Programs`](util.md#programs)  }
-
-Represents the pre-execution context that is the result of calling
-`configureProgram`.
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
-
-#### Defined in
-
-[types/program.ts:242](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L242)
-
-___
-
-### Program
-
-Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](index.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](index.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](index.md#program)\<`CustomCliArguments`\> ; `version`: (`version`: `string` \| ``false``) => [`Program`](index.md#program)\<`CustomCliArguments`\>  }
-
-Represents a pre-configured yargs instance ready for argument parsing and
-execution.
-
-`Program` is essentially a drop-in replacement for the `Argv` type exported
-by yargs but with several differences and should be preferred.
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
-
-#### Defined in
-
-[types/program.ts:40](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L40)
-
-___
-
-### ProgramMetadata
-
-Ƭ **ProgramMetadata**: `Object`
-
-Represents the meta information about a discovered command and its
-corresponding [Configuration](index.md#configuration) object/file.
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `filename` | `string` | The basename of `filepath`. |
-| `filenameWithoutExtension` | `string` | The basename of `filepath` with the trailing extension trimmed. |
-| `filepath` | `string` | Absolute filesystem path to the loaded configuration file. |
-| `parentDirName` | `string` | The basename of the direct parent directory containing `filepath`. |
-| `type` | [`ProgramType`](util.md#programtype) | The "type" of [Configuration](index.md#configuration) that was loaded, indicating which interface to expect when interacting with `configuration`. The possibilities are: - **root**: implements `RootConfiguration` (the only pure `ParentConfiguration`) - **parent-child**: implements `ParentConfiguration`, `ChildConfiguration` - **child**: implements `ChildConfiguration` Note that "root" `type` configurations are unique in that there will only ever be one `RootConfiguration`, and it **MUST** be the first command module auto-discovered and loaded (invariant). |
-
-#### Defined in
-
-[types/program.ts:167](https://github.com/Xunnamius/black-flag/blob/faba99e/types/program.ts#L167)
+[types/module.ts:143](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/module.ts#L143)
 
 ___
 
@@ -603,7 +416,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/faba99e/types/module.ts#L134)
+[types/module.ts:134](https://github.com/Xunnamius/black-flag/blob/3943fc2/types/module.ts#L134)
 
 ## Variables
 
@@ -616,82 +429,16 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/faba99e/src/constant.ts#L5)
-
-___
-
-### ErrorMessage
-
-• `Const` **ErrorMessage**: `Object`
-
-A collection of possible error and warning messages emitted by Black Flag.
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `AppValidationFailure` | () => `string` |
-| `AuthFailure` | () => `string` |
-| `ClientValidationFailure` | () => `string` |
-| `GuruMeditation` | () => `string` |
-| `HttpFailure` | (`error?`: `string`) => `string` |
-| `HttpSubFailure` | (`error`: ``null`` \| `string`, `statusCode`: `number`) => `string` |
-| `InvalidAppConfiguration` | (`details?`: `string`) => `string` |
-| `InvalidAppEnvironment` | (`details?`: `string`) => `string` |
-| `InvalidClientConfiguration` | (`details?`: `string`) => `string` |
-| `InvalidItem` | (`item`: `unknown`, `itemName`: `string`) => `string` |
-| `InvalidSecret` | (`secretType`: `string`) => `string` |
-| `ItemNotFound` | (`item`: `unknown`, `itemName`: `string`) => `string` |
-| `ItemOrItemsNotFound` | (`itemsName`: `string`) => `string` |
-| `NotAuthenticated` | () => `string` |
-| `NotAuthorized` | () => `string` |
-| `NotFound` | () => `string` |
-| `NotImplemented` | () => `string` |
-| `ValidationFailure` | () => `string` |
-| `AssertionFailureBadConfigurationPath` | (`path`: `unknown`) => `string` |
-| `AssertionFailureBadParameterCombination` | () => `string` |
-| `AssertionFailureCannotExecuteMultipleTimes` | () => `string` |
-| `AssertionFailureConfigureExecutionEpilogue` | () => `string` |
-| `AssertionFailureInvocationNotAllowed` | (`name`: `string`) => `string` |
-| `AssertionFailureNamingInvariant` | (`name`: `string`) => `string` |
-| `AssertionFailureNoConfigurationLoaded` | (`path`: `string`) => `string` |
-| `AssertionFailureOrderingInvariant` | () => `string` |
-| `AssertionFailureReachedTheUnreachable` | () => `string` |
-| `AssertionFailureUseParseAsyncInstead` | () => `string` |
-| `ConfigLoadFailure` | (`path`: `string`) => `string` |
-| `Generic` | () => `string` |
-| `GracefulEarlyExit` | () => `string` |
-| `InvalidCharacters` | (`str`: `string`, `violation`: `string`) => `string` |
-| `InvalidConfigureArgumentsReturnType` | () => `string` |
-| `InvalidConfigureExecutionContextReturnType` | () => `string` |
-
-#### Defined in
-
-[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L163)
-
-___
-
-### defaultUsageText
-
-• `Const` **defaultUsageText**: ``"Usage: $000\n\n$1"``
-
-Hard-coded default command `usage` text provided to programs via
-`.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
-with a command's usage DSL (`command` export), name (`name` export), and
-description (`description` export) respectively.
-
-#### Defined in
-
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/faba99e/src/constant.ts#L13)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/constant.ts#L5)
 
 ## Functions
 
 ### configureProgram
 
-▸ **configureProgram**\<`CustomContext`\>(`commandModulePath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
+▸ **configureProgram**\<`CustomContext`\>(`commandModulePath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\<`CustomContext`\>\>
 
-Create and return a [PreExecutionContext](index.md#preexecutioncontext) containing fully-configured
-[Program](index.md#program) instances and an [Executor](index.md#executor) entry point function.
+Create and return a [PreExecutionContext](util.md#preexecutioncontext) containing fully-configured
+[Program](util.md#program) instances and an [Executor](util.md#executor) entry point function.
 
 Command auto-discovery will occur at `commandModulePath`. An exception will
 occur if no commands are loadable from the given `commandModulePath`.
@@ -704,7 +451,7 @@ handles exceptions and sets the exit code for you.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) = [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Parameters
 
@@ -715,11 +462,55 @@ handles exceptions and sets the exit code for you.
 
 #### Returns
 
-`Promise`\<[`PreExecutionContext`](index.md#preexecutioncontext)\<`CustomContext`\>\>
+`Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\<`CustomContext`\>\>
 
 #### Defined in
 
-[src/index.ts:60](https://github.com/Xunnamius/black-flag/blob/faba99e/src/index.ts#L60)
+[src/index.ts:60](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/index.ts#L60)
+
+___
+
+### isCliError
+
+▸ **isCliError**(`parameter`): parameter is CliError
+
+Type guard for [CliError](../classes/index.CliError.md).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `parameter` | `unknown` |
+
+#### Returns
+
+parameter is CliError
+
+#### Defined in
+
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L21)
+
+___
+
+### isGracefulEarlyExitError
+
+▸ **isGracefulEarlyExitError**(`parameter`): parameter is GracefulEarlyExitError
+
+Type guard for [GracefulEarlyExitError](../classes/index.GracefulEarlyExitError.md).
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `parameter` | `unknown` |
+
+#### Returns
+
+parameter is GracefulEarlyExitError
+
+#### Defined in
+
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L34)
 
 ___
 
@@ -743,7 +534,7 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -761,7 +552,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:175](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L175)
+[src/util.ts:175](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L175)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -781,7 +572,7 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -799,7 +590,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:198](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L198)
+[src/util.ts:198](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L198)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -819,7 +610,7 @@ or reject no matter what.** Instead, when an error is caught,
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -836,7 +627,7 @@ or reject no matter what.** Instead, when an error is caught,
 
 #### Defined in
 
-[src/util.ts:222](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L222)
+[src/util.ts:222](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L222)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -856,7 +647,7 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -874,7 +665,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:247](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L247)
+[src/util.ts:247](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L247)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -894,7 +685,7 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -912,7 +703,7 @@ desired.
 
 #### Defined in
 
-[src/util.ts:270](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L270)
+[src/util.ts:270](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L270)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -932,7 +723,7 @@ returned.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](index.md#executioncontext) |
+| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -949,4 +740,4 @@ returned.
 
 #### Defined in
 
-[src/util.ts:295](https://github.com/Xunnamius/black-flag/blob/faba99e/src/util.ts#L295)
+[src/util.ts:295](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/util.ts#L295)

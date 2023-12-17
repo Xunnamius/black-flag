@@ -14,15 +14,15 @@ can be used as a simple wrapper around other errors.
 
   ↳ **`CliError`**
 
-  ↳↳ [`AssertionFailedError`](index.AssertionFailedError.md)
-
-  ↳↳ [`CommandNotImplementedError`](index.CommandNotImplementedError.md)
-
   ↳↳ [`GracefulEarlyExitError`](index.GracefulEarlyExitError.md)
+
+  ↳↳ [`AssertionFailedError`](util.AssertionFailedError.md)
+
+  ↳↳ [`CommandNotImplementedError`](util.CommandNotImplementedError.md)
 
 ## Implements
 
-- `NonNullable`\<[`CliErrorOptions`](../modules/index.md#clierroroptions)\>
+- `NonNullable`\<[`CliErrorOptions`](../modules/util.md#clierroroptions)\>
 
 ## Table of contents
 
@@ -59,7 +59,7 @@ other context.
 | Name | Type |
 | :------ | :------ |
 | `cause` | `string` \| `Error` |
-| `options?` | [`CliErrorOptions`](../modules/index.md#clierroroptions) |
+| `options?` | [`CliErrorOptions`](../modules/util.md#clierroroptions) |
 
 #### Returns
 
@@ -71,7 +71,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L73)
+[src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L73)
 
 • **new CliError**(`cause`, `options`, `message`, `superOptions`): [`CliError`](index.CliError.md)
 
@@ -83,7 +83,7 @@ via `super`.
 | Name | Type |
 | :------ | :------ |
 | `cause` | `string` \| `Error` |
-| `options` | [`CliErrorOptions`](../modules/index.md#clierroroptions) |
+| `options` | [`CliErrorOptions`](../modules/util.md#clierroroptions) |
 | `message` | `string` |
 | `superOptions` | `ErrorOptions` |
 
@@ -97,7 +97,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L78)
+[src/error.ts:78](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L78)
 
 ## Properties
 
@@ -107,7 +107,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L68)
+[src/error.ts:68](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L68)
 
 ___
 
@@ -177,7 +177,7 @@ NonNullable.suggestedExitCode
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L66)
 
 ___
 

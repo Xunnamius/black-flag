@@ -1,8 +1,8 @@
-[black-flag](../README.md) / [index](../modules/index.md) / AssertionFailedError
+[black-flag](../README.md) / [util](../modules/util.md) / AssertionFailedError
 
 # Class: AssertionFailedError
 
-[index](../modules/index.md).AssertionFailedError
+[util](../modules/util.md).AssertionFailedError
 
 Represents a failed sanity check.
 
@@ -16,28 +16,28 @@ Represents a failed sanity check.
 
 ### Constructors
 
-- [constructor](index.AssertionFailedError.md#constructor)
+- [constructor](util.AssertionFailedError.md#constructor)
 
 ### Properties
 
-- [[$type]](index.AssertionFailedError.md#[$type])
-- [cause](index.AssertionFailedError.md#cause)
-- [message](index.AssertionFailedError.md#message)
-- [name](index.AssertionFailedError.md#name)
-- [stack](index.AssertionFailedError.md#stack)
-- [suggestedExitCode](index.AssertionFailedError.md#suggestedexitcode)
-- [prepareStackTrace](index.AssertionFailedError.md#preparestacktrace)
-- [stackTraceLimit](index.AssertionFailedError.md#stacktracelimit)
+- [[$type]](util.AssertionFailedError.md#[$type])
+- [cause](util.AssertionFailedError.md#cause)
+- [message](util.AssertionFailedError.md#message)
+- [name](util.AssertionFailedError.md#name)
+- [stack](util.AssertionFailedError.md#stack)
+- [suggestedExitCode](util.AssertionFailedError.md#suggestedexitcode)
+- [prepareStackTrace](util.AssertionFailedError.md#preparestacktrace)
+- [stackTraceLimit](util.AssertionFailedError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](index.AssertionFailedError.md#capturestacktrace)
+- [captureStackTrace](util.AssertionFailedError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new AssertionFailedError**(`message`): [`AssertionFailedError`](index.AssertionFailedError.md)
+• **new AssertionFailedError**(`message`): [`AssertionFailedError`](util.AssertionFailedError.md)
 
 Represents a failed sanity check.
 
@@ -49,7 +49,7 @@ Represents a failed sanity check.
 
 #### Returns
 
-[`AssertionFailedError`](index.AssertionFailedError.md)
+[`AssertionFailedError`](util.AssertionFailedError.md)
 
 #### Overrides
 
@@ -57,7 +57,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:151](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L151)
+[src/error.ts:151](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L151)
 
 ## Properties
 
@@ -71,7 +71,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:147](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L147)
+[src/error.ts:147](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L147)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/faba99e/src/error.ts#L66)
+[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/3943fc2/src/error.ts#L66)
 
 ___
 
