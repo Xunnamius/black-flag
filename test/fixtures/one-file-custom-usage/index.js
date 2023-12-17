@@ -9,8 +9,9 @@ const name = basename(dirname(__filename));
  */
 module.exports = {
   name: 'custom-name',
-  description: 'custom-description',
+  description: 'custom-description $0 $1 $1 $0',
   command: '$0 <custom1|custom2> [custom3..]',
+  usage: 'Usage: $0 - $1 - $000',
   builder: (blackFlag) => {
     return blackFlag.option(name, { boolean: true });
   },

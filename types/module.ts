@@ -21,7 +21,10 @@ export type Configuration<
    * interpreted](https://github.com/yargs/yargs/pull/647) by
    * [yargs](https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases).
    *
-   * Note that positional arguments defined in aliases are ignored.
+   * Note 1: positional arguments defined in aliases are ignored.
+   *
+   * Note 2: when a command file is interpreted as a {@link RootConfiguration},
+   * `aliases` is effectively ignored.
    *
    * @default []
    */

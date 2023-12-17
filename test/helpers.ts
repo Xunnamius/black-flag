@@ -5,16 +5,28 @@ export function getFixturePath(fixture: string | string[]) {
 }
 
 export function expectedCommandsRegex(
-  childCommands: string[],
-  parentFullName = require(`./fixtures/package.json`).name
+  childCommands: (string | [command: string, descriptionRegex: string])[],
+  parentFullName = require(`./fixtures/package.json`).name,
+  parentDescriptionRegex?: string,
+  childDescriptionRegex = '[A-Z]',
+  includeFinalNewline = true
 ) {
   return new RegExp(
     'Commands:\\n\\s+' +
       parentFullName +
-      '\\s+Description.*?\\s+\\[default]\\n' +
+      `\\s+${parentDescriptionRegex ?? childDescriptionRegex}[^\\n]*${
+        parentDescriptionRegex ? '' : '\\s+\\[default][^\\n]*'
+      }\\n` +
       childCommands
-        .map((cmd) => '\\s+' + parentFullName + '\\s+' + cmd + '\\s+Description.*?\\n')
+        .map(
+          (cmd) =>
+            '\\s+' +
+            parentFullName +
+            '\\s+' +
+            (Array.isArray(cmd) ? cmd[0] : cmd) +
+            `\\s+${Array.isArray(cmd) ? cmd[1] : childDescriptionRegex}[^\\n]*\\n`
+        )
         .join('') +
-      '\\n'
+      (includeFinalNewline ? '\\n' : '')
   );
 }

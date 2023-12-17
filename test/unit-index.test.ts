@@ -399,12 +399,12 @@ describe('::configureProgram', () => {
       });
     });
 
-    it('replaces "$000", "$0", and "$1" in default usage text in the appropriate order when outputting help text', async () => {
+    it('replaces "$000", "$0", and "$1" in usage text in the appropriate order when outputting help text', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ logSpy, errorSpy }) => {
         await expect(
-          (await bf.configureProgram(getFixturePath('one-file-default-usage'))).execute([
+          (await bf.configureProgram(getFixturePath('one-file-custom-usage'))).execute([
             '--help'
           ])
         ).resolves.toBeDefined();
@@ -412,7 +412,7 @@ describe('::configureProgram', () => {
         expect(logSpy.mock.calls).toStrictEqual([
           [
             expect.stringMatching(
-              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
+              /^Usage: custom-name - Custom-description custom-name \$1 \$1 custom-name - custom-name <custom1\|custom2> \[custom3\.\.]/
             )
           ]
         ]);
@@ -420,7 +420,7 @@ describe('::configureProgram', () => {
         expect(errorSpy.mock.calls).toHaveLength(0);
 
         await expect(
-          (await bf.configureProgram(getFixturePath('one-file-default-usage'))).execute([
+          (await bf.configureProgram(getFixturePath('one-file-custom-usage'))).execute([
             '--bad'
           ])
         ).rejects.toBeDefined();
@@ -429,7 +429,7 @@ describe('::configureProgram', () => {
         expect(errorSpy.mock.calls).toStrictEqual([
           [
             expect.stringMatching(
-              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
+              /^Usage: custom-name - Custom-description custom-name \$1 \$1 custom-name - custom-name <custom1\|custom2> \[custom3\.\.]/
             )
           ],
           [],
@@ -439,7 +439,7 @@ describe('::configureProgram', () => {
 
       await withMocks(async ({ logSpy, errorSpy }) => {
         await expect(
-          (await bf.configureProgram(getFixturePath('one-file-default-usage'))).execute([
+          (await bf.configureProgram(getFixturePath('one-file-custom-usage'))).execute([
             'custom-param',
             '--bad'
           ])
@@ -449,11 +449,47 @@ describe('::configureProgram', () => {
         expect(errorSpy.mock.calls).toStrictEqual([
           [
             expect.stringMatching(
-              /^Usage: custom-name <custom1\|custom2> \[custom3\.\.]\n\nCustom-description/
+              /^Usage: custom-name - Custom-description custom-name \$1 \$1 custom-name - custom-name <custom1\|custom2> \[custom3\.\.]/
             )
           ],
           [],
           ['Unknown argument: bad']
+        ]);
+      });
+    });
+
+    it('supports "$1" interpolation in usage even when description is false and commands are hidden', async () => {
+      expect.hasAssertions();
+
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('nested-false-description')
+      });
+
+      await withMocks(async ({ logSpy }) => {
+        await expect(run('--help')).resolves.toBeDefined();
+        await expect(run('nested --help')).resolves.toBeDefined();
+        await expect(run('nested child --help')).resolves.toBeDefined();
+
+        expect(logSpy.mock.calls).toStrictEqual([
+          [expect.stringMatching(/^Usage: test\n\nOptions:/)],
+          [expect.stringMatching(/^Usage: test nested\n\nOptions:/)],
+          [expect.stringMatching(/^Usage: test nested child\n\nOptions:/)]
+        ]);
+      });
+    });
+
+    it('capitalizes descriptions and custom usage text', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ logSpy }) => {
+        await expect(
+          (await bf.configureProgram(getFixturePath('one-file-custom-usage'))).execute([
+            '--help'
+          ])
+        ).resolves.toBeDefined();
+
+        expect(logSpy.mock.calls).toStrictEqual([
+          [expect.stringMatching(/^Usage: custom-name - C/)]
         ]);
       });
     });
@@ -1522,7 +1558,7 @@ describe('::CliError', () => {
         }
       });
 
-      expect(getExitCode()).toBe(1);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
       expect(errorSpy).toHaveBeenCalled();
     });
   });
@@ -1686,15 +1722,15 @@ describe('<command module auto-discovery>', () => {
       expect(bf_util.isNullArguments(childResult)).toBeTrue();
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
-        expect.stringMatching(/\s+--option\s+Some description\s+\[boolean](\n|$)/)
+        expect.stringMatching(/\s+--option\s+Some description\s+\[boolean]$/)
       ]);
 
       expect(logSpy.mock.calls[1]).toStrictEqual([
-        expect.stringMatching(/\s+--option2\s+\[boolean](\n|$)/)
+        expect.stringMatching(/\s+--option2\s+\[boolean]$/)
       ]);
 
       expect(logSpy.mock.calls[2]).toStrictEqual([
-        expect.stringMatching(/\s+--child-option1\s+\[boolean](\n|$)/)
+        expect.stringMatching(/\s+--child-option1\s+\[boolean]|$/)
       ]);
     });
   });
@@ -1728,7 +1764,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('supports root, child, and grandchild commands with configured positional arguments', async () => {
+  it('supports root, child, and grandchild commands with explicitly-configured positional arguments', async () => {
     expect.hasAssertions();
 
     // TODO: use .positional()
@@ -1744,10 +1780,100 @@ describe('<command module auto-discovery>', () => {
 
   it('supports "deprecated" export at parent, child, and root', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
+
+    await withMocks(async ({ logSpy }) => {
+      const rootResult = await run('--help');
+      const parentResult = await run('n --help');
+
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+
+      expect(logSpy.mock.calls[0]).toStrictEqual([
+        expect.stringMatching(
+          expectedCommandsRegex(
+            ['n'],
+            'nsf',
+            'Root program.+\\s+\\[default]\\s+\\[deprecated]',
+            'Parent program.+\\s+\\[deprecated]'
+          )
+        )
+      ]);
+
+      expect(logSpy.mock.calls[1]).toStrictEqual([
+        expect.stringMatching(
+          expectedCommandsRegex(
+            [['f', 'Child program.+\\s+\\[deprecated]'], 's', 't'],
+            'nsf n',
+            'Parent program.+\\s+\\[default]\\s+\\[deprecated]',
+            'Child program.+\\s+\\[(?!deprecated)[^\\n]*]'
+          )
+        )
+      ]);
+    });
   });
 
   it('supports "description" export at parent, child, and root', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
+
+    await withMocks(async ({ logSpy }) => {
+      const rootResult = await run('--help');
+      const parentResult = await run('n --help');
+
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+
+      expect(logSpy.mock.calls[0]).toStrictEqual([
+        expect.stringMatching(expectedCommandsRegex(['n'], 'nsf', 'Root', 'Parent'))
+      ]);
+
+      expect(logSpy.mock.calls[1]).toStrictEqual([
+        expect.stringMatching(
+          expectedCommandsRegex(['f', 's', 't'], 'nsf n', 'Parent', 'Child')
+        )
+      ]);
+    });
+  });
+
+  it('supports empty ("") "description" export at parent, child, and root', async () => {
+    expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-empty-description')
+    });
+
+    await withMocks(async ({ logSpy }) => {
+      const rootResult = await run('--help');
+      const parentResult = await run('nested --help');
+      const childResult = await run('nested child --help');
+
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+      expect(bf_util.isNullArguments(childResult)).toBeTrue();
+
+      expect(logSpy.mock.calls[0]).toStrictEqual([
+        expect.stringMatching(
+          /Commands:\n\s+test\s+\[default]\n\s+test nested\n\nOptions:/
+        )
+      ]);
+
+      expect(logSpy.mock.calls[1]).toStrictEqual([
+        expect.stringMatching(
+          /Commands:\n\s+test nested\s+\[default]\n\s+test nested child\n\nOptions:/
+        )
+      ]);
+
+      expect(logSpy.mock.calls[2]).toStrictEqual([
+        expect.stringMatching(/^Usage: test nested child\n\nOptions:/)
+      ]);
+    });
   });
 
   it('supports "handler" export at parent, child, and root', async () => {
@@ -1799,14 +1925,32 @@ describe('<command module auto-discovery>', () => {
 
   it('supports "usage" export at parent, child, and root', async () => {
     expect.hasAssertions();
-  });
 
-  it('supports "$1" interpolation in "usage" export', async () => {
-    expect.hasAssertions();
-  });
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-full')
+    });
 
-  it('supports "$1" interpolation in usage even when description is false export', async () => {
-    expect.hasAssertions();
+    await withMocks(async ({ logSpy }) => {
+      const rootResult = await run('--help');
+      const parentResult = await run('n --help');
+      const childResult = await run('n f --help');
+
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+      expect(bf_util.isNullArguments(childResult)).toBeTrue();
+
+      expect(logSpy.mock.calls[0]).toStrictEqual([
+        expect.stringMatching(/^USAGE: root program/)
+      ]);
+
+      expect(logSpy.mock.calls[1]).toStrictEqual([
+        expect.stringMatching(/^USAGE: parent program/)
+      ]);
+
+      expect(logSpy.mock.calls[2]).toStrictEqual([
+        expect.stringMatching(/^USAGE: child program/)
+      ]);
+    });
   });
 
   it('supports random additions to the ExecutionContext from handlers', async () => {
@@ -1829,24 +1973,23 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('ignores empty command configuration root directory', async () => {
+  it('throws if command configuration module directory is empty', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy, errorSpy, exitSpy, getExitCode }) => {
-      await bf.runProgram(getFixturePath('empty'), '--help');
+    await withMocks(async ({ getExitCode }) => {
+      await expect(
+        (await bf.configureProgram(getFixturePath('empty'))).execute(['--help'])
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath(
+          getFixturePath('empty')
+        )
+      });
 
-      expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('Options:'));
-      expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
-      expect(logSpy).not.toHaveBeenCalledWith(expect.stringContaining('Commands:'));
+      await expect(bf.runProgram(getFixturePath('empty'), '--help')).resolves.toSatisfy(
+        bf_util.isNullArguments
+      );
 
-      // ? The semi-broken yargs instance is not configured properly, so we
-      // ? can test for the consequences of passing "--help" to it:
-
-      expect(getExitCode()).toBe(1);
-      expect(exitSpy.mock.calls).toStrictEqual([[0]]);
-      expect(errorSpy.mock.calls).toStrictEqual([
-        [expect.stringContaining('process.exit(0)')]
-      ]);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
     });
   });
 
@@ -1986,7 +2129,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
       ]);
 
-      expect(getExitCode()).toBe(0);
+      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       expect(errorSpy.mock.calls).toStrictEqual([]);
 
       await run('--x');
@@ -2015,56 +2158,14 @@ describe('<command module auto-discovery>', () => {
         expect.anything()
       ]);
 
-      expect(getExitCode()).toBe(1);
+      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
     });
   });
 
-  it('supports --help with description and command in usage text across deep aliased hierarchies', async () => {
+  it('accounts for bugs in vanilla yargs when outputting help text', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ logSpy }) => {
-      const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full')
-      });
-
-      await run('--help');
-      await run('parent --help');
-      await run('parent child-1 --help');
-      await run('parent child-2 --help');
-      await run('parent child-3 --help');
-
-      // // * Make sure we're getting the correct entries under "Commands:"
-
-      // expect(logSpy.mock.calls).toStrictEqual([
-      //   [expect.stringMatching(expectedCommandsRegex(['n'], 'nsf'))],
-      //   [expect.stringMatching(expectedCommandsRegex(['f', 's', 't'], 'nsf n'))],
-      //   [expect.not.stringContaining('Commands:')],
-      //   [expect.not.stringContaining('Commands:')],
-      //   [expect.not.stringContaining('Commands:')]
-      // ]);
-
-      // // * Make sure we're getting the correct help text next to "--help"
-
-      // expect(logSpy.mock.calls).toStrictEqual([
-      //   [expect.stringContaining('Show help text')],
-      //   [expect.stringContaining('Show help text')],
-      //   [expect.stringContaining('Show help text')],
-      //   [expect.stringContaining('Show help text')],
-      //   [expect.stringContaining('Show help text')]
-      // ]);
-
-      // // * Make sure we're getting the correct command name
-
-      // expect(logSpy.mock.calls).toStrictEqual([
-      //   [expect.stringMatching(/^Usage: nsf\n/)],
-      //   [expect.stringMatching(/^Usage: nsf n\n/)],
-      //   [expect.stringMatching(/^Usage: nsf good1 good2\n/)],
-      //   [expect.stringMatching(/^Usage: nsf good1 good2 good3\n/)],
-      //   [expect.stringMatching(/^Usage: nsf good1 good2 good3 command\n/)]
-      // ]);
-
-      // // * Make sure the correct aliases are reported alongside their commands
-    });
+    // * https://github.com/Xunnamius/black-flag/tree/main#generating-help-text
   });
 
   it('outputs the same command full name in error help text as in non-error help text when commands have aliases', async () => {
@@ -2091,7 +2192,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
       ]);
 
-      expect(getExitCode()).toBe(0);
+      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
       expect(errorSpy.mock.calls).toStrictEqual([]);
 
       await run('--x');
@@ -2120,7 +2221,7 @@ describe('<command module auto-discovery>', () => {
         expect.anything()
       ]);
 
-      expect(getExitCode()).toBe(1);
+      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
     });
   });
 
@@ -2203,7 +2304,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching('Unknown argument: yelp')]
       ]);
 
-      expect(getExitCode()).toBe(1);
+      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
     });
   });
 
@@ -2239,12 +2340,6 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('accounts for the help text generation bugs in vanilla yargs', async () => {
-    expect.hasAssertions();
-
-    // * https://github.com/Xunnamius/black-flag/tree/main#generating-help-text
-  });
-
   it('does the right thing when the nearest package.json file is empty', async () => {
     expect.hasAssertions();
   });
@@ -2254,14 +2349,6 @@ describe('<command module auto-discovery>', () => {
   });
 
   it('sets context.state.isGracefullyExiting to true in the configureErrorHandlingEpilogue hook when exiting gracefully', async () => {
-    expect.hasAssertions();
-  });
-
-  it('supports both empty ("") and false (or "hidden") Configuration::description values', async () => {
-    expect.hasAssertions();
-  });
-
-  it('capitalizes descriptions and custom usage text', async () => {
     expect.hasAssertions();
   });
 
