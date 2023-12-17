@@ -620,11 +620,11 @@ export async function discoverCommands(
         debug_('error.message: %O', error?.message);
         debug_('error is native error: %O', isNativeError(error));
 
-        // ! Is there a better to differentiate between Yargs-specific errors and
-        // ! third-party errors? Or is this the best yargs will allow?
+        // ! Is there a better way to differentiate between Yargs-specific
+        // ! errors and third-party errors? Or is this the best we can do?
         if (!error && context.state.showHelpOnFail) {
           // ? If a failure happened but error is not defined, it was *probably*
-          // ? a yargs-specific errors (e.g. argument validation).
+          // ? a yargs-specific error (e.g. argument validation failure).
           debug_('sending help text to stderr (triggered by yargs)');
           // ! Notice the helper program is ALWAYS the one outputting help text.
           programs.helper.showHelp('error');
@@ -823,9 +823,9 @@ export async function discoverCommands(
                 // ? Ensure the root command is added first (though it probably
                 // ? doesn't matter either way).
                 return firstCommand.startsWith('$0')
-                  ? 1
+                  ? -1
                   : secondCommand.startsWith('$0')
-                    ? -1
+                    ? 1
                     : sort(firstCommand, secondCommand);
               });
 

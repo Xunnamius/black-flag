@@ -1562,7 +1562,7 @@ describe('<command module auto-discovery>', () => {
       expect(logSpy.mock.calls).toStrictEqual([
         [
           expect.stringMatching(
-            expectedCommandsRegex(['exports-function', 'exports-object test-positional'])
+            expectedCommandsRegex(['exports-function', 'exports-object'])
           )
         ]
       ]);
@@ -1666,7 +1666,7 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('ignores empty command configuration root directory (returns semi-broken instance)', async () => {
+  it('ignores empty command configuration root directory', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ logSpy, errorSpy, exitSpy, getExitCode }) => {
@@ -2136,6 +2136,10 @@ describe('<command module auto-discovery>', () => {
   });
 
   it('throws when a configuration file unexpectedly fails to load', async () => {
+    expect.hasAssertions();
+  });
+
+  it('throws when a configuration file has bad permissions', async () => {
     expect.hasAssertions();
   });
 
