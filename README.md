@@ -1318,11 +1318,20 @@ Flag, but are noted below nonetheless.
   yargs, no positional arguments or aliases will be confusingly mixed into help
   text output unless you [make it so][43].
 
-- Currently, yargs (as of 17.7.2) [doesn't really support][37] calling
-  `yargs::parse`/`yargs::parseAsync` [multiple times on the same instance][51]
-  if it's using the commands-based API. This might be a regression since, [among
-  other things][52], there are comments within yargs's source that indicate
-  these functions were intended to be called multiple times.
+- As of yargs\@17.7.2, attempting to add two commands with the exact same name
+  causes all sorts of runtime insanity, especially if the commands also have
+  aliases.
+
+  Black Flag addresses this by taking measure to prevent you from shooting
+  yourself in the foot. Specifically: Black Flag will throw if you attempt to
+  add a command with a name or alias that conflicts with an existing command's
+  name or alias.
+
+- Unfortunately, yargs\@17.7.2 [doesn't really support][37] calling
+  `yargs::parse` or `yargs::parseAsync` [multiple times on the same
+  instance][51] if it's using the commands-based API. This might be a regression
+  since, [among other things][52], there are comments within yargs's source that
+  indicate these functions were intended to be called multiple times.
 
   Black Flag addresses this in two ways. First, the [`runProgram`][8] helper
   takes care of state isolation for you, making it safe to call
