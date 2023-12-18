@@ -1497,8 +1497,8 @@ In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
 
 - An end user trying to invoke a non-existent sub-command will cause an
-  exception to be thrown. This is true even if the effector and helpers have
-  been set to non-strict mode (`yargs::strict(false)`).
+  exception to be thrown. This is true even if the effector has been set to
+  non-strict mode (`yargs::strict(false)`).
 
 - The right command gets to generate help and version text. To this end, passing
   `--help`/`--version` or equivalent arguments is effectively ignored by
