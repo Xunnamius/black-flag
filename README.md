@@ -141,10 +141,10 @@ defaults when called without any arguments.
 ### It's Yargs All the Way down ✨
 
 At the end of the day, you're still working with yargs instances, so there's no
-unfamiliar interface to wrestle with and no brand new things to learn. All yargs
-features still work, the [yargs documentation][4] still applies, and Black Flag,
-as a wrapper around yargs, is [widely compatible][5] with the existing yargs
-ecosystem.
+unfamiliar interface to wrestle with and no brand new things to learn. All of
+yargs's killer features still work, the [yargs documentation][4] still applies,
+and Black Flag, as a wrapper around yargs, is [widely compatible][5] with the
+existing yargs ecosystem.
 
 For example, Black Flag helps you validate those [dynamic options][6] using the
 same yargs API you already know and love:
