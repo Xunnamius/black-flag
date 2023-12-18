@@ -29,10 +29,9 @@ import type {
   RouterProgram
 } from 'types/program';
 
-import type { Configuration, ImportedConfigurationModule } from 'types/module';
-
 import type { PackageJson } from 'type-fest';
-import { parserConfiguration } from 'yargs';
+import type { Configuration, ImportedConfigurationModule } from 'types/module';
+import type { Options } from 'yargs';
 
 const hasSpacesRegExp = /\s+/;
 
@@ -874,22 +873,49 @@ export async function discoverCommands(
           return void 'disabled by Black Flag (use parseAsync instead)';
         }
 
-        if (
-          descriptor === 'helper' &&
-          typeof property === 'string' &&
-          (property.startsWith('strict') || property.startsWith('demand'))
-        ) {
-          // * Although it's tempting to do more, issuing a debug warning is
-          // * all that can be done here. Move along.
+        if (descriptor === 'helper' && typeof property === 'string') {
+          if (property.startsWith('strict') || property.startsWith('demand')) {
+            // * Although it's tempting to do more, issuing a debug warning is
+            // * all that can be done here. Move along.
 
-          return function () {
-            debug_(
-              `discarded attempted access to disabled method "${property}" on %O program`,
-              descriptor
-            );
+            return function () {
+              debug_(
+                `discarded attempted access to disabled method "${property}" on %O program`,
+                descriptor
+              );
 
-            return proxy;
-          };
+              return proxy;
+            };
+          }
+
+          // * Our goal with the below is to prevent option configurations like
+          // * `demandOption` from hurting the helper while still applying it
+          // * to the effector.
+
+          if (property === 'option' || property === 'options') {
+            return function (...args: unknown[]) {
+              const options = (
+                args.length === 1 ? args[0] : { [args[0] as string]: args[1] || {} }
+              ) as Record<string, Options>;
+
+              assert(args.length === 0 || !!options, ErrorMessage.GuruMeditation());
+
+              Object.entries(options).forEach(([option, optionConfiguration]) => {
+                if ('demandOption' in optionConfiguration) {
+                  debug_(
+                    `discarded attempted mutation of disabled yargs option configuration key "demandOption" (for the %O option) on %O program`,
+                    option,
+                    descriptor
+                  );
+
+                  delete optionConfiguration.demandOption;
+                }
+              });
+
+              target.options(options);
+              return proxy;
+            };
+          }
         }
 
         if (descriptor === 'router') {
@@ -1134,7 +1160,9 @@ export async function discoverCommands(
             : config.builder;
 
         if (blackFlagBuilderResult && blackFlagBuilderResult !== program) {
-          vanillaYargs.options(
+          // ? Use program here instead of vanillaYargs since we want our
+          // ? version of the ::options method.
+          program.options(
             blackFlagBuilderResult as Parameters<typeof vanillaYargs.options>[0]
           );
         }

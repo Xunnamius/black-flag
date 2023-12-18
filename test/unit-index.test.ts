@@ -2637,18 +2637,91 @@ describe('<command module auto-discovery>', () => {
 
   it('alpha-sorts commands that appear in help text', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await bf.runProgram(getFixturePath('nested-alphanumeric'), '--help');
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            expectedCommandsRegex(
+              ['five', 'four', 'one', 'three', 'two'],
+              'alpha',
+              '',
+              ''
+            )
+          )
+        ]
+      ]);
+    });
   });
 
   it('enables strictness constraints on effectors (and not helpers) by default', async () => {
     expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--bad bad still good')
+      ).resolves.toStrictEqual(
+        expect.objectContaining({
+          _: ['still', 'good'],
+          bad: 'bad'
+        })
+      );
+    });
   });
 
-  it('allows yargs::strictX method calls on effectors that are ignored on helpers', async () => {
+  it('allows yargs::strictX and yargs::demandX method calls and options configurations on effectors that are ignored on helpers', async () => {
     expect.hasAssertions();
-  });
 
-  it('allows yargs::demandX method calls on effectors that are ignored on helpers', async () => {
-    expect.hasAssertions();
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('one-file-strict')
+    });
+
+    await withMocks(async ({ errorSpy, logSpy, getExitCode }) => {
+      await run('--bad bad not good');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      await run('--good');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      await run();
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      await run('--good --good1 --good2 --good3 --good4');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+      await run('--help');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.any(String)],
+        [],
+        [
+          expect.stringContaining(
+            'Missing required arguments: good4, good1, good2, good3, good'
+          )
+        ],
+        [expect.any(String)],
+        [],
+        [
+          expect.stringContaining(
+            'Missing required arguments: good4, good1, good2, good3'
+          )
+        ],
+        [expect.any(String)],
+        [],
+        [
+          expect.stringContaining(
+            'Missing required arguments: good4, good1, good2, good3, good'
+          )
+        ]
+      ]);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--good1\s+\[boolean]\n\s+--good2\s+\[boolean]\n\s+--good3\s+\[boolean]\n\s+--good4\s+\[boolean]\n\s+--good\s+\[boolean]$/
+          )
+        ]
+      ]);
+    });
   });
 
   it('enables strictness constraints on childless parents and childless root', async () => {
