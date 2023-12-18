@@ -713,7 +713,7 @@ export async function discoverCommands(
         .strict(false)
         .exitProcess(false)
         .fail(false);
-    } else if (context.state.globalHelpOption) {
+    } else if (context.state.globalHelpOption?.name?.length) {
       const { name: helpOptionName, description: helpOptionDescription } =
         context.state.globalHelpOption;
 

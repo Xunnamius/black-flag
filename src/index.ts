@@ -182,13 +182,13 @@ export async function configureProgram<
 
       assert(
         context.state.globalHelpOption === undefined ||
-          context.state.globalHelpOption.name.length,
+          context.state.globalHelpOption.name?.length,
         'bad context.state.globalHelpOption'
       );
 
       assert(
         context.state.globalVersionOption === undefined ||
-          context.state.globalVersionOption.name.length,
+          context.state.globalVersionOption.name?.length,
         'bad context.state.globalVersionOption'
       );
 

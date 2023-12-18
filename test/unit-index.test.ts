@@ -183,7 +183,7 @@ describe('::configureProgram', () => {
   it('returns program instances instead of vanilla yargs instances from proxied methods', async () => {
     expect.assertions(3);
 
-    await bf.configureProgram(getFixturePath('one-file-no-strict'), {
+    await bf.configureProgram(getFixturePath('one-file-loose'), {
       configureExecutionPrologue({ effector, helper, router }) {
         expect(effector.boolean('key')).toBe(effector);
         expect(helper.options({ option: { boolean: true } })).toBe(helper);
@@ -209,7 +209,7 @@ describe('::configureProgram', () => {
   it('throws when calling disallowed methods or properties on programs', async () => {
     expect.assertions(15);
 
-    await bf.configureProgram(getFixturePath('one-file-no-strict'), {
+    await bf.configureProgram(getFixturePath('one-file-loose'), {
       configureExecutionPrologue({ effector, helper, router }) {
         const asYargs = (o: unknown): Argv => o as Argv;
 
@@ -292,14 +292,14 @@ describe('::configureProgram', () => {
 
           await expect(
             (
-              await bf.configureProgram(getFixturePath('one-file-no-strict'), config)
+              await bf.configureProgram(getFixturePath('one-file-loose'), config)
             ).execute()
           ).resolves.toBeDefined();
 
           await expect(
-            (
-              await bf.configureProgram(getFixturePath('one-file-no-strict'), config)
-            ).execute(['3'])
+            (await bf.configureProgram(getFixturePath('one-file-loose'), config)).execute(
+              ['3']
+            )
           ).resolves.toBeDefined();
         },
         {
@@ -318,18 +318,15 @@ describe('::configureProgram', () => {
       const expectedResult = { something: 'else' } as unknown as Arguments;
 
       await withMocks(async () => {
-        const { execute } = await bf.configureProgram(
-          getFixturePath('one-file-no-strict'),
-          {
-            configureArguments() {
-              return expectedArgv;
-            },
-            configureExecutionEpilogue(argv) {
-              expect(argv._).toStrictEqual(expectedArgv);
-              return expectedResult;
-            }
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureArguments() {
+            return expectedArgv;
+          },
+          configureExecutionEpilogue(argv) {
+            expect(argv._).toStrictEqual(expectedArgv);
+            return expectedResult;
           }
-        );
+        });
 
         await expect(execute()).resolves.toBe(expectedResult);
       });
@@ -341,32 +338,29 @@ describe('::configureProgram', () => {
       let expectedContext: ExecutionContext;
 
       await withMocks(async () => {
-        const { execute } = await bf.configureProgram(
-          getFixturePath('one-file-no-strict'),
-          {
-            configureArguments(argv, context) {
-              expect(context).toBe(expectedContext);
-              return argv;
-            },
-            configureExecutionEpilogue(argv, context) {
-              expect(argv[bf.$executionContext]).toBe(expectedContext);
-              expect(context).toBe(expectedContext);
-              return argv;
-            },
-            configureErrorHandlingEpilogue(_meta, argv, context) {
-              expect(argv[bf.$executionContext]).toBe(expectedContext);
-              expect(context).toBe(expectedContext);
-            },
-            configureExecutionContext(context) {
-              context.ok = true;
-              return context;
-            },
-            configureExecutionPrologue(_program, context) {
-              expect(context.ok).toBeTrue();
-              expectedContext = context;
-            }
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureArguments(argv, context) {
+            expect(context).toBe(expectedContext);
+            return argv;
+          },
+          configureExecutionEpilogue(argv, context) {
+            expect(argv[bf.$executionContext]).toBe(expectedContext);
+            expect(context).toBe(expectedContext);
+            return argv;
+          },
+          configureErrorHandlingEpilogue(_meta, argv, context) {
+            expect(argv[bf.$executionContext]).toBe(expectedContext);
+            expect(context).toBe(expectedContext);
+          },
+          configureExecutionContext(context) {
+            context.ok = true;
+            return context;
+          },
+          configureExecutionPrologue(_program, context) {
+            expect(context.ok).toBeTrue();
+            expectedContext = context;
           }
-        );
+        });
 
         const result = await execute();
         expect(result).toBeDefined();
@@ -736,10 +730,9 @@ describe('::configureProgram', () => {
     it('throws if configureArguments returns falsy', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-no-strict'),
-        { configureArguments: () => undefined as any }
-      );
+      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+        configureArguments: () => undefined as any
+      });
 
       await withMocks(async ({ errorSpy }) => {
         await expect(execute(['--help'])).rejects.toMatchObject({
@@ -753,10 +746,9 @@ describe('::configureProgram', () => {
     it('throws if configureExecutionEpilogue returns falsy', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-no-strict'),
-        { configureExecutionEpilogue: () => undefined as any }
-      );
+      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+        configureExecutionEpilogue: () => undefined as any
+      });
 
       await withMocks(async ({ errorSpy }) => {
         await expect(execute(['--vex'])).rejects.toMatchObject({
@@ -770,7 +762,7 @@ describe('::configureProgram', () => {
     it('throws if invoked more than once', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-no-strict'));
+      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'));
 
       await withMocks(async () => {
         await expect(execute()).resolves.toBeDefined();
@@ -895,7 +887,7 @@ describe('::runProgram and util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
-      await bf.runProgram(getFixturePath('one-file-no-strict'));
+      await bf.runProgram(getFixturePath('one-file-loose'));
 
       expect(logSpy).toHaveBeenCalledTimes(0);
       expect(warnSpy).toHaveBeenCalledTimes(0);
@@ -1571,7 +1563,7 @@ describe('::isPreExecutionContext', () => {
     expect.hasAssertions();
 
     const preExecutionContext = await bf.configureProgram(
-      getFixturePath('one-file-no-strict')
+      getFixturePath('one-file-loose')
     );
 
     expect(bf_util.isPreExecutionContext(preExecutionContext)).toBeTrue();
@@ -1584,7 +1576,7 @@ describe('::isArguments', () => {
     expect.hasAssertions();
 
     const Arguments = await (
-      await bf.configureProgram(getFixturePath('one-file-no-strict'))
+      await bf.configureProgram(getFixturePath('one-file-loose'))
     ).execute(['--ok']);
 
     expect(bf_util.isArguments(Arguments)).toBeTrue();
@@ -1597,7 +1589,7 @@ describe('::isNullArguments', () => {
     expect.hasAssertions();
 
     const NullArguments = await (
-      await bf.configureProgram(getFixturePath('one-file-no-strict'))
+      await bf.configureProgram(getFixturePath('one-file-loose'))
     ).execute(['--help']);
 
     expect(bf_util.isNullArguments(NullArguments)).toBeTrue();
@@ -2245,10 +2237,84 @@ describe('<command module auto-discovery>', () => {
 
   it('never adds a "help command" or a "version command", only options', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('one-file-index')
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await run('help');
+      await run('version');
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy).toHaveBeenCalledTimes(6);
+    });
   });
 
   it('throws if "help" or "version" are incorrectly configured in context.state using configureExecutionContext', async () => {
     expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), {
+            configureExecutionContext(context) {
+              // @ts-expect-error: doing bad things with friends
+              context.state.globalHelpOption = {};
+              return context;
+            },
+            configureErrorHandlingEpilogue() {
+              /* silence is golden */
+            }
+          })
+        ).execute(['bad'])
+      ).rejects.toMatchObject({ message: 'bad context.state.globalHelpOption' });
+
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), {
+            configureExecutionContext(context) {
+              // @ts-expect-error: doing bad things with friends
+              context.state.globalHelpOption = { name: '' };
+              return context;
+            },
+            configureErrorHandlingEpilogue() {
+              /* silence is golden */
+            }
+          })
+        ).execute(['bad'])
+      ).rejects.toMatchObject({ message: 'bad context.state.globalHelpOption' });
+
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), {
+            configureExecutionContext(context) {
+              // @ts-expect-error: doing bad things with friends
+              context.state.globalVersionOption = {};
+              return context;
+            },
+            configureErrorHandlingEpilogue() {
+              /* silence is golden */
+            }
+          })
+        ).execute(['bad'])
+      ).rejects.toMatchObject({ message: 'bad context.state.globalVersionOption' });
+
+      await expect(
+        (
+          await bf.configureProgram(getFixturePath('one-file-index'), {
+            configureExecutionContext(context) {
+              // @ts-expect-error: doing bad things with friends
+              context.state.globalVersionOption = { name: '' };
+              return context;
+            },
+            configureErrorHandlingEpilogue() {
+              /* silence is golden */
+            }
+          })
+        ).execute(['bad'])
+      ).rejects.toMatchObject({ message: 'bad context.state.globalVersionOption' });
+    });
   });
 
   it('outputs the same command full name in error help text as in non-error help text', async () => {
@@ -2275,7 +2341,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
       ]);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
       expect(errorSpy.mock.calls).toStrictEqual([]);
 
       await run('--x');
@@ -2304,7 +2370,7 @@ describe('<command module auto-discovery>', () => {
         expect.anything()
       ]);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
     });
   });
 
@@ -2338,7 +2404,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
       ]);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.Ok);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
       expect(errorSpy.mock.calls).toStrictEqual([]);
 
       await run('--x');
@@ -2367,7 +2433,7 @@ describe('<command module auto-discovery>', () => {
         expect.anything()
       ]);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
     });
   });
 
@@ -2455,7 +2521,7 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching('Unknown argument: yelp')]
       ]);
 
-      expect(getExitCode()).toBe(FrameworkExitCode.DefaultError);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
     });
   });
 
