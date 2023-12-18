@@ -1857,6 +1857,24 @@ describe('<command module auto-discovery>', () => {
 
   it('prints deprecation message when "deprecated" is a string', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-deprecation-msg')
+    });
+
+    await withMocks(async ({ logSpy, errorSpy }) => {
+      await run('--help');
+
+      expect(errorSpy).not.toHaveBeenCalled();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('[deprecated: this is a deprecation message!]')]
+      ]);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('[deprecated: deprecation message 2]')]
+      ]);
+    });
   });
 
   it('supports "description" export at parent, child, and root', async () => {

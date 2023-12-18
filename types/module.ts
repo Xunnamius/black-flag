@@ -83,7 +83,7 @@ export type Configuration<
   /**
    * If truthy, the command will be considered "deprecated" by yargs. If
    * `deprecated` is a string, it will additionally be treated as a deprecation
-   * message and printed.
+   * message that will appear alongside the command in help text.
    *
    * @default false
    */
