@@ -32,6 +32,7 @@ import type {
 import type { Configuration, ImportedConfigurationModule } from 'types/module';
 
 import type { PackageJson } from 'type-fest';
+import { parserConfiguration } from 'yargs';
 
 const hasSpacesRegExp = /\s+/;
 
@@ -178,13 +179,13 @@ export async function discoverCommands(
       return;
     }
 
+    ensureConfigurationDoesNotConflictWithReservedNames(parentConfig, lineage.join(' '));
+
     lineage = [...lineage, parentConfig.name];
     const parentConfigFullName = lineage.join(' ');
 
     debug('updated parent lineage: %O', lineage);
     debug('command full name: %O', parentConfigFullName);
-
-    ensureConfigurationDoesNotConflictWithReservedNames(parentConfig, lineage.join(' '));
 
     const parentPrograms = await makeCommandPrograms(
       parentConfig,
@@ -487,55 +488,70 @@ export async function discoverCommands(
     config: Configuration,
     parentFullName: string
   ) {
-    if (parentFullName) {
-      context.commands.forEach((command, commandName) => {
-        let checkCount = 0;
-        const splitCommandName = commandName.split(' ');
-        const seenParentFullName = splitCommandName.slice(0, -1).join(' ');
-        const seenName = splitCommandName.at(-1);
+    let checkCount = 0;
 
-        if (seenParentFullName === parentFullName) {
-          command.metadata.reservedCommandNames.forEach((reservedName, index) => {
-            assert(
-              index !== 0 || seenName === reservedName,
-              ErrorMessage.GuruMeditation()
+    [config.name, ...config.aliases].forEach((reservedName, index, reservedNames) => {
+      [...reservedNames.slice(0, index), ...reservedNames.slice(index + 1)].forEach(
+        (reservedName_, index_) => {
+          checkCount++;
+          if (reservedName === reservedName_) {
+            throw new AssertionFailedError(
+              ErrorMessage.AssertionFailureDuplicateCommandName(
+                parentFullName,
+                reservedName,
+                index === 0 ? 'name' : 'alias',
+                reservedName_,
+                index !== 0 && index_ === 0 ? 'name' : 'alias'
+              )
             );
+          }
+        }
+      );
+    });
 
+    assert(typeof parentFullName === 'string', ErrorMessage.GuruMeditation());
+
+    context.commands.forEach((command, commandName) => {
+      const splitCommandName = commandName.split(' ');
+      const seenParentFullName = splitCommandName.slice(0, -1).join(' ');
+      const seenName = splitCommandName.at(-1);
+
+      if (seenParentFullName === parentFullName) {
+        command.metadata.reservedCommandNames.forEach((reservedName, index) => {
+          assert(index !== 0 || seenName === reservedName, ErrorMessage.GuruMeditation());
+
+          checkCount++;
+          if (reservedName === config.name) {
+            throw new AssertionFailedError(
+              ErrorMessage.AssertionFailureDuplicateCommandName(
+                parentFullName,
+                config.name,
+                'name',
+                reservedName,
+                index === 0 ? 'name' : 'alias'
+              )
+            );
+          }
+
+          config.aliases.forEach((aliasName) => {
             checkCount++;
-            if (reservedName === config.name) {
+            if (reservedName === aliasName) {
               throw new AssertionFailedError(
                 ErrorMessage.AssertionFailureDuplicateCommandName(
                   parentFullName,
-                  config.name,
-                  'name',
+                  aliasName,
+                  'alias',
                   reservedName,
                   index === 0 ? 'name' : 'alias'
                 )
               );
             }
-
-            config.aliases.forEach((aliasName) => {
-              checkCount++;
-              if (reservedName === aliasName) {
-                throw new AssertionFailedError(
-                  ErrorMessage.AssertionFailureDuplicateCommandName(
-                    parentFullName,
-                    aliasName,
-                    'alias',
-                    reservedName,
-                    index === 0 ? 'name' : 'alias'
-                  )
-                );
-              }
-            });
           });
-        }
+        });
+      }
+    });
 
-        debug('no reserved name conflicts detected (%O checks performed)', checkCount);
-      });
-    } else {
-      debug('skipped reserved name conflict check for root command');
-    }
+    debug('no reserved name conflicts detected (%O checks performed)', checkCount);
   }
 
   /**
@@ -816,21 +832,22 @@ export async function discoverCommands(
     // * information available.
 
     return new Proxy(vanillaYargs, {
-      get(target, property: keyof Program, proxy: Program) {
+      get(target, property: unknown, proxy: Program) {
         const isSymbolOrOwnProperty =
-          isSymbolObject(property) ||
-          Object.hasOwn(vanillaYargs, property) ||
-          Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property);
+          typeof property === 'string' &&
+          (isSymbolObject(property) ||
+            Object.hasOwn(vanillaYargs, property) ||
+            Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property));
 
-        if (['help', 'version'].includes(property)) {
+        if (['help', 'version'].includes(property as string)) {
           return function () {
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+              ErrorMessage.AssertionFailureInvocationNotAllowed(property as string)
             );
           };
         }
 
-        if (property === ('parseSync' as keyof Program)) {
+        if (property === 'parseSync') {
           return function () {
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureUseParseAsyncInstead()
@@ -838,7 +855,7 @@ export async function discoverCommands(
           };
         }
 
-        if (property === ('argv' as keyof Program)) {
+        if (property === 'argv') {
           debug_.warn(
             `discarded attempted access to disabled "${property}" magic property on %O program`,
             descriptor
@@ -859,6 +876,7 @@ export async function discoverCommands(
 
         if (
           descriptor === 'helper' &&
+          typeof property === 'string' &&
           (property.startsWith('strict') || property.startsWith('demand'))
         ) {
           // * Although it's tempting to do more, issuing a debug warning is

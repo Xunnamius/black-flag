@@ -1,12 +1,12 @@
 // @ts-check
-/// <reference path="../../index.d.ts"/>
+/// <reference path="../index.d.ts"/>
 
 /**
  * @type {Type.ChildConfig}
  */
 const commandModule = {
-  aliases: ['alias1', 'alias2'],
-  name: 'name1'
+  aliases: ['alias4', 'alias5'],
+  name: 'name2'
 };
 
 module.exports = commandModule;

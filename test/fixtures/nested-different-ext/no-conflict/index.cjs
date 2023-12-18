@@ -1,5 +1,7 @@
 // @ts-check
-/// <reference path="../../../index.d.ts"/>
+/// <reference path="../../index.d.ts"/>
+
+// * This file SHOULD be ignored!
 
 /**
  * @type {Type.ParentConfig}

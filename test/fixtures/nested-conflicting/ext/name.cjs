@@ -4,9 +4,6 @@
 /**
  * @type {Type.ChildConfig}
  */
-const commandModule = {
-  aliases: ['alias1', 'alias2'],
-  name: 'name1'
-};
+const commandModule = {};
 
 module.exports = commandModule;

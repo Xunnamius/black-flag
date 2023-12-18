@@ -12,6 +12,7 @@ import * as bf_util from 'universe/exports/util';
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
+import { error } from 'node:console';
 import type { Arguments, ExecutionContext } from 'types/program';
 import type { Argv } from 'yargs';
 
@@ -2378,11 +2379,36 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
 
     // * https://github.com/Xunnamius/black-flag/tree/main#generating-help-text
+    // ? No positionals or aliases are mixed into the Command output section.
+
+    await withMocks(async ({ logSpy }) => {
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('nested-several-files-full')
+      });
+
+      await run('--help');
+      await run('n --help');
+      await run('n f --help');
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /Commands:\n\s+nsf\s+Root program description text\s+\[default] \[deprecated]\n\s+nsf n\s+Parent program description text\s+\[aliases: parent, p] \[deprecated]\n\nOptions:/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /Commands:\n\s+nsf n\s+Parent program description text\s+\[default] \[deprecated]\n\s+nsf n f\s+Child program description text\s+\[aliases: child-1] \[deprecated]\n\s+nsf n s\s+Child program description text\s+\[aliases: child-2]\n\s+nsf n t\s+Child program description text\s+\[aliases: child-3]\n\nOptions:/
+          )
+        ],
+        [expect.not.stringContaining('Commands:')]
+      ]);
+    });
   });
 
   it('outputs the same command full name in error help text as in non-error help text when commands have aliases', async () => {
     expect.hasAssertions();
-    expect(true).toBeFalse();
+
     await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
         commandModulePath: getFixturePath('nested-depth')
@@ -2442,58 +2468,6 @@ describe('<command module auto-discovery>', () => {
 
     // TODO: also supports: disabled, empty description, empty option, both,
     // TODO: custom, and no change (still help)
-
-    expect(true).toBeFalse();
-
-    await withMocks(async ({ logSpy }) => {
-      const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth')
-      });
-
-      await run('--help');
-      await run('good1 --help');
-      await run('good1 good2 --help');
-      await run('good1 good2 good3 --help');
-      await run('good1 good2 good3 command --help');
-
-      // * Make sure we're getting the correct entries under "Commands:"
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(expectedCommandsRegex(['good1']))],
-        [expect.stringMatching(expectedCommandsRegex(['good', 'good2'], 'test good1'))],
-        [
-          expect.stringMatching(
-            expectedCommandsRegex(['good', 'good3'], 'test good1 good2')
-          )
-        ],
-        [
-          expect.stringMatching(
-            expectedCommandsRegex(['command'], 'test good1 good2 good3')
-          )
-        ],
-        [expect.not.stringContaining('Commands:')]
-      ]);
-
-      // * Make sure we're getting the correct help text next to "--help"
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringContaining('Show help text')],
-        [expect.stringContaining('Show help text')],
-        [expect.stringContaining('Show help text')],
-        [expect.stringContaining('Show help text')],
-        [expect.stringContaining('Show help text')]
-      ]);
-
-      // * Make sure we're getting the correct command name
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(/^Usage: test\n/)],
-        [expect.stringMatching(/^Usage: test good1\n/)],
-        [expect.stringMatching(/^Usage: test good1 good2\n/)],
-        [expect.stringMatching(/^Usage: test good1 good2 good3\n/)],
-        [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
-      ]);
-    });
   });
 
   it('supports using configureExecutionContext and context.state.globalVersionOption to configure the version option across deep hierarchies', async () => {
@@ -2527,12 +2501,138 @@ describe('<command module auto-discovery>', () => {
 
   it('ensures parent commands and child commands of the same name do not interfere', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await bf.runProgram(getFixturePath('nested-same-names'), '--help');
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringMatching(expectedCommandsRegex(['conflict'], 'conflict', '', ''))]
+      ]);
+    });
   });
 
   it("throws when adding a command that has the same name or alias as a sibling command's name or alias", async () => {
     expect.hasAssertions();
 
-    // TODO: this one!
+    // ! Might have to do something about these tests expecting a certain order
+    // ! when different OSes might end up swapping the order
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'alias-alias']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'name1',
+          'alias1',
+          'alias',
+          'alias1',
+          'alias'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'alias-name']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'name1-alias1',
+          'name1-alias1',
+          'name',
+          'name1-alias1',
+          'alias'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'name-alias']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'test',
+          'name',
+          'name',
+          'name',
+          'alias'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'name-name']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'name',
+          'name',
+          'name',
+          'name',
+          'name'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'self']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          undefined,
+          'name-alias',
+          'name',
+          'name-alias',
+          'alias'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'self-self']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'test',
+          'name-alias',
+          'name',
+          'name-alias',
+          'alias'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'ext']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+          'ext',
+          'name',
+          'name',
+          'name',
+          'name'
+        )
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-conflicting', 'no-conflict']))
+      ).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([]);
+    });
+  });
+
+  it('does the right thing when two files have the same name but different extensions', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await bf.runProgram(getFixturePath('nested-different-ext'), '--help');
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            expectedCommandsRegex(
+              [
+                ['name', '\\[aliases: alias1, alias2]'],
+                ['name2', '\\[aliases: alias4, alias5]'],
+                ['no-conflict', '\\[aliases: alias3]']
+              ],
+              'name',
+              '',
+              ''
+            )
+          )
+        ]
+      ]);
+    });
   });
 
   it('alpha-sorts commands that appear in help text', async () => {
