@@ -24,7 +24,7 @@ export function expectedCommandsRegex(
             parentFullName +
             '\\s+' +
             (Array.isArray(cmd) ? cmd[0] : cmd) +
-            `\\s+${Array.isArray(cmd) ? cmd[1] : childDescriptionRegex}[^\\n]*\\n`
+            `\\s*${Array.isArray(cmd) ? cmd[1] : childDescriptionRegex}[^\\n]*\\n`
         )
         .join('') +
       (includeFinalNewline ? '\\n' : '')

@@ -85,13 +85,6 @@ export type Program<
   showHelpOnFail: (enabled: boolean) => Program<CustomCliArguments>;
 
   /**
-   * @see `yargs::version`
-   */
-  version: {
-    (version: string | false): Program<CustomCliArguments>;
-  };
-
-  /**
    * Identical to `yargs::command` except its execution is enqueued and
    * deferred until {@link Program.command_finalize_deferred} is called.
    *
@@ -328,7 +321,7 @@ export type ExecutionContext = {
     isGracefullyExiting: boolean;
     /**
      * If `isHandlingHelpOption` is `true`, Black Flag is currently in the
-     * process of getting yargs to generate help text for a child command.
+     * process of getting yargs to generate help text for some command.
      *
      * Checking the value of this property is useful when you want to know if
      * `--help` (or whatever your equivalent option is) was passed to the root
@@ -339,9 +332,10 @@ export type ExecutionContext = {
      * yargs instances and they all want to be the one that handles generating
      * help text.
      *
-     * Note: setting `isHandlingHelpOption` to `true` manually will cause Black
-     * Flag to output help text as if the user had specified `--help` (or an
-     * equivalent) as one of their arguments.
+     * Note: setting `isHandlingHelpOption` to `true` manually via
+     * `configureExecutionContext` will cause Black Flag to output help text as
+     * if the user had specified `--help` (or the equivalent) as one of their
+     * arguments.
      *
      * @default false
      */
@@ -350,7 +344,9 @@ export type ExecutionContext = {
      * `globalHelpOption` replaces the functionality of the disabled vanilla
      * yargs `yargs::help` method. Set this to the value you want using the
      * `configureExecutionContext` configuration hook (any other hook is run too
-     * late). `name`, if provided, must be >= 1 character in length. If `name`
+     * late).
+     *
+     * `name`, if provided, must be >= 1 character in length. If `name`
      * is exactly one character in length, the help option will take the form of
      * `-${name}`, otherwise `--${name}`.
      *
@@ -361,6 +357,48 @@ export type ExecutionContext = {
      * @default { name: "help", description: defaultHelpTextDescription }
      */
     globalHelpOption: { name: string; description: string } | undefined;
+    /**
+     * If `isHandlingVersionOption` is `true`, Black Flag is currently in the
+     * process of getting yargs to generate version text for some command.
+     *
+     * Checking the value of this property is useful when you want to know if
+     * `--version` (or whatever your equivalent option is) was passed to the
+     * root command. The value of `isHandlingVersionOption` is also used to
+     * determine the value of `helpOrVersionSet` in commands' `builder`
+     * functions.
+     *
+     * We have to track this separately from yargs since we're stacking multiple
+     * yargs instances and they all want to be the one that handles generating
+     * version text.
+     *
+     * Note: setting `isHandlingVersionOption` to `true` manually via
+     * `configureExecutionContext` will cause Black Flag to output version text
+     * as if the user had specified `--version` (or the equivalent) as one of
+     * their arguments.
+     *
+     * @default false
+     */
+    isHandlingVersionOption: boolean;
+    /**
+     * `globalVersionOption` replaces the functionality of the disabled vanilla
+     * yargs `yargs::version` method. Set this to the value you want using the
+     * `configureExecutionContext` configuration hook (any other hook is run too
+     * late).
+     *
+     * `name`, if provided, must be >= 1 character in length. If `name` is
+     * exactly one character in length, the version option will take the form of
+     * `-${name}`, otherwise `--${name}`. `text`, if provided, will be the
+     * version text sent to stdout and defaults to the "version" property in the
+     * nearest `package.json`.
+     *
+     * Note: this property should not be relied upon or mutated by
+     * end-developers outside of the `configureExecutionContext` configuration
+     * hook. Doing so will result in undefined behavior.
+     *
+     * @default { name: "version", description: defaultVersionTextDescription,
+     * text: `${packageJson.version}` }
+     */
+    globalVersionOption: { name: string; description: string; text: string } | undefined;
     /**
      * If `true`, Black Flag will dump help text to stderr when an error occurs.
      * This is also set when `Program::showHelpOnFail` is called.

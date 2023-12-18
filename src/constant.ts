@@ -13,16 +13,26 @@ export const $executionContext = Symbol('execution-context');
 export const defaultUsageText = 'Usage: $000\n\n$1';
 
 /**
- * Hard-coded default command `description` text provided used in string
- * interpolation and elsewhere.
- */
-export const defaultHelpTextDescription = 'Show help text';
-
-/**
  * Hard-coded default option name for dumping help text to stdout. For example:
  * `--${defaultHelpOptionName}`.
  */
 export const defaultHelpOptionName = 'help';
+
+/**
+ * Hard-coded default help option description text.
+ */
+export const defaultHelpTextDescription = 'Show help text';
+
+/**
+ * Hard-coded default option name for dumping version text to stdout. For
+ * example: `--${defaultVersionOptionName}`.
+ */
+export const defaultVersionOptionName = 'version';
+
+/**
+ * Hard-coded default version option description text.
+ */
+export const defaultVersionTextDescription = 'Show version number';
 
 /**
  * Well-known exit codes shared across CLI implementations.

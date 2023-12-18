@@ -12,7 +12,9 @@ export {
 export {
   defaultHelpOptionName,
   defaultHelpTextDescription,
-  defaultUsageText
+  defaultUsageText,
+  defaultVersionOptionName,
+  defaultVersionTextDescription
 } from 'universe/constant';
 
 export {

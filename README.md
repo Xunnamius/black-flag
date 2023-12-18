@@ -205,7 +205,7 @@ myctl init --lang 'python' --version=21.1
 Usage: myctl init
 
 Options:
-  --help     Show help                                                 [boolean]
+  --help     Show help text                                            [boolean]
   --lang                                                     [choices: "python"]
   --version                                    [choices: "3.10", "3.11", "3.12"]
 
@@ -218,7 +218,7 @@ myctl init --help
 Usage: myctl init
 
 Options:
-  --help     Show help                                                 [boolean]
+  --help     Show help text                                            [boolean]
   --lang                                             [choices: "node", "python"]
   --version
 ```
@@ -243,11 +243,11 @@ const configuration: Configuration = {
   // ALL OF THESE ARE OPTIONAL! Black Flag would still accept this file even if
   // if were completely blank
 
-  // An array of yargs aliases for this command. Defaults to []
+  // An array of yargs aliases for this command. DO NOT include positional
+  // arguments here, those go in `command` just like with vanilla yargs
   aliases: [],
 
   // Can be a yargs options object or a builder function like below
-  // Defaults to {}
   builder(yargs, helpOrVersionSet, argv) {
     // We are never forced to return anything...
     // return yargs;
@@ -500,8 +500,8 @@ commands. Specifically:
   }
   ```
 
-- Handling graceful exit events (like when `--help` is called) as non-errors
-  automatically.
+- Handling graceful exit events (like when `--help` or `--version` is used) as
+  non-errors automatically.
 
   ```typescript
   // Throwing this in your handler or elsewhere will cause Black Flag to exit
@@ -1275,14 +1275,20 @@ Flag, but are noted below nonetheless.
   [muck around with][43] the relevant yargs instances manually in
   [`configureExecutionPrologue`][44].
 
-- By default, Black Flag enables the `--help` option same as vanilla yargs.
-  However, since vanilla yargs [lacks the ability][45] to modify or remove
-  options added by `yargs::option`, calling `yargs::help` will throw. If you
-  require the functionality of `yargs::help` to disable or modify the `--help`
-  option, update [`context.state.globalHelpOption`][28] directly in
-  [`configureExecutionContext`][29].
+- By default, Black Flag enables the `--help` and `--version` options same as
+  vanilla yargs. However, since vanilla yargs [lacks the ability][45] to modify
+  or remove options added by `yargs::option`, calling
+  `yargs::help`/`yargs::version` will throw. If you require the functionality of
+  `yargs::help`/`yargs::version` to disable or modify the `--help`/`--version`
+  option, update
+  [`context.state.globalHelpOption`][28]/[`context.state.globalVersionOption`][28]
+  directly in [`configureExecutionContext`][29].
 
-  > Black Flag enables a help _option_, never a help _command_.
+  > Note: Black Flag enables a help _option_, never a help _command_.
+
+  > Note: only the root command has default support for the built-in `--version`
+  > option. Calling `--version` on a sub-command will have no effect unless you
+  > make it so.
 
 #### Irrelevant Differences
 
@@ -1332,18 +1338,17 @@ Flag, but are noted below nonetheless.
   file(s), must start with `"$0"` or an error will be thrown. This is also
   enforced by intellisense.
 
-- `yargs::check` and `yargs::global`, while they work as expected on commands
-  and their direct sub-commands, do not necessarily apply "globally" across your
-  entire command hierarchy since [there are several _distinct_ yargs instances
-  in play when Black Flag executes][43]. This will not be a problem for most
-  projects as vanilla yargs already has a similar limitation with
-  `yargs::check`.
+- Methods like `yargs::check` and `yargs::global`, while they may work as
+  expected on commands and their direct sub-commands, will not function
+  "globally" across your entire command hierarchy since [there are several
+  _distinct_ yargs instances in play when Black Flag executes][43].
 
-  However, if you want a uniform check or so-called "global" argument to apply
-  to every command across your entire hierarchy, and using each command's
-  [`builder`][7] property doesn't sound appealing, you can leverage the
-  [`configureArguments`][31] and/or [`configureExecutionPrologue`][44]
-  configuration hooks.
+  If you want a uniform check or so-called "global" argument to apply to every
+  command across your entire hierarchy, the "Black Flag way" would be to just
+  use normal JavaScript: export a shared [`builder`][7] function from a utility
+  file and call it in each of your command files. If you want something fancier
+  than that, you can leverage [`configureExecutionPrologue`][44] to call
+  `yargs::global` or `yargs::check` by hand.
 
 - Due to the way Black Flag stacks yargs instances, arbitrary parameters cannot
   appear in the arguments list until after the final command name.
@@ -1492,8 +1497,9 @@ Black Flag to make certain guarantees:
   exception to be thrown. This is true even if the effector and helpers have
   been set to non-strict mode (`yargs::strict(false)`).
 
-- The right command gets to generate help text. To this end, passing `--help` or
-  an equivalent argument is effectively ignored by routers.
+- The right command gets to generate help and version text. To this end, passing
+  `--help`/`--version` or equivalent arguments is effectively ignored by
+  routers.
 
 With vanilla yargs strict mode, attempting to meet these guarantees would
 require disallowing any arguments unrecognized by the yargs instance doing the
@@ -1639,7 +1645,7 @@ the `myctl` example from the previous sections.
                  └───────────────────────────────────┘
 ```
 
-Suppose the user executes `myctl --version`.<sup>🡒1</sup> Black Flag (using
+Suppose the user executes `myctl --verbose`.<sup>🡒1</sup> Black Flag (using
 `runProgram`) calls your configuration hooks, discovers all available commands,
 and creates three programs per discovered command: the "router", "helper", and
 "effector". If there was an error during discovery/configuration or hook
@@ -1653,8 +1659,8 @@ validation error), the exception bubbles up to the root
 command.<sup>R3B🡒R1</sup> Otherwise, the helper will parse the given arguments
 before calling `EffectorProgram::parseAsync`.<sup>3B🡒4A</sup> The effector will
 re-parse the given arguments, this time with the third `argv` parameter
-available to `builder`, before calling the current command's `handler` function,
-throwing an error, or, in this case, outputting version text. The result of
+available to `builder`, before throwing an error, outputting help/version text,
+or in this case, calling the current command's `handler` function. The result of
 calling `EffectorProgram::parseAsync` bubbles up to the root
 command<sup>R4A🡒R2</sup> where it is then communicated to the
 user.<sup>R2🡒R1</sup>

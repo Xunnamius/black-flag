@@ -19,7 +19,10 @@ import {
 import {
   $executionContext,
   FrameworkExitCode,
-  defaultHelpTextDescription
+  defaultHelpOptionName,
+  defaultHelpTextDescription,
+  defaultVersionOptionName,
+  defaultVersionTextDescription
 } from 'universe/constant';
 
 import type { Promisable } from 'type-fest';
@@ -97,12 +100,21 @@ export async function configureProgram<
       state: {
         rawArgv: [],
         initialTerminalWidth: yargs().terminalWidth(),
-        isGracefullyExiting: false,
-        isHandlingHelpOption: false,
-        globalHelpOption: { name: 'help', description: defaultHelpTextDescription },
         showHelpOnFail: true,
         firstPassArgv: undefined,
-        deepestParseResult: undefined
+        deepestParseResult: undefined,
+        isGracefullyExiting: false,
+        isHandlingHelpOption: false,
+        isHandlingVersionOption: false,
+        globalHelpOption: {
+          name: defaultHelpOptionName,
+          description: defaultHelpTextDescription
+        },
+        globalVersionOption: {
+          name: defaultVersionOptionName,
+          description: defaultVersionTextDescription,
+          text: ''
+        }
       }
     })
   );
@@ -166,11 +178,18 @@ export async function configureProgram<
       }
 
       debug('context.state.globalHelpOption: %O', context.state.globalHelpOption);
+      debug('context.state.globalVersionOption: %O', context.state.globalVersionOption);
 
       assert(
         context.state.globalHelpOption === undefined ||
           context.state.globalHelpOption.name.length,
-        ErrorMessage.GuruMeditation()
+        'bad context.state.globalHelpOption'
+      );
+
+      assert(
+        context.state.globalVersionOption === undefined ||
+          context.state.globalVersionOption.name.length,
+        'bad context.state.globalVersionOption'
       );
 
       if (context.state.globalHelpOption) {
@@ -178,11 +197,31 @@ export async function configureProgram<
         const helpFlag = `${helpOption.length > 1 ? '--' : '-'}${helpOption}`;
         const targetIndex = argv.indexOf(helpFlag);
         context.state.isHandlingHelpOption = targetIndex >= 0;
+      } else {
+        debug.warn(
+          'disabled built-in help option since context.state.globalHelpOption was falsy'
+        );
       }
 
       debug(
         'context.state.isHandlingHelpOption determination: %O',
         context.state.isHandlingHelpOption
+      );
+
+      if (context.state.globalVersionOption) {
+        const versionOption = context.state.globalVersionOption.name;
+        const versionFlag = `${versionOption.length > 1 ? '--' : '-'}${versionOption}`;
+        const targetIndex = argv.indexOf(versionFlag);
+        context.state.isHandlingVersionOption = targetIndex >= 0;
+      } else {
+        debug.warn(
+          'disabled built-in version option since context.state.globalVersionOption was falsy'
+        );
+      }
+
+      debug(
+        'context.state.isHandlingVersionOption determination: %O',
+        context.state.isHandlingVersionOption
       );
 
       debug('configured argv (initialRawArgv): %O', argv);

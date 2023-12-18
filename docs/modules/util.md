@@ -32,6 +32,8 @@
 - [defaultHelpOptionName](util.md#defaulthelpoptionname)
 - [defaultHelpTextDescription](util.md#defaulthelptextdescription)
 - [defaultUsageText](util.md#defaultusagetext)
+- [defaultVersionOptionName](util.md#defaultversionoptionname)
+- [defaultVersionTextDescription](util.md#defaultversiontextdescription)
 
 ### Functions
 
@@ -57,7 +59,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/error.ts#L48)
+[src/error.ts:48](https://github.com/Xunnamius/black-flag/blob/49222a8/src/error.ts#L48)
 
 ___
 
@@ -76,7 +78,7 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:144](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L144)
+[types/program.ts:137](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L137)
 
 ___
 
@@ -94,7 +96,7 @@ Represents an "effector" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:113](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L113)
+[types/program.ts:106](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L106)
 
 ___
 
@@ -114,19 +116,21 @@ Represents a globally-accessible shared context object singleton.
 | :------ | :------ | :------ |
 | `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](util.md#programmetadata) ; `programs`: [`Programs`](util.md#programs)  }\> | A Map consisting of auto-discovered [Program](util.md#program) instances and their associated [ProgramMetadata](util.md#programmetadata) as singular object values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map will always be the root command. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
+| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `globalVersionOption`: \{ `description`: `string` ; `name`: `string` ; `text`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `isHandlingVersionOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
 | `state.deepestParseResult` | [`Arguments`](index.md#arguments) \| `undefined` | Stores the result of the latest call to `EffectorProgram::parseAsync`. This is necessary because, with our depth-first multi-yargs architecture, the parse job done by shallower programs in the chain must not mutate the result of the deepest call to `EffectorProgram::parseAsync` in the execution chain. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
 | `state.firstPassArgv` | [`Arguments`](index.md#arguments) \| `undefined` | Allows helper and effector programs to keep track of pre-pared arguments. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
 | `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the functionality of the disabled vanilla yargs `yargs::help` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the help option will take the form of `-${name}`, otherwise `--${name}`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
+| `state.globalVersionOption` | \{ `description`: `string` ; `name`: `string` ; `text`: `string`  } \| `undefined` | `globalVersionOption` replaces the functionality of the disabled vanilla yargs `yargs::version` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the version option will take the form of `-${name}`, otherwise `--${name}`. `text`, if provided, will be the version text sent to stdout and defaults to the "version" property in the nearest `package.json`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "version", description: defaultVersionTextDescription, * text: `${packageJson.version}` } ``` |
 | `state.initialTerminalWidth` | `number` | The detected width of the terminal. This value is determined by yargs when `configureProgram` is called. |
 | `state.isGracefullyExiting` | `boolean` | If `true`, Black Flag is currently in the process of handling a graceful exit. Checking the value of this flag is useful in configuration hooks like `configureExecutionEpilogue`, which are still executed when a `GracefulEarlyExitError` is thrown. In almost every other context, this will _always_ be `false`. **`Default`** ```ts false ``` |
-| `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for a child command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingHelpOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. Note: setting `isHandlingHelpOption` to `true` manually will cause Black Flag to output help text as if the user had specified `--help` (or an equivalent) as one of their arguments. **`Default`** ```ts false ``` |
+| `state.isHandlingHelpOption` | `boolean` | If `isHandlingHelpOption` is `true`, Black Flag is currently in the process of getting yargs to generate help text for some command. Checking the value of this property is useful when you want to know if `--help` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingHelpOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating help text. Note: setting `isHandlingHelpOption` to `true` manually via `configureExecutionContext` will cause Black Flag to output help text as if the user had specified `--help` (or the equivalent) as one of their arguments. **`Default`** ```ts false ``` |
+| `state.isHandlingVersionOption` | `boolean` | If `isHandlingVersionOption` is `true`, Black Flag is currently in the process of getting yargs to generate version text for some command. Checking the value of this property is useful when you want to know if `--version` (or whatever your equivalent option is) was passed to the root command. The value of `isHandlingVersionOption` is also used to determine the value of `helpOrVersionSet` in commands' `builder` functions. We have to track this separately from yargs since we're stacking multiple yargs instances and they all want to be the one that handles generating version text. Note: setting `isHandlingVersionOption` to `true` manually via `configureExecutionContext` will cause Black Flag to output version text as if the user had specified `--version` (or the equivalent) as one of their arguments. **`Default`** ```ts false ``` |
 | `state.rawArgv` | typeof `process.argv` | A subset of the original argv returned by [ConfigureArguments](index.md#configurearguments). It is used internally to give the final command in the arguments list the chance to parse argv. Further, it is used to enforce the ordering invariant on chained child program invocations. That is: all non-positional arguments must appear _after_ the last command name in any arguments list parsed by this program. Since it will be actively manipulated by each command in the arguments list, **do not rely on `rawArgv` for anything other than checking invariant satisfaction.** **`Default`** ```ts [] ``` |
 | `state.showHelpOnFail` | `boolean` | If `true`, Black Flag will dump help text to stderr when an error occurs. This is also set when `Program::showHelpOnFail` is called. **`Default`** ```ts true ``` |
 
 #### Defined in
 
-[types/program.ts:279](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L279)
+[types/program.ts:272](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L272)
 
 ___
 
@@ -166,7 +170,7 @@ instead.
 
 #### Defined in
 
-[types/program.ts:231](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L231)
+[types/program.ts:224](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L224)
 
 ___
 
@@ -190,7 +194,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:210](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L210)
+[types/program.ts:203](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L203)
 
 ___
 
@@ -208,7 +212,7 @@ Represents an "helper" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:120](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L120)
+[types/program.ts:113](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L113)
 
 ___
 
@@ -227,13 +231,13 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:242](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L242)
+[types/program.ts:235](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L235)
 
 ___
 
 ### Program
 
-Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](util.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](util.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `version`: (`version`: `string` \| ``false``) => [`Program`](util.md#program)\<`CustomCliArguments`\>  }
+Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](util.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](util.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\>  }
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -249,7 +253,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:40](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L40)
+[types/program.ts:40](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L40)
 
 ___
 
@@ -261,7 +265,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:139](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L139)
+[types/program.ts:132](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L132)
 
 ___
 
@@ -284,7 +288,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:167](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L167)
+[types/program.ts:160](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L160)
 
 ___
 
@@ -296,7 +300,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:134](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L134)
+[types/program.ts:127](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L127)
 
 ___
 
@@ -315,7 +319,7 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:157](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L157)
+[types/program.ts:150](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L150)
 
 ___
 
@@ -333,7 +337,7 @@ Represents an "router" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:127](https://github.com/Xunnamius/black-flag/blob/a7d0011/types/program.ts#L127)
+[types/program.ts:120](https://github.com/Xunnamius/black-flag/blob/49222a8/types/program.ts#L120)
 
 ## Variables
 
@@ -369,8 +373,8 @@ A collection of possible error and warning messages emitted by Black Flag.
 | `AssertionFailureBadParameterCombination` | () => `string` |
 | `AssertionFailureCannotExecuteMultipleTimes` | () => `string` |
 | `AssertionFailureConfigureExecutionEpilogue` | () => `string` |
+| `AssertionFailureInvalidCommandExport` | (`name`: `string`) => `string` |
 | `AssertionFailureInvocationNotAllowed` | (`name`: `string`) => `string` |
-| `AssertionFailureNamingInvariant` | (`name`: `string`) => `string` |
 | `AssertionFailureNoConfigurationLoaded` | (`path`: `string`) => `string` |
 | `AssertionFailureOrderingInvariant` | () => `string` |
 | `AssertionFailureReachedTheUnreachable` | () => `string` |
@@ -384,7 +388,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/error.ts#L163)
+[src/error.ts:163](https://github.com/Xunnamius/black-flag/blob/49222a8/src/error.ts#L163)
 
 ___
 
@@ -397,7 +401,7 @@ Hard-coded default option name for dumping help text to stdout. For example:
 
 #### Defined in
 
-[src/constant.ts:25](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/constant.ts#L25)
+[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/49222a8/src/constant.ts#L19)
 
 ___
 
@@ -405,12 +409,11 @@ ___
 
 • `Const` **defaultHelpTextDescription**: ``"Show help text"``
 
-Hard-coded default command `description` text provided used in string
-interpolation and elsewhere.
+Hard-coded default help option description text.
 
 #### Defined in
 
-[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/constant.ts#L19)
+[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/49222a8/src/constant.ts#L24)
 
 ___
 
@@ -425,7 +428,32 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/49222a8/src/constant.ts#L13)
+
+___
+
+### defaultVersionOptionName
+
+• `Const` **defaultVersionOptionName**: ``"version"``
+
+Hard-coded default option name for dumping version text to stdout. For
+example: `--${defaultVersionOptionName}`.
+
+#### Defined in
+
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/49222a8/src/constant.ts#L30)
+
+___
+
+### defaultVersionTextDescription
+
+• `Const` **defaultVersionTextDescription**: ``"Show version number"``
+
+Hard-coded default version option description text.
+
+#### Defined in
+
+[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/49222a8/src/constant.ts#L35)
 
 ## Functions
 
@@ -471,7 +499,7 @@ obj is Arguments
 
 #### Defined in
 
-[src/util.ts:464](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/util.ts#L464)
+[src/util.ts:464](https://github.com/Xunnamius/black-flag/blob/49222a8/src/util.ts#L464)
 
 ___
 
@@ -493,7 +521,7 @@ obj is NullArguments
 
 #### Defined in
 
-[src/util.ts:453](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/util.ts#L453)
+[src/util.ts:453](https://github.com/Xunnamius/black-flag/blob/49222a8/src/util.ts#L453)
 
 ___
 
@@ -515,7 +543,7 @@ obj is PreExecutionContext
 
 #### Defined in
 
-[src/util.ts:440](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/util.ts#L440)
+[src/util.ts:440](https://github.com/Xunnamius/black-flag/blob/49222a8/src/util.ts#L440)
 
 ___
 
@@ -578,4 +606,4 @@ details.
 
 #### Defined in
 
-[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/a7d0011/src/util.ts#L45)
+[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/49222a8/src/util.ts#L45)

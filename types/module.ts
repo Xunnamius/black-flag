@@ -21,9 +21,11 @@ export type Configuration<
    * interpreted](https://github.com/yargs/yargs/pull/647) by
    * [yargs](https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases).
    *
-   * Note 1: positional arguments defined in aliases are ignored.
+   * **WARNING: positional arguments ARE NOT ALLOWED HERE** and including them
+   * will lead to strange behavior! If you want to add positional arguments,
+   * export {@link Configuration.command} instead.
    *
-   * Note 2: when a command file is interpreted as a {@link RootConfiguration},
+   * Note: when a command file is interpreted as a {@link RootConfiguration},
    * `aliases` is effectively ignored.
    *
    * @default []
@@ -103,13 +105,12 @@ export type Configuration<
    */
   handler: (args: Arguments<CustomCliArguments>) => Promisable<void>;
   /**
-   * The name of the command. **Must not contain any spaces** or any characters
-   * that yargs does not consider valid for a command name. An error will be
-   * thrown if known problematic characters are present.
+   * The name of the command. Any spaces will be replaced with hyphens.
+   * Including a character that yargs does not consider valid for a
+   * command name will result in an error.
    *
    * Defaults to the filename containing the configuration, excluding its
-   * extension, or the directory name (converted to [kebab
-   * case](https://developer.mozilla.org/en-US/docs/Glossary/Kebab_case)) if the
+   * extension, or the directory name (with spaces replaced) if the
    * filename without extension is "index".
    */
   name: string;

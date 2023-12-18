@@ -45,6 +45,8 @@ describe('::configureProgram', () => {
         'isGracefullyExiting',
         'isHandlingHelpOption',
         'globalHelpOption',
+        'isHandlingVersionOption',
+        'globalVersionOption',
         'showHelpOnFail',
         'firstPassArgv',
         'deepestParseResult'
@@ -1807,7 +1809,11 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
-      await bf.configureProgram(getFixturePath('one-file-throws-command'));
+      await expect(
+        bf.configureProgram(getFixturePath('one-file-throws-command'))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureInvalidCommandExport('test')
+      });
     });
   });
 
@@ -1847,6 +1853,10 @@ describe('<command module auto-discovery>', () => {
         )
       ]);
     });
+  });
+
+  it('prints deprecation message when "deprecated" is a string', async () => {
+    expect.hasAssertions();
   });
 
   it('supports "description" export at parent, child, and root', async () => {
@@ -2002,25 +2012,102 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('supports files, directories, and package names with spaces and other invalid characters', async () => {
+  it('supports files, directories, and package names with spaces', async () => {
     expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-with-spaces')
+    });
+
+    await withMocks(async ({ logSpy, getExitCode }) => {
+      const rootResult = await run('--help');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+      const parentResult = await run('spaced-name --help');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+      const childResult = await run('spaced-name bad-ly-name-d --help');
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      expect(bf_util.isNullArguments(rootResult)).toBeTrue();
+      expect(bf_util.isNullArguments(parentResult)).toBeTrue();
+      expect(bf_util.isNullArguments(childResult)).toBeTrue();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            expectedCommandsRegex(
+              ['s-p-a-c-e-d-name', 'spaced-name'],
+              'badly-named-package',
+              '',
+              ''
+            )
+          )
+        ],
+        [
+          expect.stringMatching(
+            expectedCommandsRegex(
+              ['bad-ly-name-d'],
+              'badly-named-package spaced-name',
+              '',
+              ''
+            )
+          )
+        ],
+        [
+          expect.stringMatching(
+            /^Usage: badly-named-package spaced-name bad-ly-name-d\n\nOptions:/
+          )
+        ]
+      ]);
+    });
   });
 
-  it('throws if command configuration module directory is empty', async () => {
+  it('throws when files, directories, or package names have invalid characters', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        bf.configureProgram(getFixturePath('nested-bad-names'))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.InvalidCharacters('<bad>', '|, <, >, [, ], {, or }')
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-bad-names', '<bad>']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.InvalidCharacters('<bad>', '|, <, >, [, ], {, or }')
+      });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-bad-names', 'bad']))
+      ).rejects.toMatchObject({ message: ErrorMessage.InvalidCharacters('$0', '$0') });
+
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-bad-names', 'bad2']))
+      ).rejects.toMatchObject({ message: ErrorMessage.InvalidCharacters('$111', '$1') });
+    });
+  });
+
+  it('throws in configureProgram if command configuration module directory is empty', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        bf.configureProgram(getFixturePath('empty-dir'))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureNoConfigurationLoaded(
+          getFixturePath('empty-dir')
+        )
+      });
+    });
+  });
+
+  it('returns undefined with runProgram if configuration module directory is empty', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode }) => {
       await expect(
-        (await bf.configureProgram(getFixturePath('empty'))).execute(['--help'])
-      ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath(
-          getFixturePath('empty')
-        )
-      });
-
-      await expect(bf.runProgram(getFixturePath('empty'), '--help')).resolves.toSatisfy(
-        bf_util.isNullArguments
-      );
+        bf.runProgram(getFixturePath('empty'), '--help')
+      ).resolves.toBeUndefined();
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
     });
@@ -2136,6 +2223,14 @@ describe('<command module auto-discovery>', () => {
         [expect.stringMatching(/^Usage: test good1 good2 good3 command\n/)]
       ]);
     });
+  });
+
+  it('never adds a "help command" or a "version command", only options', async () => {
+    expect.hasAssertions();
+  });
+
+  it('throws if "help" or "version" are incorrectly configured in context.state using configureExecutionContext', async () => {
+    expect.hasAssertions();
   });
 
   it('outputs the same command full name in error help text as in non-error help text', async () => {
@@ -2317,9 +2412,14 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('supports --version only for root command unless manually configured', async () => {
+  it('supports using configureExecutionContext and context.state.globalVersionOption to configure the version option across deep hierarchies', async () => {
+    expect.hasAssertions();
+  });
+
+  it('limits --version visibility to root command unless manually configured for other commands', async () => {
     expect.hasAssertions();
     // TODO: exits gracefully
+    // TODO: check the builder second arg!!!
   });
 
   it('does not repeat help text when handling yargs errors in deeply nested commands', async () => {
@@ -2342,6 +2442,10 @@ describe('<command module auto-discovery>', () => {
   });
 
   it('ensures parent commands and child commands of the same name do not interfere', async () => {
+    expect.hasAssertions();
+  });
+
+  it('throws when two commands have the same name and same parent command', async () => {
     expect.hasAssertions();
   });
 
@@ -2377,7 +2481,11 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingHelpOption is true or --version given', async () => {
+  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingHelpOption is true', async () => {
+    expect.hasAssertions();
+  });
+
+  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingVersionOption is true', async () => {
     expect.hasAssertions();
   });
 

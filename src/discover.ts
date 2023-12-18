@@ -106,6 +106,20 @@ export async function discoverCommands(
   }
 
   debug('relevant cli package.json data discovered: %O', pkg);
+
+  if (context.state.globalVersionOption) {
+    if (!context.state.globalVersionOption.text) {
+      context.state.globalVersionOption.text = pkg.version || '';
+    }
+
+    if (!context.state.globalVersionOption.text) {
+      context.state.globalVersionOption = undefined;
+      debug.warn(
+        'disabled built-in version option (globalVersionOption=undefined) since no version info available'
+      );
+    }
+  }
+
   debug('beginning configuration module auto-discovery at %O', basePath);
 
   await discover(basePath);
@@ -358,7 +372,7 @@ export async function discoverCommands(
           rawConfig = Object.assign({}, rawConfig);
 
           const finalConfig: Configuration = {
-            aliases: rawConfig.aliases?.map((str) => str.trim()) || [],
+            aliases: rawConfig.aliases?.map((str) => replaceSpaces(str).trim()) || [],
             builder: rawConfig.builder || {},
             command: (rawConfig.command ?? '$0').trim() as '$0',
             deprecated: rawConfig.deprecated ?? false,
@@ -372,13 +386,13 @@ export async function discoverCommands(
 
               return (rawConfig.handler || defaultCommandHandler)(...args);
             },
-            name: (
+            name: replaceSpaces(
               rawConfig.name ||
-              (isRootProgram && pkg.name
-                ? pkg.name
-                : isParentProgram
-                  ? meta.parentDirName
-                  : meta.filenameWithoutExtension)
+                (isRootProgram && pkg.name
+                  ? pkg.name
+                  : isParentProgram
+                    ? meta.parentDirName
+                    : meta.filenameWithoutExtension)
             ).trim(),
             // ? This property is trimmed below
             usage: rawConfig.usage || defaultUsageText
@@ -430,12 +444,13 @@ export async function discoverCommands(
               !finalConfig.command.startsWith('$0 '))
           ) {
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureNamingInvariant(finalConfig.name)
+              ErrorMessage.AssertionFailureInvalidCommandExport(finalConfig.name)
             );
           }
 
           debug_('configuration is valid!');
 
+          // ? The first configuration loaded is gonna be the root every time!
           alreadyLoadedRootCommand = true;
 
           return { configuration: finalConfig, metadata: meta };
@@ -476,16 +491,6 @@ export async function discoverCommands(
       router: await makePartiallyConfiguredProgram('router')
     };
 
-    // * Only the root command should recognize the --version flag.
-
-    if (type === 'pure parent') {
-      programs.helper.version(pkg.version || false);
-      programs.effector.version(pkg.version || false);
-    } else {
-      programs.helper.version(false);
-      programs.effector.version(false);
-    }
-
     // * Enable strict mode by default.
 
     // ? Note that the strictX and demandX functions are permanently disabled on
@@ -493,7 +498,7 @@ export async function discoverCommands(
     //programs.helper.strict(true);
     programs.effector.strict(true);
 
-    // * Configure usage help text.
+    // * Configure usage text.
 
     const usageText = (config.usage ?? defaultUsageText)
       .replaceAll('$000', config.command)
@@ -558,6 +563,18 @@ export async function discoverCommands(
 
           // ! Notice the helper program is ALWAYS the one outputting help text.
           programs.helper.showHelp('log');
+
+          debug_('gracefully exited wrapper handler function for %O', config.name);
+          throw new GracefulEarlyExitError();
+        } else if (type === 'pure parent' && context.state.isHandlingVersionOption) {
+          debug_(
+            'sending version text to stdout (triggered by the %O option)',
+            /* istanbul ignore next */
+            context.state.globalVersionOption?.name || '???'
+          );
+
+          // eslint-disable-next-line no-console
+          console.log(context.state.globalVersionOption?.text || '???');
 
           debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
@@ -679,21 +696,35 @@ export async function discoverCommands(
 
     vanillaYargs.help(false);
 
+    // * Disable built-in version functionality; we only want a --version
+    // * option, not a command, so we disable the yargs::version function at
+    // * Proxy level too.
+
+    vanillaYargs.version(false);
+
     // * For router programs, disable just about everything. For other program
     // * types, configure Black Flag's custom default help option.
 
     if (descriptor === 'router') {
       vanillaYargs
-        .version(false)
         .scriptName('[router]')
         .usage('[router]')
         .strict(false)
         .exitProcess(false)
         .fail(false);
     } else if (context.state.globalHelpOption) {
-      const { name, description } = context.state.globalHelpOption;
-      assert(name.length, ErrorMessage.GuruMeditation());
-      vanillaYargs.option(name, { boolean: true, description });
+      const { name: helpOptionName, description: helpOptionDescription } =
+        context.state.globalHelpOption;
+
+      assert(helpOptionName.length, ErrorMessage.GuruMeditation());
+
+      vanillaYargs.option(helpOptionName, {
+        boolean: true,
+        description: helpOptionDescription
+      });
+
+      // * Black Flag's custom version option functionality is configured by the
+      // * calling function rather than here (since we need to know the type).
     }
 
     // * For helper programs, disable strictness here since it cannot be done
@@ -721,7 +752,7 @@ export async function discoverCommands(
           Object.hasOwn(vanillaYargs, property) ||
           Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property);
 
-        if (property === ('help' as keyof Program)) {
+        if (['help', 'version'].includes(property)) {
           return function () {
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureInvocationNotAllowed(property)
@@ -894,6 +925,11 @@ export async function discoverCommands(
       '[routed-2]',
       {},
       async function () {
+        // ? Only the root command handles the built-in version option, so if
+        // ? we've made it this far, we must not be handling the version option
+        // ? as a built-in even if it's in argv.
+        context.state.isHandlingVersionOption = false;
+
         const debug_ = debug.extend('router');
         const givenName = context.state.rawArgv.shift();
         const acceptableNames = [childConfig.name, ...childConfig.aliases];
@@ -1002,7 +1038,9 @@ export async function discoverCommands(
           typeof config.builder === 'function'
             ? config.builder(
                 program,
-                context.state.isHandlingHelpOption || helpOrVersionSet,
+                context.state.isHandlingHelpOption ||
+                  context.state.isHandlingVersionOption ||
+                  helpOrVersionSet,
                 context.state.firstPassArgv
               )
             : config.builder;
@@ -1046,6 +1084,13 @@ function defaultCommandHandler() {
  */
 function capitalize(str: string) {
   return (str.at(0)?.toUpperCase() || '') + str.slice(1);
+}
+
+/**
+ * Replace all the ASCII#32 space characters in a string with hyphens.
+ */
+function replaceSpaces(str: string) {
+  return str.replaceAll(' ', '-');
 }
 
 /**

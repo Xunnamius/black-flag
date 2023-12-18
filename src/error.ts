@@ -186,7 +186,7 @@ export const ErrorMessage = {
   AssertionFailureOrderingInvariant() {
     return 'flags, switches, and other such parameters must appear after the final command name in your arguments list, not before';
   },
-  AssertionFailureNamingInvariant(name: string) {
+  AssertionFailureInvalidCommandExport(name: string) {
     return `the ${name}'s command export must start with either "$0" or "$0 "`;
   },
   AssertionFailureNoConfigurationLoaded(path: string) {
