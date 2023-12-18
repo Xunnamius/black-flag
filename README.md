@@ -1322,9 +1322,9 @@ Flag, but are noted below nonetheless.
   same name causes all sorts of runtime insanity, especially if the commands
   also have aliases.
 
-  Black Flag addresses prevents you from shooting yourself in the foot with
-  this. Specifically: Black Flag will throw if you attempt to add a command with
-  a name or alias that conflicts with its sibling commands' name or alias.
+  Black Flag prevents you from shooting yourself in the foot with this.
+  Specifically: Black Flag will throw if you attempt to add a command with a
+  name or alias that conflicts with its sibling commands' name or alias.
 
 - Unfortunately, yargs\@17.7.2 [doesn't really support][37] calling
   `yargs::parse` or `yargs::parseAsync` [multiple times on the same
