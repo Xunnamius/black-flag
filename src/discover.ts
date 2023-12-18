@@ -409,6 +409,7 @@ export async function discoverCommands(
           debug_('validating loaded configuration object for correctness');
 
           for (const name of [finalConfig.name, ...finalConfig.aliases]) {
+            /* istanbul ignore next */
             if (hasSpacesRegExp.test(name)) {
               throw new AssertionFailedError(
                 ErrorMessage.InvalidCharacters(name, 'space(s)')

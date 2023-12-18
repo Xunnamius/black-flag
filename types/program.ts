@@ -395,8 +395,7 @@ export type ExecutionContext = {
      * end-developers outside of the `configureExecutionContext` configuration
      * hook. Doing so will result in undefined behavior.
      *
-     * @default { name: "version", description: defaultVersionTextDescription,
-     * text: `${packageJson.version}` }
+     * @default { name: "version", description: defaultVersionTextDescription, text: `${packageJson.version}` }
      */
     globalVersionOption: { name: string; description: string; text: string } | undefined;
     /**
