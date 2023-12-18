@@ -184,6 +184,8 @@ export async function discoverCommands(
     debug('updated parent lineage: %O', lineage);
     debug('command full name: %O', parentConfigFullName);
 
+    ensureConfigurationDoesNotConflictWithReservedNames(parentConfig, lineage.join(' '));
+
     const parentPrograms = await makeCommandPrograms(
       parentConfig,
       parentConfigFullName,
@@ -248,6 +250,11 @@ export async function discoverCommands(
         const childConfigFullName = `${parentConfigFullName} ${childConfig.name}`;
 
         debug('pure child full name (lineage): %O', childConfigFullName);
+
+        ensureConfigurationDoesNotConflictWithReservedNames(
+          childConfig,
+          parentConfigFullName
+        );
 
         const childPrograms = await makeCommandPrograms(
           childConfig,
@@ -350,7 +357,7 @@ export async function discoverCommands(
               ? 'parent-child'
               : 'pure child';
 
-          debug_('configuration file metadata: %O', meta);
+          debug_('configuration file metadata (w/o reservedCommandNames): %O', meta);
 
           // ? ESM <=> CJS interop
           if ('default' in maybeImportedConfig && !maybeImportedConfig.__esModule) {
@@ -454,6 +461,9 @@ export async function discoverCommands(
           // ? The first configuration loaded is gonna be the root every time!
           alreadyLoadedRootCommand = true;
 
+          meta.reservedCommandNames = [finalConfig.name, ...finalConfig.aliases];
+          debug_('metadata reserved command names: %O', meta.reservedCommandNames);
+
           return { configuration: finalConfig, metadata: meta };
         }
       } catch (error) {
@@ -467,6 +477,65 @@ export async function discoverCommands(
     }
 
     return { configuration: undefined, metadata: undefined };
+  }
+
+  /**
+   * Throws if `config.name` or `config.aliases` conflicts with existing names
+   * and/or aliases.
+   */
+  function ensureConfigurationDoesNotConflictWithReservedNames(
+    config: Configuration,
+    parentFullName: string
+  ) {
+    if (parentFullName) {
+      context.commands.forEach((command, commandName) => {
+        let checkCount = 0;
+        const splitCommandName = commandName.split(' ');
+        const seenParentFullName = splitCommandName.slice(0, -1).join(' ');
+        const seenName = splitCommandName.at(-1);
+
+        if (seenParentFullName === parentFullName) {
+          command.metadata.reservedCommandNames.forEach((reservedName, index) => {
+            assert(
+              index !== 0 || seenName === reservedName,
+              ErrorMessage.GuruMeditation()
+            );
+
+            checkCount++;
+            if (reservedName === config.name) {
+              throw new AssertionFailedError(
+                ErrorMessage.AssertionFailureDuplicateCommandName(
+                  parentFullName,
+                  config.name,
+                  'name',
+                  reservedName,
+                  index === 0 ? 'name' : 'alias'
+                )
+              );
+            }
+
+            config.aliases.forEach((aliasName) => {
+              checkCount++;
+              if (reservedName === aliasName) {
+                throw new AssertionFailedError(
+                  ErrorMessage.AssertionFailureDuplicateCommandName(
+                    parentFullName,
+                    aliasName,
+                    'alias',
+                    reservedName,
+                    index === 0 ? 'name' : 'alias'
+                  )
+                );
+              }
+            });
+          });
+        }
+
+        debug('no reserved name conflicts detected (%O checks performed)', checkCount);
+      });
+    } else {
+      debug('skipped reserved name conflict check for root command');
+    }
   }
 
   /**

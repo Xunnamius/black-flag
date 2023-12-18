@@ -2529,8 +2529,10 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('throws when two commands have the same name and same parent command', async () => {
+  it("throws when adding a command that has the same name or alias as a sibling command's name or alias", async () => {
     expect.hasAssertions();
+
+    // TODO: this one!
   });
 
   it('alpha-sorts commands that appear in help text', async () => {

@@ -189,6 +189,19 @@ export type ProgramMetadata = {
    * The basename of the direct parent directory containing `filepath`.
    */
   parentDirName: string;
+  /**
+   * The names "reserved" by this command. When a name is reserved by a command,
+   * no other sibling command (i.e. a command with the same parent command) can
+   * use that name as an name or alias. When attempting to add a command that
+   * uses the same name as its sibling, an error with be thrown.
+   *
+   * All commands attempt to reserve their `name` and `aliases` exports upon
+   * discovery.
+   *
+   * **Invariant: `name` must be at index 0; `...aliases` must start at index
+   * 1.**
+   */
+  reservedCommandNames: string[];
 };
 
 /**

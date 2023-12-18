@@ -180,6 +180,15 @@ export const ErrorMessage = {
   InvalidCharacters(str: string, violation: string) {
     return `string "${str}" contains one or more illegal characters: ${violation}`;
   },
+  AssertionFailureDuplicateCommandName(
+    parentFullName: string,
+    name1: string,
+    type1: 'name' | 'alias',
+    name2: string,
+    type2: 'name' | 'alias'
+  ) {
+    return `two sibling sub-commands of "${parentFullName}" are attempting to register conflicting command names/aliases: "${name1}" (${type1}) conflicts with "${name2}" (${type2})`;
+  },
   AssertionFailureConfigureExecutionEpilogue() {
     return 'configureExecutionEpilogue must return Arguments';
   },
