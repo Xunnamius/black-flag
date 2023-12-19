@@ -808,7 +808,7 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-handler')
+        getFixturePath('one-file-throws-handler-1')
       );
 
       await withMocks(async ({ errorSpy }) => {
@@ -2966,7 +2966,53 @@ describe('<command module auto-discovery>', () => {
 
   it('supports dynamic arguments (arguments that depend on other arguments)', async () => {
     expect.hasAssertions();
-    // TODO: use choices
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('one-file-dynamic'),
+      configurationHooks: {
+        configureExecutionContext(context) {
+          context.state.globalVersionOption = undefined;
+          return context;
+        }
+      }
+    });
+
+    await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
+      await expect(run(['--lang', 'node', '--version=21.1'])).resolves.toContainEntries([
+        ['lang', 'node'],
+        ['version', '21.1']
+      ]);
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      await expect(run(['--lang', 'python', '--version=21.1'])).resolves.toBeUndefined();
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      await expect(run('--help')).resolves.toSatisfy(bf_util.isNullArguments);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--lang\s+\[choices: "node", "python"]\n\s+--version\s+\[string]$/
+          )
+        ]
+      ]);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [
+          expect.stringMatching(
+            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--lang\s+\[choices: "python"]\n\s+--version\s+\[choices: "3\.10", "3\.11", "3\.12"]$/
+          )
+        ],
+        [],
+        [
+          expect.stringContaining(
+            'Argument: version, Given: "21.1", Choices: "3.10", "3.11", "3.12"'
+          )
+        ]
+      ]);
+    });
   });
 
   it('ensures PreExecutionContext::rootPrograms is PreExecutionContext.commands[0].programs and also referenced by the root command full name', async () => {
@@ -2984,6 +3030,25 @@ describe('<command module auto-discovery>', () => {
 
   it('behaves properly when CliError or non-CliError is thrown from handler', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-throws-handler-1'))
+      ).resolves.toBeUndefined();
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-throws-handler-2'))
+      ).resolves.toBeUndefined();
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        ['Error: error thrown in handler'],
+        ['error string thrown in handler']
+      ]);
+    });
   });
 
   it('throws when an auto-discovered command file itself throws upon attempted import', async () => {

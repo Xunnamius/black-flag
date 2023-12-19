@@ -1,12 +1,7 @@
 import type { Promisable } from 'type-fest';
 import type { Options as _Options, Argv as _Program } from 'yargs';
 
-import type {
-  Arguments,
-  EffectorProgram,
-  ExecutionContext,
-  HelperProgram
-} from 'types/program';
+import type { Arguments, EffectorProgram, ExecutionContext } from 'types/program';
 
 /**
  * A replacement for the `CommandModule` type that comes with yargs.
@@ -55,11 +50,9 @@ export type Configuration<
    */
   builder:
     | { [key: string]: _Options }
-    | (<
-        T extends EffectorProgram<CustomCliArguments> | HelperProgram<CustomCliArguments>
-      >(
+    | ((
         blackFlag: Omit<
-          T,
+          EffectorProgram<CustomCliArguments>,
           | 'parseAsync'
           | 'fail'
           | 'command'
@@ -68,7 +61,11 @@ export type Configuration<
         >,
         helpOrVersionSet: boolean,
         argv?: Arguments<CustomCliArguments>
-      ) => void | T | { [key: string]: _Options } | _Program);
+      ) =>
+        | void
+        | EffectorProgram<CustomCliArguments>
+        | { [key: string]: _Options }
+        | _Program);
   /**
    * The command as interpreted by yargs. May contain positional arguments.
    *

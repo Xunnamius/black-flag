@@ -187,6 +187,8 @@ export function builder(yargs, helpOrVersionSet, argv) {
       version: { string: true }
     };
   }
+
+  yargs.parserConfiguration({ 'parse-numbers': false });
 }
 
 export function handler(argv) {
@@ -210,7 +212,7 @@ Options:
   --version                                    [choices: "3.10", "3.11", "3.12"]
 
 Invalid values:
-  Argument: version, Given: 21.1, Choices: "3.10", "3.11", "3.12"
+  Argument: version, Given: "21.1", Choices: "3.10", "3.11", "3.12"
 ```
 
 ```text
@@ -220,7 +222,7 @@ Usage: myctl init
 Options:
   --help     Show help text                                            [boolean]
   --lang                                             [choices: "node", "python"]
-  --version
+  --version                                                             [string]
 ```
 
 If `builder` and `handler` sound familiar, it's because the exports from your

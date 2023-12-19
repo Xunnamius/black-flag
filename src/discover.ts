@@ -606,8 +606,8 @@ export async function discoverCommands(
     // * Finish configuring custom error handling, which is responsible for
     // * outputting help text to stderr before rethrowing a wrapped error.
 
-    programs.helper.fail(customFailHandler('helper'));
-    programs.effector.fail(customFailHandler('effector'));
+    programs.helper.fail(customFailHandler(programs.helper, 'helper'));
+    programs.effector.fail(customFailHandler(programs.effector, 'effector'));
 
     // * Link router program to helper program
 
@@ -713,7 +713,10 @@ export async function discoverCommands(
 
     return programs;
 
-    function customFailHandler(descriptor: ProgramDescriptor) {
+    function customFailHandler(
+      program: HelperProgram | EffectorProgram,
+      descriptor: ProgramDescriptor
+    ) {
       return function (message?: string | null, error?: Error) {
         const debug_ = debug.extend(`${descriptor}*`);
         debug_.message('entered failure handler for command %O', fullName);
@@ -728,8 +731,7 @@ export async function discoverCommands(
           // ? If a failure happened but error is not defined, it was *probably*
           // ? a yargs-specific error (e.g. argument validation failure).
           debug_('sending help text to stderr (triggered by yargs)');
-          // ! Notice the helper program is ALWAYS the one outputting help text.
-          programs.helper.showHelp('error');
+          program.showHelp('error');
           // eslint-disable-next-line no-console
           console.error();
         }
