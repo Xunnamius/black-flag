@@ -58,7 +58,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/9255a74/types/program.ts#L17)
 
 ___
 
@@ -78,7 +78,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:156](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/module.ts#L156)
+[types/module.ts:156](https://github.com/Xunnamius/black-flag/blob/9255a74/types/module.ts#L156)
 
 ___
 
@@ -111,7 +111,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/module.ts#L16)
+[types/module.ts:16](https://github.com/Xunnamius/black-flag/blob/9255a74/types/module.ts#L16)
 
 ___
 
@@ -140,7 +140,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L90)
+[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L90)
 
 ___
 
@@ -177,7 +177,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L42)
+[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L42)
 
 ___
 
@@ -224,7 +224,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L75)
+[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L75)
 
 ___
 
@@ -258,7 +258,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L14)
+[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L14)
 
 ___
 
@@ -297,7 +297,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L58)
+[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L58)
 
 ___
 
@@ -340,7 +340,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/configure.ts#L31)
+[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/9255a74/types/configure.ts#L31)
 
 ___
 
@@ -360,7 +360,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:165](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/module.ts#L165)
+[types/module.ts:165](https://github.com/Xunnamius/black-flag/blob/9255a74/types/module.ts#L165)
 
 ___
 
@@ -376,7 +376,7 @@ yargs from returning a real `Arguments` parse result.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/program.ts#L28)
+[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/9255a74/types/program.ts#L28)
 
 ___
 
@@ -396,7 +396,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:147](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/module.ts#L147)
+[types/module.ts:147](https://github.com/Xunnamius/black-flag/blob/9255a74/types/module.ts#L147)
 
 ___
 
@@ -416,7 +416,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/types/module.ts#L138)
+[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/9255a74/types/module.ts#L138)
 
 ## Variables
 
@@ -429,7 +429,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/9255a74/src/constant.ts#L5)
 
 ## Functions
 
@@ -466,7 +466,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:66](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/index.ts#L66)
+[src/index.ts:66](https://github.com/Xunnamius/black-flag/blob/9255a74/src/index.ts#L66)
 
 ___
 
@@ -488,7 +488,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/error.ts#L21)
+[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/9255a74/src/error.ts#L21)
 
 ___
 
@@ -510,7 +510,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/error.ts#L34)
+[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/9255a74/src/error.ts#L34)
 
 ___
 
@@ -523,9 +523,8 @@ Invokes the dynamically imported
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `undefined` (if
-`configureProgram` threw) or `NullArguments` (if `execute` threw) is
-returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
@@ -547,12 +546,12 @@ desired.
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
-`undefined` if `configureProgram` throws, `NullArguments` if
-`execute` throws, or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:175](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L175)
+[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L174)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -561,9 +560,8 @@ configurationHooks).execute()` function.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `undefined` (if
-`configureProgram` threw) or `NullArguments` (if `execute` threw) is
-returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
@@ -585,12 +583,12 @@ desired.
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
-`undefined` if `configureProgram` throws, `NullArguments` if
-`execute` throws, or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:198](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L198)
+[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L196)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -603,8 +601,8 @@ unacceptable, do not pass `runProgram` a `preExecutionContext` property.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `NullArguments` (if
-`execute` threw) is returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 #### Type parameters
 
@@ -623,11 +621,12 @@ or reject no matter what.** Instead, when an error is caught,
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
-`NullArguments` if `execute` throws or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:222](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L222)
+[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L221)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -637,9 +636,8 @@ string, `argv = argv.split(' ')` is applied first.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `undefined` (if
-`configureProgram` threw) or `NullArguments` (if `execute` threw) is
-returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
@@ -661,12 +659,12 @@ desired.
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-`undefined` if `configureProgram` throws, `NullArguments` if
-`execute` throws, or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:248](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L248)
+[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L246)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -676,9 +674,8 @@ argv.split(' ')` is applied first.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `undefined` (if
-`configureProgram` threw) or `NullArguments` (if `execute` threw) is
-returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
@@ -700,12 +697,12 @@ desired.
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-`undefined` if `configureProgram` throws, `NullArguments` if
-`execute` throws, or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:272](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L272)
+[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L269)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -719,8 +716,8 @@ unacceptable, do not pass `runProgram` a `preExecutionContext` property.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an error is caught,
-`process.exitCode` is set to the appropriate value and `NullArguments` is
-returned.
+`process.exitCode` is set to the appropriate value and either `NullArguments`
+(only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
 #### Type parameters
 
@@ -739,8 +736,9 @@ returned.
 
 `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
-`NullArguments` if `execute` throws or `Arguments` otherwise.
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:298](https://github.com/Xunnamius/black-flag/blob/fbfc0ac/src/util.ts#L298)
+[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/9255a74/src/util.ts#L296)

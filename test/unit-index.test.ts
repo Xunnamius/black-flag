@@ -2845,16 +2845,76 @@ describe('<command module auto-discovery>', () => {
     expect.hasAssertions();
   });
 
-  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingHelpOption is true', async () => {
+  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingHelpOption or context.state.isHandlingVersionOption is true', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-2nd-param'), '--help')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-2nd-param'), '--version')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-2nd-param'))
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [true],
+        [expect.any(String)],
+        [true],
+        [expect.any(String)],
+        [false],
+        [false] // ? helper then effector, unlike the above (helper only)
+      ]);
+    });
   });
 
-  it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingVersionOption is true', async () => {
+  it('sets context.state.isGracefullyExiting to true in the configureExecutionEpilogue hook when exiting gracefully', async () => {
     expect.hasAssertions();
-  });
 
-  it('sets context.state.isGracefullyExiting to true in the configureErrorHandlingEpilogue hook when exiting gracefully', async () => {
-    expect.hasAssertions();
+    await withMocks(async ({ logSpy }) => {
+      let counter = 0;
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--help', {
+          configureExecutionEpilogue(argv, context) {
+            counter++;
+            expect(context.state.isGracefullyExiting).toBeTrue();
+            return argv;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(1);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--version', {
+          configureExecutionEpilogue(argv, context) {
+            counter++;
+            expect(context.state.isGracefullyExiting).toBeTrue();
+            return argv;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(2);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--okay', {
+          configureExecutionEpilogue(argv, context) {
+            counter++;
+            expect(context.state.isGracefullyExiting).toBeFalse();
+            return argv;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(3);
+      expect(logSpy).toHaveBeenCalledTimes(2);
+    });
   });
 
   it('supports dynamic arguments (arguments that depend on other arguments)', async () => {

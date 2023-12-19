@@ -162,15 +162,14 @@ export function makeRunner<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` (if
- * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
- * returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  *
- * @returns `undefined` if `configureProgram` throws, `NullArguments` if
- * `execute` throws, or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -185,15 +184,14 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` (if
- * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
- * returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  *
- * @returns `undefined` if `configureProgram` throws, `NullArguments` if
- * `execute` throws, or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -214,10 +212,11 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `NullArguments` (if
- * `execute` threw) is returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
- * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -235,15 +234,14 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` (if
- * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
- * returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  *
- * @returns `undefined` if `configureProgram` throws, `NullArguments` if
- * `execute` throws, or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -259,15 +257,14 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `undefined` (if
- * `configureProgram` threw) or `NullArguments` (if `execute` threw) is
- * returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
  * Note: It is always safe to invoke this form of `runProgram` as many times as
  * desired.
  *
- * @returns `undefined` if `configureProgram` throws, `NullArguments` if
- * `execute` throws, or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
@@ -290,10 +287,11 @@ export async function runProgram<
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an error is caught,
- * `process.exitCode` is set to the appropriate value and `NullArguments` is
- * returned.
+ * `process.exitCode` is set to the appropriate value and either `NullArguments`
+ * (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
  *
- * @returns `NullArguments` if `execute` throws or `Arguments` otherwise.
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
   CustomContext extends ExecutionContext,
