@@ -2831,18 +2831,65 @@ describe('<command module auto-discovery>', () => {
 
   it('enables strictness constraints on childless parents and childless root', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-index'), '--bad');
+      await bf.runProgram(getFixturePath('nested-one-file-index'), 'nested --bad');
+
+      expect(errorSpy).toHaveBeenCalledTimes(6);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+    });
   });
 
   it('allows for childless root with a handler and no parameters/arguments', async () => {
     expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(bf.runProgram(getFixturePath('one-file-bare'))).resolves.toSatisfy(
+        bf_util.isArguments
+      );
+    });
   });
 
   it('allows for childless root to handle --help and --version properly', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--help')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--version')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        ['1.0.0']
+      ]);
+    });
   });
 
   it('does the right thing when the nearest package.json file is empty', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-empty-pkg-json'), '--help')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-empty-pkg-json'), '--version')
+      ).resolves.toBeUndefined();
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.not.stringContaining('--version')],
+        [],
+        [expect.stringContaining('version')]
+      ]);
+    });
   });
 
   it('sets helpOrVersionSet to true in builder on both passes if context.state.isHandlingHelpOption or context.state.isHandlingVersionOption is true', async () => {
@@ -2922,8 +2969,17 @@ describe('<command module auto-discovery>', () => {
     // TODO: use choices
   });
 
-  it('ensures PreExecutionContext::rootPrograms is PreExecutionContext.commands[0].programs', async () => {
+  it('ensures PreExecutionContext::rootPrograms is PreExecutionContext.commands[0].programs and also referenced by the root command full name', async () => {
     expect.hasAssertions();
+
+    await withMocks(async () => {
+      const { commands, rootPrograms } = await bf.configureProgram(
+        getFixturePath('one-file-loose')
+      );
+
+      expect(commands.values().next().value?.programs).toBe(rootPrograms);
+      expect(commands.get('test')?.programs).toBe(rootPrograms);
+    });
   });
 
   it('behaves properly when CliError or non-CliError is thrown from handler', async () => {
