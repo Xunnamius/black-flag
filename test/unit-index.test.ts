@@ -12,7 +12,6 @@ import * as bf_util from 'universe/exports/util';
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
 
-import { error } from 'node:console';
 import type { Arguments, ExecutionContext } from 'types/program';
 import type { Argv } from 'yargs';
 
@@ -2466,18 +2465,124 @@ describe('<command module auto-discovery>', () => {
   it('supports using configureExecutionContext and context.state.globalHelpOption to configure the help option across deep hierarchies', async () => {
     expect.hasAssertions();
 
-    // TODO: also supports: disabled, empty description, empty option, both,
-    // TODO: custom, and no change (still help)
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--help')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--help', {
+          configureExecutionContext(context) {
+            context.state.globalHelpOption = {
+              name: 'info',
+              description: 'Info description'
+            };
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--info', {
+          configureExecutionContext(context) {
+            context.state.globalHelpOption = {
+              name: 'info',
+              description: 'Info description'
+            };
+            return context;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--help', {
+          configureExecutionContext(context) {
+            context.state.globalHelpOption = undefined;
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringMatching(/Options:\n\s+--help\s+Show help text\s+\[boolean]$/)],
+        [expect.stringMatching(/Options:\n\s+--info\s+Info description\s+\[boolean]$/)]
+      ]);
+    });
   });
 
   it('supports using configureExecutionContext and context.state.globalVersionOption to configure the version option across deep hierarchies', async () => {
     expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--version')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--version', {
+          configureExecutionContext(context) {
+            context.state.globalVersionOption = {
+              name: 'info',
+              description: 'Info description',
+              text: 'Custom 1.2.3\nVersion 4.5.6\nInfo 7.8.9-0'
+            };
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--info', {
+          configureExecutionContext(context) {
+            context.state.globalVersionOption = {
+              name: 'info',
+              description: 'Info description',
+              text: 'Custom 1.2.3\nVersion 4.5.6\nInfo 7.8.9-0'
+            };
+            return context;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--version', {
+          configureExecutionContext(context) {
+            context.state.globalVersionOption = undefined;
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        ['1.0.0'],
+        ['Custom 1.2.3\nVersion 4.5.6\nInfo 7.8.9-0']
+      ]);
+    });
   });
 
   it('limits --version visibility to root command unless manually configured for other commands', async () => {
     expect.hasAssertions();
-    // TODO: exits gracefully
-    // TODO: check the builder second arg!!!
+
+    await withMocks(async ({ errorSpy, logSpy, getExitCode }) => {
+      await expect(
+        bf.runProgram(getFixturePath('nested-several-empty-files'), '--version')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('nested-several-empty-files'), 'nested --version')
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(
+          getFixturePath('nested-several-empty-files'),
+          'nested first --version'
+        )
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy).toHaveBeenCalledTimes(6);
+      expect(logSpy.mock.calls).toStrictEqual([['1.0.0']]);
+    });
   });
 
   it('does not repeat help text when handling yargs errors in deeply nested commands', async () => {
