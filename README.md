@@ -75,10 +75,10 @@ capabilities with several powerful declarative features.
 Black Flag provides first-class support for authoring sprawling deeply nested
 tree-like structures of commands and child commands.
 
-No more wrestling with positional parameters. No more pleading with
-`yargs::commandDir` to behave. And no more dealing with help text that
-unexpectedly changes depending on the OS or the presence of aliases or what have
-you.
+No more pleading with `yargs::commandDir` to behave. Less wrestling with
+positional parameters. Less tap-dancing around footguns. And no more dealing
+with help text that unexpectedly changes depending on the OS or the presence of
+aliases.
 
 ```shell
 myctl --version
