@@ -32,6 +32,7 @@ import type {
 import type { PackageJson } from 'type-fest';
 import type { Configuration, ImportedConfigurationModule } from 'types/module';
 import type { Options } from 'yargs';
+import { capitalize } from './util';
 
 const hasSpacesRegExp = /\s+/;
 
@@ -731,6 +732,8 @@ export async function discoverCommands(
         debug_('error.message: %O', error?.message);
         debug_('error is native error: %O', isNativeError(error));
 
+        // TODO: report errors differently here? (tied-in to other TODOs)
+
         // ! Is there a better way to differentiate between Yargs-specific
         // ! errors and third-party errors? Or is this the best we can do?
         if (!error && context.state.showHelpOnFail) {
@@ -1192,13 +1195,6 @@ export async function discoverCommands(
  */
 function defaultCommandHandler() {
   throw new CommandNotImplementedError();
-}
-
-/**
- * Uppercase the first letter of a string.
- */
-function capitalize(str: string) {
-  return (str.at(0)?.toUpperCase() || '') + str.slice(1);
 }
 
 /**

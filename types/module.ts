@@ -44,7 +44,7 @@ export type Configuration<
    * `yargs::positional`), they are only accessible from `argv?._` (`builder`'s
    * third parameter). This is because positional arguments, while fully
    * supported by Black Flag, **are parsed and validated _after_ `builder` is
-   * invoked** and so aren't available until a little later.
+   * first invoked** and so aren't available until a little later.
    *
    * @default {}
    */

@@ -900,7 +900,7 @@ With that in mind, let's actually run our skeletal CLI now:
 ---
 
 ```text
-CommandNotImplementedError: attempted to invoke unimplemented functionality
+Error: this command is currently unimplemented
 ```
 
 Let's try with a bad positional parameter:

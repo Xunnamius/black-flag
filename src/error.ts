@@ -111,7 +111,7 @@ export class CommandNotImplementedError extends CliError {
    * implemented.
    */
   constructor() {
-    super(ErrorMessage.NotImplemented(), {
+    super(ErrorMessage.CommandNotImplemented(), {
       suggestedExitCode: FrameworkExitCode.NotImplemented
     });
   }
@@ -164,6 +164,9 @@ export const ErrorMessage = {
   ...NamedErrorMessage,
   Generic() {
     return 'an error occurred that caused this software to crash';
+  },
+  CommandNotImplemented() {
+    return 'this command is currently unimplemented';
   },
   GracefulEarlyExit() {
     return 'execution is ending exceptionally early, which is not a bad thing!';

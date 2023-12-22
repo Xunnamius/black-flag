@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 
 import { FrameworkExitCode } from 'universe/constant';
-import { getRootDebugLogger } from 'universe/index';
+import { getRootDebugLogger } from 'universe/debug';
 
 import {
   AssertionFailedError,
@@ -488,4 +488,11 @@ export function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoExc
     'expected' in error &&
     'operator' in error
   );
+}
+
+/**
+ * Uppercase the first letter of a string.
+ */
+export function capitalize(str: string) {
+  return (str.at(0)?.toUpperCase() || '') + str.slice(1);
 }

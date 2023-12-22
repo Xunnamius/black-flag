@@ -619,6 +619,36 @@ describe('::configureProgram', () => {
       });
     });
 
+    it('calls configureErrorHandlingEpilogue with the expected arguments', async () => {
+      expect.hasAssertions();
+
+      let executed = false;
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-throws-handler-1'), {
+              configureErrorHandlingEpilogue(
+                { error, exitCode, message },
+                argv,
+                context
+              ) {
+                expect(error).toBeInstanceOf(Error);
+                expect(exitCode).toBe(bf.FrameworkExitCode.DefaultError);
+                expect(message).toBe('error thrown in handler');
+                expect(argv).toSatisfy(bf_util.isNullArguments);
+                expect(context).toBeDefined();
+                executed = true;
+              }
+            })
+          ).execute()
+        ).rejects.toMatchObject({ message: 'error thrown in handler' });
+
+        expect(errorSpy).toHaveBeenCalledTimes(0);
+        expect(executed).toBeTrue();
+      });
+    });
+
     it('calls builder twice, passes correct programs and third parameter on second pass', async () => {
       expect.hasAssertions();
 
@@ -713,8 +743,52 @@ describe('::configureProgram', () => {
       });
     });
 
+    it('capitalizes error messages (via configureErrorHandlingEpilogue) by default', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-throws-handler-1'))
+          ).execute()
+        ).rejects.toMatchObject({ message: 'error thrown in handler' });
+
+        expect(errorSpy.mock.calls).toStrictEqual([['Error thrown in handler']]);
+      });
+    });
+
     it('supports adding positional arguments (custom command export) to an executable command that has no handler export', async () => {
       expect.hasAssertions();
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-positionals-no-handler'))
+          ).execute()
+        ).rejects.toMatchObject({
+          message: 'Not enough non-option arguments: got 0, need at least 2'
+        });
+
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-positionals-no-handler'))
+          ).execute(['first', 'second'])
+        ).rejects.toMatchObject({
+          message: ErrorMessage.CommandNotImplemented()
+        });
+
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('--help')],
+          [],
+          [expect.stringMatching(/^Not enough/)],
+          [expect.stringContaining('--help')],
+          [],
+          [
+            ErrorMessage.CommandNotImplemented()[0].toUpperCase() +
+              ErrorMessage.CommandNotImplemented().slice(1)
+          ]
+        ]);
+      });
     });
 
     it('throws CommandNotImplemented error when attempting to execute a childless command with no handler export and no custom command export', async () => {
@@ -798,7 +872,7 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('error #1 thrown in builder')]
+          [expect.stringContaining('Error #1 thrown in builder')]
         ]);
       });
     });
@@ -814,7 +888,7 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('error #2 thrown in builder')]
+          [expect.stringContaining('Error #2 thrown in builder')]
         ]);
       });
     });
@@ -830,7 +904,7 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('error thrown in handler')]
+          [expect.stringContaining('Error thrown in handler')]
         ]);
       });
     });
@@ -873,7 +947,7 @@ describe('::configureProgram', () => {
 
         await expect(
           (await bf.configureProgram(getFixturePath('empty-index-file'))).execute()
-        ).rejects.toMatchObject({ message: ErrorMessage.NotImplemented() });
+        ).rejects.toMatchObject({ message: ErrorMessage.CommandNotImplemented() });
 
         expect(errorSpy).toHaveBeenCalledTimes(1);
       });
@@ -3043,7 +3117,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('behaves properly when CliError or non-CliError is thrown from handler', async () => {
+  it('outputs and exits properly when CliError or non-CliError is thrown from handler', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -3060,13 +3134,21 @@ describe('<command module auto-discovery>', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       expect(errorSpy.mock.calls).toStrictEqual([
-        ['Error: error thrown in handler'],
-        ['error string thrown in handler']
+        ['Error thrown in handler'],
+        ['Error string thrown in handler']
       ]);
     });
   });
 
   it('does not call yargs::demandCommand on childless parents and childless root', async () => {
+    expect.hasAssertions();
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of a parent and/or root', async () => {
+    expect.hasAssertions();
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command (by definition) of a pure child in strict mode', async () => {
     expect.hasAssertions();
   });
 
@@ -3080,27 +3162,6 @@ describe('<command module auto-discovery>', () => {
         message: expect.stringContaining('error thrown upon importing this file')
       });
     });
-  });
-
-  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of a parent and/or root', async () => {
-    expect.hasAssertions();
-
-    await withMocks(async ({ errorSpy, getExitCode }) => {
-      await expect(
-        bf.runProgram(getFixturePath('one-file-index'), 'does not exist')
-      ).resolves.toBeUndefined();
-
-      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
-      expect(errorSpy.mock.calls).toStrictEqual([
-        [expect.any(String)],
-        [],
-        ['error string thrown in handler']
-      ]);
-    });
-  });
-
-  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command (by definition) of a pure child in strict mode', async () => {
-    expect.hasAssertions();
   });
 
   it('throws when calling demandCommand from a builder function', async () => {

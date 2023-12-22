@@ -1,12 +1,12 @@
 import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
-import { name as pkgName } from 'package';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { createDebugLogger } from 'multiverse/rejoinder';
+import { getRootDebugLogger } from 'universe/debug';
 import { discoverCommands } from 'universe/discover';
+import { capitalize } from 'universe/util';
 
 import {
   AssertionFailedError,
@@ -42,15 +42,7 @@ import type {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { runProgram } from 'universe/util';
 
-const rootDebugLogger = createDebugLogger({ namespace: pkgName });
-const debug = rootDebugLogger.extend('index');
-
-/**
- * @internal
- */
-export function getRootDebugLogger() {
-  return rootDebugLogger;
-}
+const debug = getRootDebugLogger().extend('index');
 
 /**
  * Create and return a {@link PreExecutionContext} containing fully-configured
@@ -86,7 +78,7 @@ export async function configureProgram<
 
   finalConfigurationHooks.configureErrorHandlingEpilogue ??= ({ message }) => {
     // eslint-disable-next-line no-console
-    console.error(message);
+    console.error(capitalize(message));
   };
 
   debug('command module auto-discovery path: %O', commandModulePath);
@@ -96,7 +88,7 @@ export async function configureProgram<
   const context = asUnenumerable(
     await finalConfigurationHooks.configureExecutionContext({
       commands: new Map(),
-      debug: rootDebugLogger,
+      debug: getRootDebugLogger(),
       state: {
         rawArgv: [],
         initialTerminalWidth: yargs().terminalWidth(),
@@ -293,18 +285,20 @@ export async function configureProgram<
 
         let message = ErrorMessage.Generic();
         let exitCode = FrameworkExitCode.DefaultError;
+        const { isAssertionSystemError } = await import('universe/util');
 
         if (typeof error === 'string') {
           message = error;
-        } else if (isCliError(error)) {
+        } else if (isNativeError(error)) {
           message = error.message;
-          exitCode = error.suggestedExitCode;
+          exitCode =
+            isAssertionSystemError(error) || isAssertionSystemError(error.cause)
+              ? FrameworkExitCode.AssertionFailed
+              : isCliError(error)
+                ? error.suggestedExitCode
+                : FrameworkExitCode.DefaultError;
         } else if (error) {
           message = `${error}`;
-
-          if ((await import('universe/util')).isAssertionSystemError(error)) {
-            exitCode = FrameworkExitCode.AssertionFailed;
-          }
         }
 
         debug_error('theoretical error message: %O', message);
@@ -326,9 +320,7 @@ export async function configureProgram<
           debug_error('wrapping error with CliError');
 
           // eslint-disable-next-line no-ex-assign
-          error = new CliError(isNativeError(error) ? error : message, {
-            suggestedExitCode: exitCode
-          });
+          error = new CliError(message, { suggestedExitCode: exitCode });
         }
       }
 
