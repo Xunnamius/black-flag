@@ -703,6 +703,12 @@ export async function discoverCommands(
       config.deprecated
     );
 
+    // * Ensure yargs knows to demand a command when attempting to invoke parent
+    // * programs that (1) have children and (2) do not have a handler or custom
+    // * command config.
+
+    // TODO
+
     // * Finished!
 
     debug_(
@@ -875,6 +881,8 @@ export async function discoverCommands(
           return void 'disabled by Black Flag (use parseAsync instead)';
         }
 
+        // TODO: disable demand and demandCommand
+
         if (descriptor === 'helper' && typeof property === 'string') {
           if (property.startsWith('strict') || property.startsWith('demand')) {
             // * Although it's tempting to do more, issuing a debug warning is
@@ -996,6 +1004,8 @@ export async function discoverCommands(
               return proxy;
             };
           }
+
+          // TODO: demandCommand_force
         }
 
         // ! This line (and any line like it) has to be gated behind the if
@@ -1041,14 +1051,8 @@ export async function discoverCommands(
       '[routed-2]',
       {},
       async function () {
-        // ? Only the root command handles the built-in version option, so if
-        // ? we've made it this far, we must not be handling the version option
-        // ? as a built-in even if it's in argv.
-        context.state.isHandlingVersionOption = false;
-
         const debug_ = debug.extend('router');
         const givenName = context.state.rawArgv.shift();
-        const acceptableNames = [childConfig.name, ...childConfig.aliases];
 
         if (debug_.enabled) {
           const splitName = childFullName.split(' ');
@@ -1057,23 +1061,16 @@ export async function discoverCommands(
             splitName.slice(0, -1).join(' '),
             splitName.at(-1)
           );
+
+          debug_('shifted given name off rawArgv: %O', givenName);
+          debug_('new context.state.rawArgv: %O', context.state.rawArgv);
+          debug_("relinquishing control to child command's router program");
         }
 
-        debug_('ordering invariant: %O must be one of: %O', givenName, acceptableNames);
-
-        const rawArgvSatisfiesArgumentOrderingInvariant =
-          givenName && acceptableNames.includes(givenName);
-
-        if (!rawArgvSatisfiesArgumentOrderingInvariant) {
-          debug_.error('ordering invariant violated!');
-
-          throw new AssertionFailedError(
-            ErrorMessage.AssertionFailureOrderingInvariant()
-          );
-        }
-
-        debug_('invariant satisfied');
-        debug_("relinquishing control to child command's router program");
+        // ? Only the root command handles the built-in version option, so if
+        // ? we've made it this far, we must not be handling the version option
+        // ? as a built-in even if it's in argv.
+        context.state.isHandlingVersionOption = false;
 
         await childRouter.parseAsync(
           context.state.rawArgv,

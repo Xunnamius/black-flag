@@ -112,7 +112,7 @@ describe('::configureProgram', () => {
 
     await withMocks(async () => {
       const context = await bf.configureProgram(
-        getFixturePath('nested-several-empty-files')
+        getFixturePath('nested-several-files-empty')
       );
 
       expect(Array.from(context.commands.keys())).toStrictEqual([
@@ -135,15 +135,15 @@ describe('::configureProgram', () => {
 
     await withMocks(async () => {
       const context = await bf.configureProgram(
-        getFixturePath('nested-several-empty-files')
+        getFixturePath('nested-several-files-empty')
       );
 
       expect(Array.from(context.commands.keys())).toStrictEqual([
-        'nested-several-empty-files',
-        'nested-several-empty-files nested',
-        'nested-several-empty-files nested first',
-        'nested-several-empty-files nested second',
-        'nested-several-empty-files nested third'
+        'nested-several-files-empty',
+        'nested-several-files-empty nested',
+        'nested-several-files-empty nested first',
+        'nested-several-files-empty nested second',
+        'nested-several-files-empty nested third'
       ]);
     });
   });
@@ -711,6 +711,21 @@ describe('::configureProgram', () => {
 
         expect(errorSpy).toHaveReturnedTimes(4);
       });
+    });
+
+    it('supports adding positional arguments (custom command export) to an executable command that has no handler export', async () => {
+      expect.hasAssertions();
+    });
+
+    it('throws CommandNotImplemented error when attempting to execute a childless command with no handler export and no custom command export', async () => {
+      expect.hasAssertions();
+
+      // TODO: that's ALL TYPES of childless commands (pure child, childless
+      // TODO: parent, childless root)
+    });
+
+    it('rethrows CommandNotImplemented error as CliError and prints help text when attempting to execute a parent/root command that has children and no handler export and no custom command export', async () => {
+      expect.hasAssertions();
     });
 
     it('throws when execution fails', async () => {
@@ -2565,16 +2580,16 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ errorSpy, logSpy, getExitCode }) => {
       await expect(
-        bf.runProgram(getFixturePath('nested-several-empty-files'), '--version')
+        bf.runProgram(getFixturePath('nested-several-files-empty'), '--version')
       ).resolves.toSatisfy(bf_util.isNullArguments);
 
       await expect(
-        bf.runProgram(getFixturePath('nested-several-empty-files'), 'nested --version')
+        bf.runProgram(getFixturePath('nested-several-files-empty'), 'nested --version')
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
 
       await expect(
         bf.runProgram(
-          getFixturePath('nested-several-empty-files'),
+          getFixturePath('nested-several-files-empty'),
           'nested first --version'
         )
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
@@ -2776,7 +2791,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('allows yargs::strictX and yargs::demandX method calls and options configurations on effectors that are ignored on helpers', async () => {
+  it('allows yargs::strictX and yargs::demandOption method calls and options configurations on effectors that are ignored on helpers', async () => {
     expect.hasAssertions();
 
     const run = bf_util.makeRunner({
@@ -2841,7 +2856,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('allows for childless root with a handler and no parameters/arguments', async () => {
+  it('allows for non-strict childless parents/root with a handler and no parameters', async () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
@@ -3051,6 +3066,10 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
+  it('does not call yargs::demandCommand on childless parents and childless root', async () => {
+    expect.hasAssertions();
+  });
+
   it('throws when an auto-discovered command file itself throws upon attempted import', async () => {
     expect.hasAssertions();
 
@@ -3063,11 +3082,28 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('throws when ordering invariant is violated', async () => {
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of a parent and/or root', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-index'), 'does not exist')
+      ).resolves.toBeUndefined();
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.any(String)],
+        [],
+        ['error string thrown in handler']
+      ]);
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command (by definition) of a pure child in strict mode', async () => {
     expect.hasAssertions();
   });
 
-  it('throws when attempting to execute a command that does not exist', async () => {
+  it('throws when calling demandCommand from a builder function', async () => {
     expect.hasAssertions();
   });
 

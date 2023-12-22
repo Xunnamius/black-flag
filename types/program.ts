@@ -42,6 +42,10 @@ export type Program<
 > = Omit<
   _Program<FrameworkArguments & CustomCliArguments>,
   | 'command'
+  | 'demand'
+  | 'demandCommand'
+  | 'strictCommands'
+  | 'onFinishCommand'
   | 'showHelpOnFail'
   | 'version'
   | 'help'
