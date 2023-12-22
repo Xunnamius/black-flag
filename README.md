@@ -73,7 +73,7 @@ capabilities with several powerful declarative features.
 ### Declaratively Build Deep Command Hierarchies ✨
 
 Black Flag provides first-class support for authoring sprawling deeply nested
-tree-like structures of commands and sub-commands.
+tree-like structures of commands and child commands.
 
 No more wrestling with positional parameters. No more pleading with
 `yargs::commandDir` to behave. And no more dealing with help text that
@@ -978,14 +978,19 @@ defaults:
     invocation's arguments into one long usage string instead of overwriting
     previous invocations with later ones
 - `yargs::version(false)`
-  - For the root command, `yargs::version(pkgJson.version || false)` is called
+  - For the root command,
+    `yargs::version(false)::option('version', { description })` is called
     instead
+- `yargs::demandCommand(1)` is called automatically on all parent commands
+  (including the root command) that both (1) have children and (2) do not export
+  a `handler` or custom `command`.
 
 <!-- lint enable list-item-style -->
 
-Any default can be tweaked or overridden via each command's [`builder`][7]
-function, which gives you direct access to the yargs API. Let's add one to
-`commands/index.js` along with a `handler` function and `usage` string:
+Most of these defaults can be tweaked or overridden via each command's
+[`builder`][7] function, which gives you direct access to the yargs API. Let's
+add one to `commands/index.js` along with a `handler` function and `usage`
+string:
 
 ```javascript
 /**
@@ -1111,6 +1116,41 @@ Options:
   --help          Show help text                                       [boolean]
 ```
 
+Phew. Alright, but what about trying some commands we know _don't_ exist?
+
+```shell
+./cli.js fake bad horrible
+```
+
+---
+
+```text
+Usage: myctl
+
+Options:
+  --help          Show help text                                       [boolean]
+
+Unknown command: fake
+```
+
+Let's try an invalid command where one of the parent commands actually _does_
+exist:
+
+```shell
+./cli.js remote bad horrible
+```
+
+---
+
+```text
+Usage: myctl remote
+
+Options:
+  --help          Show help text                                       [boolean]
+
+Unknown command: bad
+```
+
 Neat! 📸
 
 ### Testing Your CLI
@@ -1230,12 +1270,12 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 
 ### Terminology
 
-|      Term       | Description                                                                                                                                                                              |
-| :-------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][23] file and represented internally as a trio of programs: effector, helper, and router.                              |
-|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][38] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][39] type.           |
-|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                          |
-| default command | A "default command" is [yargs parlance][40] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_. |
+|      Term       | Description                                                                                                                                                                                                                                                                                                   |
+| :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     command     | A "command" is a functional unit associated with a [configuration][23] file and represented internally as a trio of programs: [effector, helper, and router][38]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][39] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][40] type.                                                                                                                                |
+|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                               |
+| default command | A "default command" is [yargs parlance][41] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
 
 ### Differences between Black Flag and Yargs
 
@@ -1256,7 +1296,7 @@ Flag, but are noted below nonetheless.
   earlier invocation_. This can lead to undefined or even dangerous behavior.
 
   > Who in their right mind is out here cloning yargs instances, you may ask?
-  > [Jest does so whenever you use certain asymmetric matchers][41].
+  > [Jest does so whenever you use certain asymmetric matchers][42].
 
   Regardless, you should never have to reach below Black Flag's abstraction over
   yargs to call methods like `yargs::parse`, `yargs::parseAsync`, `yargs::argv`,
@@ -1265,7 +1305,7 @@ Flag, but are noted below nonetheless.
   Therefore, this is effectively a non-issue with proper declarative use of
   Black Flag.
 
-- Yargs [middleware][42] isn't supported since the functionality is mostly
+- Yargs [middleware][43] isn't supported since the functionality is mostly
   covered by configuration hooks ~~and I didn't notice yargs had this feature
   until after I wrote Black Flag~~.
 
@@ -1274,7 +1314,7 @@ Flag, but are noted below nonetheless.
   function or just call the middleware function right then and there. If you
   want the middleware to apply globally, invoke the function directly in
   [`configureArguments`][31]. If neither solution is desirable, you can also
-  [muck around with][43] the relevant yargs instances manually in
+  [muck around with][38] the relevant yargs instances manually in
   [`configureExecutionPrologue`][44].
 
 - By default, Black Flag enables the `--help` and `--version` options same as
@@ -1290,8 +1330,8 @@ Flag, but are noted below nonetheless.
   > or version _command_.
 
   > Note: only the root command has default support for the built-in `--version`
-  > option. Calling `--version` on a sub-command will have no effect unless you
-  > make it so. This dodges [another yargs footgun][46], and setting
+  > option. Calling `--version` on a child command will have no effect unless
+  > you make it so. This dodges [another yargs footgun][46], and setting
   > [`context.state.globalVersionOption = undefined`][28] will prevent yargs
   > from clobbering any custom version arguments on the root command too.
 
@@ -1299,7 +1339,7 @@ Flag, but are noted below nonetheless.
 
 - A [bug][47] in yargs\@17.7.2 prevents `yargs::showHelp`/`--help` from printing
   anything when using an async [`builder`][7] function (or promise-returning
-  function) for a [default command][40].
+  function) for a [default command][41].
 
   Black Flag addresses this with its types, in that attempting to pass an async
   builder will be flagged as problematic by intellisense. Moreover, Black Flag
@@ -1309,8 +1349,8 @@ Flag, but are noted below nonetheless.
   for now.
 
 - A [bug?][49] in yargs\@17.7.2 causes `yargs::showHelp` to erroneously print
-  the _second_ element in the [`aliases`][50] array of the [default command][40]
-  when said command also has sub-commands.
+  the _second_ element in the [`aliases`][50] array of the [default command][41]
+  when said command also has child commands.
 
   Black Flag addresses this by using a "helper" program to generate help text
   [more consistently][49] than vanilla yargs. For instance, the default help
@@ -1318,7 +1358,7 @@ Flag, but are noted below nonetheless.
   [`description`][7] strings while the commands under `"Commands:"` are listed
   in alpha-sort order as their full canonical names _only_; unlike vanilla
   yargs, no positional arguments or aliases will be confusingly mixed into help
-  text output unless you [make it so][43].
+  text output unless you [make it so][38].
 
 - As of yargs\@17.7.2, attempting to add two sibling commands with the exact
   same name causes all sorts of runtime insanity, especially if the commands
@@ -1347,46 +1387,35 @@ Flag, but are noted below nonetheless.
   yargs outputs an error message, or use `yargs::epilogue`/`yargs::example`.
 
 - Since every auto-discovered command translates [into its own yargs
-  instances][43], the [`command`][7] property, if exported by your command
+  instances][38], the [`command`][7] property, if exported by your command
   file(s), must start with `"$0"` or an error will be thrown. This is also
   enforced by intellisense.
 
-- Methods like `yargs::check` and `yargs::global`, while they may work as
-  expected on commands and their direct sub-commands, will not function
-  "globally" across your entire command hierarchy since [there are several
-  _distinct_ yargs instances in play when Black Flag executes][43].
+- The `yargs::check`, `yargs::global`, and `yargs::onFinishCommand` methods,
+  while they may work as expected on commands and their direct child commands,
+  will not function "globally" across your entire command hierarchy since [there
+  are several _distinct_ yargs instances in play when Black Flag executes][38].
 
   If you want a uniform check or so-called "global" argument to apply to every
   command across your entire hierarchy, the "Black Flag way" would be to just
-  use normal JavaScript: export a shared [`builder`][7] function from a utility
-  file and call it in each of your command files. If you want something fancier
-  than that, you can leverage [`configureExecutionPrologue`][44] to call
+  use normal JavaScript instead: export a shared [`builder`][7] function from a
+  utility file and call it in each of your command files. If you want something
+  fancier than that, you can leverage [`configureExecutionPrologue`][44] to call
   `yargs::global` or `yargs::check` by hand.
 
-- Due to the way Black Flag stacks yargs instances, arbitrary parameters cannot
-  appear in the arguments list until after the final command name.
-
-  For example, the following is acceptable:
-
-  ```shell
-  treasure-chest retrieve --name piece-of-8 # Will succeed
-  ```
-
-  While this will result in an error:
-
-  ```shell
-  treasure-chest --name piece-of-8 retrieve # Will FAIL
-  ```
-
-  This limitation was inherited from yargs itself: vanilla yargs [never really
-  supported this functionality][53] in that you can't implement
-  `git -p ls-files --full-name` and have that mean something different than
-  `git ls-files --full-name -p` or `git -p ls-files --full-name -p` with yargs.
-  Black Flag makes this a formal invariant that will throw an error.
+  `yargs::onFinishCommand`, if defined, should only be called when the `argv`
+  parameter in [`builder`][7] is not `undefined` (i.e. only on [effector
+  programs][38]). This would prevent the callback from being executed twice.
+  Similar to the above, the "Black Flag way" of implementing this would be to
+  ditch `yargs::onFinishCommand` entirely and use plain old JavaScript and/or
+  the [`configureExecutionPrologue`][44] configuration hook instead.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. You shouldn't be calling the
   `yargs::parseX` functions directly anyway.
+
+- [Black Flag sets different several different defaults compared to vanilla
+  yargs][25].
 
 ### Advanced Usage
 
@@ -1446,7 +1475,7 @@ Each of these six commands is actually _three_ programs:
    final parse results bubble up to the root Black Flag execution context
    ([`PreExecutionContext::execute`][11]) for handling.
 
-> See the [flow chart][54] below for a visual overview.
+> See the [flow chart][53] below for a visual overview.
 
 These three programs representing the root command are accessible from the
 [`PreExecutionContext::rootPrograms`][11] property. They are also always the
@@ -1467,21 +1496,21 @@ await preExecutionContext.execute();
 ```
 
 Effectors do the heavy lifting in that they actually execute their command's
-[`handler`][7]. They are accessible via the [`programs.effector`][55] property
+[`handler`][7]. They are accessible via the [`programs.effector`][54] property
 of each object in [`PreExecutionContext::commands`][11], and can be configured
 as one might a typical yargs instance.
 
 Helpers are "clones" of their respective effectors and are accessible via the
-[`programs.helper`][55] property of each object in
+[`programs.helper`][54] property of each object in
 [`PreExecutionContext::commands`][11]. These instances have been reconfigured to
-address [a couple bugs][56] in yargs help text output by excluding aliases from
+address [a couple bugs][55] in yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
 side-effect of this is that only effectors recognize top-level positional
 arguments, which isn't a problem Black Flag users have to worry about unless
 they're dangerously tampering with these programs directly.
 
 Routers are partially-configured just enough to proxy control to other routers
-or to helpers and are accessible via the [`programs.router`][55] property of
+or to helpers and are accessible via the [`programs.router`][54] property of
 each object in [`PreExecutionContext::commands`][11]. They cannot and _must not_
 have any configured strictness or validation logic.
 
@@ -1496,51 +1525,66 @@ See [the docs][x-repo-docs] for more details on Black Flag's internals.
 
 #### Motivation
 
-The delegation of responsibility between helper and effectors facilitates the
-double-parsing necessary for [dynamic options][6] support. In implementing
-dynamic options, Black Flag accurately parses the given arguments with the
-helper program on the first pass and feeds the result to the [`builder`][7]
-function of the effector on the second pass (via [`builder`'s new third
-parameter][6]).
+Rather than chain singular yargs instances together, the delegation of
+responsibility between helper and effectors facilitates the double-parsing
+necessary for [dynamic options][6] support. In implementing dynamic options,
+Black Flag accurately parses the given arguments with the helper program on the
+first pass and feeds the result to the [`builder`][7] function of the effector
+on the second pass (via [`builder`'s new third parameter][6]).
 
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
 
-- An end user trying to invoke a non-existent sub-command will cause an
-  exception to be thrown. This is true even if the effector has been set to
-  non-strict mode (`yargs::strict(false)`).
+- An end user trying to invoke a parent command with no implementation will
+  cause help text to be printed and an exception to be thrown with default error
+  exit code. E.g.: `myctl parent child1` and `myctl parent child2` work but we
+  want `myctl parent` to show help text listing the available commands ("child1"
+  and "child2") and exit with a "not found" error.
 
-- The right command gets to generate help and version text. To this end, passing
-  `--help`/`--version` or equivalent arguments is effectively ignored by
-  routers.
+- An end user trying to invoke a non-existent child of a parent command will
+  cause help text to be printed and an exception to be thrown with default error
+  exit code. E.g.: we want `myctl exists noexist` and `myctl noexist` to show
+  help text listing the available commands ("exists") and exit with a "not
+  found" error.
 
-With vanilla yargs strict mode, attempting to meet these guarantees would
-require disallowing any arguments unrecognized by the yargs instance doing the
-routing, even if the yargs instance being routed to _does_ recognize said
-arguments. This would break Black Flag's support for deep command hierarchies
-entirely.
+  > Note that this section doesn't cover the case of attempting to invoke a
+  > non-existent child of a _pure child_ command, which is the same thing as
+  > giving the wrong arguments to any command and is therefore handled by yargs
+  > validation already, so we don't worry about it.
 
-Without vanilla yargs strict mode, attempting to meet these guarantees would
-require allowing attempts to invoke non-existent sub-commands without throwing
-an error. This would result in a deeply flawed end-user experience.
+- The right command gets to generate help and version text when triggered via
+  arguments. To this end, passing `--help`/`--version` or equivalent arguments
+  is effectively ignored by routers.
+
+With vanilla yargs's strict/demand mode, attempting to meet these guarantees
+would require disallowing any arguments unrecognized by the yargs instances
+earlier in the chain, even if the instances down-chain _do_ recognize said
+arguments. This would break Black Flag's support for deep "chained" command
+hierarchies entirely.
+
+However, without vanilla yargs's strict/demand mode, attempting to meet these
+guarantees would require allowing attempts to invoke non-existent child commands
+without throwing an error. This would result in a deeply flawed end-user
+experience.
 
 Hence the need for a distinct _routing program_ which allows parent commands to
-recursively route control to child commands in your hierarchy even when ancestor
-commands are not aware of the syntax accepted by their distant descendants—while
-still properly throwing an error when the end user tries to invoke a sub-command
-that does not exist.
+recursively chain/route control to child commands in your hierarchy even when
+ancestor commands are not aware of the syntax accepted by their distant
+descendants—while still properly throwing an error when the end user tries to
+invoke a child command that does not exist or invoke a child command with
+gibberish arguments.
 
 #### Generating Help Text
 
 Effectors are essentially yargs instances with a registered [default
-command][40]. Unfortunately, when vanilla yargs is asked to generate help text
+command][41]. Unfortunately, when vanilla yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
 
-![Vanilla yargs parseAsync help text example][57]
+![Vanilla yargs parseAsync help text example][56]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
-root command is being reported alongside `subcmd` as if it were a sub-command
+root command is being reported alongside `subcmd` as if it were a child command
 when in actuality it's just an alias for the default command.
 
 Worse, the complete command string (`'$0 root-positional'`) is also dumped into
@@ -1569,7 +1613,7 @@ with permanent effects.
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][58]
+![Black Flag runProgram help text example][57]
 
 > Note: in this example, `runProgram` is a function returned by
 > [`makeRunner`][15].
@@ -1684,7 +1728,7 @@ user.<sup>R2🡒R1</sup>
 Suppose instead the user executes `myctl remote --help`.<sup>🡒1</sup> Black Flag
 (using `runProgram`) sets everything up and calls `RouterProgram::parseAsync`
 the same as the previous example.<sup>1🡒2</sup> However, this time the router
-detects that the given arguments refer to a sub-command and so relinquishes
+detects that the given arguments refer to a child command and so relinquishes
 control to the trio of programs representing the `myctl remote`
 command.<sup>2->3A</sup> Black Flag notes the user asked to generate generic
 help text (by having passed the `--help` argument) before calling
@@ -1695,17 +1739,17 @@ and throws a `GracefulEarlyExitError` that bubbles up to the root
 command<sup>R5B🡒R2</sup> where it is then communicated to the
 user.<sup>R2🡒R1</sup>
 
-> The `myctl remote` sub-command is a child command of the root `myctl` command,
-> but it also has its own child commands, making it a parent _and_ a child
-> command (i.e. a "parent-child").
+> The `myctl remote` child command is a child command of the root `myctl`
+> command, but it also has its own child commands, making it a parent _and_ a
+> child command (i.e. a "parent-child").
 
 Finally, suppose the user executes `myctl remote remove origin`.<sup>🡒1</sup>
 Black Flag (using `runProgram`) sets everything up and calls the root
 `RouterProgram::parseAsync` the same as the previous example.<sup>1🡒2</sup> The
-router detects that the given arguments refer to a sub-command and so
+router detects that the given arguments refer to a child command and so
 relinquishes control to the trio of programs representing the `myctl remote`
 command.<sup>2->3A</sup> The parent-child router detects that the given
-arguments refer to a sub-command and so relinquishes control to the trio of
+arguments refer to a child command and so relinquishes control to the trio of
 programs representing the `myctl remote show` command.<sup>3A->4B->5A</sup>
 `myctl remote show`'s router detects that the given arguments refer to the
 current command<sup>5A->6B</sup> and so calls
@@ -1719,11 +1763,11 @@ of calling `EffectorProgram::parseAsync` bubbles up to the root
 command<sup>R8🡒R2</sup> where it is then communicated to the
 user.<sup>R2🡒R1</sup>
 
-> The `myctl remote show` sub-command is a child command of the parent-child
+> The `myctl remote show` child command is a child command of the parent-child
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][59]
+> The ascii art diagram was built using [https://asciiflow.com][58]
 
 ### Inspiration
 
@@ -1732,9 +1776,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][60], I realized the (irritatingly disparate 😖) structures of my
+another tool][59], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][61] to ["optimize" my workflows][62], I
+yargs. And, as I'm [always eager][60] to ["optimize" my workflows][61], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1932,15 +1976,15 @@ specification. Contributions of any kind welcome!
 [35]: https://builtin.com/software-engineering-perspectives/currying-javascript
 [36]: https://jestjs.io/docs/jest-object#jestresetmodules
 [37]: https://github.com/yargs/yargs/issues/2191
-[38]:
+[38]: #advanced-usage
+[39]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[39]: ./docs/modules/util.md#program
-[40]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[41]:
-  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[40]: ./docs/modules/util.md#program
+[41]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [42]:
+  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[43]:
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[43]: #advanced-usage
 [44]: ./docs/modules/index.md#configureexecutionprologue
 [45]: https://github.com/yargs/yargs/issues/733
 [46]: https://github.com/yargs/yargs/issues/1323
@@ -1950,14 +1994,13 @@ specification. Contributions of any kind welcome!
 [50]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
 [51]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
 [52]: https://github.com/yargs/yargs/issues/1137
-[53]: https://github.com/yargs/yargs/issues/156
-[54]: #execution-flow-diagram
-[55]: ./docs/modules/util.md#programmetadata
-[56]: #irrelevant-differences
-[57]: ./example-1.png
-[58]: ./example-2.png
-[59]: https://asciiflow.com
-[60]: https://github.com/Xunnamius/xunnctl
-[61]: https://xkcd.com/1205
-[62]:
+[53]: #execution-flow-diagram
+[54]: ./docs/modules/util.md#programmetadata
+[55]: #irrelevant-differences
+[56]: ./example-1.png
+[57]: ./example-2.png
+[58]: https://asciiflow.com
+[59]: https://github.com/Xunnamius/xunnctl
+[60]: https://xkcd.com/1205
+[61]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
