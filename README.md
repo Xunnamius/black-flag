@@ -1403,19 +1403,19 @@ Flag, but are noted below nonetheless.
   fancier than that, you can leverage [`configureExecutionPrologue`][44] to call
   `yargs::global` or `yargs::check` by hand.
 
-  `yargs::onFinishCommand`, if defined, should only be called when the `argv`
+  Similarly, `yargs::onFinishCommand` should only be called when the `argv`
   parameter in [`builder`][7] is not `undefined` (i.e. only on [effector
   programs][38]). This would prevent the callback from being executed twice.
-  Similar to the above, the "Black Flag way" of implementing this would be to
-  ditch `yargs::onFinishCommand` entirely and use plain old JavaScript and/or
-  the [`configureExecutionPrologue`][44] configuration hook instead.
+  Further, the "Black Flag way" would be to ditch `yargs::onFinishCommand`
+  entirely and use plain old JavaScript and/or the
+  [`configureExecutionPrologue`][44] configuration hook instead.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. You shouldn't be calling the
   `yargs::parseX` functions directly anyway.
 
-- [Black Flag sets different several different defaults compared to vanilla
-  yargs][25].
+- Black Flag sets several defaults compared to vanilla yargs. These defaults are
+  detailed in the [Usage section][25].
 
 ### Advanced Usage
 
