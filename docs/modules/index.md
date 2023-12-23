@@ -58,7 +58,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:18](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L18)
+[types/program.ts:18](https://github.com/Xunnamius/black-flag/blob/f208753/types/program.ts#L18)
 
 ___
 
@@ -78,7 +78,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/5838645/types/module.ts#L153)
+[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/f208753/types/module.ts#L153)
 
 ___
 
@@ -111,7 +111,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/5838645/types/module.ts#L11)
+[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/f208753/types/module.ts#L11)
 
 ___
 
@@ -134,13 +134,13 @@ definition for details.
 | :------ | :------ | :------ |
 | `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `PreExecutionContext::execute` and should return a `process.argv`-like array. This is where yargs middleware and other argument pre-processing can be implemented. |
 | `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)\<`CustomContext`\> | This function is called once at the very end of the error handling process after an error has occurred. Note that this function is _always_ called whenever there is an error, regardless of which other functions have already been called. The only exceptions to this are if (1) the error occurs within `configureErrorHandlingEpilogue` itself or (2) the error is an instance of `GracefulEarlyExitError`. This function is also called even after yargs internally handles and reports an argument parsing/validation error. |
-| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](util.md#executioncontext) singleton. |
+| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](util.md#executioncontext) singleton. Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
 | `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\<`CustomContext`\> | This function is called once after CLI argument parsing completes and either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown. The value returned by this function is used as the return value of the `PreExecutionContext::execute` method. This function will _not_ be called when yargs argument validation fails. This function is the complement of [ConfigureExecutionPrologue](index.md#configureexecutionprologue). |
-| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](util.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). |
+| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](util.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
 
 #### Defined in
 
-[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L90)
+[types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L96)
 
 ___
 
@@ -177,7 +177,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L42)
+[types/configure.ts:48](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L48)
 
 ___
 
@@ -224,7 +224,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L75)
+[types/configure.ts:81](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L81)
 
 ___
 
@@ -246,6 +246,9 @@ This function is called once towards the beginning of the execution of
 `configureProgram` and should return what will become the global
 [ExecutionContext](util.md#executioncontext) singleton.
 
+Note that any errors thrown this early in the initialization process will be
+thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue).
+
 ##### Parameters
 
 | Name | Type |
@@ -258,7 +261,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L14)
+[types/configure.ts:17](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L17)
 
 ___
 
@@ -297,7 +300,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L58)
+[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L64)
 
 ___
 
@@ -327,6 +330,9 @@ All commands and sub-commands known to Black Flag are available in the
 
 This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue).
 
+Note that any errors thrown this early in the initialization process will be
+thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue).
+
 ##### Parameters
 
 | Name | Type |
@@ -340,7 +346,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/5838645/types/configure.ts#L31)
+[types/configure.ts:37](https://github.com/Xunnamius/black-flag/blob/f208753/types/configure.ts#L37)
 
 ___
 
@@ -360,7 +366,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/5838645/types/module.ts#L162)
+[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/f208753/types/module.ts#L162)
 
 ___
 
@@ -376,7 +382,7 @@ yargs from returning a real `Arguments` parse result.
 
 #### Defined in
 
-[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L29)
+[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/f208753/types/program.ts#L29)
 
 ___
 
@@ -396,7 +402,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/5838645/types/module.ts#L144)
+[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/f208753/types/module.ts#L144)
 
 ___
 
@@ -416,7 +422,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/5838645/types/module.ts#L135)
+[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/f208753/types/module.ts#L135)
 
 ## Variables
 
@@ -429,7 +435,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/f208753/src/constant.ts#L5)
 
 ## Functions
 
@@ -466,7 +472,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/5838645/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/f208753/src/index.ts#L59)
 
 ___
 
@@ -488,7 +494,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/5838645/src/error.ts#L25)
+[src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/f208753/src/error.ts#L25)
 
 ___
 
@@ -510,7 +516,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/5838645/src/error.ts#L38)
+[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/f208753/src/error.ts#L38)
 
 ___
 
@@ -551,7 +557,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L174)
+[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L174)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -588,7 +594,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L196)
+[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L196)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -626,7 +632,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L221)
+[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L221)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -664,7 +670,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L246)
+[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L246)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -702,7 +708,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L269)
+[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L269)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -741,4 +747,4 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L296)
+[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/f208753/src/util.ts#L296)
