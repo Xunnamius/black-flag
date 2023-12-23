@@ -337,39 +337,39 @@ export async function runProgram<
   let configurationHooks: ConfigurationHooks<CustomContext> | undefined = undefined;
   let preExecutionContext: PreExecutionContext<CustomContext> | undefined = undefined;
 
-  if (typeof args[1] === 'string' || Array.isArray(args[1])) {
-    // * Must be call sig 4, 5, or 6
-    argv = args[1];
-
-    if (args[2]) {
-      // * Must be call sig 5 or 6
-      const argument2 = await args[2];
-      if (isPreExecutionContext(argument2)) {
-        // * Must be call sig 6
-        preExecutionContext = argument2;
-      } else {
-        // * Must be call sig 5
-        configurationHooks = argument2;
-      }
-    }
-  } else if (args[1]) {
-    // * Must be call sig 2 or 3
-    const argument1 = await args[1];
-    if (isPreExecutionContext(argument1)) {
-      // * Must be call sig 3
-      preExecutionContext = argument1;
-    } else {
-      // * Must be call sig 2
-      configurationHooks = argument1;
-    }
-  } // * else, must be call sig 1
-
-  assert(
-    !preExecutionContext || !!configurationHooks !== !!preExecutionContext,
-    ErrorMessage.GuruMeditation()
-  );
-
   try {
+    if (typeof args[1] === 'string' || Array.isArray(args[1])) {
+      // * Must be call sig 4, 5, or 6
+      argv = args[1];
+
+      if (args[2]) {
+        // * Must be call sig 5 or 6
+        const argument2 = await args[2];
+        if (isPreExecutionContext(argument2)) {
+          // * Must be call sig 6
+          preExecutionContext = argument2;
+        } else {
+          // * Must be call sig 5
+          configurationHooks = argument2;
+        }
+      }
+    } else if (args[1]) {
+      // * Must be call sig 2 or 3
+      const argument1 = await args[1];
+      if (isPreExecutionContext(argument1)) {
+        // * Must be call sig 3
+        preExecutionContext = argument1;
+      } else {
+        // * Must be call sig 2
+        configurationHooks = argument1;
+      }
+    } // * else, must be call sig 1
+
+    assert(
+      !preExecutionContext || !!configurationHooks !== !!preExecutionContext,
+      ErrorMessage.GuruMeditation()
+    );
+
     debug_(
       preExecutionContext
         ? 'using provided preExecutionContext'
@@ -413,17 +413,13 @@ export async function runProgram<
     debug_.error('exit code set to %O', process.exitCode);
 
     if (isGracefulEarlyExitError(error)) {
-      if (preExecutionContext) {
-        debug_.message(
-          'the exception resulted in a graceful exit (maybe with parse result)'
-        );
-        return preExecutionContext.state
-          .deepestParseResult as Arguments<CustomCliArguments>;
-      } else {
-        debug_.message(
-          'the exception resulted in a graceful exit (WITHOUT parse result)'
-        );
-      }
+      debug_.message(
+        'the exception resulted in a graceful exit (maybe with parse result)'
+      );
+
+      return preExecutionContext?.state.deepestParseResult as
+        | Arguments<CustomCliArguments>
+        | undefined;
     }
 
     debug_('runProgram invocation "succeeded" (via error handler)');

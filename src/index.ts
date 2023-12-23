@@ -333,7 +333,7 @@ export async function configureProgram<
               : isCliError(error)
                 ? error.suggestedExitCode
                 : FrameworkExitCode.DefaultError;
-        } else if (error) {
+        } else {
           message = `${error}`;
         }
 

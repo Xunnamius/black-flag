@@ -72,6 +72,7 @@ export async function discoverCommands(
   try {
     await fs.access(basePath, fs.constants.R_OK);
     if (!(await fs.stat(basePath)).isDirectory()) {
+      // ? This will be caught and re-thrown as an AssertionFailedError 👍🏿
       throw new Error('path is not a directory');
     }
   } catch (error) {
@@ -100,6 +101,7 @@ export async function discoverCommands(
       pkg.name = name;
       pkg.version = version;
     } catch (error) {
+      /* istanbul ignore next */
       debug.warn('load failed: attempt to import %O failed: %O', pkg.path, error);
     }
   } else {
@@ -172,7 +174,7 @@ export async function discoverCommands(
 
     if (!parentConfig) {
       debug.warn(
-        `skipped ${parentType} configuration (depth: %O) due to missing index file in directory %O`,
+        `skipped ${parentType} configuration (depth: %O) due to missing or unloadable index file in directory %O`,
         depth,
         configPath
       );
@@ -244,6 +246,7 @@ export async function discoverCommands(
         const { configuration: childConfig, metadata: childMeta } =
           await loadConfiguration(entryFullPath, context);
 
+        /* istanbul ignore next */
         if (!childConfig) {
           debug.error(
             `failed to load pure child configuration (depth: %O) due to missing or invalid file %O`,
@@ -383,8 +386,11 @@ export async function discoverCommands(
             // eslint-disable-next-line no-await-in-loop
             rawConfig = await maybeImportedConfig(context);
           } else {
-            debug_('configuration returned an object');
-            rawConfig = maybeImportedConfig || {};
+            debug_('configuration returned an object (or something coerced into {})');
+            rawConfig =
+              !!maybeImportedConfig && typeof maybeImportedConfig === 'object'
+                ? maybeImportedConfig
+                : {};
           }
 
           // ? Ensure configuration namespace is copied by value!
@@ -510,6 +516,7 @@ export async function discoverCommands(
         (reservedName_, index_) => {
           checkCount++;
           if (reservedName === reservedName_) {
+            /* istanbul ignore next */
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureDuplicateCommandName(
                 parentFullName,
@@ -537,6 +544,7 @@ export async function discoverCommands(
 
           checkCount++;
           if (reservedName === config.name) {
+            /* istanbul ignore next */
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureDuplicateCommandName(
                 parentFullName,
@@ -551,6 +559,7 @@ export async function discoverCommands(
           config.aliases.forEach((aliasName) => {
             checkCount++;
             if (reservedName === aliasName) {
+              /* istanbul ignore next */
               throw new AssertionFailedError(
                 ErrorMessage.AssertionFailureDuplicateCommandName(
                   parentFullName,
@@ -810,6 +819,7 @@ export async function discoverCommands(
               'exited failure handler: set finalError to error wrapped with CliError'
             );
             context.state.finalError = new CliError(
+              /* istanbul ignore next */
               error || message || ErrorMessage.GuruMeditation()
             );
           }
@@ -969,11 +979,18 @@ export async function discoverCommands(
 
           if (property === 'option' || property === 'options') {
             return function (...args: unknown[]) {
-              const options = (
-                args.length === 1 ? args[0] : { [args[0] as string]: args[1] || {} }
-              ) as Record<string, Options>;
+              /* istanbul ignore next */
+              if (!args.length) {
+                // ? Not our problem
+                target.options(...(args as Parameters<typeof target.options>));
+                return proxy;
+              }
 
-              assert(args.length === 0 || !!options, ErrorMessage.GuruMeditation());
+              const options = (
+                args.length === 1
+                  ? args[0]
+                  : { [args[0] as string]: args[1] || /* istanbul ignore next */ {} }
+              ) as Record<string, Options>;
 
               Object.entries(options).forEach(([option, optionConfiguration]) => {
                 if ('demandOption' in optionConfiguration) {
@@ -1216,7 +1233,7 @@ export async function discoverCommands(
         const blackFlagBuilderResult =
           typeof config.builder === 'function'
             ? config.builder(
-                program,
+                program as EffectorProgram,
                 context.state.isHandlingHelpOption ||
                   context.state.isHandlingVersionOption ||
                   helpOrVersionSet,

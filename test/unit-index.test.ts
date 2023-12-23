@@ -1631,6 +1631,44 @@ describe('::runProgram and util::makeRunner', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
       expect(errorSpy).toHaveBeenCalled();
     });
+
+    await withMocks(async ({ getExitCode }) => {
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('one-file-log-handler')
+      });
+
+      await run({ configureExecutionContext: () => assert.fail() });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.Ok when graceful exit is requested extremely early', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ getExitCode }) => {
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('one-file-log-handler')
+      });
+
+      await run({
+        configureExecutionContext: () => {
+          throw new bf.GracefulEarlyExitError();
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      await run(
+        bf.configureProgram(getFixturePath('one-file-log-handler'), {
+          configureExecutionContext: () => {
+            throw new bf.GracefulEarlyExitError();
+          }
+        })
+      );
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+    });
   });
 
   it('exits with bf.FrameworkExitCode.DefaultError upon string error type', async () => {
@@ -1660,6 +1698,59 @@ describe('::runProgram and util::makeRunner', () => {
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
       expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError upon non-Error error type', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          throw {
+            toString() {
+              return 'wtf is this?';
+            }
+          };
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(
+        getFixturePath('one-file-log-handler'),
+        await bf.configureProgram(getFixturePath('one-file-log-handler'), {
+          configureArguments() {
+            throw {
+              toString() {
+                return 'wtf is this?';
+              }
+            };
+          }
+        })
+      );
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError upon non-wrapped-Error error type', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureExecutionContext() {
+          // ? Throw very early before Black Flag has a chance to wrap the error
+          // ? or use configureErrorHandlingEpilogue.
+          throw new Error('bad');
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
     });
   });
 
@@ -1796,6 +1887,18 @@ describe('<command module auto-discovery>', () => {
       };
 
       expect(executionContext.affected).toBeTrue();
+    });
+  });
+
+  it('coerces bad module exports into the empty object', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bad-exports'), '--help')
+      ).resolves.toBeDefined();
+
+      expect(logSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -2243,7 +2346,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('throws in configureProgram if command configuration module directory is empty', async () => {
+  it('throws in configureProgram if no commands were discovered/loaded (root directory empty)', async () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
@@ -2252,6 +2355,34 @@ describe('<command module auto-discovery>', () => {
       ).rejects.toMatchObject({
         message: ErrorMessage.AssertionFailureNoConfigurationLoaded(
           getFixturePath('empty-dir')
+        )
+      });
+    });
+  });
+
+  it('throws in configureProgram if no commands were discovered/loaded (no loadable extensions)', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        bf.configureProgram(getFixturePath('several-files-bad-ext'))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureNoConfigurationLoaded(
+          getFixturePath('several-files-bad-ext')
+        )
+      });
+    });
+  });
+
+  it('throws if given command module directory is not a directory', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async () => {
+      await expect(
+        bf.configureProgram(getFixturePath(['nested-several-files-full', 'index.js']))
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureBadConfigurationPath(
+          getFixturePath(['nested-several-files-full', 'index.js'])
         )
       });
     });
@@ -2649,9 +2780,34 @@ describe('<command module auto-discovery>', () => {
         })
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
 
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '-i', {
+          configureExecutionContext(context) {
+            context.state.globalHelpOption = {
+              name: 'i',
+              description: 'Info description'
+            };
+            return context;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '-i', {
+          configureExecutionContext(context) {
+            context.state.globalHelpOption = {
+              name: 'info',
+              description: 'Info description'
+            };
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/Options:\n\s+--help\s+Show help text\s+\[boolean]$/)],
-        [expect.stringMatching(/Options:\n\s+--info\s+Info description\s+\[boolean]$/)]
+        [expect.stringMatching(/Options:\n\s+--info\s+Info description\s+\[boolean]$/)],
+        [expect.stringMatching(/Options:\n\s+-i\s+Info description\s+\[boolean]$/)]
       ]);
     });
   });
@@ -2699,9 +2855,51 @@ describe('<command module auto-discovery>', () => {
         })
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
 
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--info', {
+          configureArguments(argv, context) {
+            context.state.globalVersionOption = {
+              name: 'info',
+              description: 'Info description',
+              // @ts-expect-error: let's see what happens
+              text: undefined
+            };
+            return argv;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '-i', {
+          configureExecutionContext(context) {
+            context.state.globalVersionOption = {
+              name: 'info',
+              description: 'Info description',
+              text: 'version text'
+            };
+            return context;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '-i', {
+          configureExecutionContext(context) {
+            context.state.globalVersionOption = {
+              name: 'i',
+              description: 'Info description',
+              text: 'version text'
+            };
+            return context;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
       expect(logSpy.mock.calls).toStrictEqual([
         ['1.0.0'],
-        ['Custom 1.2.3\nVersion 4.5.6\nInfo 7.8.9-0']
+        ['Custom 1.2.3\nVersion 4.5.6\nInfo 7.8.9-0'],
+        ['???'],
+        ['version text']
       ]);
     });
   });
@@ -2987,7 +3185,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('allows for non-strict non-demandCommand childless parents/root with a handler and no parameters', async () => {
+  it('allows for non-strict non-demanded childless parents/root with a handler and no parameters', async () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
@@ -3257,19 +3455,25 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of a parent and/or root', async () => {
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of an unimplemented parent and/or root', async () => {
     expect.hasAssertions();
 
     const run = bf_util.makeRunner({
       commandModulePath: getFixturePath('nested-several-files-empty')
     });
 
-    await withMocks(async ({ errorSpy, getExitCode }) => {
+    await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       await expect(run(['does-not-exist'])).resolves.toBeUndefined();
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       await expect(run(['nested', 'does-not-exist'])).resolves.toBeUndefined();
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      // ? --help and --version should be more powerful than the impl-check
+      await expect(run(['nested', 'does-not-exist', '--help'])).resolves.toSatisfy(
+        bf_util.isNullArguments
+      );
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
@@ -3279,6 +3483,8 @@ describe('<command module auto-discovery>', () => {
         [],
         [capitalize(ErrorMessage.InvalidCommandInvocation())]
       ]);
+
+      expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
     });
   });
 
@@ -3296,21 +3502,40 @@ describe('<command module auto-discovery>', () => {
 
   it('throws immediately when yargs::parseSync is called', async () => {
     expect.hasAssertions();
-  });
 
-  it('throws when calling demand or demandCommand from a builder function', async () => {
-    expect.hasAssertions();
-  });
+    await withMocks(async () => {
+      await expect(
+        bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureExecutionPrologue(rootPrograms) {
+            // @ts-expect-error: on purpose
+            rootPrograms.effector.parseSync();
+          }
+        })
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+      });
 
-  it('throws when a configuration file unexpectedly fails to load', async () => {
-    expect.hasAssertions();
-  });
+      await expect(
+        bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureExecutionPrologue(rootPrograms) {
+            // @ts-expect-error: on purpose
+            rootPrograms.helper.parseSync();
+          }
+        })
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+      });
 
-  it('throws when a configuration file has bad permissions', async () => {
-    expect.hasAssertions();
-  });
-
-  it('throws if no commands were discovered/loaded', async () => {
-    expect.hasAssertions();
+      await expect(
+        bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureExecutionPrologue(rootPrograms) {
+            // @ts-expect-error: on purpose
+            rootPrograms.router.parseSync();
+          }
+        })
+      ).rejects.toMatchObject({
+        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+      });
+    });
   });
 });

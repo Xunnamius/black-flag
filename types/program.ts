@@ -43,8 +43,6 @@ export type Program<
 > = Omit<
   _Program<FrameworkArguments & CustomCliArguments>,
   | 'command'
-  | 'demand'
-  | 'demandCommand'
   | 'onFinishCommand'
   | 'showHelpOnFail'
   | 'version'
@@ -118,7 +116,7 @@ export type EffectorProgram<
  */
 export type HelperProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<Program<CustomCliArguments>, 'command'>;
+> = Omit<Program<CustomCliArguments>, 'demand' | 'demandCommand' | 'command'>;
 
 /**
  * Represents an "router" {@link Program} instance.

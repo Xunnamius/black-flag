@@ -32,6 +32,8 @@
 Black Flag is a fairly thin library that wraps [yargs][1], extending its
 capabilities with several powerful declarative features.
 
+Tested on Ubuntu and Windows.
+
 ---
 
 <!-- remark-ignore-start -->
@@ -516,7 +518,8 @@ commands. Specifically:
 - Access to the parsed process arguments at the time the error occurred (if
   available).
 
-How errors are reported is determined by the optionally-provided
+How errors thrown from [`builder`][7] and [`handler`][7] functions are reported
+to the user is determined by the optionally-provided
 [`configureErrorHandlingEpilogue`][13] configuration hook, as well as each
 command file's optionally-exported [`builder`][7] function.
 
@@ -540,8 +543,9 @@ export function builder(blackFlag) {
 }
 ```
 
-> Note that [framework errors][14], which are the result of developer error
-> rather than end user error, cannot be handled by
+> Note that [framework errors][14] and errors thrown in
+> `configureExecutionContext` or `configureExecutionPrologue`, which are always
+> the result of developer error rather than end user error, cannot be handled by
 > `configureErrorHandlingEpilogue`. If you're using
 > [`makeRunner`][15]/[`runProgram`][8] (which never throws) and a
 > misconfiguration triggers a framework error, your application will set its

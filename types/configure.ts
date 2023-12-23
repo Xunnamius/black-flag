@@ -10,6 +10,9 @@ import type { $executionContext } from 'universe/constant';
  * This function is called once towards the beginning of the execution of
  * `configureProgram` and should return what will become the global
  * {@link ExecutionContext} singleton.
+ *
+ * Note that any errors thrown this early in the initialization process will be
+ * thrown as-is and will NOT trigger {@link ConfigureErrorHandlingEpilogue}.
  */
 export type ConfigureExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -27,6 +30,9 @@ export type ConfigureExecutionContext<
  * `Program::parseAsync` et al.
  *
  * This function is the complement of {@link ConfigureExecutionEpilogue}.
+ *
+ * Note that any errors thrown this early in the initialization process will be
+ * thrown as-is and will NOT trigger {@link ConfigureErrorHandlingEpilogue}.
  */
 export type ConfigureExecutionPrologue<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -94,6 +100,10 @@ export type ConfigurationHooks<
    * This function is called once towards the beginning of the execution of
    * `configureProgram` and should return what will become the global
    * {@link ExecutionContext} singleton.
+   *
+   * Note that any errors thrown this early in the initialization process will
+   * be thrown as-is and will NOT trigger
+   * {@link ConfigureErrorHandlingEpilogue}.
    */
   configureExecutionContext?: ConfigureExecutionContext<CustomContext>;
   /**
@@ -108,6 +118,10 @@ export type ConfigurationHooks<
    * `Program::parseAsync` et al.
    *
    * This function is the complement of {@link ConfigureExecutionEpilogue}.
+   *
+   * Note that any errors thrown this early in the initialization process will
+   * be thrown as-is and will NOT trigger
+   * {@link ConfigureErrorHandlingEpilogue}.
    */
   configureExecutionPrologue?: ConfigureExecutionPrologue<CustomContext>;
   /**
