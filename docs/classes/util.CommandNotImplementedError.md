@@ -52,7 +52,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:113](https://github.com/Xunnamius/black-flag/blob/aefa590/src/error.ts#L113)
+[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L132)
 
 ## Properties
 
@@ -66,7 +66,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:108](https://github.com/Xunnamius/black-flag/blob/aefa590/src/error.ts#L108)
+[src/error.ts:127](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L127)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:66](https://github.com/Xunnamius/black-flag/blob/aefa590/src/error.ts#L66)
+[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L85)
 
 ___
 

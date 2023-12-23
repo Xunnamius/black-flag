@@ -58,7 +58,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/aefa590/types/program.ts#L17)
+[types/program.ts:17](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/program.ts#L17)
 
 ___
 
@@ -78,7 +78,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/aefa590/types/module.ts#L153)
+[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/module.ts#L153)
 
 ___
 
@@ -111,7 +111,7 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/aefa590/types/module.ts#L11)
+[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/module.ts#L11)
 
 ___
 
@@ -140,7 +140,7 @@ definition for details.
 
 #### Defined in
 
-[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L90)
+[types/configure.ts:90](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L90)
 
 ___
 
@@ -177,7 +177,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L42)
+[types/configure.ts:42](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L42)
 
 ___
 
@@ -224,7 +224,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L75)
+[types/configure.ts:75](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L75)
 
 ___
 
@@ -258,7 +258,7 @@ This function is called once towards the beginning of the execution of
 
 #### Defined in
 
-[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L14)
+[types/configure.ts:14](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L14)
 
 ___
 
@@ -297,7 +297,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L58)
+[types/configure.ts:58](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L58)
 
 ___
 
@@ -340,7 +340,7 @@ This function is the complement of [ConfigureExecutionEpilogue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/aefa590/types/configure.ts#L31)
+[types/configure.ts:31](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/configure.ts#L31)
 
 ___
 
@@ -360,7 +360,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/aefa590/types/module.ts#L162)
+[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/module.ts#L162)
 
 ___
 
@@ -376,7 +376,7 @@ yargs from returning a real `Arguments` parse result.
 
 #### Defined in
 
-[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/aefa590/types/program.ts#L28)
+[types/program.ts:28](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/program.ts#L28)
 
 ___
 
@@ -396,7 +396,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/aefa590/types/module.ts#L144)
+[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/module.ts#L144)
 
 ___
 
@@ -416,7 +416,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/aefa590/types/module.ts#L135)
+[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/9fc72cf/types/module.ts#L135)
 
 ## Variables
 
@@ -429,7 +429,7 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/aefa590/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/constant.ts#L5)
 
 ## Functions
 
@@ -466,7 +466,7 @@ handles exceptions and sets the exit code for you.
 
 #### Defined in
 
-[src/index.ts:58](https://github.com/Xunnamius/black-flag/blob/aefa590/src/index.ts#L58)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/index.ts#L59)
 
 ___
 
@@ -488,7 +488,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:21](https://github.com/Xunnamius/black-flag/blob/aefa590/src/error.ts#L21)
+[src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L25)
 
 ___
 
@@ -510,7 +510,7 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:34](https://github.com/Xunnamius/black-flag/blob/aefa590/src/error.ts#L34)
+[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L38)
 
 ___
 
@@ -551,7 +551,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L174)
+[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L174)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -588,7 +588,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L196)
+[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L196)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
@@ -626,7 +626,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L221)
+[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L221)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -664,7 +664,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L246)
+[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L246)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -702,7 +702,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L269)
+[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L269)
 
 ▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
@@ -741,4 +741,4 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/aefa590/src/util.ts#L296)
+[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/util.ts#L296)
