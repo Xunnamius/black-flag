@@ -147,7 +147,8 @@ export async function discoverCommands(
   async function discover(
     configPath: string,
     lineage: string[] = [],
-    grandparentPrograms: Programs | undefined = undefined
+    grandparentPrograms: Programs | undefined = undefined,
+    grandparentMeta: ProgramMetadata | undefined = undefined
   ): Promise<void> {
     const isRootCommand = !alreadyLoadedRootCommand;
     const parentType: ProgramType = isRootCommand ? 'pure parent' : 'parent-child';
@@ -214,6 +215,10 @@ export async function discoverCommands(
       grandparentPrograms?.helper
     );
 
+    if (grandparentMeta) {
+      grandparentMeta.hasChildren = true;
+    }
+
     debug_load(
       `discovered ${parentType} configuration (depth: %O) for command %O`,
       depth,
@@ -232,7 +237,7 @@ export async function discoverCommands(
 
       if (entry.isDirectory()) {
         debug('file is actually a directory, recursing');
-        await discover(entryFullPath, lineage, parentPrograms);
+        await discover(entryFullPath, lineage, parentPrograms, parentMeta);
       } else if (isPotentialChildConfigOfCurrentParent) {
         debug('attempting to load file');
 
@@ -347,12 +352,14 @@ export async function discoverCommands(
         }
 
         if (maybeImportedConfig) {
-          const meta = {} as ProgramMetadata;
+          const meta = {
+            hasChildren: false,
+            filename: path.basename(maybeConfigPath),
+            filepath: maybeConfigPath,
+            parentDirName: path.basename(path.dirname(maybeConfigPath))
+          } as ProgramMetadata;
 
-          meta.filename = path.basename(maybeConfigPath);
           meta.filenameWithoutExtension = meta.filename.split('.').slice(0, -1).join('.');
-          meta.filepath = maybeConfigPath;
-          meta.parentDirName = path.basename(path.dirname(maybeConfigPath));
 
           const isParentProgram = meta.filenameWithoutExtension === 'index';
 
@@ -676,6 +683,13 @@ export async function discoverCommands(
           debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
         } else {
+          if (!meta.isImplemented && meta.hasChildren) {
+            debug_.message(
+              'short-circuited effector: command is both unimplemented and has children'
+            );
+            throw new CommandNotImplementedError();
+          }
+
           context.state.firstPassArgv = parsedArgv;
 
           const localArgv = await programs.effector.parseAsync(
@@ -733,42 +747,77 @@ export async function discoverCommands(
         const debug_ = debug.extend(`${descriptor}*`);
         debug_.message('entered failure handler for command %O', fullName);
 
-        debug_('message: %O', message);
-        debug_('error.message: %O', error?.message);
-        debug_('error is native error: %O', isNativeError(error));
-
         // ? If a failure happened but error is not defined, it was *probably*
         // ? a yargs-specific error (e.g. argument validation failure).
         // ! Is there a better way to differentiate between Yargs-specific
         // ! errors and third-party errors? Or is `!error` the best we can do?
         const isProbablyVanillaYargsError = !error;
 
+        debug_('message: %O', message);
+        debug_('error.message: %O', error?.message);
+        debug_('error is native error: %O', isNativeError(error));
+        debug_('will show help on fail: %O', context.state.showHelpOnFail);
+        debug_('is probably vanilla yargs error: %O', isProbablyVanillaYargsError);
+        debug_(
+          'did output help or version text: %O',
+          context.state.didOutputHelpOrVersionText
+        );
+
         assert(!meta.hasChildren || type !== 'pure child', ErrorMessage.GuruMeditation());
+
         // ? Only helpers of "parous" parents should send help text to stderr
         const isParousParentHelperHandlingCommandNotImplementedError =
           meta.hasChildren &&
           descriptor === 'helper' &&
           isCommandNotImplementedError(error);
 
+        debug_(
+          'is parous parent helper handling CommandNotImplementedError: %O',
+          isParousParentHelperHandlingCommandNotImplementedError
+        );
+
         if (
           context.state.showHelpOnFail &&
+          !context.state.didOutputHelpOrVersionText &&
           (isProbablyVanillaYargsError ||
             isParousParentHelperHandlingCommandNotImplementedError)
         ) {
           debug_(
             `sending help text to stderr (triggered by ${error ? 'black flag' : 'yargs'})`
           );
+          // ! Note how only the most specific program gets to generate help
+          // ! text.
           program.showHelp('error');
           context.state.didOutputHelpOrVersionText = true;
+
+          if (isParousParentHelperHandlingCommandNotImplementedError) {
+            debug_(
+              'exited failure handler: set finalError to CliError(InvalidCommandInvocation)'
+            );
+
+            context.state.finalError = new CliError(
+              ErrorMessage.InvalidCommandInvocation()
+            );
+          }
         }
 
-        if (isCliError(error)) {
-          debug_('exited failure handler: re-throwing error as-is');
-          throw error;
+        if (context.state.finalError === undefined) {
+          if (isCliError(error)) {
+            debug_('exited failure handler: set finalError to error as-is');
+            context.state.finalError = error;
+          } else {
+            debug_(
+              'exited failure handler: set finalError to error wrapped with CliError'
+            );
+            context.state.finalError = new CliError(
+              error || message || ErrorMessage.GuruMeditation()
+            );
+          }
         } else {
-          debug_('exited failure handler: re-throwing error wrapped with CliError');
-          throw new CliError(error || message || ErrorMessage.GuruMeditation());
+          debug_('exited failure handler: finalError unchanged');
         }
+
+        throw context.state.finalError;
       };
     }
   }
@@ -1017,13 +1066,6 @@ export async function discoverCommands(
           if (property === 'showHelpOnFail') {
             return function (enabled: boolean) {
               context.state.showHelpOnFail = enabled;
-              return proxy;
-            };
-          }
-
-          if (property === 'demandCommand_force') {
-            return function () {
-              vanillaYargs;
               return proxy;
             };
           }

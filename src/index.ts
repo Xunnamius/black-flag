@@ -116,6 +116,7 @@ export async function configureProgram<
         isHandlingHelpOption: false,
         isHandlingVersionOption: false,
         didOutputHelpOrVersionText: false,
+        finalError: undefined,
         globalHelpOption: {
           name: defaultHelpOptionName,
           description: defaultHelpTextDescription
@@ -155,16 +156,6 @@ export async function configureProgram<
   context.commands.forEach((command, fullName) => {
     debug('calling HelperProgram::command_finalize_deferred for command %O', fullName);
     command.programs.helper.command_finalize_deferred();
-  });
-
-  debug('finalizing command demands on parents');
-
-  context.commands.forEach((command, fullName) => {
-    if (command.metadata.hasChildren) {
-      debug('calling HelperProgram::demandCommand_force(1) for command %O', fullName);
-      assert(command.metadata.type !== 'pure child', ErrorMessage.GuruMeditation());
-      command.programs.helper.demandCommand_force(1);
-    }
   });
 
   debug('configureProgram invocation succeeded');
@@ -262,7 +253,15 @@ export async function configureProgram<
       try {
         // * Note how we discard the result of RouterProgram::parseAsync
         await rootPrograms.router.parseAsync(argv, wrapExecutionContext(context));
-      } catch (error) {
+      } catch (error_) {
+        const error = context.state.finalError || error_;
+
+        if (error !== error_) {
+          debug.warn(
+            'root router parse warning: context.state.finalError !== caught error (caught error was discarded)'
+          );
+        }
+
         if (isGracefulEarlyExitError(error)) {
           debug.message(
             'caught graceful early exit "error" in PreExecutionContext::execute'

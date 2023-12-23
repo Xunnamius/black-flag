@@ -4,6 +4,7 @@ import type { ExtendedDebugger } from 'multiverse/rejoinder';
 import type { ConfigureArguments } from 'types/configure';
 import type { Configuration } from 'types/module';
 import type { $executionContext } from 'universe/constant';
+import type { CliError } from 'universe/error';
 
 // ? Used by intellisense and in auto-generated documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +45,6 @@ export type Program<
   | 'command'
   | 'demand'
   | 'demandCommand'
-  | 'strictCommands'
   | 'onFinishCommand'
   | 'showHelpOnFail'
   | 'version'
@@ -104,12 +104,6 @@ export type Program<
    * @internal
    */
   command_finalize_deferred: () => void;
-
-  /**
-   * @see {@link _Program.demandCommand}
-   * @internal
-   */
-  demandCommand_force: (min: 1) => void;
 };
 
 /**
@@ -117,10 +111,7 @@ export type Program<
  */
 export type EffectorProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<
-  Program<CustomCliArguments>,
-  'demandCommand_force' | 'command_deferred' | 'command_finalize_deferred'
->;
+> = Omit<Program<CustomCliArguments>, 'command_deferred' | 'command_finalize_deferred'>;
 
 /**
  * Represents an "helper" {@link Program} instance.
@@ -476,6 +467,17 @@ export type ExecutionContext = {
      * @default false
      */
     didOutputHelpOrVersionText: boolean;
+    /**
+     * Contains the final error that will be communicated to the user, if
+     * defined. Ideally we wouldn't have to track this and we could just rely on
+     * yargs's exception handling plumbing, but there are trap doors where yargs
+     * will simply swallow errors and do other weird stuff.
+     *
+     * Instead of trying to deal with all that, we'll just handle it ourselves.
+     *
+     * @default undefined
+     */
+    finalError: CliError | undefined;
 
     [key: string]: unknown;
   };

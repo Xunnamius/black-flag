@@ -26,7 +26,7 @@ const mockNullArguments: bf.NullArguments = {
   })
 };
 
-const capitalizedCommandNotFoundErrorMessage = capitalize(
+const capitalizedCommandNotImplementedErrorMessage = capitalize(
   ErrorMessage.CommandNotImplemented()
 );
 
@@ -55,7 +55,8 @@ describe('::configureProgram', () => {
         'showHelpOnFail',
         'firstPassArgv',
         'deepestParseResult',
-        'didOutputHelpOrVersionText'
+        'didOutputHelpOrVersionText',
+        'finalError'
       ]);
       expect(rest).toBeEmpty();
     });
@@ -787,7 +788,7 @@ describe('::configureProgram', () => {
           [expect.stringContaining('--help')],
           [],
           [expect.stringMatching(/^Not enough/)],
-          [capitalizedCommandNotFoundErrorMessage]
+          [capitalizedCommandNotImplementedErrorMessage]
         ]);
       });
     });
@@ -822,14 +823,14 @@ describe('::configureProgram', () => {
         });
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [capitalizedCommandNotFoundErrorMessage],
-          [capitalizedCommandNotFoundErrorMessage],
-          [capitalizedCommandNotFoundErrorMessage]
+          [capitalizedCommandNotImplementedErrorMessage],
+          [capitalizedCommandNotImplementedErrorMessage],
+          [capitalizedCommandNotImplementedErrorMessage]
         ]);
       });
     });
 
-    it('outputs help text in lieu of an error message when attempting to execute a parent command that has children and no handler export and no custom command export', async () => {
+    it('outputs help text with ErrorMessage.InvalidCommandInvocation epilogue when attempting to execute a parent command that has children and no handler export and no custom command export', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ errorSpy }) => {
@@ -839,10 +840,14 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('nested-several-files-empty'))
           ).execute(['nested'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.CommandNotImplemented()
+          message: ErrorMessage.InvalidCommandInvocation()
         });
 
-        expect(errorSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('--help')],
+          [],
+          [capitalize(ErrorMessage.InvalidCommandInvocation())]
+        ]);
       });
     });
 
@@ -1843,10 +1848,12 @@ describe('<command module auto-discovery>', () => {
       const rootResult = await run('--help');
       const parentResult = await run('n --help');
       const childResult = await run('n f --help');
+      const workingResult = await run('n f positional --child-option1');
 
       expect(bf_util.isNullArguments(rootResult)).toBeTrue();
       expect(bf_util.isNullArguments(parentResult)).toBeTrue();
       expect(bf_util.isNullArguments(childResult)).toBeTrue();
+      expect(bf_util.isNullArguments(workingResult)).toBeFalse();
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
         expect.stringMatching(/\s+--option\s+Some description\s+\[boolean]$/)
@@ -1858,6 +1865,12 @@ describe('<command module auto-discovery>', () => {
 
       expect(logSpy.mock.calls[2]).toStrictEqual([
         expect.stringMatching(/\s+--child-option1\s+\[boolean]|$/)
+      ]);
+
+      expect(logSpy).toHaveBeenCalledTimes(3);
+      expect(workingResult).toContainEntry([
+        'handled_by',
+        getFixturePath(['nested-several-files-full', 'nested', 'first.js'])
       ]);
     });
   });
@@ -2974,7 +2987,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('allows for non-strict childless parents/root with a handler and no parameters', async () => {
+  it('allows for non-strict non-demandCommand childless parents/root with a handler and no parameters', async () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
@@ -3244,16 +3257,29 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('does not call yargs::demandCommand on childless parents and childless root', async () => {
-    expect.hasAssertions();
-  });
-
   it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of a parent and/or root', async () => {
     expect.hasAssertions();
-  });
 
-  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command (by definition) of a pure child in strict mode', async () => {
-    expect.hasAssertions();
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('nested-several-files-empty')
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await expect(run(['does-not-exist'])).resolves.toBeUndefined();
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      await expect(run(['nested', 'does-not-exist'])).resolves.toBeUndefined();
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+      ]);
+    });
   });
 
   it('throws when an auto-discovered command file itself throws upon attempted import', async () => {
@@ -3268,6 +3294,10 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
+  it('throws immediately when yargs::parseSync is called', async () => {
+    expect.hasAssertions();
+  });
+
   it('throws when calling demand or demandCommand from a builder function', async () => {
     expect.hasAssertions();
   });
@@ -3277,10 +3307,6 @@ describe('<command module auto-discovery>', () => {
   });
 
   it('throws when a configuration file has bad permissions', async () => {
-    expect.hasAssertions();
-  });
-
-  it('throws immediately when yargs::parseSync is called', async () => {
     expect.hasAssertions();
   });
 

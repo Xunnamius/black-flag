@@ -885,11 +885,15 @@ command files support a subset of the following extensions in precedence order:
 `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`. To keep things simple, we'll be
 using ES modules as `.js` files (note the [type][27] in `package.json`).
 
-Also note that empty files, and files that do not export a `handler` function,
-are picked up by Black Flag as unfinished/unimplemented commands. They will
-still appear in help text but, when invoked, will throw an error. This means you
-can stub out a complex CLI in a couple minutes: just name your directories and
-empty files accordingly!
+Also note that empty files, and files that do not export a `handler` function or
+custom `command` string, are picked up by Black Flag as unfinished or
+"unimplemented" commands. They will still appear in help text but, when invoked,
+will either (1) output an error message explaining that the command is not
+implemented if said command has no sub-commands or (2) output help text for the
+command if said command has one or more sub-commands.
+
+This means you can stub out a complex CLI in a couple minutes: just name your
+directories and empty files accordingly!
 
 With that in mind, let's actually run our skeletal CLI now:
 

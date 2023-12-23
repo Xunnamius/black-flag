@@ -187,6 +187,9 @@ export const ErrorMessage = {
   CommandNotImplemented() {
     return 'this command is currently unimplemented';
   },
+  InvalidCommandInvocation() {
+    return 'invalid command: you must call this command with a valid sub-command argument';
+  },
   GracefulEarlyExit() {
     return 'execution is ending exceptionally early, which is not a bad thing!';
   },
