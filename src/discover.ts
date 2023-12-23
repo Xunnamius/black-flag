@@ -602,7 +602,7 @@ export async function discoverCommands(
 
     // * Configure usage text.
 
-    const usageText = (config.usage ?? defaultUsageText)
+    const usageText = config.usage
       .replaceAll('$000', config.command)
       .replaceAll('$1', config.description || '')
       .trim();
@@ -913,7 +913,7 @@ export async function discoverCommands(
             Object.hasOwn(vanillaYargs, property) ||
             Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property));
 
-        if (['help', 'version', 'demand', 'demandCommand'].includes(property as string)) {
+        if (['help', 'version'].includes(property as string)) {
           return function () {
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureInvocationNotAllowed(property as string)
@@ -1042,6 +1042,7 @@ export async function discoverCommands(
 
                 // ? Ensure the root command is added first (though it probably
                 // ? doesn't matter either way).
+                /* istanbul ignore next */
                 return firstCommand.startsWith('$0')
                   ? -1
                   : secondCommand.startsWith('$0')
@@ -1117,6 +1118,7 @@ export async function discoverCommands(
         const debug_ = debug.extend('router');
         const givenName = context.state.rawArgv.shift();
 
+        /* istanbul ignore next */
         if (debug_.enabled) {
           const splitName = childFullName.split(' ');
           debug_.message(
@@ -1171,6 +1173,7 @@ export async function discoverCommands(
       [childConfig.name, ...childConfig.aliases],
       childConfig.description,
       makeVanillaYargsBuilder(parentHelper, childConfig, 'first-pass'),
+      /* istanbul ignore next */
       async (_parsedArgv) => {
         throw new AssertionFailedError(
           ErrorMessage.AssertionFailureReachedTheUnreachable()

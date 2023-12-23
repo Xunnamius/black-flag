@@ -985,9 +985,6 @@ defaults:
   - For the root command,
     `yargs::version(false)::option('version', { description })` is called
     instead
-- `yargs::demandCommand(1)` is called automatically on all parent commands
-  (including the root command) that both (1) have children and (2) do not export
-  a `handler` or custom `command`.
 
 <!-- lint enable list-item-style -->
 
@@ -1546,11 +1543,11 @@ Black Flag to make certain guarantees:
   want `myctl parent` to show help text listing the available commands ("child1"
   and "child2") and exit with a "not found" error.
 
-- An end user trying to invoke a non-existent child of a parent command will
-  cause help text to be printed and an exception to be thrown with default error
-  exit code. E.g.: we want `myctl exists noexist` and `myctl noexist` to show
-  help text listing the available commands ("exists") and exit with a "not
-  found" error.
+- An end user trying to invoke a non-existent child of a strict parent command
+  with strict child commands will cause help text to be printed and an exception
+  to be thrown with default error exit code. E.g.: we want
+  `myctl exists noexist` and `myctl noexist` to show help text listing the
+  available commands ("exists") and exit with a "not found" error.
 
   > Note that this section doesn't cover the case of attempting to invoke a
   > non-existent child of a _pure child_ command, which is the same thing as
@@ -1561,13 +1558,13 @@ Black Flag to make certain guarantees:
   arguments. To this end, passing `--help`/`--version` or equivalent arguments
   is effectively ignored by routers.
 
-With vanilla yargs's strict/demand mode, attempting to meet these guarantees
-would require disallowing any arguments unrecognized by the yargs instances
-earlier in the chain, even if the instances down-chain _do_ recognize said
-arguments. This would break Black Flag's support for deep "chained" command
-hierarchies entirely.
+With vanilla yargs's strict mode, attempting to meet these guarantees would
+require disallowing any arguments unrecognized by the yargs instances earlier in
+the chain, even if the instances down-chain _do_ recognize said arguments. This
+would break Black Flag's support for deep "chained" command hierarchies
+entirely.
 
-However, without vanilla yargs's strict/demand mode, attempting to meet these
+However, without vanilla yargs's strict mode, attempting to meet these
 guarantees would require allowing attempts to invoke non-existent child commands
 without throwing an error. This would result in a deeply flawed end-user
 experience.
