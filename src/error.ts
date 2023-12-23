@@ -11,6 +11,10 @@ import { FrameworkExitCode } from 'universe/constant';
 // TODO: replace a lot of all that follows with the official package(s),
 // TODO: including the symbol use below
 
+// TODO: the [$type] property of these classes should be an array of symbols
+// TODO: instead of an array of strings since two classes could have the same
+// TODO: name!
+
 // TODO: Need to ensure isXError functions deal with inheritance/extends
 export const $type = Symbol.for('object-type-hint');
 
@@ -39,6 +43,21 @@ export function isGracefulEarlyExitError(
     $type in parameter &&
     Array.isArray(parameter[$type]) &&
     parameter[$type].includes(GracefulEarlyExitError.name)
+  );
+}
+
+/**
+ * Type guard for {@link CommandNotImplementedError}.
+ */
+// TODO: make-named-error should create and return this function automatically
+export function isCommandNotImplementedError(
+  parameter: unknown
+): parameter is CommandNotImplementedError {
+  return (
+    isNativeError(parameter) &&
+    $type in parameter &&
+    Array.isArray(parameter[$type]) &&
+    parameter[$type].includes(CommandNotImplementedError.name)
   );
 }
 

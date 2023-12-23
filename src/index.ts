@@ -6,13 +6,14 @@ import yargs from 'yargs/yargs';
 
 import { getRootDebugLogger } from 'universe/debug';
 import { discoverCommands } from 'universe/discover';
-import { capitalize } from 'universe/util';
+import { capitalize, wrapExecutionContext } from 'universe/util';
 
 import {
   AssertionFailedError,
   CliError,
   ErrorMessage,
   isCliError,
+  isCommandNotImplementedError,
   isGracefulEarlyExitError
 } from 'universe/error';
 
@@ -76,9 +77,25 @@ export async function configureProgram<
     return context as CustomContext;
   };
 
-  finalConfigurationHooks.configureErrorHandlingEpilogue ??= ({ message }) => {
-    // eslint-disable-next-line no-console
-    console.error(capitalize(message));
+  finalConfigurationHooks.configureErrorHandlingEpilogue ??= (
+    { message, error },
+    _,
+    { state: { didOutputHelpOrVersionText } }
+  ) => {
+    if (didOutputHelpOrVersionText) {
+      if (!isCommandNotImplementedError(error)) {
+        // eslint-disable-next-line no-console
+        console.error();
+        outputErrorMessage();
+      }
+    } else {
+      outputErrorMessage();
+    }
+
+    function outputErrorMessage() {
+      // eslint-disable-next-line no-console
+      console.error(capitalize(message));
+    }
   };
 
   debug('command module auto-discovery path: %O', commandModulePath);
@@ -98,6 +115,7 @@ export async function configureProgram<
         isGracefullyExiting: false,
         isHandlingHelpOption: false,
         isHandlingVersionOption: false,
+        didOutputHelpOrVersionText: false,
         globalHelpOption: {
           name: defaultHelpOptionName,
           description: defaultHelpTextDescription
@@ -131,6 +149,25 @@ export async function configureProgram<
   await finalConfigurationHooks.configureExecutionPrologue(rootPrograms, context);
 
   debug('exited configureExecutionPrologue');
+
+  debug('finalizing deferred command registrations');
+
+  context.commands.forEach((command, fullName) => {
+    debug('calling HelperProgram::command_finalize_deferred for command %O', fullName);
+    command.programs.helper.command_finalize_deferred();
+  });
+
+  debug('finalizing command demands on parents');
+
+  context.commands.forEach((command, fullName) => {
+    if (command.metadata.hasChildren) {
+      debug('calling HelperProgram::demandCommand_force(1) for command %O', fullName);
+      assert(command.metadata.type !== 'pure child', ErrorMessage.GuruMeditation());
+      command.programs.helper.demandCommand_force(1);
+    }
+  });
+
+  debug('configureProgram invocation succeeded');
 
   let alreadyInvoked = false;
   const parseAndExecuteWithErrorHandling: Executor = async (argv_) => {
@@ -329,15 +366,6 @@ export async function configureProgram<
     }
   };
 
-  debug('finalizing deferred command registrations');
-
-  context.commands.forEach((command, fullName) => {
-    debug('calling HelperProgram::command_finalize_deferred for command %O', fullName);
-    command.programs.helper.command_finalize_deferred();
-  });
-
-  debug('configureProgram invocation succeeded');
-
   return {
     rootPrograms,
     execute: parseAndExecuteWithErrorHandling,
@@ -350,15 +378,6 @@ export async function configureProgram<
     assert(root !== undefined, ErrorMessage.GuruMeditation());
     return root;
   }
-}
-
-/**
- * Creates an object with a "hidden" `[$executionContext]` property.
- *
- * @internal
- */
-export function wrapExecutionContext(context: ExecutionContext) {
-  return { [$executionContext]: context };
 }
 
 /**

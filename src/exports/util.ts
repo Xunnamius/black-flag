@@ -4,6 +4,7 @@ import { hideBin as hideBin_ } from 'yargs/helpers';
 
 export {
   isArguments,
+  isAssertionSystemError,
   isNullArguments,
   isPreExecutionContext,
   makeRunner

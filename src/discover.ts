@@ -6,7 +6,7 @@ import { isNativeError, isPromise, isSymbolObject } from 'node:util/types';
 import makeVanillaYargs from 'yargs/yargs';
 
 import { defaultUsageText } from 'universe/constant';
-import { wrapExecutionContext } from 'universe/index';
+import { capitalize, wrapExecutionContext } from 'universe/util';
 
 import {
   AssertionFailedError,
@@ -14,7 +14,8 @@ import {
   CommandNotImplementedError,
   ErrorMessage,
   GracefulEarlyExitError,
-  isCliError
+  isCliError,
+  isCommandNotImplementedError
 } from 'universe/error';
 
 import type {
@@ -32,7 +33,6 @@ import type {
 import type { PackageJson } from 'type-fest';
 import type { Configuration, ImportedConfigurationModule } from 'types/module';
 import type { Options } from 'yargs';
-import { capitalize } from './util';
 
 const hasSpacesRegExp = /\s+/;
 
@@ -189,6 +189,7 @@ export async function discoverCommands(
 
     const parentPrograms = await makeCommandPrograms(
       parentConfig,
+      parentMeta,
       parentConfigFullName,
       parentType
     );
@@ -259,6 +260,7 @@ export async function discoverCommands(
 
         const childPrograms = await makeCommandPrograms(
           childConfig,
+          childMeta,
           childConfigFullName,
           'pure child'
         );
@@ -282,6 +284,8 @@ export async function discoverCommands(
           childConfigFullName,
           parentPrograms.helper
         );
+
+        parentMeta.hasChildren = true;
 
         debug_load(
           `discovered pure child configuration (depth: %O) for command %O`,
@@ -379,10 +383,14 @@ export async function discoverCommands(
           // ? Ensure configuration namespace is copied by value!
           rawConfig = Object.assign({}, rawConfig);
 
+          const command = (rawConfig.command ?? '$0').trim() as '$0';
+
+          meta.isImplemented = rawConfig.handler !== undefined || command !== '$0';
+
           const finalConfig: Configuration = {
             aliases: rawConfig.aliases?.map((str) => replaceSpaces(str).trim()) || [],
             builder: rawConfig.builder || {},
-            command: (rawConfig.command ?? '$0').trim() as '$0',
+            command,
             deprecated: rawConfig.deprecated ?? false,
             // ? This property is trimmed below
             description: rawConfig.description ?? '',
@@ -559,6 +567,7 @@ export async function discoverCommands(
    */
   async function makeCommandPrograms(
     config: Configuration,
+    meta: ProgramMetadata,
     fullName: string,
     type: ProgramType
   ): Promise<Programs> {
@@ -649,6 +658,7 @@ export async function discoverCommands(
 
           // ! Notice the helper program is ALWAYS the one outputting help text.
           programs.helper.showHelp('log');
+          context.state.didOutputHelpOrVersionText = true;
 
           debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
@@ -661,6 +671,7 @@ export async function discoverCommands(
 
           // eslint-disable-next-line no-console
           console.log(context.state.globalVersionOption?.text || '???');
+          context.state.didOutputHelpOrVersionText = true;
 
           debug_('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
@@ -704,12 +715,6 @@ export async function discoverCommands(
       config.deprecated
     );
 
-    // * Ensure yargs knows to demand a command when attempting to invoke parent
-    // * programs that (1) have children and (2) do not have a handler or custom
-    // * command config.
-
-    // TODO
-
     // * Finished!
 
     debug_(
@@ -732,26 +737,36 @@ export async function discoverCommands(
         debug_('error.message: %O', error?.message);
         debug_('error is native error: %O', isNativeError(error));
 
-        // TODO: report errors differently here? (tied-in to other TODOs)
-
+        // ? If a failure happened but error is not defined, it was *probably*
+        // ? a yargs-specific error (e.g. argument validation failure).
         // ! Is there a better way to differentiate between Yargs-specific
-        // ! errors and third-party errors? Or is this the best we can do?
-        if (!error && context.state.showHelpOnFail) {
-          // ? If a failure happened but error is not defined, it was *probably*
-          // ? a yargs-specific error (e.g. argument validation failure).
-          debug_('sending help text to stderr (triggered by yargs)');
+        // ! errors and third-party errors? Or is `!error` the best we can do?
+        const isProbablyVanillaYargsError = !error;
+
+        assert(!meta.hasChildren || type !== 'pure child', ErrorMessage.GuruMeditation());
+        // ? Only helpers of "parous" parents should send help text to stderr
+        const isParousParentHelperHandlingCommandNotImplementedError =
+          meta.hasChildren &&
+          descriptor === 'helper' &&
+          isCommandNotImplementedError(error);
+
+        if (
+          context.state.showHelpOnFail &&
+          (isProbablyVanillaYargsError ||
+            isParousParentHelperHandlingCommandNotImplementedError)
+        ) {
+          debug_(
+            `sending help text to stderr (triggered by ${error ? 'black flag' : 'yargs'})`
+          );
           program.showHelp('error');
-          // eslint-disable-next-line no-console
-          console.error();
+          context.state.didOutputHelpOrVersionText = true;
         }
 
         if (isCliError(error)) {
           debug_('exited failure handler: re-throwing error as-is');
           throw error;
         } else {
-          debug_(
-            'exited failure handler: re-throwing error/message wrapped with CliError'
-          );
+          debug_('exited failure handler: re-throwing error wrapped with CliError');
           throw new CliError(error || message || ErrorMessage.GuruMeditation());
         }
       };
@@ -849,7 +864,7 @@ export async function discoverCommands(
             Object.hasOwn(vanillaYargs, property) ||
             Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property));
 
-        if (['help', 'version'].includes(property as string)) {
+        if (['help', 'version', 'demand', 'demandCommand'].includes(property as string)) {
           return function () {
             throw new AssertionFailedError(
               ErrorMessage.AssertionFailureInvocationNotAllowed(property as string)
@@ -883,8 +898,6 @@ export async function discoverCommands(
           // ? undefined behavior and heisenbugs. Yuck.
           return void 'disabled by Black Flag (use parseAsync instead)';
         }
-
-        // TODO: disable demand and demandCommand
 
         if (descriptor === 'helper' && typeof property === 'string') {
           if (property.startsWith('strict') || property.startsWith('demand')) {
@@ -1008,7 +1021,12 @@ export async function discoverCommands(
             };
           }
 
-          // TODO: demandCommand_force
+          if (property === 'demandCommand_force') {
+            return function () {
+              vanillaYargs;
+              return proxy;
+            };
+          }
         }
 
         // ! This line (and any line like it) has to be gated behind the if

@@ -8,6 +8,7 @@ import assert from 'node:assert';
 import { ErrorMessage } from 'universe/error';
 import * as bf from 'universe/exports/index';
 import * as bf_util from 'universe/exports/util';
+import { capitalize } from 'universe/util';
 
 import { expectedCommandsRegex, getFixturePath } from 'testverse/helpers';
 import { withMocks } from 'testverse/setup';
@@ -24,6 +25,10 @@ const mockNullArguments: bf.NullArguments = {
     state: expect.any(Object)
   })
 };
+
+const capitalizedCommandNotFoundErrorMessage = capitalize(
+  ErrorMessage.CommandNotImplemented()
+);
 
 describe('::configureProgram', () => {
   it('returns PreExecutionContext with expected properties and values', async () => {
@@ -49,7 +54,8 @@ describe('::configureProgram', () => {
         'globalVersionOption',
         'showHelpOnFail',
         'firstPassArgv',
-        'deepestParseResult'
+        'deepestParseResult',
+        'didOutputHelpOrVersionText'
       ]);
       expect(rest).toBeEmpty();
     });
@@ -781,25 +787,63 @@ describe('::configureProgram', () => {
           [expect.stringContaining('--help')],
           [],
           [expect.stringMatching(/^Not enough/)],
-          [expect.stringContaining('--help')],
-          [],
-          [
-            ErrorMessage.CommandNotImplemented()[0].toUpperCase() +
-              ErrorMessage.CommandNotImplemented().slice(1)
-          ]
+          [capitalizedCommandNotFoundErrorMessage]
         ]);
       });
     });
 
-    it('throws CommandNotImplemented error when attempting to execute a childless command with no handler export and no custom command export', async () => {
+    it('throws CommandNotImplemented error and does not output help text when attempting to execute a childless command with no handler export and no custom command export', async () => {
       expect.hasAssertions();
 
-      // TODO: that's ALL TYPES of childless commands (pure child, childless
-      // TODO: parent, childless root)
+      await withMocks(async ({ errorSpy }) => {
+        // * Childless root
+        await expect(
+          (await bf.configureProgram(getFixturePath('empty-index-file'))).execute()
+        ).rejects.toMatchObject({
+          message: ErrorMessage.CommandNotImplemented()
+        });
+
+        // * Pure child
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('nested-several-files-empty'))
+          ).execute(['nested', 'first'])
+        ).rejects.toMatchObject({
+          message: ErrorMessage.CommandNotImplemented()
+        });
+
+        // * Childless parent
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('nested-one-file-index-empty'))
+          ).execute(['nested'])
+        ).rejects.toMatchObject({
+          message: ErrorMessage.CommandNotImplemented()
+        });
+
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [capitalizedCommandNotFoundErrorMessage],
+          [capitalizedCommandNotFoundErrorMessage],
+          [capitalizedCommandNotFoundErrorMessage]
+        ]);
+      });
     });
 
-    it('rethrows CommandNotImplemented error as CliError and prints help text when attempting to execute a parent/root command that has children and no handler export and no custom command export', async () => {
+    it('outputs help text in lieu of an error message when attempting to execute a parent command that has children and no handler export and no custom command export', async () => {
       expect.hasAssertions();
+
+      await withMocks(async ({ errorSpy }) => {
+        // * Implementation-less parent with children
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('nested-several-files-empty'))
+          ).execute(['nested'])
+        ).rejects.toMatchObject({
+          message: ErrorMessage.CommandNotImplemented()
+        });
+
+        expect(errorSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
+      });
     });
 
     it('throws when execution fails', async () => {
@@ -2923,7 +2967,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await bf.runProgram(getFixturePath('one-file-index'), '--bad');
-      await bf.runProgram(getFixturePath('nested-one-file-index'), 'nested --bad');
+      await bf.runProgram(getFixturePath('nested-one-file-index-empty'), 'nested --bad');
 
       expect(errorSpy).toHaveBeenCalledTimes(6);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
@@ -3017,8 +3061,8 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.runProgram(getFixturePath('one-file-loose'), '--help', {
           configureExecutionEpilogue(argv, context) {
-            counter++;
             expect(context.state.isGracefullyExiting).toBeTrue();
+            counter++;
             return argv;
           }
         })
@@ -3029,8 +3073,8 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.runProgram(getFixturePath('one-file-loose'), '--version', {
           configureExecutionEpilogue(argv, context) {
-            counter++;
             expect(context.state.isGracefullyExiting).toBeTrue();
+            counter++;
             return argv;
           }
         })
@@ -3041,8 +3085,8 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.runProgram(getFixturePath('one-file-loose'), '--okay', {
           configureExecutionEpilogue(argv, context) {
-            counter++;
             expect(context.state.isGracefullyExiting).toBeFalse();
+            counter++;
             return argv;
           }
         })
@@ -3050,6 +3094,66 @@ describe('<command module auto-discovery>', () => {
 
       expect(counter).toBe(3);
       expect(logSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it('sets context.state.didOutputHelpOrVersionText to true after help or version text has been output', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
+      let counter = 0;
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--help', {
+          configureExecutionEpilogue(argv, context) {
+            expect(context.state.didOutputHelpOrVersionText).toBeTrue();
+            counter++;
+            return argv;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(1);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--version', {
+          configureExecutionEpilogue(argv, context) {
+            expect(context.state.didOutputHelpOrVersionText).toBeTrue();
+            counter++;
+            return argv;
+          }
+        })
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(2);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-loose'), '--okay', {
+          configureExecutionEpilogue(argv, context) {
+            expect(context.state.didOutputHelpOrVersionText).toBeFalse();
+            counter++;
+            return argv;
+          }
+        })
+      ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(counter).toBe(3);
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(errorSpy).toHaveBeenCalledTimes(0);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-index'), '--bad', {
+          configureErrorHandlingEpilogue(_, __, context) {
+            expect(context.state.didOutputHelpOrVersionText).toBeTrue();
+            counter++;
+          }
+        })
+      ).resolves.toBeUndefined();
+
+      expect(counter).toBe(4);
+      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
     });
   });
 
@@ -3164,7 +3268,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('throws when calling demandCommand from a builder function', async () => {
+  it('throws when calling demand or demandCommand from a builder function', async () => {
     expect.hasAssertions();
   });
 

@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 
-import { FrameworkExitCode } from 'universe/constant';
+import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import { getRootDebugLogger } from 'universe/debug';
 
 import {
@@ -488,6 +488,15 @@ export function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoExc
     'expected' in error &&
     'operator' in error
   );
+}
+
+/**
+ * Creates an object with a "hidden" `[$executionContext]` property.
+ *
+ * @internal
+ */
+export function wrapExecutionContext(context: ExecutionContext) {
+  return { [$executionContext]: context };
 }
 
 /**

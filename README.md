@@ -1462,13 +1462,14 @@ Each of these six commands is actually _three_ programs:
 
 1. The **effector** (`programs.effector`) programs is responsible for
    second-pass arguments parsing and comprehensive validation, executing each
-   command's actual [`handler`][7] function, and ensuring the final parse result
-   bubbles up to the router program.
+   command's actual [`handler`][7] function, generating specific help text
+   during errors, and ensuring the final parse result bubbles up to the router
+   program.
 
-2. The **helper** (`programs.helper`) programs is responsible for generating all
-   help text as well as first-pass arguments parsing and initial validation.
-   Said parse result is used as the `argv` third parameter passed to the
-   [`builder`][7] functions of effectors.
+2. The **helper** (`programs.helper`) programs is responsible for generating
+   generic help text as well as first-pass arguments parsing and initial
+   validation. Said parse result is used as the `argv` third parameter passed to
+   the [`builder`][7] functions of effectors.
 
 3. The **router** (`programs.router`) programs is responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and

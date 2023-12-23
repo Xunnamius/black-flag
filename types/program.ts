@@ -60,7 +60,8 @@ export type Program<
   // ? signature exposure in the Argv type exposed by yargs
 
   /**
-   * @see `yargs::command`
+   * @see {@link _Program.command}
+   * @internal
    */
   command: {
     (
@@ -77,14 +78,15 @@ export type Program<
   };
 
   /**
-   * Like `yargs::showHelpOnFail`, but with no second `message` parameter. If
-   * you want to output some specific error message, use a configuration hook or
-   * `yargs::epilogue`.
+   * Like `yargs::showHelpOnFail` except (1) it also determines if help text is
+   * shown when executing an unimplemented parent command and (2) it has no
+   * second `message` parameter. If you want to output some specific error
+   * message, use a configuration hook or `yargs::epilogue`.
    *
    * Invoking this method will affect all programs in your command hierarchy,
    * not just the program on which it was invoked.
    *
-   * @see `yargs::showHelpOnFail`
+   * @see {@link _Program.showHelpOnFail}
    */
   showHelpOnFail: (enabled: boolean) => Program<CustomCliArguments>;
 
@@ -92,7 +94,7 @@ export type Program<
    * Identical to `yargs::command` except its execution is enqueued and
    * deferred until {@link Program.command_finalize_deferred} is called.
    *
-   * @see `yargs::command`
+   * @see {@link _Program.command}
    * @internal
    */
   command_deferred: Program<CustomCliArguments>['command'];
@@ -102,6 +104,12 @@ export type Program<
    * @internal
    */
   command_finalize_deferred: () => void;
+
+  /**
+   * @see {@link _Program.demandCommand}
+   * @internal
+   */
+  demandCommand_force: (min: 1) => void;
 };
 
 /**
@@ -109,7 +117,10 @@ export type Program<
  */
 export type EffectorProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<Program<CustomCliArguments>, 'command_deferred' | 'command_finalize_deferred'>;
+> = Omit<
+  Program<CustomCliArguments>,
+  'demandCommand_force' | 'command_deferred' | 'command_finalize_deferred'
+>;
 
 /**
  * Represents an "helper" {@link Program} instance.
@@ -206,6 +217,19 @@ export type ProgramMetadata = {
    * 1.**
    */
   reservedCommandNames: string[];
+  /**
+   * If `true`, this command exported neither a `command` string nor a `handler`
+   * function. Black Flag therefore considers this command "unimplemented".
+   *
+   * When executed, unimplemented commands will show help text before throwing a
+   * context-specific error.
+   */
+  isImplemented: boolean;
+  /**
+   * If `true`, this command is a "pure parent" or "parent-child" that has at
+   * least one child command.
+   */
+  hasChildren: boolean;
 };
 
 /**
@@ -445,6 +469,13 @@ export type ExecutionContext = {
      * @default undefined
      */
     deepestParseResult: Arguments | undefined;
+    /**
+     * If `true`, Black Flag sent either help or version text to stdout or
+     * stderr.
+     *
+     * @default false
+     */
+    didOutputHelpOrVersionText: boolean;
 
     [key: string]: unknown;
   };
