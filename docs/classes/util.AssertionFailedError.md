@@ -57,7 +57,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L170)
+[src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/49460ac/src/error.ts#L170)
 
 ## Properties
 
@@ -71,7 +71,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L166)
+[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/49460ac/src/error.ts#L166)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/9fc72cf/src/error.ts#L85)
+[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/49460ac/src/error.ts#L85)
 
 ___
 
