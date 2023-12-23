@@ -60,7 +60,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/49460ac/src/error.ts#L67)
+[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/5838645/src/error.ts#L67)
 
 ___
 
@@ -79,13 +79,13 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:152](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L152)
+[types/program.ts:143](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L143)
 
 ___
 
 ### EffectorProgram
 
-Ƭ **EffectorProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](util.md#program)\<`CustomCliArguments`\>, ``"strictDemandCommand"`` \| ``"command_deferred"`` \| ``"command_finalize_deferred"``\>
+Ƭ **EffectorProgram**\<`CustomCliArguments`\>: `Omit`\<[`Program`](util.md#program)\<`CustomCliArguments`\>, ``"command_deferred"`` \| ``"command_finalize_deferred"``\>
 
 Represents an "effector" [Program](util.md#program) instance.
 
@@ -97,7 +97,7 @@ Represents an "effector" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:118](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L118)
+[types/program.ts:112](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L112)
 
 ___
 
@@ -117,9 +117,10 @@ Represents a globally-accessible shared context object singleton.
 | :------ | :------ | :------ |
 | `commands` | `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](util.md#programmetadata) ; `programs`: [`Programs`](util.md#programs)  }\> | A Map consisting of auto-discovered [Program](util.md#program) instances and their associated [ProgramMetadata](util.md#programmetadata) as singular object values with their respective _full names_ as keys. Note that key-value pairs will always be iterated in insertion order, implying the first pair in the Map will always be the root command. |
 | `debug` | `ExtendedDebugger` | The ExtendedDebugger for the current runtime level. |
-| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `didOutputHelpOrVersionText`: `boolean` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `globalVersionOption`: \{ `description`: `string` ; `name`: `string` ; `text`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `isHandlingVersionOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
+| `state` | \{ `[key: string]`: `unknown`; `deepestParseResult`: [`Arguments`](index.md#arguments) \| `undefined` ; `didOutputHelpOrVersionText`: `boolean` ; `finalError`: [`CliError`](../classes/index.CliError.md) \| `undefined` ; `firstPassArgv`: [`Arguments`](index.md#arguments) \| `undefined` ; `globalHelpOption`: \{ `description`: `string` ; `name`: `string`  } \| `undefined` ; `globalVersionOption`: \{ `description`: `string` ; `name`: `string` ; `text`: `string`  } \| `undefined` ; `initialTerminalWidth`: `number` ; `isGracefullyExiting`: `boolean` ; `isHandlingHelpOption`: `boolean` ; `isHandlingVersionOption`: `boolean` ; `rawArgv`: typeof `process.argv` ; `showHelpOnFail`: `boolean`  } | The current state of the execution environment. |
 | `state.deepestParseResult` | [`Arguments`](index.md#arguments) \| `undefined` | Stores the result of the latest call to `EffectorProgram::parseAsync`. This is necessary because, with our depth-first multi-yargs architecture, the parse job done by shallower programs in the chain must not mutate the result of the deepest call to `EffectorProgram::parseAsync` in the execution chain. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
 | `state.didOutputHelpOrVersionText` | `boolean` | If `true`, Black Flag sent either help or version text to stdout or stderr. **`Default`** ```ts false ``` |
+| `state.finalError` | [`CliError`](../classes/index.CliError.md) \| `undefined` | Contains the final error that will be communicated to the user, if defined. Ideally we wouldn't have to track this and we could just rely on yargs's exception handling plumbing, but there are trap doors where yargs will simply swallow errors and do other weird stuff. Instead of trying to deal with all that, we'll just handle it ourselves. **`Default`** ```ts undefined ``` |
 | `state.firstPassArgv` | [`Arguments`](index.md#arguments) \| `undefined` | Allows helper and effector programs to keep track of pre-pared arguments. Note: this property should not be relied upon or mutated by end-developers. **`Default`** ```ts undefined ``` |
 | `state.globalHelpOption` | \{ `description`: `string` ; `name`: `string`  } \| `undefined` | `globalHelpOption` replaces the functionality of the disabled vanilla yargs `yargs::help` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the help option will take the form of `-${name}`, otherwise `--${name}`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "help", description: defaultHelpTextDescription } ``` |
 | `state.globalVersionOption` | \{ `description`: `string` ; `name`: `string` ; `text`: `string`  } \| `undefined` | `globalVersionOption` replaces the functionality of the disabled vanilla yargs `yargs::version` method. Set this to the value you want using the `configureExecutionContext` configuration hook (any other hook is run too late). `name`, if provided, must be >= 1 character in length. If `name` is exactly one character in length, the version option will take the form of `-${name}`, otherwise `--${name}`. `text`, if provided, will be the version text sent to stdout and defaults to the "version" property in the nearest `package.json`. Note: this property should not be relied upon or mutated by end-developers outside of the `configureExecutionContext` configuration hook. Doing so will result in undefined behavior. **`Default`** ```ts { name: "version", description: defaultVersionTextDescription, text: `${packageJson.version}` } ``` |
@@ -132,7 +133,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:313](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L313)
+[types/program.ts:304](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L304)
 
 ___
 
@@ -172,7 +173,7 @@ instead.
 
 #### Defined in
 
-[types/program.ts:265](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L265)
+[types/program.ts:256](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L256)
 
 ___
 
@@ -196,7 +197,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:244](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L244)
+[types/program.ts:235](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L235)
 
 ___
 
@@ -214,7 +215,7 @@ Represents an "helper" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:128](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L128)
+[types/program.ts:119](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L119)
 
 ___
 
@@ -233,13 +234,13 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:276](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L276)
+[types/program.ts:267](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L267)
 
 ___
 
 ### Program
 
-Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](util.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"demand"`` \| ``"demandCommand"`` \| ``"strictCommands"`` \| ``"onFinishCommand"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](util.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `strictDemandCommand`: (`min`: ``1``) => `void`  }
+Ƭ **Program**\<`CustomCliArguments`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](util.md#frameworkarguments) & `CustomCliArguments`\>, ``"command"`` \| ``"demand"`` \| ``"demandCommand"`` \| ``"onFinishCommand"`` \| ``"showHelpOnFail"`` \| ``"version"`` \| ``"help"`` \| ``"exitProcess"`` \| ``"commandDir"`` \| ``"parse"`` \| ``"parsed"`` \| ``"parseSync"`` \| ``"argv"``\> & \{ `command`: (`command`: `string`[], `description`: `string` \| ``false``, `builder`: (`yargs`: `Argv`\<{}\>, `helpOrVersionSet`: `boolean`) => `Argv`\<{}\> \| `Record`\<`string`, `never`\>, `handler`: (`args`: [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>) => `Promisable`\<`void`\>, `middlewares`: [], `deprecated`: `string` \| `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\> ; `command_deferred`: [`Program`](util.md#program)\<`CustomCliArguments`\>[``"command"``] ; `command_finalize_deferred`: () => `void` ; `showHelpOnFail`: (`enabled`: `boolean`) => [`Program`](util.md#program)\<`CustomCliArguments`\>  }
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -255,7 +256,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:40](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L40)
+[types/program.ts:41](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L41)
 
 ___
 
@@ -267,7 +268,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:147](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L147)
+[types/program.ts:138](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L138)
 
 ___
 
@@ -293,7 +294,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:175](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L175)
+[types/program.ts:166](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L166)
 
 ___
 
@@ -305,7 +306,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:142](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L142)
+[types/program.ts:133](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L133)
 
 ___
 
@@ -324,7 +325,7 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:165](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L165)
+[types/program.ts:156](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L156)
 
 ___
 
@@ -342,7 +343,7 @@ Represents an "router" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:135](https://github.com/Xunnamius/black-flag/blob/49460ac/types/program.ts#L135)
+[types/program.ts:126](https://github.com/Xunnamius/black-flag/blob/5838645/types/program.ts#L126)
 
 ## Variables
 
@@ -389,12 +390,13 @@ A collection of possible error and warning messages emitted by Black Flag.
 | `Generic` | () => `string` |
 | `GracefulEarlyExit` | () => `string` |
 | `InvalidCharacters` | (`str`: `string`, `violation`: `string`) => `string` |
+| `InvalidCommandInvocation` | () => `string` |
 | `InvalidConfigureArgumentsReturnType` | () => `string` |
 | `InvalidConfigureExecutionContextReturnType` | () => `string` |
 
 #### Defined in
 
-[src/error.ts:182](https://github.com/Xunnamius/black-flag/blob/49460ac/src/error.ts#L182)
+[src/error.ts:182](https://github.com/Xunnamius/black-flag/blob/5838645/src/error.ts#L182)
 
 ___
 
@@ -407,7 +409,7 @@ Hard-coded default option name for dumping help text to stdout. For example:
 
 #### Defined in
 
-[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/49460ac/src/constant.ts#L19)
+[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L19)
 
 ___
 
@@ -419,7 +421,7 @@ Hard-coded default help option description text.
 
 #### Defined in
 
-[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/49460ac/src/constant.ts#L24)
+[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L24)
 
 ___
 
@@ -434,7 +436,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/49460ac/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L13)
 
 ___
 
@@ -447,7 +449,7 @@ example: `--${defaultVersionOptionName}`.
 
 #### Defined in
 
-[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/49460ac/src/constant.ts#L30)
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L30)
 
 ___
 
@@ -459,7 +461,7 @@ Hard-coded default version option description text.
 
 #### Defined in
 
-[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/49460ac/src/constant.ts#L35)
+[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/5838645/src/constant.ts#L35)
 
 ## Functions
 
@@ -505,7 +507,7 @@ obj is Arguments
 
 #### Defined in
 
-[src/util.ts:462](https://github.com/Xunnamius/black-flag/blob/49460ac/src/util.ts#L462)
+[src/util.ts:462](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L462)
 
 ___
 
@@ -527,7 +529,7 @@ error is ErrnoException & Object
 
 #### Defined in
 
-[src/util.ts:476](https://github.com/Xunnamius/black-flag/blob/49460ac/src/util.ts#L476)
+[src/util.ts:476](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L476)
 
 ___
 
@@ -549,7 +551,7 @@ obj is NullArguments
 
 #### Defined in
 
-[src/util.ts:451](https://github.com/Xunnamius/black-flag/blob/49460ac/src/util.ts#L451)
+[src/util.ts:451](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L451)
 
 ___
 
@@ -571,7 +573,7 @@ obj is PreExecutionContext
 
 #### Defined in
 
-[src/util.ts:438](https://github.com/Xunnamius/black-flag/blob/49460ac/src/util.ts#L438)
+[src/util.ts:438](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L438)
 
 ___
 
@@ -634,4 +636,4 @@ details.
 
 #### Defined in
 
-[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/49460ac/src/util.ts#L45)
+[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/5838645/src/util.ts#L45)
