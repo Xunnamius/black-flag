@@ -22,6 +22,7 @@ export {
   AssertionFailedError,
   CommandNotImplementedError,
   ErrorMessage,
+  isCommandNotImplementedError,
   type CliErrorOptions
 } from 'universe/error';
 
