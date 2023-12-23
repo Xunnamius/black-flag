@@ -518,10 +518,9 @@ commands. Specifically:
 - Access to the parsed process arguments at the time the error occurred (if
   available).
 
-How errors thrown from [`builder`][7] and [`handler`][7] functions are reported
-to the user is determined by the optionally-provided
-[`configureErrorHandlingEpilogue`][13] configuration hook, as well as each
-command file's optionally-exported [`builder`][7] function.
+How errors thrown during execution are reported to the user is determined by the
+optionally-provided [`configureErrorHandlingEpilogue`][13] configuration hook,
+as well as each command file's optionally-exported [`builder`][7] function.
 
 ```typescript
 // File: my-cli-project/cli.ts
@@ -1541,22 +1540,18 @@ on the second pass (via [`builder`'s new third parameter][6]).
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
 
-- An end user trying to invoke a parent command with no implementation will
-  cause help text to be printed and an exception to be thrown with default error
-  exit code. E.g.: `myctl parent child1` and `myctl parent child2` work but we
-  want `myctl parent` to show help text listing the available commands ("child1"
-  and "child2") and exit with a "not found" error.
+- An end user trying to invoke a parent command with no implementation, or a
+  non-existent child command of such a parent, will cause help text to be
+  printed and an exception to be thrown with default error exit code. E.g.:
+  `myctl parent child1` and `myctl parent child2` work but we want
+  `myctl parent` to show help text listing the available commands ("child1" and
+  "child2") and exit with an error indicating the given command was not found.
 
-- An end user trying to invoke a non-existent child of a strict parent command
-  with strict child commands will cause help text to be printed and an exception
-  to be thrown with default error exit code. E.g.: we want
-  `myctl exists noexist` and `myctl noexist` to show help text listing the
-  available commands ("exists") and exit with a "not found" error.
-
-  > Note that this section doesn't cover the case of attempting to invoke a
-  > non-existent child of a _pure child_ command, which is the same thing as
-  > giving the wrong arguments to any command and is therefore handled by yargs
-  > validation already, so we don't worry about it.
+- An end user trying to invoke a non-existent child of a strict pure child
+  command will cause help text to be printed and an exception to be thrown with
+  default error exit code. E.g.: we want `myctl exists noexist` and
+  `myctl noexist` to show help text listing the available commands ("exists")
+  and exit with an error indicating bad arguments.
 
 - The right command gets to generate help and version text when triggered via
   arguments. To this end, passing `--help`/`--version` or equivalent arguments
@@ -1570,8 +1565,10 @@ entirely.
 
 However, without vanilla yargs's strict mode, attempting to meet these
 guarantees would require allowing attempts to invoke non-existent child commands
-without throwing an error. This would result in a deeply flawed end-user
-experience.
+without throwing an error or throwing the wrong/confusing error. Worse, it would
+require a more rigid set of assumptions for the yargs instances, meaning some
+API features would be unnecessarily disabled. This would result in a deeply
+flawed experience for developers and users.
 
 Hence the need for a distinct _routing program_ which allows parent commands to
 recursively chain/route control to child commands in your hierarchy even when
