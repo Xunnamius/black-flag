@@ -27,7 +27,7 @@ import {
 } from 'universe/constant';
 
 import type { Promisable } from 'type-fest';
-import type { ConfigurationHooks } from 'types/configure';
+import type { ConfigurationHooks, ConfigureErrorHandlingEpilogue } from 'types/configure';
 
 import type {
   ExecutionContext,
@@ -60,13 +60,13 @@ export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
   commandModulePath: string,
-  configurationHooks?: Promisable<ConfigurationHooks<CustomContext>>
-): Promise<PreExecutionContext<CustomContext>> {
+  configurationHooks?: Promisable<ConfigurationHooks>
+): Promise<PreExecutionContext> {
   debug('configureProgram was invoked');
 
   const finalConfigurationHooks = Object.assign(
     {},
-    ((await configurationHooks) || {}) as Required<ConfigurationHooks<CustomContext>>
+    ((await configurationHooks) || {}) as Required<ConfigurationHooks>
   );
 
   finalConfigurationHooks.configureArguments ??= (rawArgv) => rawArgv;
@@ -77,26 +77,8 @@ export async function configureProgram<
     return context as CustomContext;
   };
 
-  finalConfigurationHooks.configureErrorHandlingEpilogue ??= (
-    { message, error },
-    _,
-    { state: { didOutputHelpOrVersionText } }
-  ) => {
-    if (didOutputHelpOrVersionText) {
-      if (!isCommandNotImplementedError(error)) {
-        // eslint-disable-next-line no-console
-        console.error();
-        outputErrorMessage();
-      }
-    } else {
-      outputErrorMessage();
-    }
-
-    function outputErrorMessage() {
-      // eslint-disable-next-line no-console
-      console.error(capitalize(message));
-    }
-  };
+  finalConfigurationHooks.configureErrorHandlingEpilogue ??=
+    defaultErrorHandlingEpilogueConfigurationHook;
 
   debug('command module auto-discovery path: %O', commandModulePath);
   debug('configuration hooks: %O', finalConfigurationHooks);
@@ -376,6 +358,34 @@ export async function configureProgram<
     const root = context.commands.get(context.commands.keys().next().value);
     assert(root !== undefined, ErrorMessage.GuruMeditation());
     return root;
+  }
+}
+
+/**
+ * @internal
+ */
+export function defaultErrorHandlingEpilogueConfigurationHook(
+  ...[
+    { message, error },
+    _,
+    {
+      state: { didOutputHelpOrVersionText }
+    }
+  ]: Parameters<ConfigureErrorHandlingEpilogue>
+) {
+  if (didOutputHelpOrVersionText) {
+    if (!isCommandNotImplementedError(error)) {
+      // eslint-disable-next-line no-console
+      console.error();
+      outputErrorMessage();
+    }
+  } else {
+    outputErrorMessage();
+  }
+
+  function outputErrorMessage() {
+    // eslint-disable-next-line no-console
+    console.error(capitalize(message));
   }
 }
 

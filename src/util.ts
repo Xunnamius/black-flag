@@ -1,7 +1,13 @@
 import assert from 'node:assert';
+import { isNativeError } from 'node:util/types';
 
 import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import { getRootDebugLogger } from 'universe/debug';
+
+import {
+  configureProgram,
+  defaultErrorHandlingEpilogueConfigurationHook
+} from 'universe/index';
 
 import {
   AssertionFailedError,
@@ -13,7 +19,6 @@ import {
 import type { Promisable } from 'type-fest';
 import type { ConfigurationHooks } from 'types/configure';
 
-import { isNativeError } from 'node:util/types';
 import type {
   Arguments,
   ExecutionContext,
@@ -43,7 +48,6 @@ const debug = getRootDebugLogger().extend('util');
  * details.
  */
 export function makeRunner<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   options: {
@@ -58,7 +62,7 @@ export function makeRunner<
          *
          * @see {@link runProgram}
          */
-        configurationHooks?: Promisable<ConfigurationHooks<ExecutionContext>>;
+        configurationHooks?: Promisable<ConfigurationHooks>;
         preExecutionContext?: undefined;
       }
     | {
@@ -67,7 +71,7 @@ export function makeRunner<
          *
          * @see {@link runProgram}
          */
-        preExecutionContext?: Promisable<PreExecutionContext<ExecutionContext>>;
+        preExecutionContext?: Promisable<PreExecutionContext>;
         configurationHooks?: undefined;
       }
   )
@@ -77,24 +81,18 @@ export function makeRunner<
   return <
     T extends
       | [commandModulePath: string]
-      | [
-          commandModulePath: string,
-          configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
-        ]
-      | [
-          commandModulePath: string,
-          preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
-        ]
+      | [commandModulePath: string, configurationHooks: Promisable<ConfigurationHooks>]
+      | [commandModulePath: string, preExecutionContext: Promisable<PreExecutionContext>]
       | [commandModulePath: string, argv: string | string[]]
       | [
           commandModulePath: string,
           argv: string | string[],
-          configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
+          configurationHooks: Promisable<ConfigurationHooks>
         ]
       | [
           commandModulePath: string,
           argv: string | string[],
-          preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
+          preExecutionContext: Promisable<PreExecutionContext>
         ]
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
@@ -150,8 +148,8 @@ export function makeRunner<
 
     debug_('calling runProgram with the following arguments: %O', parameters);
 
-    return runProgram<CustomContext, CustomCliArguments>(
-      ...(parameters as Parameters<typeof runProgram<CustomContext, CustomCliArguments>>)
+    return runProgram<CustomCliArguments>(
+      ...(parameters as Parameters<typeof runProgram<CustomCliArguments>>)
     );
   };
 }
@@ -173,7 +171,6 @@ export function makeRunner<
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string]
@@ -194,13 +191,9 @@ export async function runProgram<
  * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [
-    commandModulePath: string,
-    configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
-  ]
+  ...args: [commandModulePath: string, configurationHooks: Promisable<ConfigurationHooks>]
 ): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the `preExecutionContext.execute()` function.
@@ -219,12 +212,11 @@ export async function runProgram<
  * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
-    preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
+    preExecutionContext: Promisable<PreExecutionContext>
   ]
 ): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
@@ -245,7 +237,6 @@ export async function runProgram<
  */
 export async function runProgram<
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [commandModulePath: string, argv: string | string[]]
@@ -267,13 +258,12 @@ export async function runProgram<
  * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
     argv: string | string[],
-    configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
+    configurationHooks: Promisable<ConfigurationHooks>
   ]
 ): Promise<NullArguments | Arguments<CustomCliArguments>>;
 /**
@@ -294,39 +284,31 @@ export async function runProgram<
  * if any other error occurs, or `Arguments` otherwise.
  */
 export async function runProgram<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args: [
     commandModulePath: string,
     argv: string | string[],
-    preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
+    preExecutionContext: Promisable<PreExecutionContext>
   ]
 ): Promise<NullArguments | Arguments<CustomCliArguments>>;
 export async function runProgram<
-  CustomContext extends ExecutionContext,
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
   ...args:
     | [commandModulePath: string]
-    | [
-        commandModulePath: string,
-        configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
-      ]
-    | [
-        commandModulePath: string,
-        preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
-      ]
+    | [commandModulePath: string, configurationHooks: Promisable<ConfigurationHooks>]
+    | [commandModulePath: string, preExecutionContext: Promisable<PreExecutionContext>]
     | [commandModulePath: string, argv: string | string[]]
     | [
         commandModulePath: string,
         argv: string | string[],
-        configurationHooks: Promisable<ConfigurationHooks<CustomContext>>
+        configurationHooks: Promisable<ConfigurationHooks>
       ]
     | [
         commandModulePath: string,
         argv: string | string[],
-        preExecutionContext: Promisable<PreExecutionContext<CustomContext>>
+        preExecutionContext: Promisable<PreExecutionContext>
       ]
 ): Promise<NullArguments | Arguments<CustomCliArguments> | undefined> {
   const debug_ = debug.extend('runProgram');
@@ -334,8 +316,9 @@ export async function runProgram<
 
   const commandModulePath = args[0];
   let argv: string | string[] | undefined = undefined;
-  let configurationHooks: ConfigurationHooks<CustomContext> | undefined = undefined;
-  let preExecutionContext: PreExecutionContext<CustomContext> | undefined = undefined;
+  let configurationHooks: ConfigurationHooks | undefined = undefined;
+  let preExecutionContext: PreExecutionContext | undefined = undefined;
+  let successfullyHandledErrorViaConfigurationHook = false;
 
   try {
     if (typeof args[1] === 'string' || Array.isArray(args[1])) {
@@ -376,9 +359,21 @@ export async function runProgram<
         : 'invoking configureProgram'
     );
 
-    preExecutionContext ||= await (
-      await import('universe/index')
-    ).configureProgram(commandModulePath, configurationHooks);
+    preExecutionContext ||= await configureProgram(
+      commandModulePath,
+      Promise.resolve(configurationHooks).then((givenHooks) => {
+        return {
+          ...givenHooks,
+          configureErrorHandlingEpilogue(...args) {
+            successfullyHandledErrorViaConfigurationHook = true;
+            return (
+              givenHooks?.configureErrorHandlingEpilogue ||
+              defaultErrorHandlingEpilogueConfigurationHook
+            )(...args);
+          }
+        };
+      })
+    );
 
     debug_('invoking preExecutionContext.execute');
 
@@ -420,6 +415,11 @@ export async function runProgram<
       return preExecutionContext?.state.deepestParseResult as
         | Arguments<CustomCliArguments>
         | undefined;
+    }
+
+    if (!successfullyHandledErrorViaConfigurationHook) {
+      // eslint-disable-next-line no-console
+      console.error(ErrorMessage.FrameworkError(error));
     }
 
     debug_('runProgram invocation "succeeded" (via error handler)');

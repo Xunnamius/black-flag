@@ -188,15 +188,22 @@ describe('::configureProgram', () => {
   });
 
   it('returns program instances instead of vanilla yargs instances from proxied methods', async () => {
-    expect.assertions(3);
+    expect.hasAssertions();
 
-    await bf.configureProgram(getFixturePath('one-file-loose'), {
-      configureExecutionPrologue({ effector, helper, router }) {
-        expect(effector.boolean('key')).toBe(effector);
-        expect(helper.options({ option: { boolean: true } })).toBe(helper);
-        expect(router.command(['x'], false, {}, () => {}, [], false)).toBe(router);
-      }
+    let succeeded = false;
+
+    await withMocks(async () => {
+      await bf.configureProgram(getFixturePath('one-file-loose'), {
+        configureExecutionPrologue({ effector, helper, router }) {
+          expect(effector.boolean('key')).toBe(effector);
+          expect(helper.options({ option: { boolean: true } })).toBe(helper);
+          expect(router.command(['x'], false, {}, () => {}, [], false)).toBe(router);
+          succeeded = true;
+        }
+      });
     });
+
+    expect(succeeded).toBeTrue();
   });
 
   it('throws when configureExecutionContext returns falsy', async () => {
@@ -214,51 +221,58 @@ describe('::configureProgram', () => {
   });
 
   it('throws when calling disallowed methods or properties on programs', async () => {
-    expect.assertions(15);
+    expect.hasAssertions();
 
-    await bf.configureProgram(getFixturePath('one-file-loose'), {
-      configureExecutionPrologue({ effector, helper, router }) {
-        const asYargs = (o: unknown): Argv => o as Argv;
+    let succeeded = false;
 
-        expect(() => asYargs(effector).help(false)).toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
-        );
-        expect(() => asYargs(helper).help(false)).toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
-        );
-        expect(() => asYargs(router).help(false)).toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('help')
-        );
+    await withMocks(async () => {
+      await bf.configureProgram(getFixturePath('one-file-loose'), {
+        configureExecutionPrologue({ effector, helper, router }) {
+          const asYargs = (o: unknown): Argv => o as Argv;
 
-        expect(() => asYargs(effector).parseSync()).toThrow(
-          ErrorMessage.AssertionFailureUseParseAsyncInstead()
-        );
-        expect(() => asYargs(helper).parseSync()).toThrow(
-          ErrorMessage.AssertionFailureUseParseAsyncInstead()
-        );
-        expect(() => asYargs(router).parseSync()).toThrow(
-          ErrorMessage.AssertionFailureUseParseAsyncInstead()
-        );
+          expect(() => asYargs(effector).help(false)).toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+          );
+          expect(() => asYargs(helper).help(false)).toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+          );
+          expect(() => asYargs(router).help(false)).toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+          );
 
-        expect(asYargs(effector).argv).toBeUndefined();
-        expect(asYargs(helper).argv).toBeUndefined();
-        expect(asYargs(router).argv).toBeUndefined();
+          expect(() => asYargs(effector).parseSync()).toThrow(
+            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+          );
+          expect(() => asYargs(helper).parseSync()).toThrow(
+            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+          );
+          expect(() => asYargs(router).parseSync()).toThrow(
+            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+          );
 
-        expect(() => asYargs(effector).showHelpOnFail(false)).not.toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
-        );
-        expect(() => asYargs(helper).showHelpOnFail(false)).not.toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
-        );
-        expect(() => asYargs(router).showHelpOnFail(false)).toThrow(
-          ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
-        );
+          expect(asYargs(effector).argv).toBeUndefined();
+          expect(asYargs(helper).argv).toBeUndefined();
+          expect(asYargs(router).argv).toBeUndefined();
 
-        expect(asYargs(effector).parsed).toBeFalse();
-        expect(asYargs(helper).parsed).toBeFalse();
-        expect(asYargs(router).parsed).toBeUndefined();
-      }
+          expect(() => asYargs(effector).showHelpOnFail(false)).not.toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+          );
+          expect(() => asYargs(helper).showHelpOnFail(false)).not.toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+          );
+          expect(() => asYargs(router).showHelpOnFail(false)).toThrow(
+            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+          );
+
+          expect(asYargs(effector).parsed).toBeFalse();
+          expect(asYargs(helper).parsed).toBeFalse();
+          expect(asYargs(router).parsed).toBeUndefined();
+          succeeded = true;
+        }
+      });
     });
+
+    expect(succeeded).toBeTrue();
   });
 
   describe('::execute', () => {
@@ -464,11 +478,11 @@ describe('::configureProgram', () => {
     it('supports "$1" interpolation in usage even when description is false and commands are hidden', async () => {
       expect.hasAssertions();
 
-      const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-false-description')
-      });
-
       await withMocks(async ({ logSpy }) => {
+        const run = bf_util.makeRunner({
+          commandModulePath: getFixturePath('nested-false-description')
+        });
+
         await expect(run('--help')).resolves.toBeDefined();
         await expect(run('nested --help')).resolves.toBeDefined();
         await expect(run('nested child --help')).resolves.toBeDefined();
@@ -500,11 +514,11 @@ describe('::configureProgram', () => {
     it('outputs error messages to console.error via default handler if no error handling configuration hook is provided', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-index'), {
-        configureErrorHandlingEpilogue: undefined
-      });
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-index'), {
+          configureErrorHandlingEpilogue: undefined
+        });
+
         await expect(execute(['bad-bad'])).rejects.toBeDefined();
         expect(errorSpy.mock.calls).toStrictEqual([
           [expect.stringMatching(/^Usage/)],
@@ -585,15 +599,15 @@ describe('::configureProgram', () => {
       const configureErrorHandlingEpilogueSpy = jest.fn();
       const configureExecutionEpilogueSpy = jest.fn(() => ({}) as Arguments);
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-handler-graceful'),
-        {
-          configureErrorHandlingEpilogue: configureErrorHandlingEpilogueSpy,
-          configureExecutionEpilogue: configureExecutionEpilogueSpy
-        }
-      );
-
       await withMocks(async () => {
+        const { execute } = await bf.configureProgram(
+          getFixturePath('one-file-throws-handler-graceful'),
+          {
+            configureErrorHandlingEpilogue: configureErrorHandlingEpilogueSpy,
+            configureExecutionEpilogue: configureExecutionEpilogueSpy
+          }
+        );
+
         await expect(execute()).resolves.toBeDefined();
 
         expect(configureErrorHandlingEpilogueSpy).not.toHaveBeenCalled();
@@ -606,14 +620,14 @@ describe('::configureProgram', () => {
 
       const configureErrorHandlingEpilogueSpy = jest.fn();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-index'), {
-        configureErrorHandlingEpilogue: configureErrorHandlingEpilogueSpy,
-        configureExecutionEpilogue: () => {
-          throw new Error('badness');
-        }
-      });
-
       await withMocks(async () => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-index'), {
+          configureErrorHandlingEpilogue: configureErrorHandlingEpilogueSpy,
+          configureExecutionEpilogue: () => {
+            throw new Error('badness');
+          }
+        });
+
         await expect(execute()).rejects.toBeDefined();
 
         expect(configureErrorHandlingEpilogueSpy.mock.calls).toStrictEqual([
@@ -659,11 +673,11 @@ describe('::configureProgram', () => {
     it('calls builder twice, passes correct programs and third parameter on second pass', async () => {
       expect.hasAssertions();
 
-      const { execute, rootPrograms } = await bf.configureProgram(
-        getFixturePath('one-file-verbose-builder')
-      );
-
       await withMocks(async ({ logSpy }) => {
+        const { execute, rootPrograms } = await bf.configureProgram(
+          getFixturePath('one-file-verbose-builder')
+        );
+
         await expect(execute(['--option'])).resolves.toBeDefined();
 
         expect(logSpy.mock.calls).toStrictEqual([
@@ -854,9 +868,9 @@ describe('::configureProgram', () => {
     it('throws when execution fails', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-index'));
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-index'));
+
         await expect(execute(['--x-bad-x'])).rejects.toMatchObject({
           message: expect.stringMatching('x-bad-x')
         });
@@ -868,11 +882,11 @@ describe('::configureProgram', () => {
     it('throws if configureArguments returns falsy', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
-        configureArguments: () => undefined as any
-      });
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureArguments: () => undefined as any
+        });
+
         await expect(execute(['--help'])).rejects.toMatchObject({
           message: expect.stringMatching(/typeof process\.argv/)
         });
@@ -884,11 +898,11 @@ describe('::configureProgram', () => {
     it('throws if configureExecutionEpilogue returns falsy', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
-        configureExecutionEpilogue: () => undefined as any
-      });
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
+          configureExecutionEpilogue: () => undefined as any
+        });
+
         await expect(execute(['--vex'])).rejects.toMatchObject({
           message: expect.stringMatching(/Arguments/)
         });
@@ -900,9 +914,9 @@ describe('::configureProgram', () => {
     it('throws if invoked more than once', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'));
-
       await withMocks(async () => {
+        const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'));
+
         await expect(execute()).resolves.toBeDefined();
         await expect(execute()).rejects.toMatchObject({
           message: ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
@@ -913,11 +927,11 @@ describe('::configureProgram', () => {
     it('does the right thing when a command builder throws on first pass', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-builder-1')
-      );
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(
+          getFixturePath('one-file-throws-builder-1')
+        );
+
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -929,11 +943,11 @@ describe('::configureProgram', () => {
     it('does the right thing when a command builder throws on second pass', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-builder-2')
-      );
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(
+          getFixturePath('one-file-throws-builder-2')
+        );
+
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -945,11 +959,11 @@ describe('::configureProgram', () => {
     it('does the right thing when a command handler throws', async () => {
       expect.hasAssertions();
 
-      const { execute } = await bf.configureProgram(
-        getFixturePath('one-file-throws-handler-1')
-      );
-
       await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(
+          getFixturePath('one-file-throws-handler-1')
+        );
+
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -1461,7 +1475,7 @@ describe('::runProgram and util::makeRunner', () => {
         expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.Ok);
       });
 
-      await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
+      await withMocks(async ({ getExitCode, logSpy, warnSpy, errorSpy }) => {
         const run1 = bf_util.makeRunner({
           commandModulePath,
           preExecutionContext: bf.configureProgram(commandModulePath, {
@@ -1501,6 +1515,7 @@ describe('::runProgram and util::makeRunner', () => {
         expectedWarnSpy.push([5], [5], [6], [6]);
         expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
         expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.Ok);
+        expect(errorSpy).toHaveBeenCalledTimes(0);
 
         // ? Test that we can't invoke PreExecutionContext::execute >1 times
 
@@ -1510,6 +1525,18 @@ describe('::runProgram and util::makeRunner', () => {
         expect(logSpy.mock.calls).toStrictEqual(expect.objectContaining({ length: 2 }));
         expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
         expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.AssertionFailed);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [
+            expect.stringContaining(
+              ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
+            )
+          ],
+          [
+            expect.stringContaining(
+              ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
+            )
+          ]
+        ]);
       });
     });
   });
@@ -1555,14 +1582,16 @@ describe('::runProgram and util::makeRunner', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.NotImplemented when command provides no handler', async () => {
+  it('exits with bf.FrameworkExitCode.NotImplemented and outputs unhandled error text to stderr when child command provides no handler', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await bf.runProgram(getFixturePath('not-implemented'), 'cmd');
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.NotImplemented);
-      expect(errorSpy).toHaveBeenCalled();
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [capitalizedCommandNotImplementedErrorMessage]
+      ]);
     });
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -1573,12 +1602,59 @@ describe('::runProgram and util::makeRunner', () => {
       await run('cmd');
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.NotImplemented);
-      expect(errorSpy).toHaveBeenCalledTimes(1);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [capitalizedCommandNotImplementedErrorMessage]
+      ]);
 
-      await run('cmd');
+      await run('nested cmd');
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.NotImplemented);
-      expect(errorSpy).toHaveBeenCalledTimes(2);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [capitalizedCommandNotImplementedErrorMessage],
+        [capitalizedCommandNotImplementedErrorMessage]
+      ]);
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.DefaultError and outputs help text and invalid subcommand error to stderr when parous parent command provides no handler', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('not-implemented'), 'nested');
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+      ]);
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      const run = bf_util.makeRunner({
+        commandModulePath: getFixturePath('not-implemented')
+      });
+
+      await run('nested');
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+      ]);
+
+      await run('nested');
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [expect.stringContaining('--help')],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+      ]);
     });
   });
 
@@ -1609,7 +1685,7 @@ describe('::runProgram and util::makeRunner', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.AssertionFailed when sanity check or node assert fails', async () => {
+  it('exits with bf.FrameworkExitCode.AssertionFailed and outputs unhandled error text if any to stderr when sanity check or node assert fails', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -1618,7 +1694,9 @@ describe('::runProgram and util::makeRunner', () => {
       });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
-      expect(errorSpy).toHaveBeenCalled();
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [capitalize(ErrorMessage.InvalidConfigureArgumentsReturnType())]
+      ]);
     });
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -1626,20 +1704,25 @@ describe('::runProgram and util::makeRunner', () => {
         commandModulePath: getFixturePath('one-file-log-handler')
       });
 
+      // ? Inside handler, will be handled by configureExecutionEpilogue
       await run({ configureArguments: () => assert.fail() });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
-      expect(errorSpy).toHaveBeenCalled();
+      expect(errorSpy.mock.calls).toStrictEqual([['Failed']]);
     });
 
-    await withMocks(async ({ getExitCode }) => {
+    await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
         commandModulePath: getFixturePath('one-file-log-handler')
       });
 
+      // ? Outside handler, will NOT be handled by configureExecutionEpilogue
       await run({ configureExecutionContext: () => assert.fail() });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('UNHANDLED FRAMEWORK')]
+      ]);
     });
   });
 
@@ -1738,10 +1821,10 @@ describe('::runProgram and util::makeRunner', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.DefaultError upon non-wrapped-Error error type', async () => {
+  it('exits with bf.FrameworkExitCode.DefaultError and outputs unhandled error text to stderr upon non-wrapped-Error error type', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ getExitCode }) => {
+    await withMocks(async ({ getExitCode, errorSpy }) => {
       await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureExecutionContext() {
           // ? Throw very early before Black Flag has a chance to wrap the error
@@ -1751,6 +1834,9 @@ describe('::runProgram and util::makeRunner', () => {
       });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('UNHANDLED FRAMEWORK')]
+      ]);
     });
   });
 
@@ -1791,12 +1877,14 @@ describe('::isPreExecutionContext', () => {
   it('returns true iff obj is PreExecutionContext', async () => {
     expect.hasAssertions();
 
-    const preExecutionContext = await bf.configureProgram(
-      getFixturePath('one-file-loose')
-    );
+    await withMocks(async () => {
+      const preExecutionContext = await bf.configureProgram(
+        getFixturePath('one-file-loose')
+      );
 
-    expect(bf_util.isPreExecutionContext(preExecutionContext)).toBeTrue();
-    expect(bf_util.isPreExecutionContext({})).toBeFalse();
+      expect(bf_util.isPreExecutionContext(preExecutionContext)).toBeTrue();
+      expect(bf_util.isPreExecutionContext({})).toBeFalse();
+    });
   });
 });
 
@@ -1804,12 +1892,14 @@ describe('::isArguments', () => {
   it('returns true iff obj is Arguments', async () => {
     expect.hasAssertions();
 
-    const Arguments = await (
-      await bf.configureProgram(getFixturePath('one-file-loose'))
-    ).execute(['--ok']);
+    await withMocks(async () => {
+      const Arguments = await (
+        await bf.configureProgram(getFixturePath('one-file-loose'))
+      ).execute(['--ok']);
 
-    expect(bf_util.isArguments(Arguments)).toBeTrue();
-    expect(bf_util.isArguments({})).toBeFalse();
+      expect(bf_util.isArguments(Arguments)).toBeTrue();
+      expect(bf_util.isArguments({})).toBeFalse();
+    });
   });
 });
 
@@ -1817,13 +1907,16 @@ describe('::isNullArguments', () => {
   it('returns true iff obj is NullArguments', async () => {
     expect.hasAssertions();
 
-    const NullArguments = await (
-      await bf.configureProgram(getFixturePath('one-file-loose'))
-    ).execute(['--help']);
+    await withMocks(async ({ logSpy }) => {
+      const NullArguments = await (
+        await bf.configureProgram(getFixturePath('one-file-loose'))
+      ).execute(['--help']);
 
-    expect(bf_util.isNullArguments(NullArguments)).toBeTrue();
-    expect(bf_util.isArguments(NullArguments)).toBeTrue();
-    expect(bf_util.isNullArguments({})).toBeFalse();
+      expect(bf_util.isNullArguments(NullArguments)).toBeTrue();
+      expect(bf_util.isArguments(NullArguments)).toBeTrue();
+      expect(bf_util.isNullArguments({})).toBeFalse();
+      expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
+    });
   });
 });
 
@@ -2388,15 +2481,18 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('returns undefined with runProgram if configuration module directory is empty', async () => {
+  it('returns undefined and outputs unhandled error text to stderr with runProgram if configuration module directory is empty', async () => {
     expect.hasAssertions();
 
-    await withMocks(async ({ getExitCode }) => {
+    await withMocks(async ({ getExitCode, errorSpy }) => {
       await expect(
         bf.runProgram(getFixturePath('empty'), '--help')
       ).resolves.toBeUndefined();
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('UNHANDLED FRAMEWORK')]
+      ]);
     });
   });
 

@@ -5,6 +5,8 @@ import { isNativeError, isPromise, isSymbolObject } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
 
+import { suppressNodeWarnings } from 'multiverse/suppress-warnings';
+
 import { defaultUsageText } from 'universe/constant';
 import { capitalize, wrapExecutionContext } from 'universe/util';
 
@@ -35,6 +37,10 @@ import type { Configuration, ImportedConfigurationModule } from 'types/module';
 import type { Options } from 'yargs';
 
 const hasSpacesRegExp = /\s+/;
+
+// ! We disable ExperimentalWarning outputs because they're very annoying and
+// ! hard to deal with
+suppressNodeWarnings('ExperimentalWarning');
 
 /**
  * Recursively scans the filesystem for valid index files starting at
@@ -343,7 +349,8 @@ export async function discoverCommands(
         } catch (error) {
           if (
             isModuleNotFoundSystemError(error) &&
-            error.moduleName === maybeConfigPath
+            (error.moduleName?.endsWith(maybeConfigPath) ||
+              error.url?.endsWith(maybeConfigPath))
           ) {
             debug_.warn(
               'a recoverable failure occurred while attempting to load configuration: %O',
@@ -1285,20 +1292,19 @@ function replaceSpaces(str: string) {
 }
 
 /**
- * Type-guard for Node's "MODULE_NOT_FOUND" so-called `SystemError`.
+ * Type-guard for Node's "MODULE_NOT_FOUND" and "ERR_MODULE_NOT_FOUND" so-called
+ * `SystemError`s. Funny story: CJS uses "MODULE_NOT_FOUND" while ESM uses
+ * "ERR_MODULE_NOT_FOUND" and the two error types share very few properties.
  */
-function isModuleNotFoundSystemError(error: unknown): error is NodeJS.ErrnoException & {
-  _originalMessage: string;
-  code: 'MODULE_NOT_FOUND';
-  hint: string;
-  moduleName: string;
-  requireStack: unknown;
-  siblingWithSimilarExtensionFound: boolean;
+function isModuleNotFoundSystemError(error: unknown): error is Error & {
+  code: 'MODULE_NOT_FOUND' | 'ERR_MODULE_NOT_FOUND';
+  url?: string;
+  moduleName?: string;
 } {
   return (
     isNativeError(error) &&
     'code' in error &&
-    error.code === 'MODULE_NOT_FOUND' &&
-    'moduleName' in error
+    ((error.code === 'ERR_MODULE_NOT_FOUND' && 'url' in error) ||
+      (error.code === 'MODULE_NOT_FOUND' && 'moduleName' in error))
   );
 }

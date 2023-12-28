@@ -10,5 +10,6 @@
     "rootDir": "./"
   },
   "extends": "./tsconfig.json",
-  "include": ["types/**/*", "lib/**/*", "src/**/*"]
+  "include": ["types/**/*", "lib/**/*", "src/**/*"],
+  "exclude": ["**/test/**/*"]
 }
