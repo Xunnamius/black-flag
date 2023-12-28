@@ -374,6 +374,7 @@ export function defaultErrorHandlingEpilogueConfigurationHook(
   ]: Parameters<ConfigureErrorHandlingEpilogue>
 ) {
   if (didOutputHelpOrVersionText) {
+    /* istanbul ignore next */
     if (!isCommandNotImplementedError(error)) {
       // eslint-disable-next-line no-console
       console.error();

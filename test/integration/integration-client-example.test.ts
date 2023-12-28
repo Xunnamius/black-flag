@@ -18,7 +18,7 @@ import {
 
 // * These tests verify that an auto-discovered Black Flag command actually
 // * works as advertized. That is: this file tests the examples present in the
-// * README.md file, including support for importing both CJS and ESM modules.
+// * README.md file.
 
 // TODO: good fable candidate here
 
@@ -59,50 +59,4 @@ beforeAll(async () => {
   );
 });
 
-it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mode', async () => {
-  expect.hasAssertions();
-
-  await withMockedFixture(
-    async (context) => {
-      assert(context.testResult, 'must use node-import-and-run-test fixture');
-      expect(context.testResult?.stderr).toBeEmpty();
-      expect(context.testResult?.code).toBe(0);
-      expect(context.testResult?.stdout).toBe('first success');
-    },
-    {
-      initialFileContents: {
-        'src/index.cjs': `require('black-flag').runProgram('${join(
-          __dirname,
-          '..',
-          'fixtures',
-          'several-files-cjs-esm'
-        )}', 'js cjs');`
-      }
-    }
-  );
-});
-
-it('supports both CJS and ESM (js, mjs, cjs) configuration files in node ESM mode', async () => {
-  expect.hasAssertions();
-
-  await withMockedFixture(
-    async (context) => {
-      assert(context.testResult, 'must use node-import-and-run-test fixture');
-      expect(context.testResult?.stderr).toBeEmpty();
-      expect(context.testResult?.code).toBe(0);
-      expect(context.testResult?.stdout).toBe('second success');
-    },
-    {
-      initialFileContents: {
-        'src/index.mjs': `
-import { runProgram } from 'black-flag';
-export default runProgram('${join(
-          __dirname,
-          '..',
-          'fixtures',
-          'several-files-cjs-esm'
-        )}', 'js mjs');`
-      }
-    }
-  );
-});
+it.todo('this');

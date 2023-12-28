@@ -100,9 +100,9 @@ export async function discoverCommands(
     debug('loading package.json file from %O', pkg.path);
 
     try {
-      const { name, version }: PackageJson = await import(pkg.path, {
-        assert: { type: 'json' }
-      });
+      const { name, version }: PackageJson = (
+        await import(pkg.path, { assert: { type: 'json' } })
+      ).default;
 
       pkg.name = name;
       pkg.version = version;

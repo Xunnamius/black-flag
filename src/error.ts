@@ -106,10 +106,15 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
     message: string | undefined = undefined,
     superOptions: ErrorOptions = {}
   ) {
-    super(message ?? (typeof cause === 'string' ? cause : cause.message), {
-      cause,
-      ...superOptions
-    });
+    super(
+      message ??
+        (typeof cause === 'string' ? cause : cause?.message) ??
+        ErrorMessage.Generic(),
+      {
+        cause,
+        ...superOptions
+      }
+    );
 
     if (suggestedExitCode !== undefined) {
       this.suggestedExitCode = suggestedExitCode;

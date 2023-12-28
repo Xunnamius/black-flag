@@ -1614,6 +1614,9 @@ describe('::runProgram and util::makeRunner', () => {
         [capitalizedCommandNotImplementedErrorMessage]
       ]);
     });
+
+    // * Note that parous parents won't output NotImplemented but will instead
+    // * output help text and exit with DefaultError. This is for superior UX.
   });
 
   it('exits with bf.FrameworkExitCode.DefaultError and outputs help text and invalid subcommand error to stderr when parous parent command provides no handler', async () => {
@@ -1869,6 +1872,21 @@ describe('::CliError', () => {
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
       expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('handles strange cause objects', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          throw new bf.CliError(undefined as any);
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+      expect(errorSpy.mock.calls).toStrictEqual([[capitalize(ErrorMessage.Generic())]]);
     });
   });
 });
