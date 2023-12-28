@@ -58,7 +58,7 @@ arguments/properties specific to Black Flag, and an indexer falling back to
 
 #### Defined in
 
-[types/program.ts:18](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L18)
+[types/program.ts:18](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L18)
 
 ___
 
@@ -78,7 +78,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/module.ts#L153)
+[types/module.ts:153](https://github.com/Xunnamius/black-flag/blob/8df9305/types/module.ts#L153)
 
 ___
 
@@ -111,36 +111,30 @@ subtype of this interface.
 
 #### Defined in
 
-[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/module.ts#L11)
+[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/8df9305/types/module.ts#L11)
 
 ___
 
 ### ConfigurationHooks
 
-Ƭ **ConfigurationHooks**\<`CustomContext`\>: `Object`
+Ƭ **ConfigurationHooks**: `Object`
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) = [`ExecutionContext`](util.md#executioncontext) |
 
 #### Type declaration
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `PreExecutionContext::execute` and should return a `process.argv`-like array. This is where yargs middleware and other argument pre-processing can be implemented. |
-| `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue)\<`CustomContext`\> | This function is called once at the very end of the error handling process after an error has occurred. Note that this function is _always_ called whenever there is an error, regardless of which other functions have already been called. The only exceptions to this are if (1) the error occurs within `configureErrorHandlingEpilogue` itself or (2) the error is an instance of `GracefulEarlyExitError`. This function is also called even after yargs internally handles and reports an argument parsing/validation error. |
-| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext)\<`CustomContext`\> | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](util.md#executioncontext) singleton. Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
-| `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue)\<`CustomContext`\> | This function is called once after CLI argument parsing completes and either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown. The value returned by this function is used as the return value of the `PreExecutionContext::execute` method. This function will _not_ be called when yargs argument validation fails. This function is the complement of [ConfigureExecutionPrologue](index.md#configureexecutionprologue). |
-| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue)\<`CustomContext`\> | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](util.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
+| `configureArguments?` | [`ConfigureArguments`](index.md#configurearguments) | This function is called once towards the beginning of the execution of `PreExecutionContext::execute` and should return a `process.argv`-like array. This is where yargs middleware and other argument pre-processing can be implemented. |
+| `configureErrorHandlingEpilogue?` | [`ConfigureErrorHandlingEpilogue`](index.md#configureerrorhandlingepilogue) | This function is called once at the very end of the error handling process after an error has occurred. Note that this function is _always_ called whenever there is an error, regardless of which other functions have already been called. The only exceptions to this are if (1) the error occurs within `configureErrorHandlingEpilogue` itself or (2) the error is an instance of `GracefulEarlyExitError`. This function is also called even after yargs internally handles and reports an argument parsing/validation error. |
+| `configureExecutionContext?` | [`ConfigureExecutionContext`](index.md#configureexecutioncontext) | This function is called once towards the beginning of the execution of `configureProgram` and should return what will become the global [ExecutionContext](util.md#executioncontext) singleton. Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
+| `configureExecutionEpilogue?` | [`ConfigureExecutionEpilogue`](index.md#configureexecutionepilogue) | This function is called once after CLI argument parsing completes and either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown. The value returned by this function is used as the return value of the `PreExecutionContext::execute` method. This function will _not_ be called when yargs argument validation fails. This function is the complement of [ConfigureExecutionPrologue](index.md#configureexecutionprologue). |
+| `configureExecutionPrologue?` | [`ConfigureExecutionPrologue`](index.md#configureexecutionprologue) | This function is called once towards the end of the execution of `configureProgram`, after all commands have been discovered but before any have been executed, and should apply any final configurations to the programs that constitute the command line interface. All commands and sub-commands known to Black Flag are available in the [ExecutionContext.commands](util.md#commands) map, which can be accessed from the `context` parameter or from the [Arguments](index.md#arguments) object returned by `Program::parseAsync` et al. This function is the complement of [ConfigureExecutionEpilogue](index.md#configureexecutionepilogue). Note that any errors thrown this early in the initialization process will be thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#configureerrorhandlingepilogue). |
 
 #### Defined in
 
-[types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L96)
+[types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L96)
 
 ___
 
@@ -177,7 +171,7 @@ implemented.
 
 #### Defined in
 
-[types/configure.ts:48](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L48)
+[types/configure.ts:48](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L48)
 
 ___
 
@@ -224,7 +218,7 @@ an argument parsing/validation error.
 
 #### Defined in
 
-[types/configure.ts:81](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L81)
+[types/configure.ts:81](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L81)
 
 ___
 
@@ -261,7 +255,7 @@ thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#conf
 
 #### Defined in
 
-[types/configure.ts:17](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L17)
+[types/configure.ts:17](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L17)
 
 ___
 
@@ -300,7 +294,7 @@ This function is the complement of [ConfigureExecutionPrologue](index.md#configu
 
 #### Defined in
 
-[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L64)
+[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L64)
 
 ___
 
@@ -346,7 +340,7 @@ thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](index.md#conf
 
 #### Defined in
 
-[types/configure.ts:37](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/configure.ts#L37)
+[types/configure.ts:37](https://github.com/Xunnamius/black-flag/blob/8df9305/types/configure.ts#L37)
 
 ___
 
@@ -366,7 +360,7 @@ file).
 
 #### Defined in
 
-[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/module.ts#L162)
+[types/module.ts:162](https://github.com/Xunnamius/black-flag/blob/8df9305/types/module.ts#L162)
 
 ___
 
@@ -382,7 +376,7 @@ yargs from returning a real `Arguments` parse result.
 
 #### Defined in
 
-[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L29)
+[types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L29)
 
 ___
 
@@ -402,7 +396,7 @@ module files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/module.ts#L144)
+[types/module.ts:144](https://github.com/Xunnamius/black-flag/blob/8df9305/types/module.ts#L144)
 
 ___
 
@@ -422,7 +416,7 @@ files that will eventually get imported via auto-discovery.
 
 #### Defined in
 
-[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/module.ts#L135)
+[types/module.ts:135](https://github.com/Xunnamius/black-flag/blob/8df9305/types/module.ts#L135)
 
 ## Variables
 
@@ -435,13 +429,13 @@ each `Arguments` instance.
 
 #### Defined in
 
-[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L5)
+[src/constant.ts:5](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L5)
 
 ## Functions
 
 ### configureProgram
 
-▸ **configureProgram**\<`CustomContext`\>(`commandModulePath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\<`CustomContext`\>\>
+▸ **configureProgram**\<`CustomContext`\>(`commandModulePath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\>
 
 Create and return a [PreExecutionContext](util.md#preexecutioncontext) containing fully-configured
 [Program](util.md#program) instances and an [Executor](util.md#executor) entry point function.
@@ -464,15 +458,15 @@ handles exceptions and sets the exit code for you.
 | Name | Type |
 | :------ | :------ |
 | `commandModulePath` | `string` |
-| `configurationHooks?` | `Promisable`\<[`ConfigurationHooks`](index.md#configurationhooks)\<`CustomContext`\>\> |
+| `configurationHooks?` | `Promisable`\<[`ConfigurationHooks`](index.md#configurationhooks)\> |
 
 #### Returns
 
-`Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\<`CustomContext`\>\>
+`Promise`\<[`PreExecutionContext`](util.md#preexecutioncontext)\>
 
 #### Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/8df9305/src/index.ts#L59)
 
 ___
 
@@ -494,7 +488,7 @@ parameter is CliError
 
 #### Defined in
 
-[src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/error.ts#L25)
+[src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/8df9305/src/error.ts#L25)
 
 ___
 
@@ -516,13 +510,13 @@ parameter is GracefulEarlyExitError
 
 #### Defined in
 
-[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/error.ts#L38)
+[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/8df9305/src/error.ts#L38)
 
 ___
 
 ### runProgram
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the dynamically imported
 `configureProgram(commandModulePath).execute()` function.
@@ -539,7 +533,6 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -557,9 +550,9 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:174](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L174)
+[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L172)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the dynamically imported `configureProgram(commandModulePath,
 configurationHooks).execute()` function.
@@ -576,14 +569,13 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | [commandModulePath: string, configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] |
+| `...args` | [commandModulePath: string, configurationHooks: Promisable\<ConfigurationHooks\>] |
 
 #### Returns
 
@@ -594,9 +586,9 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:196](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L196)
+[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L193)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\> \| `undefined`\>
 
 Invokes the `preExecutionContext.execute()` function.
 
@@ -614,14 +606,13 @@ or reject no matter what.** Instead, when an error is caught,
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | [commandModulePath: string, preExecutionContext: Promisable\<PreExecutionContext\<CustomContext\>\>] |
+| `...args` | [commandModulePath: string, preExecutionContext: Promisable\<PreExecutionContext\>] |
 
 #### Returns
 
@@ -632,9 +623,9 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:221](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L221)
+[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L214)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the dynamically imported
 `configureProgram(commandModulePath).execute(argv)` function. If `argv` is a
@@ -652,7 +643,6 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -670,9 +660,9 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:246](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L246)
+[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L238)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the dynamically imported `configureProgram(commandModulePath,
 configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
@@ -690,14 +680,13 @@ desired.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] |
+| `...args` | [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigurationHooks\>] |
 
 #### Returns
 
@@ -708,9 +697,9 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:269](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L269)
+[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L260)
 
-▸ **runProgram**\<`CustomContext`, `CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **runProgram**\<`CustomCliArguments`\>(`...args`): `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
 string, `argv = argv.split(' ')` is applied first.
@@ -729,14 +718,13 @@ or reject no matter what.** Instead, when an error is caught,
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `...args` | [commandModulePath: string, argv: string \| string[], preExecutionContext: Promisable\<PreExecutionContext\<CustomContext\>\>] |
+| `...args` | [commandModulePath: string, argv: string \| string[], preExecutionContext: Promisable\<PreExecutionContext\>] |
 
 #### Returns
 
@@ -747,4 +735,4 @@ if any other error occurs, or `Arguments` otherwise.
 
 #### Defined in
 
-[src/util.ts:296](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L296)
+[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L286)

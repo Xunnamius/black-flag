@@ -61,7 +61,7 @@ Options available when constructing a new `CliError` object.
 
 #### Defined in
 
-[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/error.ts#L67)
+[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/8df9305/src/error.ts#L67)
 
 ___
 
@@ -80,7 +80,7 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L141)
+[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L141)
 
 ___
 
@@ -98,7 +98,7 @@ Represents an "effector" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:110](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L110)
+[types/program.ts:110](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L110)
 
 ___
 
@@ -134,7 +134,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:302](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L302)
+[types/program.ts:302](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L302)
 
 ___
 
@@ -174,7 +174,7 @@ instead.
 
 #### Defined in
 
-[types/program.ts:254](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L254)
+[types/program.ts:254](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L254)
 
 ___
 
@@ -198,7 +198,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:233](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L233)
+[types/program.ts:233](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L233)
 
 ___
 
@@ -216,7 +216,7 @@ Represents an "helper" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:117](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L117)
+[types/program.ts:117](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L117)
 
 ___
 
@@ -235,7 +235,7 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:265](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L265)
+[types/program.ts:265](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L265)
 
 ___
 
@@ -257,7 +257,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:41](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L41)
+[types/program.ts:41](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L41)
 
 ___
 
@@ -269,7 +269,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:136](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L136)
+[types/program.ts:136](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L136)
 
 ___
 
@@ -295,7 +295,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:164](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L164)
+[types/program.ts:164](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L164)
 
 ___
 
@@ -307,7 +307,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:131](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L131)
+[types/program.ts:131](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L131)
 
 ___
 
@@ -326,7 +326,7 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L154)
+[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L154)
 
 ___
 
@@ -344,7 +344,7 @@ Represents an "router" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:124](https://github.com/Xunnamius/black-flag/blob/68e3e00/types/program.ts#L124)
+[types/program.ts:124](https://github.com/Xunnamius/black-flag/blob/8df9305/types/program.ts#L124)
 
 ## Variables
 
@@ -388,6 +388,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 | `AssertionFailureUseParseAsyncInstead` | () => `string` |
 | `CommandNotImplemented` | () => `string` |
 | `ConfigLoadFailure` | (`path`: `string`) => `string` |
+| `FrameworkError` | (`error`: `unknown`) => `string` |
 | `Generic` | () => `string` |
 | `GracefulEarlyExit` | () => `string` |
 | `InvalidCharacters` | (`str`: `string`, `violation`: `string`) => `string` |
@@ -397,7 +398,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:182](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/error.ts#L182)
+[src/error.ts:187](https://github.com/Xunnamius/black-flag/blob/8df9305/src/error.ts#L187)
 
 ___
 
@@ -410,7 +411,7 @@ Hard-coded default option name for dumping help text to stdout. For example:
 
 #### Defined in
 
-[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L19)
+[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L19)
 
 ___
 
@@ -422,7 +423,7 @@ Hard-coded default help option description text.
 
 #### Defined in
 
-[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L24)
+[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L24)
 
 ___
 
@@ -437,7 +438,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L13)
 
 ___
 
@@ -450,7 +451,7 @@ example: `--${defaultVersionOptionName}`.
 
 #### Defined in
 
-[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L30)
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L30)
 
 ___
 
@@ -462,7 +463,7 @@ Hard-coded default version option description text.
 
 #### Defined in
 
-[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/constant.ts#L35)
+[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/8df9305/src/constant.ts#L35)
 
 ## Functions
 
@@ -508,7 +509,7 @@ obj is Arguments
 
 #### Defined in
 
-[src/util.ts:458](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L458)
+[src/util.ts:458](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L458)
 
 ___
 
@@ -530,7 +531,7 @@ error is ErrnoException & Object
 
 #### Defined in
 
-[src/util.ts:472](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L472)
+[src/util.ts:472](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L472)
 
 ___
 
@@ -552,7 +553,7 @@ parameter is CommandNotImplementedError
 
 #### Defined in
 
-[src/error.ts:53](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/error.ts#L53)
+[src/error.ts:53](https://github.com/Xunnamius/black-flag/blob/8df9305/src/error.ts#L53)
 
 ___
 
@@ -574,7 +575,7 @@ obj is NullArguments
 
 #### Defined in
 
-[src/util.ts:447](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L447)
+[src/util.ts:447](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L447)
 
 ___
 
@@ -596,13 +597,13 @@ obj is PreExecutionContext
 
 #### Defined in
 
-[src/util.ts:434](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L434)
+[src/util.ts:434](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L434)
 
 ___
 
 ### makeRunner
 
-▸ **makeRunner**\<`CustomContext`, `CustomCliArguments`\>(`options`): \<T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
+▸ **makeRunner**\<`CustomCliArguments`\>(`options`): \<T\>(...`args`: `T` extends [`_`, ...Tail[]] ? `Tail` : []) => `Promise`\<[`NullArguments`](index.md#nullarguments) \| [`Arguments`](index.md#arguments)\<`CustomCliArguments`\>\>
 
 A high-order factory function that returns a "low-order" [runProgram](index.md#runprogram)
 function that can be called multiple times while only having to provide a
@@ -623,7 +624,6 @@ details.
 
 | Name | Type |
 | :------ | :------ |
-| `CustomContext` | extends [`ExecutionContext`](util.md#executioncontext) |
 | `CustomCliArguments` | extends `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\> |
 
 #### Parameters
@@ -632,8 +632,8 @@ details.
 | :------ | :------ | :------ |
 | `options` | `Object` | - |
 | `options.commandModulePath` | `string` | **`See`** [runProgram](index.md#runprogram) |
-| `options.configurationHooks?` | `Promisable`\<[`ConfigurationHooks`](index.md#configurationhooks)\<[`ExecutionContext`](util.md#executioncontext)\>\> | Note: cannot be used with `preExecutionContext`. **`See`** [runProgram](index.md#runprogram) |
-| `options.preExecutionContext?` | `Promisable`\<[`PreExecutionContext`](util.md#preexecutioncontext)\<[`ExecutionContext`](util.md#executioncontext)\>\> | Note: cannot be used with `configurationHooks`. **`See`** [runProgram](index.md#runprogram) |
+| `options.configurationHooks?` | `Promisable`\<[`ConfigurationHooks`](index.md#configurationhooks)\> | Note: cannot be used with `preExecutionContext`. **`See`** [runProgram](index.md#runprogram) |
+| `options.preExecutionContext?` | `Promisable`\<[`PreExecutionContext`](util.md#preexecutioncontext)\> | Note: cannot be used with `configurationHooks`. **`See`** [runProgram](index.md#runprogram) |
 
 #### Returns
 
@@ -645,7 +645,7 @@ details.
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends [commandModulePath: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] \| [commandModulePath: string, preExecutionContext: Promisable\<PreExecutionContext\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigurationHooks\<CustomContext\>\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: Promisable\<PreExecutionContext\<CustomContext\>\>] |
+| `T` | extends [commandModulePath: string] \| [commandModulePath: string, configurationHooks: Promisable\<ConfigurationHooks\>] \| [commandModulePath: string, preExecutionContext: Promisable\<PreExecutionContext\>] \| [commandModulePath: string, argv: string \| string[]] \| [commandModulePath: string, argv: string \| string[], configurationHooks: Promisable\<ConfigurationHooks\>] \| [commandModulePath: string, argv: string \| string[], preExecutionContext: Promisable\<PreExecutionContext\>] |
 
 ##### Parameters
 
@@ -659,4 +659,4 @@ details.
 
 #### Defined in
 
-[src/util.ts:45](https://github.com/Xunnamius/black-flag/blob/68e3e00/src/util.ts#L45)
+[src/util.ts:50](https://github.com/Xunnamius/black-flag/blob/8df9305/src/util.ts#L50)
