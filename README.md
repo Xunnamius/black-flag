@@ -238,7 +238,7 @@ The complete `my-cli-project/commands/init.ts` file could look like this:
 ```typescript
 // File: my-cli-project/commands/init.ts
 
-import type { Configuration, $executionContext } from 'black-flag';
+import type { Configuration, $executionContext } from '@black-flag/core';
 
 // Types are also available vvv
 const configuration: Configuration = {
@@ -313,7 +313,7 @@ too.
 // File: my-cli-project/cli.ts
 
 import { join } from 'node:path';
-import { runProgram } from 'black-flag';
+import { runProgram } from '@black-flag/core';
 
 // Just point Black Flag at the directory containing your command files
 export default runProgram(join(__dirname, 'commands'));
@@ -343,8 +343,8 @@ around `yargs::parseAsync` and `yargs::hideBin`.
 
 ```typescript
 import { join } from 'node:path';
-import { runProgram, configureProgram } from 'black-flag';
-import { hideBin, isCliError } from 'black-flag/util';
+import { runProgram, configureProgram } from '@black-flag/core';
+import { hideBin, isCliError } from '@black-flag/core/util';
 
 export default runProgram(join(__dirname, 'commands'));
 
@@ -383,7 +383,7 @@ import type {
   ConfigureExecutionContext,
   ConfigureExecutionEpilogue,
   ConfigureExecutionPrologue
-} from 'black-flag';
+} from '@black-flag/core';
 
 // These configuration hooks have been listed in the order they're typically
 // executed by Black Flag. They are all entirely optional.
@@ -434,7 +434,8 @@ export const configureArguments: ConfigureArguments = async (
   // When PreExecutionContext::execute is invoked without arguments, Black Flag
   // calls the yargs::hideBin helper utility on process.argv for you. Therefore,
   // calling hideBin here would cause a bug. You shouldn't ever need to call
-  // hideBin manually, but if you do, it's re-exported from 'black-flag/util'.
+  // hideBin manually, but if you do, it's re-exported from
+  // '@black-flag/core/util'.
 
   return rawArgv; // <== This is: the argv that yargs will be given to parse
 };
@@ -475,7 +476,7 @@ Then our CLI's entry point might look something like this:
 // File: my-cli-project/cli.ts
 
 import { join } from 'node:path';
-import { runProgram } from 'black-flag';
+import { runProgram } from '@black-flag/core';
 
 export default runProgram(
   join(__dirname, 'commands'),
@@ -588,7 +589,7 @@ Suppose we wrote some configuration hooks in `my-cli-project/configure.ts`:
 import {
   type ConfigureArguments,
   type ConfigureErrorHandlingEpilogue
-} from 'black-flag';
+} from '@black-flag/core';
 
 export const configureArguments: ConfigureArguments = (rawArgv) => {
   return preprocessInputArgs(rawArgv);
@@ -639,7 +640,7 @@ production: [`runProgram`][8].
 ```typescript
 // File: my-cli-project/test.ts (with Jest as test runner)
 
-import { makeRunner } from 'black-flag/util';
+import { makeRunner } from '@black-flag/core/util';
 
 let latestError: string | undefined = undefined;
 const run = makeRunner(`${__dirname}/commands`, {
@@ -785,7 +786,7 @@ const { dirname, basename } = require('node:path');
 const name = basename(dirname(__filename));
 
 /**
- * @type {import('black-flag').ParentConfiguration}
+ * @type {import('@black-flag/core').ParentConfiguration}
  */
 module.exports = {
   description: `description for program ${name}`,
@@ -816,14 +817,13 @@ details about generics.
 
 And that's Black Flag in a nutshell! Check out a complete demo repository for
 that snazzy `myctl` tool [here][24]. Or play with the real thing on NPM:
-`npx -p @xunnamius/my-cli-project myctl --help` (also supports `DEBUG`
-environment variable). Or check out the [step-by-step getting started guide][25]
-below!
+`npx -p @black-flag/demo myctl --help` (also supports `DEBUG` environment
+variable). Or check out the [step-by-step getting started guide][25] below!
 
 ## Install
 
 ```shell
-npm install black-flag
+npm install @black-flag/core
 ```
 
 ## Usage
@@ -832,8 +832,7 @@ What follows is a simple step-by-step guide for building, running, and testing
 the `myctl` tool from [the introductory section][26].
 
 > There's also a functional [`myctl` demo repository][24]. And you can interact
-> with the published version on NPM:
-> `npx -p @xunnamius/my-cli-project myctl --help`.
+> with the published version on NPM: `npx -p @black-flag/demo myctl --help`.
 
 ### Building and Running Your CLI
 
@@ -852,7 +851,7 @@ Add `package.json` file with the bare minimum metadata:
 
 ```shell
 echo '{"name":"myctl","version":"1.0.0","type":"module","bin":{"myctl":"./cli.js"}}' > package.json
-npm install black-flag
+npm install @black-flag/core
 ```
 
 Let's create the folder that will hold all our commands as well as the entry
@@ -870,7 +869,7 @@ Where `cli.js` has the following content:
 #!/usr/bin/env node
 
 import { join } from 'node:path';
-import { runProgram } from 'black-flag';
+import { runProgram } from '@black-flag/core';
 
 export default runProgram(join(__dirname, 'command'));
 ```
@@ -1000,14 +999,14 @@ string:
 /**
  * This little comment gives us intellisense support :)
  *
- * @type {import('black-flag').RootConfiguration['builder']}
+ * @type {import('@black-flag/core').RootConfiguration['builder']}
  */
 export function builder(blackFlag) {
   return blackFlag.strict(false);
 }
 
 /**
- * @type {import('black-flag').RootConfiguration['handler']}
+ * @type {import('@black-flag/core').RootConfiguration['handler']}
  */
 export function handler(argv) {
   console.log('ran root command handler');
@@ -1018,7 +1017,7 @@ export function handler(argv) {
  * export, on the other hand, supports the yargs DSL for defining positional
  * parameters and the like.
  *
- * @type {import('black-flag').RootConfiguration['usage']}
+ * @type {import('@black-flag/core').RootConfiguration['usage']}
  */
 export const usage = 'Usage: $0 command [options]\n\nCustom description here.';
 ```
@@ -1188,7 +1187,7 @@ invoke successively.
 > [common yargs footgun][37].
 
 ```javascript
-import { makeRunner } from 'black-flag/util';
+import { makeRunner } from '@black-flag/core/util';
 
 // makeRunner is a factory function that returns runProgram functions with
 // curried arguments.
@@ -1436,7 +1435,7 @@ their corresponding yargs instances in the OS-specific order they were
 encountered during auto-discovery:
 
 ```typescript
-import { runCommand, $executionContext } from 'black-flag';
+import { runCommand, $executionContext } from '@black-flag/core';
 
 const argv = await runCommand('./commands');
 
@@ -1863,14 +1862,14 @@ key][x-repo-all-contributors-emojis]):
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://xunn.io/"><img src="https://avatars.githubusercontent.com/u/656017?v=4?s=100" width="100px;" alt="Bernard"/><br /><sub><b>Bernard</b></sub><br /><a href="#infra-Xunnamius" title="Infrastructure (Hosting, Build-Tools, etc)">🚇 <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Code">💻 <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Documentation">📖 <a href="#maintenance-Xunnamius" title="Maintenance">🚧 <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Tests">⚠️ <a href="https://github.com/Xunnamius/black-flag/pulls?q=is%3Apr+reviewed-by%3AXunnamius" title="Reviewed Pull Requests">👀</td>
+      <td align="center" valign="top" width="14.28%"><a href="https://xunn.io/"><img src="https://avatars.githubusercontent.com/u/656017?v=4?s=100" width="100px;" alt="Bernard"/><br /><sub><b>Bernard</b></sub></a><br /><a href="#infra-Xunnamius" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Code">💻</a> <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Documentation">📖</a> <a href="#maintenance-Xunnamius" title="Maintenance">🚧</a> <a href="https://github.com/Xunnamius/black-flag/commits?author=Xunnamius" title="Tests">⚠️</a> <a href="https://github.com/Xunnamius/black-flag/pulls?q=is%3Apr+reviewed-by%3AXunnamius" title="Reviewed Pull Requests">👀</a></td>
     </tr>
   </tbody>
   <tfoot>
     <tr>
       <td align="center" size="13px" colspan="7">
         <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
         </img>
       </td>
     </tr>
@@ -1892,20 +1891,20 @@ specification. Contributions of any kind welcome!
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/black-flag
 [x-badge-downloads-image]:
-  https://img.shields.io/npm/dm/black-flag?style=flat-square
+  https://img.shields.io/npm/dm/@black-flag/core?style=flat-square
   'Number of times this package has been downloaded per month'
 [x-badge-lastcommit-image]:
   https://img.shields.io/github/last-commit/xunnamius/black-flag?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
-  https://img.shields.io/npm/l/black-flag?style=flat-square
+  https://img.shields.io/npm/l/@black-flag/core?style=flat-square
   "This package's source license"
 [x-badge-license-link]:
   https://github.com/Xunnamius/black-flag/blob/main/LICENSE
 [x-badge-npm-image]:
-  https://xunn.at/npm-pkg-version/black-flag
+  https://xunn.at/npm-pkg-version/@black-flag/core
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://www.npmjs.com/package/black-flag
+[x-badge-npm-link]: https://www.npmjs.com/package/@black-flag/core
 [x-badge-repo-link]: https://github.com/xunnamius/black-flag
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release

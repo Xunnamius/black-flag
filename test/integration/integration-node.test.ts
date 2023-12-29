@@ -89,7 +89,7 @@ beforeAll(async () => {
   );
 });
 
-describe("import {...} from 'black-flag'", () => {
+describe("import {...} from '@black-flag/core'", () => {
   test('configureProgram', async () => {
     expect.hasAssertions();
 
@@ -104,7 +104,7 @@ describe("import {...} from 'black-flag'", () => {
         // ! Regression test: we test --version here to ensure ESM-CJS interop
         // ! is working at every level. Do not change --version.
         initialFileContents: {
-          'src/index.cjs': `require('black-flag').configureProgram('${join(
+          'src/index.cjs': `require('@black-flag/core').configureProgram('${join(
             __dirname,
             '..',
             'fixtures',
@@ -127,7 +127,7 @@ describe("import {...} from 'black-flag'", () => {
       },
       {
         initialFileContents: {
-          'src/index.cjs': `require('black-flag').runProgram('${join(
+          'src/index.cjs': `require('@black-flag/core').runProgram('${join(
             __dirname,
             '..',
             'fixtures',
@@ -151,7 +151,7 @@ describe("import {...} from 'black-flag'", () => {
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('node:util/types').isSymbolObject(Object(require('black-flag').$executionContext)) ? 'success' : 'failed');`
+console.log(require('node:util/types').isSymbolObject(Object(require('@black-flag/core').$executionContext)) ? 'success' : 'failed');`
         }
       }
     );
@@ -171,7 +171,7 @@ console.log(require('node:util/types').isSymbolObject(Object(require('black-flag
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag').FrameworkExitCode.DefaultError === 1 ? 'success' : 'failed');`
+console.log(require('@black-flag/core').FrameworkExitCode.DefaultError === 1 ? 'success' : 'failed');`
         }
       }
     );
@@ -191,7 +191,7 @@ console.log(require('black-flag').FrameworkExitCode.DefaultError === 1 ? 'succes
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(new (require('black-flag').CliError)(new Error('hello!')).message === 'hello!' ? 'success' : 'failed');`
+console.log(new (require('@black-flag/core').CliError)(new Error('hello!')).message === 'hello!' ? 'success' : 'failed');`
         }
       }
     );
@@ -211,7 +211,7 @@ console.log(new (require('black-flag').CliError)(new Error('hello!')).message ==
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(new (require('black-flag').GracefulEarlyExitError)().message !== 'undefined' ? 'success' : 'failed');`
+console.log(new (require('@black-flag/core').GracefulEarlyExitError)().message !== 'undefined' ? 'success' : 'failed');`
         }
       }
     );
@@ -230,7 +230,7 @@ console.log(new (require('black-flag').GracefulEarlyExitError)().message !== 'un
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag').isCliError({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core').isCliError({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -249,7 +249,7 @@ console.log(require('black-flag').isCliError({}) === false ? 'success' : 'failed
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag').isGracefulEarlyExitError({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core').isGracefulEarlyExitError({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -291,7 +291,7 @@ console.log(require('black-flag').isGracefulEarlyExitError({}) === false ? 'succ
   });
 });
 
-describe("import {...} from 'black-flag/util'", () => {
+describe("import {...} from '@black-flag/core/util'", () => {
   test('isArguments', async () => {
     expect.hasAssertions();
 
@@ -305,7 +305,7 @@ describe("import {...} from 'black-flag/util'", () => {
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag/util').isArguments({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core/util').isArguments({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -324,7 +324,7 @@ console.log(require('black-flag/util').isArguments({}) === false ? 'success' : '
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag/util').isAssertionSystemError({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core/util').isAssertionSystemError({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -343,7 +343,7 @@ console.log(require('black-flag/util').isAssertionSystemError({}) === false ? 's
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag/util').isNullArguments({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core/util').isNullArguments({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -362,7 +362,7 @@ console.log(require('black-flag/util').isNullArguments({}) === false ? 'success'
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag/util').isPreExecutionContext({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core/util').isPreExecutionContext({}) === false ? 'success' : 'failed');`
         }
       }
     );
@@ -381,7 +381,7 @@ console.log(require('black-flag/util').isPreExecutionContext({}) === false ? 'su
       {
         initialFileContents: {
           'src/index.cjs': `
-require('black-flag/util').makeRunner({
+require('@black-flag/core/util').makeRunner({
   commandModulePath: '${join(__dirname, '..', 'fixtures', 'one-file-index')}'
 })('--help');`
         }
@@ -402,7 +402,7 @@ require('black-flag/util').makeRunner({
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(typeof require('black-flag/util').defaultHelpOptionName === 'string' ? 'success' : 'failed');`
+console.log(typeof require('@black-flag/core/util').defaultHelpOptionName === 'string' ? 'success' : 'failed');`
         }
       }
     );
@@ -421,7 +421,7 @@ console.log(typeof require('black-flag/util').defaultHelpOptionName === 'string'
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(typeof require('black-flag/util').defaultHelpTextDescription === 'string' ? 'success' : 'failed');`
+console.log(typeof require('@black-flag/core/util').defaultHelpTextDescription === 'string' ? 'success' : 'failed');`
         }
       }
     );
@@ -440,7 +440,7 @@ console.log(typeof require('black-flag/util').defaultHelpTextDescription === 'st
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(typeof require('black-flag/util').defaultUsageText === 'string' ? 'success' : 'failed');`
+console.log(typeof require('@black-flag/core/util').defaultUsageText === 'string' ? 'success' : 'failed');`
         }
       }
     );
@@ -459,7 +459,7 @@ console.log(typeof require('black-flag/util').defaultUsageText === 'string' ? 's
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(typeof require('black-flag/util').defaultVersionOptionName === 'string' ? 'success' : 'failed');`
+console.log(typeof require('@black-flag/core/util').defaultVersionOptionName === 'string' ? 'success' : 'failed');`
         }
       }
     );
@@ -478,7 +478,7 @@ console.log(typeof require('black-flag/util').defaultVersionOptionName === 'stri
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(typeof require('black-flag/util').defaultVersionTextDescription === 'string' ? 'success' : 'failed');`
+console.log(typeof require('@black-flag/core/util').defaultVersionTextDescription === 'string' ? 'success' : 'failed');`
         }
       }
     );
@@ -500,7 +500,7 @@ console.log(typeof require('black-flag/util').defaultVersionTextDescription === 
         // ! the AssertionFailedError() constructor call empty!
         initialFileContents: {
           'src/index.cjs': `
-console.log((new (require('black-flag/util').AssertionFailedError)()).message !== 'undefined' ? 'success' : 'failed');`
+console.log((new (require('@black-flag/core/util').AssertionFailedError)()).message !== 'undefined' ? 'success' : 'failed');`
         }
       }
     );
@@ -520,7 +520,7 @@ console.log((new (require('black-flag/util').AssertionFailedError)()).message !=
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(new (require('black-flag/util').CommandNotImplementedError)().message !== 'undefined' ? 'success' : 'failed');`
+console.log(new (require('@black-flag/core/util').CommandNotImplementedError)().message !== 'undefined' ? 'success' : 'failed');`
         }
       }
     );
@@ -540,7 +540,7 @@ console.log(new (require('black-flag/util').CommandNotImplementedError)().messag
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(Object.keys(require('black-flag/util').ErrorMessage).length ? 'success' : 'failed');`
+console.log(Object.keys(require('@black-flag/core/util').ErrorMessage).length ? 'success' : 'failed');`
         }
       }
     );
@@ -559,7 +559,7 @@ console.log(Object.keys(require('black-flag/util').ErrorMessage).length ? 'succe
       {
         initialFileContents: {
           'src/index.cjs': `
-console.log(require('black-flag/util').isCommandNotImplementedError({}) === false ? 'success' : 'failed');`
+console.log(require('@black-flag/core/util').isCommandNotImplementedError({}) === false ? 'success' : 'failed');`
         }
       }
     );

@@ -71,7 +71,7 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mod
     },
     {
       initialFileContents: {
-        'src/index.cjs': `require('black-flag').runProgram('${join(
+        'src/index.cjs': `require('@black-flag/core').runProgram('${join(
           __dirname,
           '..',
           'fixtures',
@@ -95,7 +95,7 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node ESM mod
     {
       initialFileContents: {
         'src/index.mjs': `
-import { runProgram } from 'black-flag';
+import { runProgram } from '@black-flag/core';
 
 if(typeof module !== 'undefined' || typeof require !== 'undefined') {
   throw new Error('expected ESM runtime but detected CJS');

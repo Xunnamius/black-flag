@@ -1,4 +1,4 @@
-[black-flag-cli](../README.md) / [util](../modules/util.md) / AssertionFailedError
+[@black-flag/core](../README.md) / [util](../modules/util.md) / AssertionFailedError
 
 # Class: AssertionFailedError
 
@@ -57,7 +57,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:175](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L175)
+[src/error.ts:175](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L175)
 
 ## Properties
 
@@ -71,7 +71,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L171)
+[src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L171)
 
 ___
 
@@ -141,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L85)
+[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L85)
 
 ___
 

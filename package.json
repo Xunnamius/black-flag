@@ -1,5 +1,5 @@
 {
-  "name": "black-flag",
+  "name": "@black-flag/core",
   "version": "0.0.0-semantic",
   "description": "A declarative framework for building fluent, deeply hierarchical command line interfaces with yargs",
   "keywords": [

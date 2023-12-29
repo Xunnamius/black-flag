@@ -1,4 +1,4 @@
-[black-flag-cli](../README.md) / [index](../modules/index.md) / GracefulEarlyExitError
+[@black-flag/core](../README.md) / [index](../modules/index.md) / GracefulEarlyExitError
 
 # Class: GracefulEarlyExitError
 
@@ -55,7 +55,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:159](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L159)
+[src/error.ts:159](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L159)
 
 ## Properties
 
@@ -69,7 +69,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:153](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L153)
+[src/error.ts:153](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L153)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/8a262dc/src/error.ts#L85)
+[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/462bdad/src/error.ts#L85)
 
 ___
 

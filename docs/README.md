@@ -1,6 +1,6 @@
-black-flag-cli
+@black-flag/core
 
-# black-flag-cli
+# @black-flag/core
 
 ## Table of contents
 
