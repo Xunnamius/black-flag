@@ -885,6 +885,10 @@ export function npmCopySelfFixture(): MockFixture {
         }
       );
 
+      // ! Notes for when we merge all of these these versions of this file
+      // ! together and publish as packages: we fixed an error with namespaced
+      // ! packages here!
+
       await rename({
         oldPath: `${context.root}/node_modules`,
         updatedPath: `${context.root}/node_modules_old`,
@@ -896,6 +900,16 @@ export function npmCopySelfFixture(): MockFixture {
         updatedPath: `${context.root}/node_modules`,
         context
       });
+
+      if (pkgName.startsWith('@')) {
+        const pkgNameParts = pkgName.split('/');
+        assert(pkgNameParts.length === 2);
+
+        await mkdir({
+          paths: [`${context.root}/node_modules/${pkgNameParts[0]}`],
+          context
+        });
+      }
 
       await rename({
         oldPath: `${context.root}/node_modules_old/${pkgName}`,
