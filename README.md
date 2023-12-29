@@ -324,7 +324,7 @@ export default runProgram(join(__dirname, 'commands'));
 ./cli.js remote show origin
 # This works after transpiling our .ts files to .js with babel...
 node ./cli.js -- remote show origin
-# ... and then publishing it and ran something like: npm i -g my-cli-project
+# ... and then publishing it and running: npm i -g @black-flag/demo
 myctl remote show origin
 # Or, if we were using a runtime that supported TypeScript natively
 deno ./cli.ts -- remote show origin
@@ -538,7 +538,7 @@ await runProgram('./commands', {
 // File: my-cli-project/commands/index.ts
 
 export function builder(blackFlag) {
-  // Turn off outputting help text when an error occurs for this command
+  // Turn off outputting help text when an error occurs
   blackFlag.showHelpOnFail(false);
 }
 ```
@@ -549,8 +549,8 @@ export function builder(blackFlag) {
 > `configureErrorHandlingEpilogue`. If you're using
 > [`makeRunner`][15]/[`runProgram`][8] (which never throws) and a
 > misconfiguration triggers a framework error, your application will set its
-> exit code [accordingly][16]. In such a case, use [debug mode][17] to gain
-> insight.
+> exit code [accordingly][16] and send an error message to stderr. In such a
+> case, use [debug mode][17] to gain insight if necessary.
 
 ### A Pleasant Testing Experience ✨
 
@@ -847,7 +847,7 @@ cd my-cli-project
 git init
 ```
 
-Add `package.json` file with the bare minimum metadata:
+Add a `package.json` file with the bare minimum metadata:
 
 ```shell
 echo '{"name":"myctl","version":"1.0.0","type":"module","bin":{"myctl":"./cli.js"}}' > package.json
@@ -894,7 +894,7 @@ will either (1) output an error message explaining that the command is not
 implemented if said command has no sub-commands or (2) output help text for the
 command if said command has one or more sub-commands.
 
-This means you can stub out a complex CLI in a couple minutes: just name your
+This means you can stub out a complex CLI in thirty seconds: just name your
 directories and empty files accordingly!
 
 With that in mind, let's actually run our skeletal CLI now:
@@ -1316,9 +1316,9 @@ Flag, but are noted below nonetheless.
   either pass it to `yargs::middleware` via that command's [`builder`][7]
   function or just call the middleware function right then and there. If you
   want the middleware to apply globally, invoke the function directly in
-  [`configureArguments`][31]. If neither solution is desirable, you can also
+  [`configureArguments`][44]. If neither solution is desirable, you can also
   [muck around with][38] the relevant yargs instances manually in
-  [`configureExecutionPrologue`][44].
+  [`configureExecutionPrologue`][31].
 
 - By default, Black Flag enables the `--help` and `--version` options same as
   vanilla yargs. However, since vanilla yargs [lacks the ability][45] to modify
@@ -1388,6 +1388,8 @@ Flag, but are noted below nonetheless.
   `yargs::showHelpOnFail` method will ignore the redundant "message" parameter.
   If you want that functionality, use said hook to output an epilogue after
   yargs outputs an error message, or use `yargs::epilogue`/`yargs::example`.
+  Also, any invocation of `yargs::showHelpOnFail` applies globally to all
+  commands in your hierarchy.
 
 - Since every auto-discovered command translates [into its own yargs
   instances][38], the [`command`][7] property, if exported by your command
@@ -1403,7 +1405,7 @@ Flag, but are noted below nonetheless.
   command across your entire hierarchy, the "Black Flag way" would be to just
   use normal JavaScript instead: export a shared [`builder`][7] function from a
   utility file and call it in each of your command files. If you want something
-  fancier than that, you can leverage [`configureExecutionPrologue`][44] to call
+  fancier than that, you can leverage [`configureExecutionPrologue`][31] to call
   `yargs::global` or `yargs::check` by hand.
 
   Similarly, `yargs::onFinishCommand` should only be called when the `argv`
@@ -1411,7 +1413,7 @@ Flag, but are noted below nonetheless.
   programs][38]). This would prevent the callback from being executed twice.
   Further, the "Black Flag way" would be to ditch `yargs::onFinishCommand`
   entirely and use plain old JavaScript and/or the
-  [`configureExecutionPrologue`][44] configuration hook instead.
+  [`configureExecutionPrologue`][31] configuration hook instead.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. You shouldn't be calling the
@@ -1944,7 +1946,7 @@ specification. Contributions of any kind welcome!
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/api.md
 [5]: #differences-between-black-flag-and-yargs
 [6]: #built-in-support-for-dynamic-options-
-[7]: ./docs/modules/index.md#type-declaration-1
+[7]: ./docs/modules/index.md#type-declaration
 [8]: ./docs/modules/index.md#runProgram
 [9]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
@@ -1970,7 +1972,7 @@ specification. Contributions of any kind welcome!
 [29]: ./docs/modules/index.md#configureexecutioncontext
 [30]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[31]: #convention-over-configuration-
+[31]: ./docs/modules/index.md#configureexecutionprologue
 [32]: https://www.npmjs.com/package/alpha-sort
 [33]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
@@ -1987,7 +1989,7 @@ specification. Contributions of any kind welcome!
   https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
 [43]:
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[44]: ./docs/modules/index.md#configureexecutionprologue
+[44]: ./docs/modules/index.md#configurearguments
 [45]: https://github.com/yargs/yargs/issues/733
 [46]: https://github.com/yargs/yargs/issues/1323
 [47]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
