@@ -89,7 +89,7 @@ beforeAll(async () => {
   );
 });
 
-describe("import ... from 'black-flag'", () => {
+describe("import {...} from 'black-flag'", () => {
   test('configureProgram', async () => {
     expect.hasAssertions();
 
@@ -291,7 +291,7 @@ console.log(require('black-flag').isGracefulEarlyExitError({}) === false ? 'succ
   });
 });
 
-describe("import ... from 'black-flag/util'", () => {
+describe("import {...} from 'black-flag/util'", () => {
   test('isArguments', async () => {
     expect.hasAssertions();
 
