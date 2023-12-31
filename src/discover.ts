@@ -615,6 +615,23 @@ export async function discoverCommands(
       router: await makePartiallyConfiguredProgram('router')
     };
 
+    if (type === 'pure parent' && context.state.globalVersionOption?.name?.length) {
+      const { name: versionOptionName, description: versionOptionDescription } =
+        context.state.globalVersionOption;
+
+      assert(versionOptionName.length, ErrorMessage.GuruMeditation());
+
+      [programs.helper, programs.effector].forEach((program) =>
+        program.option(versionOptionName, {
+          boolean: true,
+          description: versionOptionDescription
+        })
+      );
+
+      // * Black Flag's custom help option functionality is configured by
+      // * makePartiallyConfiguredProgram below rather than here.
+    }
+
     // * Enable strict mode by default.
 
     // ? Note that the strictX and demandX functions are permanently disabled on

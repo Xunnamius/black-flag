@@ -206,6 +206,24 @@ describe('::configureProgram', () => {
     expect(succeeded).toBeTrue();
   });
 
+  it('supports "file://..."-style URLs as commandModulePath', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      const context = await bf.configureProgram(
+        'file://' + getFixturePath('empty-index-file-package-no-version')
+      );
+
+      expect(Array.from(context.commands.keys())).toStrictEqual(['test-no-version']);
+
+      await expect(context.execute(['--help'])).resolves.toBeDefined();
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.not.stringContaining('--version')]
+      ]);
+    });
+  });
+
   it('throws when configureExecutionContext returns falsy', async () => {
     expect.hasAssertions();
 
@@ -400,6 +418,11 @@ describe('::configureProgram', () => {
         ).resolves.toBeDefined();
 
         expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
+        expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--version')]]);
+
+        expect(logSpy.mock.calls).toStrictEqual([
+          [expect.stringContaining('--one-file-index')]
+        ]);
 
         expect(errorSpy.mock.calls).toHaveLength(0);
 
@@ -412,6 +435,14 @@ describe('::configureProgram', () => {
           [expect.stringContaining('--help')],
           [],
           ['Unknown argument: bad']
+        ]);
+
+        expect(errorSpy.mock.calls[0]).toStrictEqual([
+          expect.stringContaining('--version')
+        ]);
+
+        expect(errorSpy.mock.calls[0]).toStrictEqual([
+          expect.stringContaining('--one-file-index')
         ]);
       });
     });
@@ -2919,9 +2950,21 @@ describe('<command module auto-discovery>', () => {
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
 
       expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(/Options:\n\s+--help\s+Show help text\s+\[boolean]$/)],
-        [expect.stringMatching(/Options:\n\s+--info\s+Info description\s+\[boolean]$/)],
-        [expect.stringMatching(/Options:\n\s+-i\s+Info description\s+\[boolean]$/)]
+        [
+          expect.stringMatching(
+            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--version\s+Show version number\s+\[boolean]$/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /Options:\n\s+--info\s+Info description\s+\[boolean]\n\s+--version\s+Show version number\s+\[boolean]$/
+          )
+        ],
+        [
+          expect.stringMatching(
+            /Options:\n\s+-i\s+Info description\s+\[boolean]\n\s+--version\s+Show version number\s+\[boolean]$/
+          )
+        ]
       ]);
     });
   });
@@ -3026,9 +3069,14 @@ describe('<command module auto-discovery>', () => {
         bf.runProgram(getFixturePath('nested-several-files-empty'), '--version')
       ).resolves.toSatisfy(bf_util.isNullArguments);
 
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+      expect(errorSpy).not.toHaveBeenCalled();
+
       await expect(
         bf.runProgram(getFixturePath('nested-several-files-empty'), 'nested --version')
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       await expect(
         bf.runProgram(
@@ -3038,7 +3086,16 @@ describe('<command module auto-discovery>', () => {
       ).resolves.not.toSatisfy(bf_util.isNullArguments);
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
-      expect(errorSpy).toHaveBeenCalledTimes(6);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringMatching(/^Usage: /)],
+        [],
+        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [expect.stringMatching(/^Usage: /)],
+        [],
+        ['Unknown argument: version']
+      ]);
+
       expect(logSpy.mock.calls).toStrictEqual([['1.0.0']]);
     });
   });
@@ -3280,7 +3337,7 @@ describe('<command module auto-discovery>', () => {
       expect(logSpy.mock.calls).toStrictEqual([
         [
           expect.stringMatching(
-            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--good1\s+\[boolean]\n\s+--good2\s+\[boolean]\n\s+--good3\s+\[boolean]\n\s+--good4\s+\[boolean]\n\s+--good\s+\[boolean]$/
+            /Options:\n\s+--help\s+Show help text\s+\[boolean]\n\s+--version\s+Show version number\s+\[boolean]\n\s+--good1\s+\[boolean]\n\s+--good2\s+\[boolean]\n\s+--good3\s+\[boolean]\n\s+--good4\s+\[boolean]\n\s+--good\s+\[boolean]$/
           )
         ]
       ]);
