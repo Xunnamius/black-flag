@@ -100,7 +100,7 @@ export type Configuration<
    *
    * @default undefined
    */
-  handler: (args: Arguments<CustomCliArguments>) => Promisable<void>;
+  handler: (argv: Arguments<CustomCliArguments>) => Promisable<void>;
   /**
    * The name of the command. Any spaces will be replaced with hyphens.
    * Including a character that yargs does not consider valid for a
