@@ -1000,18 +1000,23 @@ string:
 /**
  * This little comment gives us intellisense support :)
  *
- * @type {import('@black-flag/core').RootConfiguration['builder']}
+ * Also note how we're using the `export const X = function(...) { ... }` syntax
+ * instead of the streamlined `export function X(...) { ... }` syntax. Both of
+ * these syntaxes are correct, however JSDoc does not support using "@type" on
+ * the latter form for some reason.
+ *
+ * @type {import('@black-flag/core').Configuration['builder']}
  */
-export function builder(blackFlag) {
+export const builder = function (blackFlag) {
   return blackFlag.strict(false);
-}
+};
 
 /**
  * @type {import('@black-flag/core').RootConfiguration['handler']}
  */
-export function handler(argv) {
+export const handler = function (argv) {
   console.log('ran root command handler');
-}
+};
 
 /**
  * Note that `usage` is just a freeform string used in help text. The `command`
