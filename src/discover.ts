@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import url from 'node:url';
 import { isNativeError, isPromise, isSymbolObject } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
@@ -44,8 +45,9 @@ suppressNodeWarnings('ExperimentalWarning');
 
 /**
  * Recursively scans the filesystem for valid index files starting at
- * `basePath`. Upon encountering such a file, it is imported along with each
- * valid sibling file in the same directory, treating the raw results as
+ * `basePath`, which can be a regular filesystem path or a `'file://...'`-style
+ * URL. Upon encountering such a file, it is imported along with each valid
+ * sibling file in the same directory, treating the raw results as
  * {@link ImportedConfigurationModule} objects. These are translated into
  * {@link Configuration} objects, which are then used to create and configure
  * corresponding {@link Program} instances. Finally, these generated
@@ -70,28 +72,32 @@ export async function discoverCommands(
   // ! Invariant: first command to be discovered, if any, is the root command.
   let alreadyLoadedRootCommand = false;
 
+  const basePath_ = basePath?.startsWith?.('file://')
+    ? url.fileURLToPath(basePath)
+    : basePath;
+
   const debug = context.debug.extend('discover');
   const debug_load = debug.extend('load');
 
-  debug('ensuring base path directory exists and is readable: "%O"', basePath);
+  debug('ensuring base path directory exists and is readable: "%O"', basePath_);
 
   try {
-    await fs.access(basePath, fs.constants.R_OK);
-    if (!(await fs.stat(basePath)).isDirectory()) {
+    await fs.access(basePath_, fs.constants.R_OK);
+    if (!(await fs.stat(basePath_)).isDirectory()) {
       // ? This will be caught and re-thrown as an AssertionFailedError 👍🏿
       throw new Error('path is not a directory');
     }
   } catch (error) {
-    debug.error('failed due to invalid base path "%O": %O', basePath, error);
+    debug.error('failed due to invalid base path "%O": %O', basePath_, error);
     throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureBadConfigurationPath(basePath)
+      ErrorMessage.AssertionFailureBadConfigurationPath(basePath_)
     );
   }
 
-  debug('searching upwards for nearest package.json file starting at %O', basePath);
+  debug('searching upwards for nearest package.json file starting at %O', basePath_);
 
   const pkg = {
-    path: await (await import('pkg-up')).pkgUp({ cwd: basePath }),
+    path: await (await import('pkg-up')).pkgUp({ cwd: basePath_ }),
     name: undefined as string | undefined,
     version: undefined as string | undefined
   };
@@ -129,9 +135,9 @@ export async function discoverCommands(
     }
   }
 
-  debug('beginning configuration module auto-discovery at %O', basePath);
+  debug('beginning configuration module auto-discovery at %O', basePath_);
 
-  await discover(basePath);
+  await discover(basePath_);
 
   debug('configuration module auto-discovery completed');
 
@@ -144,7 +150,7 @@ export async function discoverCommands(
     debug_load.message('%O', context.commands);
   } else {
     throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath)
+      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath_)
     );
   }
 

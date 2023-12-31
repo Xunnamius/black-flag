@@ -59,6 +59,12 @@ const debug = getRootDebugLogger().extend('index');
 export async function configureProgram<
   CustomContext extends ExecutionContext = ExecutionContext
 >(
+  /**
+   * Command auto-discovery will occur at `commandModulePath`. An exception will
+   * occur if no commands are loadable from the given `commandModulePath`.
+   *
+   * `'file://...'`-style URLs are also accepted.
+   */
   commandModulePath: string,
   configurationHooks?: Promisable<ConfigurationHooks>
 ): Promise<PreExecutionContext> {
