@@ -1099,7 +1099,7 @@ Commands:
   myctl remote show
 
 Options:
-  --help     Show help text                                            [boolean]
+  --help  Show help text                                               [boolean]
 ```
 
 Since different OSes walk different filesystems in different orders,
@@ -1119,7 +1119,7 @@ Now let's try a grandchild command:
 Usage: myctl remote show
 
 Options:
-  --help          Show help text                                       [boolean]
+  --help  Show help text                                               [boolean]
 ```
 
 Phew. Alright, but what about trying some commands we know _don't_ exist?
