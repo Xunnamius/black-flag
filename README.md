@@ -158,9 +158,12 @@ same yargs API you already know and love:
 export function builder(yargs, helpOrVersionSet, argv) {
   //                                              ^^^
 
+  // Tell yargs to leave strings that look like numbers as strings
+  yargs.parserConfiguration({ 'parse-numbers': false });
+
   // This first conditional branch will be used to validate any dynamic
   // arguments and trigger the command's handler if validation succeeds
-
+  //
   //   vvv
   if (argv) {
     // ^^^
@@ -189,8 +192,6 @@ export function builder(yargs, helpOrVersionSet, argv) {
       version: { string: true }
     };
   }
-
-  yargs.parserConfiguration({ 'parse-numbers': false });
 }
 
 export function handler(argv) {
