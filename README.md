@@ -312,11 +312,9 @@ too.
 #!/usr/bin/env node
 // File: my-cli-project/cli.ts
 
-import { join } from 'node:path';
 import { runProgram } from '@black-flag/core';
-
 // Just point Black Flag at the directory containing your command files
-export default runProgram(join(__dirname, 'commands'));
+export default runProgram(import.meta.resolve('./commands'));
 ```
 
 ```shell
@@ -346,6 +344,7 @@ import { join } from 'node:path';
 import { runProgram, configureProgram } from '@black-flag/core';
 import { hideBin, isCliError } from '@black-flag/core/util';
 
+// Note that this example is using CJS-style path resolution. ESM is different.
 export default runProgram(join(__dirname, 'commands'));
 
 // ^^^ These are essentially equivalent vvv
@@ -475,11 +474,11 @@ Then our CLI's entry point might look something like this:
 #!/usr/bin/env node
 // File: my-cli-project/cli.ts
 
-import { join } from 'node:path';
 import { runProgram } from '@black-flag/core';
 
 export default runProgram(
-  join(__dirname, 'commands'),
+  // Note that this example is using ESM-style path resolution. CJS is different
+  import.meta.resolve('./commands'),
   // Just pass an object of your configuration hooks. Promises are okay!
   import('./configure.js') // <== Might be ".ts" over ".js" for deno projects
 );
@@ -526,7 +525,7 @@ as well as each command file's optionally-exported [`builder`][7] function.
 ```typescript
 // File: my-cli-project/cli.ts
 
-await runProgram('./commands', {
+await runProgram(import.meta.resolve('./commands'), {
   configureErrorHandlingEpilogue({ error }, argv, context) {
     // Instead of outputting to stderr by default, send all errors elsewhere
     sendJsErrorToLog4J(argv.aMoreDetailedErrorOrSomething ?? error);
@@ -868,11 +867,19 @@ Where `cli.js` has the following content:
 ```javascript
 #!/usr/bin/env node
 
-import { join } from 'node:path';
 import { runProgram } from '@black-flag/core';
-
-export default runProgram(join(__dirname, 'command'));
+export default runProgram(import.meta.resolve('./commands'));
 ```
+
+> These examples use ESM syntax. CJS is also supported. For example:
+>
+> ```javascript
+> #!/usr/bin/env node
+>
+> const bf = require('@black-flag/core');
+> const path = require('node:path');
+> module.exports = bf.runProgram(path.join(__dirname, 'commands'));
+> ```
 
 Let's create our first command, the _root command_. Every Black Flag project has
 one, and it's always named `index.js`. In vanilla yargs parlance, this would be
@@ -906,7 +913,7 @@ With that in mind, let's actually run our skeletal CLI now:
 ---
 
 ```text
-Error: this command is currently unimplemented
+This command is currently unimplemented
 ```
 
 Let's try with a bad positional parameter:
@@ -920,12 +927,9 @@ Let's try with a bad positional parameter:
 ```text
 Usage: myctl
 
-Commands:
-  myctl                                                                [default]
-
 Options:
-  --help          Show help text                                       [boolean]
-  --version       Show version number                                  [boolean]
+  --help     Show help text                                            [boolean]
+  --version  Show version number                                       [boolean]
 
 Unknown argument: bad
 ```
@@ -941,12 +945,9 @@ How about with a bad option:
 ```text
 Usage: myctl
 
-Commands:
-  myctl                                                                [default]
-
 Options:
-  --help          Show help text                                       [boolean]
-  --version       Show version number                                  [boolean]
+  --help     Show help text                                            [boolean]
+  --version  Show version number                                       [boolean]
 
 Unknown argument: bad
 ```
@@ -1068,14 +1069,16 @@ Wow, that was easy. Let's run our CLI now:
 ```text
 Usage: myctl command [options]
 
+Custom description here.
+
 Commands:
   myctl                                                                [default]
   myctl init
   myctl remote
 
 Options:
-  --help          Show help text                                       [boolean]
-  --version       Show version number                                  [boolean]
+  --help     Show help text                                            [boolean]
+  --version  Show version number                                       [boolean]
 ```
 
 Let's try a child command:
@@ -1096,7 +1099,7 @@ Commands:
   myctl remote show
 
 Options:
-  --help          Show help text                                       [boolean]
+  --help     Show help text                                            [boolean]
 ```
 
 Since different OSes walk different filesystems in different orders,
@@ -1122,24 +1125,6 @@ Options:
 Phew. Alright, but what about trying some commands we know _don't_ exist?
 
 ```shell
-./cli.js fake bad horrible
-```
-
----
-
-```text
-Usage: myctl
-
-Options:
-  --help          Show help text                                       [boolean]
-
-Unknown command: fake
-```
-
-Let's try an invalid command where one of the parent commands actually _does_
-exist:
-
-```shell
 ./cli.js remote bad horrible
 ```
 
@@ -1148,10 +1133,16 @@ exist:
 ```text
 Usage: myctl remote
 
-Options:
-  --help          Show help text                                       [boolean]
+Commands:
+  myctl remote                                                         [default]
+  myctl remote add
+  myctl remote remove
+  myctl remote show
 
-Unknown command: bad
+Options:
+  --help  Show help text                                               [boolean]
+
+Invalid command: you must call this command with a valid sub-command argument
 ```
 
 Neat! 📸
@@ -1168,8 +1159,8 @@ writing them.
 First, let's install [jest][34]. We'll also create a file to hold our tests.
 
 ```shell
-npm install jest
-touch test.js
+npm install --save-dev jest @babel/plugin-syntax-import-attributes
+touch test.cjs
 ```
 
 Since we set our root command to non-strict mode, let's test that it doesn't
@@ -1187,11 +1178,11 @@ invoke successively.
 > [common yargs footgun][37].
 
 ```javascript
-import { makeRunner } from '@black-flag/core/util';
+const { makeRunner } = require('@black-flag/core/util');
 
 // makeRunner is a factory function that returns runProgram functions with
 // curried arguments.
-const run = makeRunner(`${__dirname}/commands`);
+const run = makeRunner({ commandModulePath: `${__dirname}/commands` });
 
 afterEach(() => {
   // Since runProgram (i.e. what is returned by makeRunner) sets
@@ -1251,18 +1242,30 @@ describe('myctl (root)', () => {
 Finally, let's run our tests:
 
 ```shell
-npx jest
+npx --node-options='--experimental-vm-modules' jest --testMatch '**/test.cjs' --restoreMocks
 ```
+
+> As of January 2024, we need to use
+> `--node-options='--experimental-vm-modules'` until the Node team unflags
+> virtual machine module support in a future version.
+
+> We use `--restoreMocks` to ensure mock state doesn't leak between tests. We
+> use `--testMatch '**/test.cjs'` to make Jest see our CJS files.
 
 ---
 
 ```text
- PASS  test.js
+PASS  ./test.cjs
+  myctl (root)
+    ✓ emits expected output when called with no arguments (168 ms)
+    ✓ emits expected output when called with unknown arguments (21 ms)
+    ✓ still terminates with 0 exit code when called with unknown arguments (20 ms)
 
 Test Suites: 1 passed, 1 total
 Tests:       3 passed, 3 total
 Snapshots:   0 total
-Time:        0.272 s
+Time:        0.405 s, estimated 1 s
+Ran all test suites.
 ```
 
 Neat! 📸
