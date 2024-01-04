@@ -887,7 +887,7 @@ export function npmCopySelfFixture(): MockFixture {
 
       // ! Notes for when we merge all of these these versions of this file
       // ! together and publish as packages: we fixed an error with namespaced
-      // ! packages here!
+      // ! packages here! And also an error with dep-less packages too!
 
       await rename({
         oldPath: `${context.root}/node_modules`,
@@ -895,11 +895,25 @@ export function npmCopySelfFixture(): MockFixture {
         context
       });
 
-      await rename({
-        oldPath: `${context.root}/node_modules_old/${pkgName}/node_modules`,
-        updatedPath: `${context.root}/node_modules`,
+      const realNodeModulesPath = `${context.root}/node_modules_old/${pkgName}/node_modules`;
+      const realNodeModulesPathExists = await accessFile({
+        path: realNodeModulesPath,
         context
-      });
+      }).then(
+        () => true,
+        () => false
+      );
+
+      await (realNodeModulesPathExists
+        ? rename({
+            oldPath: realNodeModulesPath,
+            updatedPath: `${context.root}/node_modules`,
+            context
+          })
+        : mkdir({
+            paths: [`${context.root}/node_modules`],
+            context
+          }));
 
       if (pkgName.startsWith('@')) {
         const pkgNameParts = pkgName.split('/');
@@ -976,6 +990,7 @@ export function webpackTestFixture(): MockFixture {
       await run('npx', ['webpack'], { cwd: context.root, reject: true });
 
       const { code, stdout, stderr } = await run('node', [
+        '--no-warnings',
         `${context.root}/dist/index.js`
       ]);
 
@@ -1026,10 +1041,14 @@ export function nodeImportAndRunTestFixture(): MockFixture {
 
       context.treeOutput = await getTreeOutput(context);
 
-      const { code, stdout, stderr } = await run(bin, [...args, targetPath], {
-        cwd: context.root,
-        ...options
-      });
+      const { code, stdout, stderr } = await run(
+        bin,
+        ['--no-warnings', ...args, targetPath],
+        {
+          cwd: context.root,
+          ...options
+        }
+      );
 
       context.testResult = {
         code,
