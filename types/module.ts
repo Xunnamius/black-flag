@@ -176,8 +176,4 @@ export type ImportedConfigurationModule<
       | ParentConfiguration<CustomCliArguments>
       | ChildConfiguration<CustomCliArguments>
     >
-) &
-  (
-    | { __esModule?: false; default?: ImportedConfigurationModule<CustomCliArguments> }
-    | { __esModule: true }
-  );
+) & { default?: ImportedConfigurationModule<CustomCliArguments> };

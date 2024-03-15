@@ -387,8 +387,15 @@ export async function discoverCommands(
 
           debug_('configuration file metadata (w/o reservedCommandNames): %O', meta);
 
-          // ? ESM <=> CJS interop
-          if ('default' in maybeImportedConfig && !maybeImportedConfig.__esModule) {
+          // ? ESM <=> CJS interop. If there's a default property, we'll use it.
+          if (maybeImportedConfig.default) {
+            maybeImportedConfig = maybeImportedConfig.default;
+          }
+
+          // ? ESM <=> CJS interop, again. See:
+          // ? test/fixtures/several-files-cjs-esm/nested/first.cjs
+          /* istanbul ignore next */
+          if (maybeImportedConfig.default) {
             maybeImportedConfig = maybeImportedConfig.default;
           }
 
