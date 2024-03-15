@@ -1029,19 +1029,22 @@ export async function discoverCommands(
                   : { [args[0] as string]: args[1] || /* istanbul ignore next */ {} }
               ) as Record<string, Options>;
 
-              Object.entries(options).forEach(([option, optionConfiguration]) => {
-                if ('demandOption' in optionConfiguration) {
-                  debug_(
-                    `discarded attempted mutation of disabled yargs option configuration key "demandOption" (for the %O option) on %O program`,
-                    option,
-                    descriptor
-                  );
+              const optionsShallowClone = Object.fromEntries(
+                Object.entries(options).map(([option, optionConfiguration]) => {
+                  if ('demandOption' in optionConfiguration) {
+                    debug_(
+                      `discarded attempted mutation of disabled yargs option configuration key "demandOption" (for the %O option) on %O program`,
+                      option,
+                      descriptor
+                    );
+                  }
 
-                  delete optionConfiguration.demandOption;
-                }
-              });
+                  const { demandOption: _, ...rest } = optionConfiguration;
+                  return [option, rest];
+                })
+              );
 
-              target.options(options);
+              target.options(optionsShallowClone);
               return proxy;
             };
           }

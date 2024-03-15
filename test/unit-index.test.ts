@@ -3590,6 +3590,40 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
+  it('does not pass undefined through argv when using "builder"', async () => {
+    expect.hasAssertions();
+
+    const run = bf_util.makeRunner({
+      commandModulePath: getFixturePath('one-file-builder-object-literal')
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await expect(run(['--option', 'a'])).resolves.toContainEntries([
+        ['option', 'a'],
+        ['handled_by', expect.any(String)]
+      ]);
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      await expect(run(['--option', 'b'])).resolves.toContainEntries([
+        ['option', 'b'],
+        ['handled_by', expect.any(String)]
+      ]);
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+
+      await expect(run()).resolves.toBeUndefined();
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
+
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.any(String)],
+        [],
+        [expect.stringContaining('Missing required argument: option')]
+      ]);
+    });
+  });
+
   it('ensures PreExecutionContext::rootPrograms is PreExecutionContext.commands[0].programs and also referenced by the root command full name', async () => {
     expect.hasAssertions();
 
