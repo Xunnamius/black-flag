@@ -1489,18 +1489,18 @@ commands: Map(6) {
 
 Each of these six commands is actually _three_ programs:
 
-1. The **effector** (`programs.effector`) programs is responsible for
+1. The **effector** (`programs.effector`) programs are responsible for
    second-pass arguments parsing and comprehensive validation, executing each
    command's actual [`handler`][8] function, generating specific help text
    during errors, and ensuring the final parse result bubbles up to the router
    program.
 
-2. The **helper** (`programs.helper`) programs is responsible for generating
+2. The **helper** (`programs.helper`) programs are responsible for generating
    generic help text as well as first-pass arguments parsing and initial
    validation. Said parse result is used as the `argv` third parameter passed to
    the [`builder`][8] functions of effectors.
 
-3. The **router** (`programs.router`) programs is responsible for proxying
+3. The **router** (`programs.router`) programs are responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and
    final parse results bubble up to the root Black Flag execution context
    ([`PreExecutionContext::execute`][12]) for handling.
@@ -1652,7 +1652,7 @@ What follows is a flow diagram illustrating Black Flag's execution flow using
 the `myctl` example from the previous sections.
 
 ```text
-                           `myctl --version`
+                           `myctl --verbose`
                  ┌───────────────────────────────────┐
                  │                 2                 │
                  │             ┌─────►┌───────────┐  │
@@ -1734,9 +1734,9 @@ Suppose the user executes `myctl --verbose`.<sup>🡒1</sup> Black Flag (using
 `runProgram`) calls your configuration hooks, discovers all available commands,
 and creates three programs per discovered command: the "router", "helper", and
 "effector". If there was an error during discovery/configuration or hook
-execution, the error handling hook would execute before the process exited with
-the appropriate code.<sup>1🡒R1</sup> This is how all errors that bubble up are
-handled. Otherwise, Black Flag calls the root
+execution, an internal error handling routine would execute before the process
+exited with the appropriate code.<sup>1🡒R1</sup> This is how all errors that
+bubble up are handled. Otherwise, Black Flag calls the root
 `RouterProgram::parseAsync`.<sup>1🡒2</sup> The router detects that the given
 arguments refer to the current command and so calls
 `HelperProgram::parseAsync`.<sup>2🡒3B</sup> If the helper throws (e.g. due to a
