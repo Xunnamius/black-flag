@@ -9,7 +9,8 @@ import type { Arguments, EffectorProgram, ExecutionContext } from 'types/program
  * subtype of this interface.
  */
 export type Configuration<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = {
   /**
    * An array of `command` aliases [as
@@ -52,7 +53,7 @@ export type Configuration<
     | { [key: string]: _Options }
     | ((
         blackFlag: Omit<
-          EffectorProgram<CustomCliArguments>,
+          EffectorProgram<CustomCliArguments, CustomExecutionContext>,
           | 'parseAsync'
           | 'fail'
           | 'command'
@@ -60,10 +61,10 @@ export type Configuration<
           | 'command_finalize_deferred'
         >,
         helpOrVersionSet: boolean,
-        argv?: Arguments<CustomCliArguments>
+        argv?: Arguments<CustomCliArguments, CustomExecutionContext>
       ) =>
         | void
-        | EffectorProgram<CustomCliArguments>
+        | EffectorProgram<CustomCliArguments, CustomExecutionContext>
         | { [key: string]: _Options }
         | _Program);
   /**
@@ -100,7 +101,9 @@ export type Configuration<
    *
    * @default undefined
    */
-  handler: (argv: Arguments<CustomCliArguments>) => Promisable<void>;
+  handler: (
+    argv: Arguments<CustomCliArguments, CustomExecutionContext>
+  ) => Promisable<void>;
   /**
    * The name of the command. Any spaces will be replaced with hyphens.
    * Including a character that yargs does not consider valid for a
@@ -133,8 +136,9 @@ export type Configuration<
  * files that will eventually get imported via auto-discovery.
  */
 export type RootConfiguration<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Partial<ParentConfiguration<CustomCliArguments>>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Partial<ParentConfiguration<CustomCliArguments, CustomExecutionContext>>;
 
 /**
  * A partial extension to the {@link Configuration} interface for non-root
@@ -142,8 +146,9 @@ export type RootConfiguration<
  * module files that will eventually get imported via auto-discovery.
  */
 export type ParentConfiguration<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Partial<Configuration<CustomCliArguments>>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Partial<Configuration<CustomCliArguments, CustomExecutionContext>>;
 
 /**
  * A partial extension to the {@link Configuration} interface for child
@@ -151,8 +156,9 @@ export type ParentConfiguration<
  * files that will eventually get imported via auto-discovery.
  */
 export type ChildConfiguration<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Partial<Configuration<CustomCliArguments>>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Partial<Configuration<CustomCliArguments, CustomExecutionContext>>;
 
 /**
  * Represents a Configuration object imported from a CJS/ESM module external to
@@ -160,20 +166,21 @@ export type ChildConfiguration<
  * file).
  */
 export type ImportedConfigurationModule<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = (
   | ((
       context: ExecutionContext
     ) => Promisable<
       Partial<
-        | RootConfiguration<CustomCliArguments>
-        | ParentConfiguration<CustomCliArguments>
-        | ChildConfiguration<CustomCliArguments>
+        | RootConfiguration<CustomCliArguments, CustomExecutionContext>
+        | ParentConfiguration<CustomCliArguments, CustomExecutionContext>
+        | ChildConfiguration<CustomCliArguments, CustomExecutionContext>
       >
     >)
   | Partial<
-      | RootConfiguration<CustomCliArguments>
-      | ParentConfiguration<CustomCliArguments>
-      | ChildConfiguration<CustomCliArguments>
+      | RootConfiguration<CustomCliArguments, CustomExecutionContext>
+      | ParentConfiguration<CustomCliArguments, CustomExecutionContext>
+      | ChildConfiguration<CustomCliArguments, CustomExecutionContext>
     >
-) & { default?: ImportedConfigurationModule<CustomCliArguments> };
+) & { default?: ImportedConfigurationModule<CustomCliArguments, CustomExecutionContext> };

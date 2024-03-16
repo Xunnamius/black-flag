@@ -16,8 +16,9 @@ import type { runProgram } from 'universe/util';
  * `unknown` for unrecognized arguments.
  */
 export type Arguments<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = _Arguments<FrameworkArguments & CustomCliArguments>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = _Arguments<FrameworkArguments<CustomExecutionContext> & CustomCliArguments>;
 
 /**
  * Represents an empty or "null" `Arguments` object devoid of useful data.
@@ -26,10 +27,12 @@ export type Arguments<
  * various `Arguments`-returning functions when an exceptional event prevents
  * yargs from returning a real `Arguments` parse result.
  */
-export type NullArguments = {
+export type NullArguments<
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = {
   $0: '<NullArguments: no parse result available due to exception>';
   _: [];
-} & FrameworkArguments;
+} & FrameworkArguments<CustomExecutionContext>;
 
 /**
  * Represents a pre-configured yargs instance ready for argument parsing and
@@ -39,9 +42,10 @@ export type NullArguments = {
  * by yargs but with several differences and should be preferred.
  */
 export type Program<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = Omit<
-  _Program<FrameworkArguments & CustomCliArguments>,
+  _Program<FrameworkArguments<CustomExecutionContext> & CustomCliArguments>,
   | 'command'
   | 'onFinishCommand'
   | 'showHelpOnFail'
@@ -64,15 +68,18 @@ export type Program<
   command: {
     (
       command: string[],
-      description: Configuration<CustomCliArguments>['description'],
+      description: Configuration<
+        CustomCliArguments,
+        CustomExecutionContext
+      >['description'],
       builder:
         | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
         | Record<string, never>,
-      handler: Configuration<CustomCliArguments>['handler'],
+      handler: Configuration<CustomCliArguments, CustomExecutionContext>['handler'],
       // ? configureArguments already handles this use case, so...
       middlewares: [],
-      deprecated: Configuration<CustomCliArguments>['deprecated']
-    ): Program<CustomCliArguments>;
+      deprecated: Configuration<CustomCliArguments, CustomExecutionContext>['deprecated']
+    ): Program<CustomCliArguments, CustomExecutionContext>;
   };
 
   /**
@@ -86,7 +93,9 @@ export type Program<
    *
    * @see {@link _Program.showHelpOnFail}
    */
-  showHelpOnFail: (enabled: boolean) => Program<CustomCliArguments>;
+  showHelpOnFail: (
+    enabled: boolean
+  ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**
    * Identical to `yargs::command` except its execution is enqueued and
@@ -95,7 +104,7 @@ export type Program<
    * @see {@link _Program.command}
    * @internal
    */
-  command_deferred: Program<CustomCliArguments>['command'];
+  command_deferred: Program<CustomCliArguments, CustomExecutionContext>['command'];
 
   /**
    * @see {@link Program.command_deferred}
@@ -108,22 +117,31 @@ export type Program<
  * Represents an "effector" {@link Program} instance.
  */
 export type EffectorProgram<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<Program<CustomCliArguments>, 'command_deferred' | 'command_finalize_deferred'>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Omit<
+  Program<CustomCliArguments, CustomExecutionContext>,
+  'command_deferred' | 'command_finalize_deferred'
+>;
 
 /**
  * Represents an "helper" {@link Program} instance.
  */
 export type HelperProgram<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Omit<Program<CustomCliArguments>, 'demand' | 'demandCommand' | 'command'>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Omit<
+  Program<CustomCliArguments, CustomExecutionContext>,
+  'demand' | 'demandCommand' | 'command'
+>;
 
 /**
  * Represents an "router" {@link Program} instance.
  */
 export type RouterProgram<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
-> = Pick<Program<CustomCliArguments>, 'parseAsync' | 'command'>;
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = Pick<Program<CustomCliArguments, CustomExecutionContext>, 'parseAsync' | 'command'>;
 
 /**
  * Represents valid {@link Configuration} module types that can be loaded.
@@ -140,21 +158,27 @@ export type ProgramDescriptor = 'effector' | 'helper' | 'router';
  */
 export type DescriptorToProgram<
   Descriptor extends ProgramDescriptor,
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = 'effector' extends Descriptor
-  ? EffectorProgram<CustomCliArguments>
+  ? EffectorProgram<CustomCliArguments, CustomExecutionContext>
   : 'helper' extends Descriptor
-    ? HelperProgram<CustomCliArguments>
-    : RouterProgram<CustomCliArguments>;
+    ? HelperProgram<CustomCliArguments, CustomExecutionContext>
+    : RouterProgram<CustomCliArguments, CustomExecutionContext>;
 
 /**
  * Represents the program types that represent every Black Flag command as
  * aptly-named values in an object.
  */
 export type Programs<
-  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = {
-  [Descriptor in ProgramDescriptor]: DescriptorToProgram<Descriptor, CustomCliArguments>;
+  [Descriptor in ProgramDescriptor]: DescriptorToProgram<
+    Descriptor,
+    CustomCliArguments,
+    CustomExecutionContext
+  >;
 };
 
 /**
@@ -230,8 +254,10 @@ export type ProgramMetadata = {
  * (e.g. `Arguments<MyCustomArgs>`), which will extend `FrameworkArguments` for
  * you.
  */
-export type FrameworkArguments = {
-  [$executionContext]: ExecutionContext;
+export type FrameworkArguments<
+  CustomExecutionContext extends ExecutionContext = ExecutionContext
+> = {
+  [$executionContext]: CustomExecutionContext;
 };
 
 /**
