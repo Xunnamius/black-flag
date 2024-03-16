@@ -52,7 +52,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/86491dc/src/error.ts#L137)
+[src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/f66599b/src/error.ts#L137)
 
 ## Properties
 
@@ -66,7 +66,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/86491dc/src/error.ts#L132)
+[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/f66599b/src/error.ts#L132)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1076
+node_modules/typescript/lib/lib.es5.d.ts:1077
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1075
+node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1077
+node_modules/typescript/lib/lib.es5.d.ts:1078
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/86491dc/src/error.ts#L85)
+[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/f66599b/src/error.ts#L85)
 
 ___
 
@@ -144,11 +144,15 @@ ___
 
 ▪ `Static` `Optional` **prepareStackTrace**: (`err`: `Error`, `stackTraces`: `CallSite`[]) => `any`
 
+Optional override for formatting stack traces
+
+**`See`**
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+
 #### Type declaration
 
 ▸ (`err`, `stackTraces`): `any`
-
-Optional override for formatting stack traces
 
 ##### Parameters
 
@@ -160,10 +164,6 @@ Optional override for formatting stack traces
 ##### Returns
 
 `any`
-
-**`See`**
-
-https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
