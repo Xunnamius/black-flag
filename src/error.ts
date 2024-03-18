@@ -192,8 +192,8 @@ export const ErrorMessage = {
   CommandNotImplemented() {
     return 'this command is currently unimplemented';
   },
-  InvalidCommandInvocation() {
-    return 'invalid command: you must call this command with a valid sub-command argument';
+  InvalidSubCommandInvocation() {
+    return 'invalid sub-command: you must call this command with a valid sub-command argument';
   },
   FrameworkError(error: unknown) {
     return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application.\nError: ${error}`;

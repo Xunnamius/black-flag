@@ -875,7 +875,7 @@ describe('::configureProgram', () => {
       });
     });
 
-    it('outputs help text with ErrorMessage.InvalidCommandInvocation epilogue when attempting to execute a parent command that has children and no handler export and no custom command export', async () => {
+    it('outputs help text with ErrorMessage.InvalidSubCommandInvocation epilogue when attempting to execute a parent command that has children and no handler export and no custom command export', async () => {
       expect.hasAssertions();
 
       await withMocks(async ({ errorSpy }) => {
@@ -885,13 +885,13 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('nested-several-files-empty'))
           ).execute(['nested'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.InvalidCommandInvocation()
+          message: ErrorMessage.InvalidSubCommandInvocation()
         });
 
         expect(errorSpy.mock.calls).toStrictEqual([
           [expect.stringContaining('--help')],
           [],
-          [capitalize(ErrorMessage.InvalidCommandInvocation())]
+          [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
         ]);
       });
     });
@@ -1660,7 +1660,7 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
       ]);
     });
 
@@ -1675,7 +1675,7 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
       ]);
 
       await run('nested');
@@ -1684,10 +1684,10 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
       ]);
     });
   });
@@ -3090,7 +3090,7 @@ describe('<command module auto-discovery>', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^Usage: /)],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringMatching(/^Usage: /)],
         [],
         ['Unknown argument: version']
@@ -3683,10 +3683,10 @@ describe('<command module auto-discovery>', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())],
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidCommandInvocation())]
+        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
       ]);
 
       expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);

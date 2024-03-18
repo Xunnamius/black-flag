@@ -838,11 +838,11 @@ export async function discoverCommands(
 
           if (isParousParentHelperHandlingCommandNotImplementedError) {
             debug_(
-              'exited failure handler: set finalError to CliError(InvalidCommandInvocation)'
+              'exited failure handler: set finalError to CliError(InvalidSubCommandInvocation)'
             );
 
             context.state.finalError = new CliError(
-              ErrorMessage.InvalidCommandInvocation()
+              ErrorMessage.InvalidSubCommandInvocation()
             );
           }
         }
