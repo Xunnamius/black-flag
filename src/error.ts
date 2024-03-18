@@ -72,6 +72,14 @@ export type CliErrorOptions = {
    * @default FrameworkExitCode.DefaultError
    */
   suggestedExitCode?: number;
+  /**
+   * If `true`, help text will be sent to stderr _before this exception finishes
+   * bubbling_. Where the exception is thrown will determine which instance is
+   * responsible for error text generation.
+   *
+   * @default false
+   */
+  showHelp?: boolean;
 };
 
 /**
@@ -83,6 +91,7 @@ export type CliErrorOptions = {
 // TODO: of the X-app-errors pages
 export class CliError extends AppError implements NonNullable<CliErrorOptions> {
   suggestedExitCode = FrameworkExitCode.DefaultError;
+  showHelp = false;
   // TODO: this prop should be added by makeNamedError or whatever other fn
   [$type] = ['CliError'];
   /**
@@ -102,7 +111,7 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
   );
   constructor(
     cause: Error | string,
-    { suggestedExitCode }: CliErrorOptions = {},
+    { suggestedExitCode, showHelp }: CliErrorOptions = {},
     message: string | undefined = undefined,
     superOptions: ErrorOptions = {}
   ) {
@@ -118,6 +127,10 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
 
     if (suggestedExitCode !== undefined) {
       this.suggestedExitCode = suggestedExitCode;
+    }
+
+    if (showHelp !== undefined) {
+      this.showHelp = showHelp;
     }
   }
 }

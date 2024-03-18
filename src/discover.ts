@@ -802,7 +802,7 @@ export async function discoverCommands(
         debug_('message: %O', message);
         debug_('error.message: %O', error?.message);
         debug_('error is native error: %O', isNativeError(error));
-        debug_('will show help on fail: %O', context.state.showHelpOnFail);
+        debug_('is allowed to show help on fail: %O', context.state.showHelpOnFail);
         debug_('is probably vanilla yargs error: %O', isProbablyVanillaYargsError);
         debug_(
           'did output help or version text: %O',
@@ -822,11 +822,15 @@ export async function discoverCommands(
           isParousParentHelperHandlingCommandNotImplementedError
         );
 
+        const forceShowHelp = isCliError(error) && error.showHelp;
+        debug_('will attempt to force output of help text: %O', forceShowHelp);
+
         if (
           context.state.showHelpOnFail &&
           !context.state.didOutputHelpOrVersionText &&
           (isProbablyVanillaYargsError ||
-            isParousParentHelperHandlingCommandNotImplementedError)
+            isParousParentHelperHandlingCommandNotImplementedError ||
+            forceShowHelp)
         ) {
           debug_(
             `sending help text to stderr (triggered by ${error ? 'black flag' : 'yargs'})`

@@ -1003,6 +1003,19 @@ describe('::configureProgram', () => {
       });
     });
 
+    it('does not show help text when a command handler throws', async () => {
+      expect.hasAssertions();
+
+      await withMocks(async ({ errorSpy }) => {
+        const { execute } = await bf.configureProgram(
+          getFixturePath('one-file-throws-handler-1')
+        );
+
+        await expect(execute()).rejects.toBeDefined();
+        expect(errorSpy.mock.calls).toStrictEqual([['Error thrown in handler']]);
+      });
+    });
+
     it('returns NullArguments if builder or handler throws GracefulEarlyExitError, otherwise throws normally', async () => {
       expect.hasAssertions();
 
@@ -1886,6 +1899,21 @@ describe('::runProgram and util::makeRunner', () => {
 
       expect(getExitCode()).toBe(5);
       expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('sends help text to stderr when CliError::showHelp is true', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-throws-handler-showhelp'));
+
+      expect(getExitCode()).not.toBe(0);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('Usage text for')],
+        [],
+        ['Problems!']
+      ]);
     });
   });
 });
