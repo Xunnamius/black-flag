@@ -24,6 +24,7 @@ Represents a failed sanity check.
 - [cause](util.AssertionFailedError.md#cause)
 - [message](util.AssertionFailedError.md#message)
 - [name](util.AssertionFailedError.md#name)
+- [showHelp](util.AssertionFailedError.md#showhelp)
 - [stack](util.AssertionFailedError.md#stack)
 - [suggestedExitCode](util.AssertionFailedError.md#suggestedexitcode)
 - [prepareStackTrace](util.AssertionFailedError.md#preparestacktrace)
@@ -57,7 +58,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:175](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L175)
+[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L188)
 
 ## Properties
 
@@ -71,7 +72,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L171)
+[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L184)
 
 ___
 
@@ -117,6 +118,20 @@ node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
+### showHelp
+
+• **showHelp**: `boolean` = `false`
+
+#### Inherited from
+
+[CliError](index.CliError.md).[showHelp](index.CliError.md#showhelp)
+
+#### Defined in
+
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L94)
+
+___
+
 ### stack
 
 • `Optional` **stack**: `string`
@@ -141,7 +156,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L85)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L93)
 
 ___
 

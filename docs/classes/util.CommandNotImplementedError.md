@@ -24,6 +24,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 - [cause](util.CommandNotImplementedError.md#cause)
 - [message](util.CommandNotImplementedError.md#message)
 - [name](util.CommandNotImplementedError.md#name)
+- [showHelp](util.CommandNotImplementedError.md#showhelp)
 - [stack](util.CommandNotImplementedError.md#stack)
 - [suggestedExitCode](util.CommandNotImplementedError.md#suggestedexitcode)
 - [prepareStackTrace](util.CommandNotImplementedError.md#preparestacktrace)
@@ -52,7 +53,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L137)
+[src/error.ts:150](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L150)
 
 ## Properties
 
@@ -66,7 +67,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L132)
+[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L145)
 
 ___
 
@@ -112,6 +113,20 @@ node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
+### showHelp
+
+• **showHelp**: `boolean` = `false`
+
+#### Inherited from
+
+[CliError](index.CliError.md).[showHelp](index.CliError.md#showhelp)
+
+#### Defined in
+
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L94)
+
+___
+
 ### stack
 
 • `Optional` **stack**: `string`
@@ -136,7 +151,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L85)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L93)
 
 ___
 

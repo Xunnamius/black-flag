@@ -57,11 +57,12 @@ Options available when constructing a new `CliError` object.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
+| `showHelp?` | `boolean` | If `true`, help text will be sent to stderr _before this exception finishes bubbling_. Where the exception is thrown will determine which instance is responsible for error text generation. **`Default`** ```ts false ``` |
 | `suggestedExitCode?` | `number` | The exit code that will be returned when the application exits, given nothing else goes wrong in the interim. **`Default`** ```ts FrameworkExitCode.DefaultError ``` |
 
 #### Defined in
 
-[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L67)
+[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L67)
 
 ___
 
@@ -81,7 +82,7 @@ Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 
 #### Defined in
 
-[types/program.ts:159](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L159)
+[types/program.ts:159](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L159)
 
 ___
 
@@ -100,7 +101,7 @@ Represents an "effector" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:119](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L119)
+[types/program.ts:119](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L119)
 
 ___
 
@@ -136,7 +137,7 @@ Represents a globally-accessible shared context object singleton.
 
 #### Defined in
 
-[types/program.ts:328](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L328)
+[types/program.ts:328](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L328)
 
 ___
 
@@ -176,7 +177,7 @@ instead.
 
 #### Defined in
 
-[types/program.ts:280](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L280)
+[types/program.ts:280](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L280)
 
 ___
 
@@ -206,7 +207,7 @@ you.
 
 #### Defined in
 
-[types/program.ts:257](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L257)
+[types/program.ts:257](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L257)
 
 ___
 
@@ -225,7 +226,7 @@ Represents an "helper" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:130](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L130)
+[types/program.ts:130](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L130)
 
 ___
 
@@ -244,7 +245,7 @@ Represents the pre-execution context that is the result of calling
 
 #### Defined in
 
-[types/program.ts:291](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L291)
+[types/program.ts:291](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L291)
 
 ___
 
@@ -267,7 +268,7 @@ by yargs but with several differences and should be preferred.
 
 #### Defined in
 
-[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L44)
+[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L44)
 
 ___
 
@@ -279,7 +280,7 @@ Represents the three program types that comprise any Black Flag command.
 
 #### Defined in
 
-[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L154)
+[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L154)
 
 ___
 
@@ -305,7 +306,7 @@ corresponding [Configuration](index.md#configuration) object/file.
 
 #### Defined in
 
-[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L188)
+[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L188)
 
 ___
 
@@ -317,7 +318,7 @@ Represents valid [Configuration](index.md#configuration) module types that can b
 
 #### Defined in
 
-[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L149)
+[types/program.ts:149](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L149)
 
 ___
 
@@ -337,7 +338,7 @@ aptly-named values in an object.
 
 #### Defined in
 
-[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L173)
+[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L173)
 
 ___
 
@@ -356,7 +357,7 @@ Represents an "router" [Program](util.md#program) instance.
 
 #### Defined in
 
-[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/4e1a91c/types/program.ts#L141)
+[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/b5a1e58/types/program.ts#L141)
 
 ## Variables
 
@@ -410,7 +411,7 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 #### Defined in
 
-[src/error.ts:187](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L187)
+[src/error.ts:200](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L200)
 
 ___
 
@@ -423,7 +424,7 @@ Hard-coded default option name for dumping help text to stdout. For example:
 
 #### Defined in
 
-[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/constant.ts#L19)
+[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/constant.ts#L19)
 
 ___
 
@@ -435,7 +436,7 @@ Hard-coded default help option description text.
 
 #### Defined in
 
-[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/constant.ts#L24)
+[src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/constant.ts#L24)
 
 ___
 
@@ -450,7 +451,7 @@ description (`description` export) respectively.
 
 #### Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/constant.ts#L13)
 
 ___
 
@@ -463,7 +464,7 @@ example: `--${defaultVersionOptionName}`.
 
 #### Defined in
 
-[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/constant.ts#L30)
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/constant.ts#L30)
 
 ___
 
@@ -475,7 +476,7 @@ Hard-coded default version option description text.
 
 #### Defined in
 
-[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/constant.ts#L35)
+[src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/constant.ts#L35)
 
 ## Functions
 
@@ -499,7 +500,7 @@ https://yargs.js.org/docs/#api-reference
 
 #### Defined in
 
-[src/exports/util.ts:48](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/exports/util.ts#L48)
+[src/exports/util.ts:48](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/exports/util.ts#L48)
 
 ___
 
@@ -521,7 +522,7 @@ obj is Arguments
 
 #### Defined in
 
-[src/util.ts:458](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/util.ts#L458)
+[src/util.ts:458](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/util.ts#L458)
 
 ___
 
@@ -543,7 +544,7 @@ error is ErrnoException & Object
 
 #### Defined in
 
-[src/util.ts:472](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/util.ts#L472)
+[src/util.ts:472](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/util.ts#L472)
 
 ___
 
@@ -565,7 +566,7 @@ parameter is CommandNotImplementedError
 
 #### Defined in
 
-[src/error.ts:53](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L53)
+[src/error.ts:53](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L53)
 
 ___
 
@@ -587,7 +588,7 @@ obj is NullArguments
 
 #### Defined in
 
-[src/util.ts:447](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/util.ts#L447)
+[src/util.ts:447](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/util.ts#L447)
 
 ___
 
@@ -609,7 +610,7 @@ obj is PreExecutionContext
 
 #### Defined in
 
-[src/util.ts:434](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/util.ts#L434)
+[src/util.ts:434](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/util.ts#L434)
 
 ___
 
@@ -668,4 +669,4 @@ details.
 
 #### Defined in
 
-[src/util.ts:50](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/util.ts#L50)
+[src/util.ts:50](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/util.ts#L50)

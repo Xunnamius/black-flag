@@ -36,6 +36,7 @@ can be used as a simple wrapper around other errors.
 - [cause](index.CliError.md#cause)
 - [message](index.CliError.md#message)
 - [name](index.CliError.md#name)
+- [showHelp](index.CliError.md#showhelp)
 - [stack](index.CliError.md#stack)
 - [suggestedExitCode](index.CliError.md#suggestedexitcode)
 - [prepareStackTrace](index.CliError.md#preparestacktrace)
@@ -71,7 +72,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:92](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L92)
+[src/error.ts:101](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L101)
 
 • **new CliError**(`cause`, `options`, `message`, `superOptions`): [`CliError`](index.CliError.md)
 
@@ -97,7 +98,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:97](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L97)
+[src/error.ts:106](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L106)
 
 ## Properties
 
@@ -107,7 +108,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:87](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L87)
+[src/error.ts:96](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L96)
 
 ___
 
@@ -153,6 +154,20 @@ node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
+### showHelp
+
+• **showHelp**: `boolean` = `false`
+
+#### Implementation of
+
+NonNullable.showHelp
+
+#### Defined in
+
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L94)
+
+___
+
 ### stack
 
 • `Optional` **stack**: `string`
@@ -177,7 +192,7 @@ NonNullable.suggestedExitCode
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L85)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L93)
 
 ___
 

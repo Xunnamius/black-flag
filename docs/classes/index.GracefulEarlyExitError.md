@@ -26,6 +26,7 @@ termination of the application but with an exit code indicating success
 - [cause](index.GracefulEarlyExitError.md#cause)
 - [message](index.GracefulEarlyExitError.md#message)
 - [name](index.GracefulEarlyExitError.md#name)
+- [showHelp](index.GracefulEarlyExitError.md#showhelp)
 - [stack](index.GracefulEarlyExitError.md#stack)
 - [suggestedExitCode](index.GracefulEarlyExitError.md#suggestedexitcode)
 - [prepareStackTrace](index.GracefulEarlyExitError.md#preparestacktrace)
@@ -55,7 +56,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:159](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L159)
+[src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L172)
 
 ## Properties
 
@@ -69,7 +70,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:153](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L153)
+[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L166)
 
 ___
 
@@ -115,6 +116,20 @@ node_modules/typescript/lib/lib.es5.d.ts:1076
 
 ___
 
+### showHelp
+
+• **showHelp**: `boolean` = `false`
+
+#### Inherited from
+
+[CliError](index.CliError.md).[showHelp](index.CliError.md#showhelp)
+
+#### Defined in
+
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L94)
+
+___
+
 ### stack
 
 • `Optional` **stack**: `string`
@@ -139,7 +154,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:85](https://github.com/Xunnamius/black-flag/blob/4e1a91c/src/error.ts#L85)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/b5a1e58/src/error.ts#L93)
 
 ___
 
