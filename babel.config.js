@@ -85,7 +85,7 @@ module.exports = {
             replaceExtensions: {
               '^../package.json$': '../../package.json',
               '../debug-extended.js': '../debug-extended/index.js',
-              '^(([^/]*/)?lib/[^/]+)$': '$1/index'
+              '^(([^/]*/)*lib/[^/]+)$': '$1/index'
             }
           }
         ]
