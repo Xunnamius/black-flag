@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import url from 'node:url';
-import { isNativeError, isPromise, isSymbolObject } from 'node:util/types';
+import { isNativeError, isPromise } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
 
@@ -957,12 +957,10 @@ export async function discoverCommands(
     // * information available.
 
     return new Proxy(vanillaYargs, {
-      get(target, property: unknown, proxy: Program) {
-        const isSymbolOrOwnProperty =
-          typeof property === 'string' &&
-          (isSymbolObject(property) ||
-            Object.hasOwn(vanillaYargs, property) ||
-            Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property));
+      get(target, property: PropertyKey, proxy: Program) {
+        const isOwnProperty =
+          Object.hasOwn(vanillaYargs, property) ||
+          Object.hasOwn(Object.getPrototypeOf(vanillaYargs), property);
 
         if (['help', 'version'].includes(property as string)) {
           return function () {
@@ -1055,11 +1053,11 @@ export async function discoverCommands(
         }
 
         if (descriptor === 'router') {
-          if (isSymbolOrOwnProperty && !['parseAsync', 'command'].includes(property)) {
+          if (isOwnProperty && !['parseAsync', 'command'].includes(property as string)) {
             return typeof target[property as keyof typeof target] === 'function'
               ? function () {
                   throw new AssertionFailedError(
-                    ErrorMessage.AssertionFailureInvocationNotAllowed(property)
+                    ErrorMessage.AssertionFailureInvocationNotAllowed(String(property))
                   );
                 }
               : void 'disabled by Black Flag (do not access routers directly)';
@@ -1137,7 +1135,7 @@ export async function discoverCommands(
         // ! statements above or terrrrrible things will happen!
         const value: unknown = target[property as keyof typeof target];
 
-        if (isSymbolOrOwnProperty && typeof value === 'function') {
+        if (typeof value === 'function') {
           return function (...args: unknown[]) {
             // ? This is "this-recovering" code.
             const returnValue = value.apply(target, args);
