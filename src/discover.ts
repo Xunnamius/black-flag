@@ -679,7 +679,7 @@ export async function discoverCommands(
       '[routed-1]',
       {},
       async function () {
-        debug.extend('router*')('control reserved; calling HelperProgram::parseAsync');
+        debug.extend('router@')('control reserved; calling HelperProgram::parseAsync');
         await programs.helper.parseAsync(
           context.state.rawArgv,
           wrapExecutionContext(context)
@@ -790,7 +790,7 @@ export async function discoverCommands(
       descriptor: ProgramDescriptor
     ) {
       return function (message?: string | null, error?: Error) {
-        const debug_ = debug.extend(`${descriptor}*`);
+        const debug_ = debug.extend(`${descriptor}@`);
         debug_.message('entered failure handler for command %O', fullName);
 
         // ? If a failure happened but error is not defined, it was *probably*

@@ -97,7 +97,7 @@ export function makeRunner<
   >(
     ...args: T extends [infer _, ...infer Tail] ? Tail : []
   ) => {
-    const debug_ = debug.extend('runProgram*');
+    const debug_ = debug.extend('runProgram@');
     debug_('runProgram wrapper (curried) was invoked');
 
     const { commandModulePath, configurationHooks, preExecutionContext } = options as {
