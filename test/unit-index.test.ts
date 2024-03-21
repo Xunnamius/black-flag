@@ -2244,12 +2244,7 @@ describe('<command module auto-discovery>', () => {
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
         expect.stringMatching(
-          expectedCommandsRegex(
-            ['n'],
-            'nsf',
-            'Root program.+\\s+\\[default]\\s+\\[deprecated]',
-            'Parent program.+\\s+\\[deprecated]'
-          )
+          expectedCommandsRegex(['n'], 'nsf', 'Parent program.+\\s+\\[deprecated]')
         )
       ]);
 
@@ -2258,7 +2253,6 @@ describe('<command module auto-discovery>', () => {
           expectedCommandsRegex(
             [['f', 'Child program.+\\s+\\[deprecated]'], 's', 't'],
             'nsf n',
-            'Parent program.+\\s+\\[default]\\s+\\[deprecated]',
             'Child program.+\\s+\\[(?!deprecated)[^\\n]*]'
           )
         )
@@ -2277,10 +2271,6 @@ describe('<command module auto-discovery>', () => {
       await run('--help');
 
       expect(errorSpy).not.toHaveBeenCalled();
-
-      expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringContaining('[deprecated: this is a deprecation message!]')]
-      ]);
 
       expect(logSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('[deprecated: deprecation message 2]')]
@@ -2303,13 +2293,11 @@ describe('<command module auto-discovery>', () => {
       expect(bf_util.isNullArguments(parentResult)).toBeTrue();
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
-        expect.stringMatching(expectedCommandsRegex(['n'], 'nsf', 'Root', 'Parent'))
+        expect.stringMatching(expectedCommandsRegex(['n'], 'nsf', 'Parent'))
       ]);
 
       expect(logSpy.mock.calls[1]).toStrictEqual([
-        expect.stringMatching(
-          expectedCommandsRegex(['f', 's', 't'], 'nsf n', 'Parent', 'Child')
-        )
+        expect.stringMatching(expectedCommandsRegex(['f', 's', 't'], 'nsf n', 'Child'))
       ]);
     });
   });
@@ -2331,15 +2319,11 @@ describe('<command module auto-discovery>', () => {
       expect(bf_util.isNullArguments(childResult)).toBeTrue();
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
-        expect.stringMatching(
-          /Commands:\n\s+test\s+\[default]\n\s+test nested\n\nOptions:/
-        )
+        expect.stringMatching(/Commands:\n\s+test nested\n\nOptions:/)
       ]);
 
       expect(logSpy.mock.calls[1]).toStrictEqual([
-        expect.stringMatching(
-          /Commands:\n\s+test nested\s+\[default]\n\s+test nested child\n\nOptions:/
-        )
+        expect.stringMatching(/Commands:\n\s+test nested child\n\nOptions:/)
       ]);
 
       expect(logSpy.mock.calls[2]).toStrictEqual([
@@ -2466,7 +2450,6 @@ describe('<command module auto-discovery>', () => {
             expectedCommandsRegex(
               ['s-p-a-c-e-d-name', 'spaced-name'],
               'badly-named-package',
-              '',
               ''
             )
           )
@@ -2476,7 +2459,6 @@ describe('<command module auto-discovery>', () => {
             expectedCommandsRegex(
               ['bad-ly-name-d'],
               'badly-named-package spaced-name',
-              '',
               ''
             )
           )
@@ -2842,12 +2824,12 @@ describe('<command module auto-discovery>', () => {
       expect(logSpy.mock.calls).toStrictEqual([
         [
           expect.stringMatching(
-            /Commands:\n\s+nsf\s+Root program description text\s+\[default] \[deprecated]\n\s+nsf n\s+Parent program description text\s+\[aliases: parent, p] \[deprecated]\n\nOptions:/
+            /Commands:\n\s+nsf n\s+Parent program description text\s+\[aliases: parent, p] \[deprecated]\n\nOptions:/
           )
         ],
         [
           expect.stringMatching(
-            /Commands:\n\s+nsf n\s+Parent program description text\s+\[default] \[deprecated]\n\s+nsf n f\s+Child program description text\s+\[aliases: child-1] \[deprecated]\n\s+nsf n s\s+Child program description text\s+\[aliases: child-2]\n\s+nsf n t\s+Child program description text\s+\[aliases: child-3]\n\nOptions:/
+            /Commands:\n\s+nsf n f\s+Child program description text\s+\[aliases: child-1] \[deprecated]\n\s+nsf n s\s+Child program description text\s+\[aliases: child-2]\n\s+nsf n t\s+Child program description text\s+\[aliases: child-3]\n\nOptions:/
           )
         ],
         [expect.not.stringContaining('Commands:')]
@@ -3154,7 +3136,7 @@ describe('<command module auto-discovery>', () => {
       await bf.runProgram(getFixturePath('nested-same-names'), '--help');
 
       expect(logSpy.mock.calls).toStrictEqual([
-        [expect.stringMatching(expectedCommandsRegex(['conflict'], 'conflict', '', ''))]
+        [expect.stringMatching(expectedCommandsRegex(['conflict'], 'conflict', ''))]
       ]);
     });
   });
@@ -3274,7 +3256,6 @@ describe('<command module auto-discovery>', () => {
                 ['no-conflict', '\\[aliases: alias3]']
               ],
               'name',
-              '',
               ''
             )
           )
@@ -3292,12 +3273,7 @@ describe('<command module auto-discovery>', () => {
       expect(logSpy.mock.calls).toStrictEqual([
         [
           expect.stringMatching(
-            expectedCommandsRegex(
-              ['five', 'four', 'one', 'three', 'two'],
-              'alpha',
-              '',
-              ''
-            )
+            expectedCommandsRegex(['five', 'four', 'one', 'three', 'two'], 'alpha', '')
           )
         ]
       ]);

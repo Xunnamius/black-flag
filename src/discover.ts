@@ -695,7 +695,7 @@ export async function discoverCommands(
       // ! This next line excludes aliases and positionals in an attempt to
       // ! address yargs bugs around help text output. See the docs for details.
       ['$0'],
-      config.description,
+      false,
       makeVanillaYargsBuilder(programs.helper, config, 'first-pass'),
       async (parsedArgv) => {
         const debug_ = debug.extend('helper');
