@@ -104,7 +104,7 @@
     "@babel/cli": "^7.24.1",
     "@babel/eslint-parser": "^7.24.1",
     "@babel/plugin-proposal-export-default-from": "^7.24.1",
-    "@babel/preset-env": "^7.24.1",
+    "@babel/preset-env": "^7.24.3",
     "@babel/preset-typescript": "^7.24.1",
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
@@ -200,10 +200,10 @@
     "spellchecker": "^3.7.1",
     "text-extensions": "^2.4.0",
     "tsconfig-replace-paths": "^0.0.14",
-    "type-fest": "^4.13.0",
+    "type-fest": "^4.13.1",
     "typedoc": "^0.25.12",
     "typedoc-plugin-markdown": "^3.17.1",
-    "typescript": "^5.4.2",
+    "typescript": "^5.4.3",
     "unique-filename": "^3.0.0"
   },
   "engines": {
