@@ -56,7 +56,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/2369534/src/error.ts#L172)
+[src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L172)
 
 ## Properties
 
@@ -70,7 +70,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/2369534/src/error.ts#L166)
+[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L166)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/2369534/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L94)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/2369534/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L93)
 
 ___
 
