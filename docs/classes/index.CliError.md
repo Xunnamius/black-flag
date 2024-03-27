@@ -72,7 +72,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:101](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L101)
+[src/error.ts:101](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L101)
 
 • **new CliError**(`cause`, `options`, `message`, `superOptions`): [`CliError`](index.CliError.md)
 
@@ -98,7 +98,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:106](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L106)
+[src/error.ts:106](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L106)
 
 ## Properties
 
@@ -108,7 +108,7 @@ AppError.constructor
 
 #### Defined in
 
-[src/error.ts:96](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L96)
+[src/error.ts:96](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L96)
 
 ___
 
@@ -164,7 +164,7 @@ NonNullable.showHelp
 
 #### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L94)
 
 ___
 
@@ -192,7 +192,7 @@ NonNullable.suggestedExitCode
 
 #### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L93)
 
 ___
 

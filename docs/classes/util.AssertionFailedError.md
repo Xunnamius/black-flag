@@ -58,7 +58,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L188)
+[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L188)
 
 ## Properties
 
@@ -72,7 +72,7 @@ Represents a failed sanity check.
 
 #### Defined in
 
-[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L184)
+[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L184)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L94)
 
 ___
 
@@ -156,7 +156,7 @@ ___
 
 #### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/be2960a/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/4babf12/src/error.ts#L93)
 
 ___
 
