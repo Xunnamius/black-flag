@@ -243,7 +243,8 @@ export async function discoverCommands(
 
     for await (const entry of configDir) {
       const isPotentialChildConfigOfCurrentParent =
-        /.*(?<!index)\.(?:js|mjs|cjs|ts|mts|cts)$/.test(entry.name);
+        /.*(?<!index)\.(?:js|mjs|cjs|ts|mts|cts)$/.test(entry.name) &&
+        !entry.name.endsWith('.d.ts');
 
       const entryFullPath = path.join(entry.path, entry.name);
 
