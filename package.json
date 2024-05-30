@@ -125,7 +125,7 @@
     "babel-plugin-explicit-exports-references": "^1.0.2",
     "babel-plugin-module-resolver": "^5.0.2",
     "babel-plugin-transform-rewrite-imports": "^1.2.0",
-    "conventional-changelog-cli": "^5.0.0",
+    "conventional-changelog-cli": "^4.1.0",
     "doctoc": "^2.2.1",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
