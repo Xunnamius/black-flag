@@ -13,4 +13,4 @@ example: `--${defaultVersionOptionName}`.
 
 ## Source
 
-[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/constant.ts#L30)
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/constant.ts#L30)

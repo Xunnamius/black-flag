@@ -30,4 +30,4 @@ yargs from returning a real `Arguments` parse result.
 
 ## Source
 
-[types/program.ts:30](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/types/program.ts#L30)
+[types/program.ts:30](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/types/program.ts#L30)

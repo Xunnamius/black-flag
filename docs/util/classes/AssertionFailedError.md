@@ -34,7 +34,7 @@ Represents a failed sanity check.
 
 #### Source
 
-[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/error.ts#L188)
+[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L188)
 
 ## Properties
 
@@ -48,7 +48,7 @@ Represents a failed sanity check.
 
 #### Source
 
-[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/error.ts#L184)
+[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L184)
 
 ***
 
@@ -104,7 +104,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Source
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L94)
 
 ***
 
@@ -132,7 +132,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Source
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L93)
 
 ***
 

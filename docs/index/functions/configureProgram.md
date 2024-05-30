@@ -39,4 +39,4 @@ occur if no commands are loadable from the given `commandModulePath`.
 
 ## Source
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/d4a156f70283118824ee7289456277508954660f/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/index.ts#L59)
