@@ -106,9 +106,9 @@ export async function discoverCommands(
     debug('loading package.json file from %O', pkg.path);
 
     try {
-      const { name, version }: PackageJson = (
-        await import(pkg.path, { assert: { type: 'json' } })
-      ).default;
+      const { name, version }: PackageJson = JSON.parse(
+        await fs.readFile(pkg.path, 'utf8')
+      );
 
       pkg.name = name;
       pkg.version = version;
@@ -351,6 +351,7 @@ export async function discoverCommands(
         let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
 
         try {
+          // TODO: maybe just replace this with fs.readFile?
           // eslint-disable-next-line no-await-in-loop
           maybeImportedConfig = await import(maybeConfigPath);
         } catch (error) {
