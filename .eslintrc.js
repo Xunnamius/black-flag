@@ -44,7 +44,7 @@ const rules = {
     {
       argsIgnorePattern: '^_+',
       varsIgnorePattern: '^_+',
-      caughtErrorsIgnorePattern: '^ignored?\\d*$',
+      caughtErrorsIgnorePattern: String.raw`^ignored?\d*$`,
       caughtErrors: 'all'
     }
   ],
@@ -123,7 +123,11 @@ const rules = {
   // ? I'll decide when I want switch cases for fallthrough or not, thanks
   'unicorn/prefer-switch': 'off',
   // ? No, thanks
-  'unicorn/prefer-set-has': 'off'
+  'unicorn/prefer-set-has': 'off',
+  // ? No.
+  'unicorn/import-style': 'off',
+  // ? This rule is broken as of 05/30/2024
+  'unicorn/throw-new-error': 'off'
 };
 
 module.exports = {
@@ -166,7 +170,9 @@ module.exports = {
         'jest/no-conditional-in-test': 'off',
         'jest/no-conditional-expect': 'off',
         'jest/prefer-each': 'off',
-        'jest/prefer-snapshot-hint': 'off'
+        'jest/prefer-snapshot-hint': 'off',
+        // ? Maybe later
+        'jest/prefer-importing-jest-globals': 'off'
       }
     }
   ],

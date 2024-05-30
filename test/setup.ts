@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join as joinPath, resolve as resolvePath } from 'node:path';
-import { name as pkgName, version as pkgVersion } from '../package.json';
+import { name as pkgName, version as pkgVersion } from 'package';
 
 import debugFactory from 'debug';
 import execa from 'execa';
@@ -16,7 +16,7 @@ import 'jest-extended/all';
 
 import type { Debugger } from 'debug';
 import type { ExecaReturnValue } from 'execa';
-import type { EmptyObject, Merge, PartialDeep, Promisable } from 'type-fest';
+import type { EmptyObject, Merge, PackageJson, PartialDeep, Promisable } from 'type-fest';
 //import type { SimpleGit } from 'simple-git';
 
 // ! Note that these notes are relics of a copy-paste and are not recent. Most
@@ -822,7 +822,10 @@ export function npmCopySelfFixture(): MockFixture {
     setup: async (context) => {
       const root = resolvePath(__dirname, '..');
 
-      const { files: patterns } = (await import('../package.json')).default;
+      const { files: patterns } = JSON.parse(
+        await fs.readFile(`${__dirname}/../package.json`, 'utf8')
+      ) as PackageJson;
+
       assert(patterns !== undefined);
 
       const sourcePaths = patterns.flatMap((p) => globSync(p, { cwd: root, root }));

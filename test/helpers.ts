@@ -11,17 +11,17 @@ export function expectedCommandsRegex(
   includeFinalNewline = true
 ) {
   return new RegExp(
-    'Commands:\\n\\s+' +
+    String.raw`Commands:\n\s+` +
       childCommands
         .map(
           (cmd) =>
-            '\\s+' +
+            String.raw`\s+` +
             parentFullName +
-            '\\s+' +
+            String.raw`\s+` +
             (Array.isArray(cmd) ? cmd[0] : cmd) +
             `\\s*${Array.isArray(cmd) ? cmd[1] : childDescriptionRegex}[^\\n]*\\n`
         )
         .join('') +
-      (includeFinalNewline ? '\\n' : '')
+      (includeFinalNewline ? String.raw`\n` : '')
   );
 }

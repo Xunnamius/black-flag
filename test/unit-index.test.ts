@@ -2244,16 +2244,20 @@ describe('<command module auto-discovery>', () => {
 
       expect(logSpy.mock.calls[0]).toStrictEqual([
         expect.stringMatching(
-          expectedCommandsRegex(['n'], 'nsf', 'Parent program.+\\s+\\[deprecated]')
+          expectedCommandsRegex(
+            ['n'],
+            'nsf',
+            String.raw`Parent program.+\s+\[deprecated]`
+          )
         )
       ]);
 
       expect(logSpy.mock.calls[1]).toStrictEqual([
         expect.stringMatching(
           expectedCommandsRegex(
-            [['f', 'Child program.+\\s+\\[deprecated]'], 's', 't'],
+            [['f', String.raw`Child program.+\s+\[deprecated]`], 's', 't'],
             'nsf n',
-            'Child program.+\\s+\\[(?!deprecated)[^\\n]*]'
+            String.raw`Child program.+\s+\[(?!deprecated)[^\n]*]`
           )
         )
       ]);
@@ -3251,9 +3255,9 @@ describe('<command module auto-discovery>', () => {
           expect.stringMatching(
             expectedCommandsRegex(
               [
-                ['name', '\\[aliases: alias1, alias2]'],
-                ['name2', '\\[aliases: alias4, alias5]'],
-                ['no-conflict', '\\[aliases: alias3]']
+                ['name', String.raw`\[aliases: alias1, alias2]`],
+                ['name2', String.raw`\[aliases: alias4, alias5]`],
+                ['no-conflict', String.raw`\[aliases: alias3]`]
               ],
               'name',
               ''
