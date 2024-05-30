@@ -102,7 +102,8 @@ describe("import {...} from '@black-flag/core'", () => {
       },
       {
         // ! Regression test: we test --version here to ensure ESM-CJS interop
-        // ! is working at every level. Do not change --version.
+        // ! is working at every level. Do not change --version. This feature
+        // ! has broken between node versions more than once :(
         initialFileContents: {
           'src/index.cjs': `require('@black-flag/core').configureProgram('${join(
             __dirname,
