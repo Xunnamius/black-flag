@@ -1,10 +1,10 @@
-@black-flag/core
+**@black-flag/core** • **Docs**
+
+***
 
 # @black-flag/core
 
-## Table of contents
+## Modules
 
-### Modules
-
-- [index](modules/index.md)
-- [util](modules/util.md)
+- [index](index/README.md)
+- [util](util/README.md)
