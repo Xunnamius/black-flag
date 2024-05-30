@@ -1977,33 +1977,33 @@ specification. Contributions of any kind welcome!
 [5]: #differences-between-black-flag-and-yargs
 [6]: #built-in-support-for-dynamic-options-
 [7]: https://github.com/Xunnamius/black-flag-demo
-[8]: ./docs/modules/index.md#type-declaration
-[9]: ./docs/modules/index.md#runProgram
+[8]: ./docs/index/type-aliases/Configuration.md#type-declaration
+[9]: ./docs/index/functions/runProgram.md
 [10]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[11]: ./docs/modules/index.md#configureProgram
-[12]: ./docs/modules/util.md#preexecutioncontext
+[11]: ./docs/index/functions/configureProgram.md
+[12]: ./docs/util/type-aliases/PreExecutionContext.md
 [13]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[14]: ./docs/modules/index.md#configureerrorhandlingepilogue
-[15]: ./docs/classes/util.AssertionFailedError.md
-[16]: ./docs/modules/util.md#makerunner
-[17]: ./docs/enums/index.FrameworkExitCode.md
+[14]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
+[15]: ./docs/util/classes/AssertionFailedError.md
+[16]: ./docs/util/functions/makeRunner.md
+[17]: ./docs/index/enumerations/FrameworkExitCode.md
 [18]: #built-in-debug-integration-for-runtime-insights-
 [19]: https://www.npmjs.com/package/debug
 [20]: https://www.npmjs.com/package/debug#usage
-[21]: ./docs/modules/index.md#rootconfiguration
-[22]: ./docs/modules/index.md#parentconfiguration
-[23]: ./docs/modules/index.md#childconfiguration
-[24]: ./docs/modules/index.md#configuration
+[21]: ./docs/index/type-aliases/RootConfiguration.md
+[22]: ./docs/index/type-aliases/ParentConfiguration.md
+[23]: ./docs/index/type-aliases/ChildConfiguration.md
+[24]: ./docs/index/type-aliases/Configuration.md
 [25]: #building-and-running-your-cli
 [26]: https://github.com/Xunnamius/xunnctl
 [27]: #features
 [28]: https://nodejs.org/api/packages.html#type
-[29]: ./docs/modules/util.md#executioncontext
-[30]: ./docs/modules/index.md#configureexecutioncontext
+[29]: ./docs/util/type-aliases/ExecutionContext.md
+[30]: ./docs/index/type-aliases/ConfigureExecutionContext.md
 [31]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[32]: ./docs/modules/index.md#configureexecutionprologue
+[32]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
 [33]: https://www.npmjs.com/package/alpha-sort
 [34]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
@@ -2014,13 +2014,13 @@ specification. Contributions of any kind welcome!
 [39]: #advanced-usage
 [40]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[41]: ./docs/modules/util.md#program
+[41]: ./docs/util/type-aliases/Program.md
 [42]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [43]:
   https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
 [44]:
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[45]: ./docs/modules/index.md#configurearguments
+[45]: ./docs/index/type-aliases/ConfigureArguments.md
 [46]: https://github.com/yargs/yargs/issues/733
 [47]: https://github.com/yargs/yargs/issues/1323
 [48]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
@@ -2030,7 +2030,7 @@ specification. Contributions of any kind welcome!
 [52]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
 [53]: https://github.com/yargs/yargs/issues/1137
 [54]: #execution-flow-diagram
-[55]: ./docs/modules/util.md#programmetadata
+[55]: ./docs/util/type-aliases/ProgramMetadata.md
 [56]: #irrelevant-differences
 [57]: ./example-1.png
 [58]: ./example-2.png
