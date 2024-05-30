@@ -1,6 +1,6 @@
 'use strict';
 
-const plugins = ['unicorn', '@typescript-eslint', 'import'];
+const plugins = ['unicorn', '@typescript-eslint', 'import', 'module-resolver'];
 
 const xtends = [
   'eslint:recommended',
@@ -23,6 +23,7 @@ const rules = {
   'no-return-await': 'warn',
   'no-await-in-loop': 'warn',
   'import/no-unresolved': ['error', { commonjs: true }],
+  'module-resolver/use-alias': ['error', { extensions: ['.ts', '.tsx', '.jsx'] }],
   'no-extra-boolean-cast': 'off',
   'no-empty': 'off',
   '@typescript-eslint/camelcase': 'off',
@@ -88,7 +89,11 @@ const rules = {
         obj: false,
         val: false,
         env: false,
-        temp: false
+        temp: false,
+        req: false,
+        res: false,
+        ctx: false,
+        ref: false
       },
       ignore: [/stderr/i]
     }
