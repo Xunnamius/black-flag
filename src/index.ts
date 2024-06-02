@@ -200,11 +200,17 @@ export async function configureProgram<
         'bad context.state.globalVersionOption'
       );
 
+      // * We track this so that the --help and --version flags are ignored if
+      // * they occur after -- in the arguments array.
+      const doubleDashIndex = argv.indexOf('--');
+      const hasDoubleDash = doubleDashIndex >= 0;
+
       if (context.state.globalHelpOption) {
         const helpOption = context.state.globalHelpOption.name;
         const helpFlag = `${helpOption.length > 1 ? '--' : '-'}${helpOption}`;
-        const targetIndex = argv.indexOf(helpFlag);
-        context.state.isHandlingHelpOption = targetIndex >= 0;
+        const helpFlagIndex = argv.indexOf(helpFlag);
+        context.state.isHandlingHelpOption =
+          helpFlagIndex >= 0 && (!hasDoubleDash || helpFlagIndex < doubleDashIndex);
       } else {
         debug.warn(
           'disabled built-in help option since context.state.globalHelpOption was falsy'
@@ -219,8 +225,9 @@ export async function configureProgram<
       if (context.state.globalVersionOption) {
         const versionOption = context.state.globalVersionOption.name;
         const versionFlag = `${versionOption.length > 1 ? '--' : '-'}${versionOption}`;
-        const targetIndex = argv.indexOf(versionFlag);
-        context.state.isHandlingVersionOption = targetIndex >= 0;
+        const versionFlagIndex = argv.indexOf(versionFlag);
+        context.state.isHandlingVersionOption =
+          versionFlagIndex >= 0 && (!hasDoubleDash || versionFlagIndex < doubleDashIndex);
       } else {
         debug.warn(
           'disabled built-in version option since context.state.globalVersionOption was falsy'

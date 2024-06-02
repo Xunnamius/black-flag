@@ -3393,6 +3393,59 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
+  it('ignores --help and --version when they occur after -- (double-dash)', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '-- --help')
+      ).resolves.toSatisfy(bf_util.isArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '-- --version')
+      ).resolves.toSatisfy(bf_util.isArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '-- --help --something-else')
+      ).resolves.toSatisfy(bf_util.isArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '-- --version --something-else')
+      ).resolves.toSatisfy(bf_util.isArguments);
+
+      expect(logSpy.mock.calls).toBeEmpty();
+    });
+  });
+
+  it('does not ignore --help or --version when they occur before -- (double-dash)', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ logSpy }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--help --')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--version --')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--help -- --something-else')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      await expect(
+        bf.runProgram(getFixturePath('one-file-bare'), '--version -- --something-else')
+      ).resolves.toSatisfy(bf_util.isNullArguments);
+
+      expect(logSpy.mock.calls).toStrictEqual([
+        [expect.stringContaining('--help')],
+        ['1.0.0'],
+        [expect.stringContaining('--help')],
+        ['1.0.0']
+      ]);
+    });
+  });
+
   it('does the right thing when the nearest package.json file is empty', async () => {
     expect.hasAssertions();
 
