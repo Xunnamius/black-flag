@@ -38,7 +38,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L172)
+[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L172)
 
 ## runProgram(args)
 
@@ -72,7 +72,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L193)
+[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L193)
 
 ## runProgram(args)
 
@@ -107,7 +107,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L214)
+[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L214)
 
 ## runProgram(args)
 
@@ -142,7 +142,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L238)
+[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L238)
 
 ## runProgram(args)
 
@@ -177,7 +177,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L260)
+[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L260)
 
 ## runProgram(args)
 
@@ -213,4 +213,4 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Source
 
-[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/util.ts#L286)
+[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L286)

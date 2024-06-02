@@ -88,4 +88,4 @@ module auto-discovered and loaded (invariant).
 
 ## Source
 
-[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/types/program.ts#L188)
+[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L188)

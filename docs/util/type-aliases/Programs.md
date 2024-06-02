@@ -19,4 +19,4 @@ aptly-named values in an object.
 
 ## Source
 
-[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/types/program.ts#L173)
+[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L173)

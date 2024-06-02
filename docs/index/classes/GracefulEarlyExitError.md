@@ -34,7 +34,7 @@ termination of the application but with an exit code indicating success
 
 #### Source
 
-[src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L172)
+[src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L172)
 
 ## Properties
 
@@ -48,7 +48,7 @@ termination of the application but with an exit code indicating success
 
 #### Source
 
-[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L166)
+[src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L166)
 
 ***
 
@@ -104,7 +104,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Source
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L94)
 
 ***
 
@@ -132,7 +132,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Source
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L93)
 
 ***
 

@@ -31,7 +31,7 @@ implemented.
 
 #### Source
 
-[src/error.ts:150](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L150)
+[src/error.ts:150](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L150)
 
 ## Properties
 
@@ -45,7 +45,7 @@ implemented.
 
 #### Source
 
-[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L145)
+[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L145)
 
 ***
 
@@ -101,7 +101,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 #### Source
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L94)
 
 ***
 
@@ -129,7 +129,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 #### Source
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/078357b0a89baf1ca6264881df1614997567a0db/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L93)
 
 ***
 
