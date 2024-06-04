@@ -84,10 +84,11 @@ npm install @black-flag/core
 
 ### Declaratively Build Deep Command Hierarchies ✨
 
-Black Flag provides first-class support for authoring sprawling deeply nested
-tree-like structures of commands and child commands.
+Black Flag provides first-class support for authoring simple one-off executables
+_and_ sprawling deeply nested tree-like structures of commands and child
+commands alike.
 
-No more pleading with `yargs::commandDir` to behave. Less wrestling with
+No more pleading with `yargs::commandDir()` to behave. Less wrestling with
 positional parameters. Less tap-dancing around footguns. And no more dealing
 with help text that unexpectedly changes depending on the OS or the presence of
 aliases.
