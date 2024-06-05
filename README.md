@@ -33,8 +33,8 @@ Black Flag is a fairly thin library that wraps [yargs][1], extending its
 capabilities with several powerful _declarative_ features. It can be used to
 create simple single-level CLIs or deeply nested sprawling interfaces alike.
 
-The goal is for Black Flag to be as close to a drop-in replacement as possible
-for vanilla yargs, specifically for users of [`yargs::commandDir()`][2].
+Black Flag tries to be a drop-in replacement for vanilla yargs, specifically for
+users of [`yargs::commandDir()`][2].
 
 Tested on Ubuntu and Windows.
 
