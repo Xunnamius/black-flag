@@ -127,7 +127,9 @@ const rules = {
   // ? No.
   'unicorn/import-style': 'off',
   // ? This rule is broken as of 05/30/2024
-  'unicorn/throw-new-error': 'off'
+  'unicorn/throw-new-error': 'off',
+  // ? I know what I'm doing, but thanks though
+  'unicorn/no-negation-in-equality-check': 'off'
 };
 
 module.exports = {
