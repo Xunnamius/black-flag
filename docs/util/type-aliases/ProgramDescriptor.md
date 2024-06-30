@@ -4,12 +4,12 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / ProgramDescriptor
 
-# Type alias: ProgramDescriptor
+# Type Alias: ProgramDescriptor
 
 > **ProgramDescriptor**: `"effector"` \| `"helper"` \| `"router"`
 
 Represents the three program types that comprise any Black Flag command.
 
-## Source
+## Defined in
 
-[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L154)
+[types/program.ts:154](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L154)

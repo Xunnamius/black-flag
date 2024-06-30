@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / FrameworkArguments
 
-# Type alias: FrameworkArguments\<CustomExecutionContext\>
+# Type Alias: FrameworkArguments\<CustomExecutionContext\>
 
 > **FrameworkArguments**\<`CustomExecutionContext`\>: `object`
 
@@ -16,7 +16,7 @@ Instead of using this type directly, your project's custom arguments (e.g.
 (e.g. `Arguments<MyCustomArgs>`), which will extend `FrameworkArguments` for
 you.
 
-## Type parameters
+## Type Parameters
 
 • **CustomExecutionContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
 
@@ -26,6 +26,6 @@ you.
 
 > **\[$executionContext\]**: `CustomExecutionContext`
 
-## Source
+## Defined in
 
-[types/program.ts:257](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L257)
+[types/program.ts:257](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L257)

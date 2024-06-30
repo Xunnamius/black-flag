@@ -13,6 +13,6 @@ Hard-coded default command `usage` text provided to programs via
 with a command's usage DSL (`command` export), name (`name` export), and
 description (`description` export) respectively.
 
-## Source
+## Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L13)

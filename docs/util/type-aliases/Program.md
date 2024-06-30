@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / Program
 
-# Type alias: Program\<CustomCliArguments, CustomExecutionContext\>
+# Type Alias: Program\<CustomCliArguments, CustomExecutionContext\>
 
 > **Program**\<`CustomCliArguments`, `CustomExecutionContext`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>, `"command"` \| `"onFinishCommand"` \| `"showHelpOnFail"` \| `"version"` \| `"help"` \| `"exitProcess"` \| `"commandDir"` \| `"parse"` \| `"parsed"` \| `"parseSync"` \| `"argv"`\> & `object`
 
@@ -18,9 +18,9 @@ by yargs but with several differences and should be preferred.
 
 ### command()
 
-`Internal`
-
 > **command**: (`command`, `description`, `builder`, `handler`, `middlewares`, `deprecated`) => [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+
+**`Internal`**
 
 #### See
 
@@ -46,9 +46,9 @@ _Program.command
 
 ### command\_deferred
 
-`Internal`
-
 > **command\_deferred**: [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\[`"command"`\]
+
+**`Internal`**
 
 Identical to `yargs::command` except its execution is enqueued and
 deferred until Program.command_finalize_deferred is called.
@@ -59,9 +59,9 @@ _Program.command
 
 ### command\_finalize\_deferred()
 
-`Internal`
-
 > **command\_finalize\_deferred**: () => `void`
+
+**`Internal`**
 
 #### See
 
@@ -95,12 +95,12 @@ _Program.showHelpOnFail
 
 [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-## Type parameters
+## Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
 • **CustomExecutionContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
 
-## Source
+## Defined in
 
-[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L44)
+[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L44)

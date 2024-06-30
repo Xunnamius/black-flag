@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / ConfigureArguments
 
-# Type alias: ConfigureArguments()\<CustomContext\>
+# Type Alias: ConfigureArguments()\<CustomContext\>
 
 > **ConfigureArguments**\<`CustomContext`\>: (`rawArgv`, `context`) => `Promisable`\<*typeof* `process.argv`\>
 
@@ -14,7 +14,7 @@ This function is called once towards the beginning of the execution of
 This is where yargs middleware and other argument pre-processing can be
 implemented.
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md)
 
@@ -28,6 +28,6 @@ implemented.
 
 `Promisable`\<*typeof* `process.argv`\>
 
-## Source
+## Defined in
 
-[types/configure.ts:48](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/configure.ts#L48)
+[types/configure.ts:48](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/configure.ts#L48)

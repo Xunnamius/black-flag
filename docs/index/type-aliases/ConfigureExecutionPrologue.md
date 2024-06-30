@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / ConfigureExecutionPrologue
 
-# Type alias: ConfigureExecutionPrologue()\<CustomContext\>
+# Type Alias: ConfigureExecutionPrologue()\<CustomContext\>
 
 > **ConfigureExecutionPrologue**\<`CustomContext`\>: (`rootPrograms`, `context`) => `Promisable`\<`void`\>
 
@@ -23,7 +23,7 @@ This function is the complement of [ConfigureExecutionEpilogue](ConfigureExecuti
 Note that any errors thrown this early in the initialization process will be
 thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md).
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md)
 
@@ -37,6 +37,6 @@ thrown as-is and will NOT trigger [ConfigureErrorHandlingEpilogue](ConfigureErro
 
 `Promisable`\<`void`\>
 
-## Source
+## Defined in
 
-[types/configure.ts:37](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/configure.ts#L37)
+[types/configure.ts:37](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/configure.ts#L37)

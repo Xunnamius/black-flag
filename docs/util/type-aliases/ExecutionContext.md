@@ -4,13 +4,13 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / ExecutionContext
 
-# Type alias: ExecutionContext
+# Type Alias: ExecutionContext
 
 > **ExecutionContext**: `object`
 
 Represents a globally-accessible shared context object singleton.
 
-## Index signature
+## Index Signature
 
  \[`key`: `string`\]: `unknown`
 
@@ -39,7 +39,7 @@ The ExtendedDebugger for the current runtime level.
 
 The current state of the execution environment.
 
-#### Index signature
+#### Index Signature
 
  \[`key`: `string`\]: `unknown`
 
@@ -270,6 +270,6 @@ This is also set when `Program::showHelpOnFail` is called.
 true
 ```
 
-## Source
+## Defined in
 
-[types/program.ts:328](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L328)
+[types/program.ts:328](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L328)

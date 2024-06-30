@@ -21,7 +21,7 @@ or reject no matter what.** Instead, when an error is caught,
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -36,9 +36,9 @@ desired.
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L172)
+[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L172)
 
 ## runProgram(args)
 
@@ -55,7 +55,7 @@ or reject no matter what.** Instead, when an error is caught,
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -70,9 +70,9 @@ desired.
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L193)
+[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L193)
 
 ## runProgram(args)
 
@@ -90,7 +90,7 @@ or reject no matter what.** Instead, when an error is caught,
 `process.exitCode` is set to the appropriate value and either `NullArguments`
 (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -105,9 +105,9 @@ or reject no matter what.** Instead, when an error is caught,
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L214)
+[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L214)
 
 ## runProgram(args)
 
@@ -125,7 +125,7 @@ or reject no matter what.** Instead, when an error is caught,
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -140,9 +140,9 @@ desired.
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L238)
+[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L238)
 
 ## runProgram(args)
 
@@ -160,7 +160,7 @@ or reject no matter what.** Instead, when an error is caught,
 Note: It is always safe to invoke this form of `runProgram` as many times as
 desired.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -175,9 +175,9 @@ desired.
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L260)
+[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L260)
 
 ## runProgram(args)
 
@@ -196,7 +196,7 @@ or reject no matter what.** Instead, when an error is caught,
 `process.exitCode` is set to the appropriate value and either `NullArguments`
 (only if `GracefulEarlyExitError` was thrown) or `undefined` is returned.
 
-### Type parameters
+### Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -211,6 +211,6 @@ or reject no matter what.** Instead, when an error is caught,
 `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
 if any other error occurs, or `Arguments` otherwise.
 
-### Source
+### Defined in
 
-[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/util.ts#L286)
+[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L286)

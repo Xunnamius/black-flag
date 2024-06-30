@@ -18,7 +18,7 @@ occur if no commands are loadable from the given `commandModulePath`.
 an entry point for a CLI. See [runProgram](runProgram.md) for a wrapper function that
 handles exceptions and sets the exit code for you.
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md)
 
@@ -37,6 +37,6 @@ occur if no commands are loadable from the given `commandModulePath`.
 
 `Promise`\<[`PreExecutionContext`](../../util/type-aliases/PreExecutionContext.md)\>
 
-## Source
+## Defined in
 
-[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/index.ts#L59)
+[src/index.ts:59](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/index.ts#L59)

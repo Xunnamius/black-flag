@@ -18,6 +18,6 @@ Type guard for [GracefulEarlyExitError](../classes/GracefulEarlyExitError.md).
 
 `parameter is GracefulEarlyExitError`
 
-## Source
+## Defined in
 
-[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L38)
+[src/error.ts:38](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L38)

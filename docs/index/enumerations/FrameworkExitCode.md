@@ -20,9 +20,9 @@ this code, that's a hint to re-run things in debug mode (example:
 
 In most cases, this exit code is indicative of improper use of Black Flag.
 
-#### Source
+#### Defined in
 
-[src/constant.ts:60](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/constant.ts#L60)
+[src/constant.ts:60](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L60)
 
 ***
 
@@ -32,9 +32,9 @@ In most cases, this exit code is indicative of improper use of Black Flag.
 
 Hard-coded default fallback exit code when fatal errors occur.
 
-#### Source
+#### Defined in
 
-[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/constant.ts#L48)
+[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L48)
 
 ***
 
@@ -44,9 +44,9 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 The exit code used when executing an unimplemented child command.
 
-#### Source
+#### Defined in
 
-[src/constant.ts:52](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/constant.ts#L52)
+[src/constant.ts:52](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L52)
 
 ***
 
@@ -56,6 +56,6 @@ The exit code used when executing an unimplemented child command.
 
 The exit code used when execution succeeds and exits gracefully.
 
-#### Source
+#### Defined in
 
-[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/constant.ts#L44)
+[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L44)

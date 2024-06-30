@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / PreExecutionContext
 
-# Type alias: PreExecutionContext\<CustomContext\>
+# Type Alias: PreExecutionContext\<CustomContext\>
 
 > **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & `object`
 
@@ -48,10 +48,10 @@ recursively contains some of the same entries as its enclosing
 An object containing the effector, helper, and router [Program](Program.md)
 instances belonging to the root command.
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
 
-## Source
+## Defined in
 
-[types/program.ts:291](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L291)
+[types/program.ts:291](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L291)

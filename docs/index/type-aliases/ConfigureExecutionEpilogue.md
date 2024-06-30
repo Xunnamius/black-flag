@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / ConfigureExecutionEpilogue
 
-# Type alias: ConfigureExecutionEpilogue()\<CustomContext\>
+# Type Alias: ConfigureExecutionEpilogue()\<CustomContext\>
 
 > **ConfigureExecutionEpilogue**\<`CustomContext`\>: (`argv`, `context`) => `Promisable`\<[`Arguments`](Arguments.md)\>
 
@@ -16,7 +16,7 @@ when yargs argument validation fails.
 
 This function is the complement of [ConfigureExecutionPrologue](ConfigureExecutionPrologue.md).
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md)
 
@@ -30,6 +30,6 @@ This function is the complement of [ConfigureExecutionPrologue](ConfigureExecuti
 
 `Promisable`\<[`Arguments`](Arguments.md)\>
 
-## Source
+## Defined in
 
-[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/configure.ts#L64)
+[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/configure.ts#L64)

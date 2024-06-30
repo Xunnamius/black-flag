@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / ConfigurationHooks
 
-# Type alias: ConfigurationHooks
+# Type Alias: ConfigurationHooks
 
 > **ConfigurationHooks**: `object`
 
@@ -83,6 +83,6 @@ Note that any errors thrown this early in the initialization process will
 be thrown as-is and will NOT trigger
 [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md).
 
-## Source
+## Defined in
 
-[types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/configure.ts#L96)
+[types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/configure.ts#L96)

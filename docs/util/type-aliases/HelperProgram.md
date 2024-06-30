@@ -4,18 +4,18 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / HelperProgram
 
-# Type alias: HelperProgram\<CustomCliArguments, CustomExecutionContext\>
+# Type Alias: HelperProgram\<CustomCliArguments, CustomExecutionContext\>
 
 > **HelperProgram**\<`CustomCliArguments`, `CustomExecutionContext`\>: `Omit`\<[`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>, `"demand"` \| `"demandCommand"` \| `"command"`\>
 
 Represents an "helper" [Program](Program.md) instance.
 
-## Type parameters
+## Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
 • **CustomExecutionContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
 
-## Source
+## Defined in
 
-[types/program.ts:130](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L130)
+[types/program.ts:130](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L130)

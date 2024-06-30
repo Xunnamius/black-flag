@@ -32,9 +32,9 @@ Represents a failed sanity check.
 
 [`CliError`](../../index/classes/CliError.md).[`constructor`](../../index/classes/CliError.md#constructors)
 
-#### Source
+#### Defined in
 
-[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L188)
+[src/error.ts:188](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L188)
 
 ## Properties
 
@@ -46,9 +46,9 @@ Represents a failed sanity check.
 
 [`CliError`](../../index/classes/CliError.md).[`[$type]`](../../index/classes/CliError.md#%5B$type%5D)
 
-#### Source
+#### Defined in
 
-[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L184)
+[src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L184)
 
 ***
 
@@ -60,7 +60,7 @@ Represents a failed sanity check.
 
 [`CliError`](../../index/classes/CliError.md).[`cause`](../../index/classes/CliError.md#cause)
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
@@ -74,7 +74,7 @@ node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 [`CliError`](../../index/classes/CliError.md).[`message`](../../index/classes/CliError.md#message)
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1077
 
@@ -88,7 +88,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 [`CliError`](../../index/classes/CliError.md).[`name`](../../index/classes/CliError.md#name)
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1076
 
@@ -98,13 +98,23 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `boolean` = `false`
 
+If `true`, help text will be sent to stderr _before this exception finishes
+bubbling_. Where the exception is thrown will determine which instance is
+responsible for error text generation.
+
+#### Default
+
+```ts
+false
+```
+
 #### Inherited from
 
 [`CliError`](../../index/classes/CliError.md).[`showHelp`](../../index/classes/CliError.md#showhelp)
 
-#### Source
+#### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L94)
 
 ***
 
@@ -116,7 +126,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 [`CliError`](../../index/classes/CliError.md).[`stack`](../../index/classes/CliError.md#stack)
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1078
 
@@ -126,13 +136,22 @@ node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../../index/enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
+The exit code that will be returned when the application exits, given
+nothing else goes wrong in the interim.
+
+#### Default
+
+```ts
+FrameworkExitCode.DefaultError
+```
+
 #### Inherited from
 
 [`CliError`](../../index/classes/CliError.md).[`suggestedExitCode`](../../index/classes/CliError.md#suggestedexitcode)
 
-#### Source
+#### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L93)
 
 ***
 
@@ -160,7 +179,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 [`CliError`](../../index/classes/CliError.md).[`prepareStackTrace`](../../index/classes/CliError.md#preparestacktrace)
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:28
 
@@ -174,7 +193,7 @@ node\_modules/@types/node/globals.d.ts:28
 
 [`CliError`](../../index/classes/CliError.md).[`stackTraceLimit`](../../index/classes/CliError.md#stacktracelimit)
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:30
 
@@ -200,6 +219,6 @@ Create .stack property on a target object
 
 [`CliError`](../../index/classes/CliError.md).[`captureStackTrace`](../../index/classes/CliError.md#capturestacktrace)
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:21

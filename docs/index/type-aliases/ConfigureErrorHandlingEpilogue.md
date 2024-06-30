@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / ConfigureErrorHandlingEpilogue
 
-# Type alias: ConfigureErrorHandlingEpilogue()\<CustomContext\>
+# Type Alias: ConfigureErrorHandlingEpilogue()\<CustomContext\>
 
 > **ConfigureErrorHandlingEpilogue**\<`CustomContext`\>: (`meta`, `argv`, `context`) => `Promisable`\<`void`\>
 
@@ -20,7 +20,7 @@ exceptions to this are if (1) the error occurs within
 This function is also called even after yargs internally handles and reports
 an argument parsing/validation error.
 
-## Type parameters
+## Type Parameters
 
 • **CustomContext** *extends* [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../../util/type-aliases/ExecutionContext.md)
 
@@ -42,6 +42,6 @@ an argument parsing/validation error.
 
 `Promisable`\<`void`\>
 
-## Source
+## Defined in
 
-[types/configure.ts:81](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/configure.ts#L81)
+[types/configure.ts:81](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/configure.ts#L81)

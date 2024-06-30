@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / CliErrorOptions
 
-# Type alias: CliErrorOptions
+# Type Alias: CliErrorOptions
 
 > **CliErrorOptions**: `object`
 
@@ -39,6 +39,6 @@ nothing else goes wrong in the interim.
 FrameworkExitCode.DefaultError
 ```
 
-## Source
+## Defined in
 
-[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L67)
+[src/error.ts:67](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L67)

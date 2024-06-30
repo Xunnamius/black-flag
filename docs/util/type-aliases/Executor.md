@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / Executor
 
-# Type alias: Executor()
+# Type Alias: Executor()
 
 > **Executor**: (`rawArgv`?) => `Promise`\<[`Arguments`](../../index/type-aliases/Arguments.md)\>
 
@@ -32,6 +32,6 @@ instead.
 
 `Promise`\<[`Arguments`](../../index/type-aliases/Arguments.md)\>
 
-## Source
+## Defined in
 
-[types/program.ts:280](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L280)
+[types/program.ts:280](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L280)

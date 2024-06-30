@@ -47,9 +47,9 @@ other context.
 
 `AppError.constructor`
 
-#### Source
+#### Defined in
 
-[src/error.ts:101](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L101)
+[src/error.ts:101](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L101)
 
 ### new CliError()
 
@@ -76,9 +76,9 @@ via `super`.
 
 `AppError.constructor`
 
-#### Source
+#### Defined in
 
-[src/error.ts:106](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L106)
+[src/error.ts:106](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L106)
 
 ## Properties
 
@@ -86,9 +86,9 @@ via `super`.
 
 > **\[$type\]**: `string`[]
 
-#### Source
+#### Defined in
 
-[src/error.ts:96](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L96)
+[src/error.ts:96](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L96)
 
 ***
 
@@ -100,7 +100,7 @@ via `super`.
 
 `AppError.cause`
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
@@ -114,7 +114,7 @@ node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 `AppError.message`
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1077
 
@@ -128,7 +128,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 `AppError.name`
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1076
 
@@ -138,13 +138,23 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `boolean` = `false`
 
+If `true`, help text will be sent to stderr _before this exception finishes
+bubbling_. Where the exception is thrown will determine which instance is
+responsible for error text generation.
+
+#### Default
+
+```ts
+false
+```
+
 #### Implementation of
 
 `NonNullable.showHelp`
 
-#### Source
+#### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L94)
+[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L94)
 
 ***
 
@@ -156,7 +166,7 @@ node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 `AppError.stack`
 
-#### Source
+#### Defined in
 
 node\_modules/typescript/lib/lib.es5.d.ts:1078
 
@@ -166,13 +176,22 @@ node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
+The exit code that will be returned when the application exits, given
+nothing else goes wrong in the interim.
+
+#### Default
+
+```ts
+FrameworkExitCode.DefaultError
+```
+
 #### Implementation of
 
 `NonNullable.suggestedExitCode`
 
-#### Source
+#### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/src/error.ts#L93)
+[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L93)
 
 ***
 
@@ -200,7 +219,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 `AppError.prepareStackTrace`
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:28
 
@@ -214,7 +233,7 @@ node\_modules/@types/node/globals.d.ts:28
 
 `AppError.stackTraceLimit`
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:30
 
@@ -240,6 +259,6 @@ Create .stack property on a target object
 
 `AppError.captureStackTrace`
 
-#### Source
+#### Defined in
 
 node\_modules/@types/node/globals.d.ts:21

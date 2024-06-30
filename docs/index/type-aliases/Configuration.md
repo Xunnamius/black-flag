@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [index](../README.md) / Configuration
 
-# Type alias: Configuration\<CustomCliArguments, CustomExecutionContext\>
+# Type Alias: Configuration\<CustomCliArguments, CustomExecutionContext\>
 
 > **Configuration**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
 
@@ -12,7 +12,7 @@ A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a
 subtype of this interface.
 
-## Type parameters
+## Type Parameters
 
 • **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
 
@@ -169,6 +169,6 @@ order:
 "Usage: $000\n\n$1"
 ```
 
-## Source
+## Defined in
 
-[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/module.ts#L11)
+[types/module.ts:11](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/module.ts#L11)

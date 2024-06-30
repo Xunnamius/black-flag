@@ -4,7 +4,7 @@
 
 [@black-flag/core](../../README.md) / [util](../README.md) / ProgramMetadata
 
-# Type alias: ProgramMetadata
+# Type Alias: ProgramMetadata
 
 > **ProgramMetadata**: `object`
 
@@ -86,6 +86,6 @@ Note that "root" `type` configurations are unique in that there will only
 ever be one `RootConfiguration`, and it **MUST** be the first command
 module auto-discovered and loaded (invariant).
 
-## Source
+## Defined in
 
-[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/35f66cc9d69f8434d03db49f067b4f7e03d4c58c/types/program.ts#L188)
+[types/program.ts:188](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L188)
