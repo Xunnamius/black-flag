@@ -170,7 +170,7 @@ export type ImportedConfigurationModule<
   CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = (
   | ((
-      context: ExecutionContext
+      context: CustomExecutionContext
     ) => Promisable<
       Partial<
         | RootConfiguration<CustomCliArguments, CustomExecutionContext>
