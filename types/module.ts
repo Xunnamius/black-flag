@@ -161,9 +161,9 @@ export type ChildConfiguration<
 > = Partial<Configuration<CustomCliArguments, CustomExecutionContext>>;
 
 /**
- * Represents a Configuration object imported from a CJS/ESM module external to
- * the CLI framework (e.g. importing an auto-discovered config module from a
- * file).
+ * Represents a {@link Configuration} object imported from a CJS/ESM module
+ * external to the CLI framework (e.g. importing an auto-discovered config
+ * module from a file).
  */
 export type ImportedConfigurationModule<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
