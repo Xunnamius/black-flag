@@ -39,7 +39,8 @@ users of [`yargs::commandDir()`][2].
 Tested on Ubuntu and Windows.
 
 > If you find yourself a fan of Black Flag's more declarative DX, check out
-> [@black-flag/extensions][3].
+> [Black Flag Extensions][3] (BFE). BFE also protects you from [a couple yargs
+> footguns][4] that Black Flag by itself cannot.
 
 ---
 
@@ -81,7 +82,7 @@ npm install @black-flag/core
 ```
 
 And if you're ready to go all in on Black Flag's declarative API, check out
-[@black-flag/extensions][3]:
+[Black Flag Extensions][3]:
 
 ```shell
 npm install @black-flag/extensions
@@ -89,7 +90,7 @@ npm install @black-flag/extensions
 
 ## Features
 
-> Not yet familiar with yargs? Check out their [intro documentation][4] before
+> Not yet familiar with yargs? Check out their [intro documentation][5] before
 > continuing.
 
 ### Declaratively Build Deep Command Hierarchies ✨
@@ -140,7 +141,7 @@ That's it. Easy peasy.
 
 ### Built-In Support for Dynamic Options ✨
 
-[Dynamic options][5] are options whose `builder` configuration relies on the
+[Dynamic options][6] are options whose `builder` configuration relies on the
 resolved value of other options. Vanilla yargs does not support these, but Black
 Flag does:
 
@@ -165,11 +166,11 @@ defaults when called without any arguments.
 
 At the end of the day, you're still working with yargs instances, so there's no
 unfamiliar interface to wrestle with and no brand new things to learn. All of
-yargs's killer features still work, the [yargs documentation][6] still applies,
-and Black Flag, as a wrapper around yargs, is [widely compatible][7] with the
+yargs's killer features still work, the [yargs documentation][7] still applies,
+and Black Flag, as a wrapper around yargs, is [widely compatible][8] with the
 existing yargs ecosystem.
 
-For example, Black Flag helps you validate those [dynamic options][8] using the
+For example, Black Flag helps you validate those [dynamic options][9] using the
 same yargs API you already know and love:
 
 ```typescript
@@ -221,7 +222,7 @@ export function handler(argv) {
 }
 ```
 
-> See [the demo repo][9] for the complete implementation of this command.
+> See [the demo repo][10] for the complete implementation of this command.
 
 ```text
 myctl init --lang 'node' --version=21.1
@@ -266,9 +267,9 @@ Options:
 
 If `builder` and `handler` sound familiar, it's because the exports from your
 command files are essentially the same as those expected by the `yargs::command`
-function: [`aliases`][10], [`builder`][10], [`command`][10], [`deprecated`][10],
-[`description`][10], [`handler`][10], and two new ones: [`name`][10] and
-[`usage`][10].
+function: [`aliases`][11], [`builder`][11], [`command`][11], [`deprecated`][11],
+[`description`][11], [`handler`][11], and two new ones: [`name`][11] and
+[`usage`][11].
 
 The complete `my-cli-project/commands/init.ts` file could look like this:
 
@@ -365,15 +366,15 @@ myctl remote show origin
 deno ./cli.ts -- remote show origin
 ```
 
-The [`runProgram`][11] function bootstraps your CLI whenever you need it, e.g.
+The [`runProgram`][12] function bootstraps your CLI whenever you need it, e.g.
 when testing, in production, when importing your CLI as a dependency, etc.
 
 > `runProgram` never throws, and never calls `process.exit` [since that's
-> dangerous][12] and a disaster for unit testing.
+> dangerous][13] and a disaster for unit testing.
 
-Under the hood, `runProgram` calls [`configureProgram`][13], which
+Under the hood, `runProgram` calls [`configureProgram`][14], which
 auto-discovers and collects all the configurations exported from your command
-files, followed by [`PreExecutionContext::execute`][14], which is a wrapper
+files, followed by [`PreExecutionContext::execute`][15], which is a wrapper
 around `yargs::parseAsync` and `yargs::hideBin`.
 
 ```typescript
@@ -402,7 +403,7 @@ export default parsedArgv;
 
 ### Convention over Configuration ✨
 
-Black Flag [favors convention over configuration][15], meaning **everything
+Black Flag [favors convention over configuration][16], meaning **everything
 works out the box with sensible defaults and no sprawling configuration files**.
 
 However, when additional configuration _is_ required, there are five optional
@@ -558,8 +559,8 @@ commands. Specifically:
   available).
 
 How errors thrown during execution are reported to the user is determined by the
-optionally-provided [`configureErrorHandlingEpilogue`][16] configuration hook,
-as well as each command file's optionally-exported [`builder`][10] function.
+optionally-provided [`configureErrorHandlingEpilogue`][17] configuration hook,
+as well as each command file's optionally-exported [`builder`][11] function.
 
 ```typescript
 // File: my-cli-project/cli.ts
@@ -581,14 +582,14 @@ export function builder(blackFlag) {
 }
 ```
 
-> Note that [framework errors][17] and errors thrown in
+> Note that [framework errors][18] and errors thrown in
 > `configureExecutionContext` or `configureExecutionPrologue`, which are always
 > the result of developer error rather than end user error, cannot be handled by
 > `configureErrorHandlingEpilogue`. If you're using
-> [`makeRunner`][18]/[`runProgram`][11] (which never throws) and a
+> [`makeRunner`][19]/[`runProgram`][12] (which never throws) and a
 > misconfiguration triggers a framework error, your application will set its
-> exit code [accordingly][19] and send an error message to stderr. In such a
-> case, use [debug mode][20] to gain insight if necessary.
+> exit code [accordingly][20] and send an error message to stderr. In such a
+> case, use [debug mode][21] to gain insight if necessary.
 
 ### A Pleasant Testing Experience ✨
 
@@ -669,9 +670,9 @@ test('configureErrorHandlingEpilogue outputs as expected', async () => {
 
 And for those who prefer a more holistic behavior-driven testing approach, you
 can use the same function for testing your CLI that you use as an entry point in
-production: [`runProgram`][11].
+production: [`runProgram`][12].
 
-> Black Flag additionally provides the [`makeRunner`][18] utility function so
+> Black Flag additionally provides the [`makeRunner`][19] utility function so
 > you don't have to tediously copy and paste `runProgram(...)` and all its
 > arguments between tests.
 
@@ -728,9 +729,9 @@ it('throws on bad init --lang argument', async () => {
 
 ### Built-In `debug` Integration for Runtime Insights ✨
 
-Black Flag integrates [debug][21], allowing for deep insight into your tool's
+Black Flag integrates [debug][22], allowing for deep insight into your tool's
 runtime without significant overhead or code changes. Simply set the `DEBUG`
-environment variable to an [appropriate value][22]:
+environment variable to an [appropriate value][23]:
 
 ```shell
 # Shows all possible debug output
@@ -748,7 +749,7 @@ DEBUG='myctl*' myctl
 > enabled.
 
 It is also possible to get meaningful debug output from your commands
-themselves. Just include the [debug][21] package in your `package.json`
+themselves. Just include the [debug][22] package in your `package.json`
 dependencies and import it in your command files:
 
 ```typescript
@@ -808,8 +809,8 @@ However, your command files are not tightly coupled with Black Flag. An
 unfortunate side effect of this flexibility is that your command files do not
 automatically pick up Black Flag's types in your IDE/editor. Fortunately, Black
 Flag exports all its exposed types, including the generic
-[`RootConfiguration`][23], [`ParentConfiguration`][24], and
-[`ChildConfiguration`][25] types.
+[`RootConfiguration`][24], [`ParentConfiguration`][25], and
+[`ChildConfiguration`][26] types.
 
 Using these types, your command files themselves can be fully typed and you can
 enjoy the improved DX that comes with comprehensive intellisense. And for those
@@ -834,11 +835,11 @@ module.exports = {
 ```
 
 Child commands (commands not declared in index files) should use
-[`ChildConfiguration`][25]. Parent commands (commands declared in index files)
-should use [`ParentConfiguration`][24]. The root parent command (at the apex of
-the directory storing your command files) should use [`RootConfiguration`][23].
+[`ChildConfiguration`][26]. Parent commands (commands declared in index files)
+should use [`ParentConfiguration`][25]. The root parent command (at the apex of
+the directory storing your command files) should use [`RootConfiguration`][24].
 
-> There's also [`Configuration`][26], the supertype of the three
+> There's also [`Configuration`][27], the supertype of the three
 > `XConfiguration` subtypes.
 
 Similarly, if you're using configuration hooks in a separate file, you can enjoy
@@ -854,20 +855,20 @@ details about generics.
 ---
 
 And that's Black Flag in a nutshell! Check out a complete demo repository for
-that snazzy `myctl` tool [here][9]. Or play with the real thing on NPM:
+that snazzy `myctl` tool [here][10]. Or play with the real thing on NPM:
 `npx -p @black-flag/demo myctl --help` (also supports `DEBUG` environment
-variable). Or check out the [step-by-step getting started guide][27] below!
+variable). Or check out the [step-by-step getting started guide][28] below!
 
 If you want to see an example of a fairly complex CLI built on Black Flag that
 implements global options, custom rich logging and error output, and support for
-configuration files, check out [my personal CLI tool][28].
+configuration files, check out [my personal CLI tool][29].
 
 ## Usage
 
 What follows is a simple step-by-step guide for building, running, and testing
-the `myctl` tool from [the introductory section][29].
+the `myctl` tool from [the introductory section][30].
 
-> There's also a functional [`myctl` demo repository][9]. And you can interact
+> There's also a functional [`myctl` demo repository][10]. And you can interact
 > with the published version on NPM: `npx -p @black-flag/demo myctl --help`.
 
 ### Building and Running Your CLI
@@ -929,7 +930,7 @@ touch commands/index.js
 Depending on how you invoke Black Flag (e.g. with Node, Deno, Babel+Node, etc),
 command files support a subset of the following extensions in precedence order:
 `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`. To keep things simple, we'll be
-using ES modules as `.js` files (note the [type][30] in `package.json`).
+using ES modules as `.js` files (note the [type][31] in `package.json`).
 
 Also note that empty files, and files that do not export a `handler` function or
 custom `command` string, are picked up by Black Flag as unfinished or
@@ -1005,8 +1006,8 @@ defaults:
 - `yargs::scriptName(fullName)`
 - `yargs::wrap(yargs::terminalWidth())`
   - If you want to tweak this across your entire command hierarchy, update
-    [`context.state.initialTerminalWidth`][31] directly in
-    [`configureExecutionContext`][32]
+    [`context.state.initialTerminalWidth`][32] directly in
+    [`configureExecutionContext`][33]
 - `yargs::exitProcess(false)`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
 - `yargs::help(false)::option('help', { description })`
@@ -1016,9 +1017,9 @@ defaults:
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::usage(defaultUsageText)`
-  - Defaults to [this][33].
+  - Defaults to [this][34].
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
-    (such as in [`configureExecutionPrologue`][34]) will concatenate each
+    (such as in [`configureExecutionPrologue`][35]) will concatenate each
     invocation's arguments into one long usage string instead of overwriting
     previous invocations with later ones
 - `yargs::version(false)`
@@ -1029,7 +1030,7 @@ defaults:
 <!-- lint enable list-item-style -->
 
 Most of these defaults can be tweaked or overridden via each command's
-[`builder`][10] function, which gives you direct access to the yargs API. Let's
+[`builder`][11] function, which gives you direct access to the yargs API. Let's
 add one to `commands/index.js` along with a `handler` function and `usage`
 string:
 
@@ -1145,8 +1146,8 @@ Options:
 ```
 
 Since different OSes walk different filesystems in different orders,
-auto-discovered commands will appear _in [alpha-sort][35] order_ in help text
-rather than in insertion order; [command groupings][36] are still respected and
+auto-discovered commands will appear _in [alpha-sort][36] order_ in help text
+rather than in insertion order; [command groupings][37] are still respected and
 each command's options are still enumerated in insertion order.
 
 > Black Flag offers a stronger sorting guarantee than
@@ -1201,7 +1202,7 @@ we'll need some automated tests.
 Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
-First, let's install [jest][37]. We'll also create a file to hold our tests.
+First, let's install [jest][38]. We'll also create a file to hold our tests.
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -1212,15 +1213,15 @@ Since we set our root command to non-strict mode, let's test that it doesn't
 throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
-Note that we use [`makeRunner`][18] below, which is a factory function that
-returns a [curried][38] version of [`runProgram`][11] that is far less tedious
+Note that we use [`makeRunner`][19] below, which is a factory function that
+returns a [curried][39] version of [`runProgram`][12] that is far less tedious
 to invoke successively.
 
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
-> entire CLI _from scratch_. Other than stuff like [the require cache][39],
+> entire CLI _from scratch_. Other than stuff like [the require cache][40],
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
-> [common yargs footgun][40].
+> [common yargs footgun][41].
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
@@ -1323,10 +1324,10 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 
 |      Term       | Description                                                                                                                                                                                                                                                                                                   |
 | :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][26] file and represented internally as a trio of programs: [effector, helper, and router][41]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
-|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][42] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][43] type.                                                                                                                                |
+|     command     | A "command" is a functional unit associated with a [configuration][27] file and represented internally as a trio of programs: [effector, helper, and router][42]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][43] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][44] type.                                                                                                                                |
 |      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                               |
-| default command | A "default command" is [yargs parlance][44] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
+| default command | A "default command" is [yargs parlance][45] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
 
 ### Differences between Black Flag and Yargs
 
@@ -1347,69 +1348,69 @@ Flag, but are noted below nonetheless.
   earlier invocation_. This can lead to undefined or even dangerous behavior.
 
   > Who in their right mind is out here cloning yargs instances, you may ask?
-  > [Jest does so whenever you use certain asymmetric matchers][45].
+  > [Jest does so whenever you use certain asymmetric matchers][46].
 
   Regardless, you should never have to reach below Black Flag's abstraction over
   yargs to call methods like `yargs::parse`, `yargs::parseAsync`, `yargs::argv`,
-  etc. Instead, just [use Black Flag as intended][11].
+  etc. Instead, just [use Black Flag as intended][12].
 
   Therefore, this is effectively a non-issue with proper declarative use of
   Black Flag.
 
-- Yargs [middleware][46] isn't supported since the functionality is mostly
+- Yargs [middleware][47] isn't supported since the functionality is mostly
   covered by configuration hooks ~~and I didn't notice yargs had this feature
   until after I wrote Black Flag~~.
 
   If you have a yargs middleware function you want run with a specific command,
-  either pass it to `yargs::middleware` via that command's [`builder`][10]
+  either pass it to `yargs::middleware` via that command's [`builder`][11]
   function or just call the middleware function right then and there. If you
   want the middleware to apply globally, invoke the function directly in
-  [`configureArguments`][47]. If neither solution is desirable, you can also
-  [muck around with][41] the relevant yargs instances manually in
-  [`configureExecutionPrologue`][34].
+  [`configureArguments`][48]. If neither solution is desirable, you can also
+  [muck around with][42] the relevant yargs instances manually in
+  [`configureExecutionPrologue`][35].
 
 - By default, Black Flag enables the `--help` and `--version` options same as
-  vanilla yargs. However, since vanilla yargs [lacks the ability][48] to modify
+  vanilla yargs. However, since vanilla yargs [lacks the ability][49] to modify
   or remove options added by `yargs::option`, calling
   `yargs::help`/`yargs::version` will throw. If you require the functionality of
   `yargs::help`/`yargs::version` to disable or modify the `--help`/`--version`
   option, update
-  [`context.state.globalHelpOption`][31]/[`context.state.globalVersionOption`][31]
-  directly in [`configureExecutionContext`][32].
+  [`context.state.globalHelpOption`][32]/[`context.state.globalVersionOption`][32]
+  directly in [`configureExecutionContext`][33].
 
   > Note: Black Flag enables built-in help and version _options_, never a help
   > or version _command_.
 
   > Note: only the root command has default support for the built-in `--version`
   > option. Calling `--version` on a child command will have no effect unless
-  > you make it so. This dodges [another yargs footgun][49], and setting
-  > [`context.state.globalVersionOption = undefined`][31] will prevent yargs
+  > you make it so. This dodges [another yargs footgun][50], and setting
+  > [`context.state.globalVersionOption = undefined`][32] will prevent yargs
   > from clobbering any custom version arguments on the root command too.
 
 #### Irrelevant Differences
 
-- A [bug][50] in yargs\@17.7.2 prevents `yargs::showHelp`/`--help` from printing
-  anything when using an async [`builder`][10] function (or promise-returning
-  function) for a [default command][44].
+- A [bug][51] in yargs\@17.7.2 prevents `yargs::showHelp`/`--help` from printing
+  anything when using an async [`builder`][11] function (or promise-returning
+  function) for a [default command][45].
 
   Black Flag addresses this with its types, in that attempting to pass an async
   builder will be flagged as problematic by intellisense. Moreover, Black Flag
   supports an asynchronous function as the value of `module.exports` in CJS
   code, and top-level await in ESM code, so if you really do need an async
-  [`builder`][10] function, [hoist][51] the async logic to work around this bug
+  [`builder`][11] function, [hoist][52] the async logic to work around this bug
   for now.
 
-- A [bug?][52] in yargs\@17.7.2 causes `yargs::showHelp` to erroneously print
-  the _second_ element in the [`aliases`][53] array of the [default command][44]
+- A [bug?][53] in yargs\@17.7.2 causes `yargs::showHelp` to erroneously print
+  the _second_ element in the [`aliases`][54] array of the [default command][45]
   when said command also has child commands.
 
   Black Flag addresses this by using a "helper" program to generate help text
-  [more consistently][52] than vanilla yargs. For instance, the default help
-  text for a Black Flag command includes the full [`command`][10] and
-  [`description`][10] strings while the commands under `"Commands:"` are listed
+  [more consistently][53] than vanilla yargs. For instance, the default help
+  text for a Black Flag command includes the full [`command`][11] and
+  [`description`][11] strings while the commands under `"Commands:"` are listed
   in alpha-sort order as their full canonical names _only_; unlike vanilla
   yargs, no positional arguments or aliases will be confusingly mixed into help
-  text output unless you [make it so][41].
+  text output unless you [make it so][42].
 
 - As of yargs\@17.7.2, attempting to add two sibling commands with the exact
   same name causes all sorts of runtime insanity, especially if the commands
@@ -1419,20 +1420,34 @@ Flag, but are noted below nonetheless.
   Specifically: Black Flag will throw if you attempt to add a command with a
   name or alias that conflicts with its sibling commands' name or alias.
 
-- Unfortunately, yargs\@17.7.2 [doesn't really support][40] calling
+- As of yargs\@17.7.2, and similar to the above point, attempting to add two
+  options with conflicting names/aliases to the same command leads to undefined
+  and potentially dangerous runtime behavior from yargs.
+
+  Unfortunately, since yargs allows adding options through a wide variety of
+  means, Black Flag cannot protect you from this footgun. However, [Black Flag
+  Extensions][3] (BFE) can.
+
+  Specifically: BFE will throw if you attempt to add a command option with a
+  name or alias that conflicts another of that command's options. BFE also takes
+  into account the following [yargs-parser settings][55] configuration settings:
+  `camel-case-expansion`, `strip-aliased`, `strip-dashed`. See [BFE's
+  documentation][3] for details.
+
+- Unfortunately, yargs\@17.7.2 [doesn't really support][41] calling
   `yargs::parse` or `yargs::parseAsync` [multiple times on the same
-  instance][54] if it's using the commands-based API. This might be a regression
-  since, [among other things][55], there are comments within yargs's source that
+  instance][56] if it's using the commands-based API. This might be a regression
+  since, [among other things][57], there are comments within yargs's source that
   indicate these functions were intended to be called multiple times.
 
-  Black Flag addresses this in two ways. First, the [`runProgram`][11] helper
+  Black Flag addresses this in two ways. First, the [`runProgram`][12] helper
   takes care of state isolation for you, making it safe to call
-  [`runProgram`][11] multiple times. Easy peasy. Second,
-  [`PreExecutionContext::execute`][14] (the wrapper around `yargs::parseAsync`)
+  [`runProgram`][12] multiple times. Easy peasy. Second,
+  [`PreExecutionContext::execute`][15] (the wrapper around `yargs::parseAsync`)
   will throw if invoked more than once.
 
 - One of Black Flag's features is simple comprehensive error reporting via the
-  [`configureErrorHandlingEpilogue`][16] configuration hook. Therefore, the
+  [`configureErrorHandlingEpilogue`][17] configuration hook. Therefore, the
   `yargs::showHelpOnFail` method will ignore the redundant "message" parameter.
   If you want that functionality, use said hook to output an epilogue after
   yargs outputs an error message, or use `yargs::epilogue`/`yargs::example`.
@@ -1440,35 +1455,35 @@ Flag, but are noted below nonetheless.
   commands in your hierarchy.
 
 - Since every auto-discovered command translates [into its own yargs
-  instances][41], the [`command`][10] property, if exported by your command
+  instances][42], the [`command`][11] property, if exported by your command
   file(s), must start with `"$0"` or an error will be thrown. This is also
   enforced by intellisense.
 
 - The `yargs::check`, `yargs::global`, and `yargs::onFinishCommand` methods,
   while they may work as expected on commands and their direct child commands,
   will not function "globally" across your entire command hierarchy since [there
-  are several _distinct_ yargs instances in play when Black Flag executes][41].
+  are several _distinct_ yargs instances in play when Black Flag executes][42].
 
   If you want a uniform check or so-called "global" argument to apply to every
   command across your entire hierarchy, the "Black Flag way" would be to just
-  use normal JavaScript instead: export a shared [`builder`][10] function from a
+  use normal JavaScript instead: export a shared [`builder`][11] function from a
   utility file and call it in each of your command files. If you want something
-  fancier than that, you can leverage [`configureExecutionPrologue`][34] to call
+  fancier than that, you can leverage [`configureExecutionPrologue`][35] to call
   `yargs::global` or `yargs::check` by hand.
 
   Similarly, `yargs::onFinishCommand` should only be called when the `argv`
-  parameter in [`builder`][10] is not `undefined` (i.e. only on [effector
-  programs][41]). This would prevent the callback from being executed twice.
+  parameter in [`builder`][11] is not `undefined` (i.e. only on [effector
+  programs][42]). This would prevent the callback from being executed twice.
   Further, the "Black Flag way" would be to ditch `yargs::onFinishCommand`
   entirely and use plain old JavaScript and/or the
-  [`configureExecutionPrologue`][34] configuration hook instead.
+  [`configureExecutionPrologue`][35] configuration hook instead.
 
 - Since Black Flag is built from the ground up to be asynchronous, calling
   `yargs::parseSync` will throw immediately. You shouldn't be calling the
   `yargs::parseX` functions directly anyway.
 
 - Black Flag sets several defaults compared to vanilla yargs. These defaults are
-  detailed in the [Usage section][27].
+  detailed in the [Usage section][28].
 
 ### Advanced Usage
 
@@ -1515,24 +1530,24 @@ Each of these six commands is actually _three_ programs:
 
 1. The **effector** (`programs.effector`) programs are responsible for
    second-pass arguments parsing and comprehensive validation, executing each
-   command's actual [`handler`][10] function, generating specific help text
+   command's actual [`handler`][11] function, generating specific help text
    during errors, and ensuring the final parse result bubbles up to the router
    program.
 
 2. The **helper** (`programs.helper`) programs are responsible for generating
    generic help text as well as first-pass arguments parsing and initial
    validation. Said parse result is used as the `argv` third parameter passed to
-   the [`builder`][10] functions of effectors.
+   the [`builder`][11] functions of effectors.
 
 3. The **router** (`programs.router`) programs are responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and
    final parse results bubble up to the root Black Flag execution context
-   ([`PreExecutionContext::execute`][14]) for handling.
+   ([`PreExecutionContext::execute`][15]) for handling.
 
-> See the [flow chart][56] below for a visual overview.
+> See the [flow chart][58] below for a visual overview.
 
 These three programs representing the root command are accessible from the
-[`PreExecutionContext::rootPrograms`][14] property. They are also always the
+[`PreExecutionContext::rootPrograms`][15] property. They are also always the
 first item in the `PreExecutionContext::commands` map.
 
 ```typescript
@@ -1550,26 +1565,26 @@ await preExecutionContext.execute();
 ```
 
 Effectors do the heavy lifting in that they actually execute their command's
-[`handler`][10]. They are accessible via the [`programs.effector`][57] property
-of each object in [`PreExecutionContext::commands`][14], and can be configured
+[`handler`][11]. They are accessible via the [`programs.effector`][59] property
+of each object in [`PreExecutionContext::commands`][15], and can be configured
 as one might a typical yargs instance.
 
 Helpers are "clones" of their respective effectors and are accessible via the
-[`programs.helper`][57] property of each object in
-[`PreExecutionContext::commands`][14]. These instances have been reconfigured to
-address [a couple bugs][58] in yargs help text output by excluding aliases from
+[`programs.helper`][59] property of each object in
+[`PreExecutionContext::commands`][15]. These instances have been reconfigured to
+address [a couple bugs][4] in yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
 side-effect of this is that only effectors recognize top-level positional
 arguments, which isn't a problem Black Flag users have to worry about unless
 they're dangerously tampering with these programs directly.
 
 Routers are partially-configured just enough to proxy control to other routers
-or to helpers and are accessible via the [`programs.router`][57] property of
-each object in [`PreExecutionContext::commands`][14]. They cannot and _must not_
+or to helpers and are accessible via the [`programs.router`][59] property of
+each object in [`PreExecutionContext::commands`][15]. They cannot and _must not_
 have any configured strictness or validation logic.
 
 Therefore: if you want to tamper with the program responsible for running a
-command's [`handler`][10], operate on the effector program. If you want to
+command's [`handler`][11], operate on the effector program. If you want to
 tamper with a command's generic stdout help text, operate on the helper program.
 If you want to tamper with validation and parsing, operate on both the helper
 and effectors. If you want to tamper with the routing of control between
@@ -1581,10 +1596,10 @@ See [the docs][x-repo-docs] for more details on Black Flag's internals.
 
 Rather than chain singular yargs instances together, the delegation of
 responsibility between helper and effectors facilitates the double-parsing
-necessary for [dynamic options][8] support. In implementing dynamic options,
+necessary for [dynamic options][9] support. In implementing dynamic options,
 Black Flag accurately parses the given arguments with the helper program on the
-first pass and feeds the result to the [`builder`][10] function of the effector
-on the second pass (via [`builder`'s new third parameter][8]).
+first pass and feeds the result to the [`builder`][11] function of the effector
+on the second pass (via [`builder`'s new third parameter][9]).
 
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
@@ -1629,11 +1644,11 @@ gibberish arguments.
 #### Generating Help Text
 
 Effectors are essentially yargs instances with a registered [default
-command][44]. Unfortunately, when vanilla yargs is asked to generate help text
+command][45]. Unfortunately, when vanilla yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
 
-![Vanilla yargs parseAsync help text example][59]
+![Vanilla yargs parseAsync help text example][60]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
 root command is being reported alongside `subcmd` as if it were a child command
@@ -1665,10 +1680,14 @@ with permanent effects.
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][60]
+![Black Flag runProgram help text example][61]
 
-> Note: in this example, `runProgram` is a function returned by
-> [`makeRunner`][18].
+> Note 1: in this example, `runProgram` is a function returned by
+> [`makeRunner`][19].
+
+> Note 2: in the above image, the first line under "Commands:" is the root
+> command. In more recent versions of Black Flag, the root command is omitted
+> from the list of sub-commands.
 
 #### Execution Flow Diagram
 
@@ -1819,7 +1838,7 @@ user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][61]
+> The ascii art diagram was built using [https://asciiflow.com][62]
 
 ### Inspiration
 
@@ -1828,9 +1847,9 @@ yargs, each with drastically different interfaces and requirements. A couple
 help manage critical systems.
 
 Recently, as I was copying-and-pasting some configs from past projects for [yet
-another tool][28], I realized the (irritatingly disparate 😖) structures of my
+another tool][29], I realized the (irritatingly disparate 😖) structures of my
 CLI projects up until this point were converging on a set of conventions around
-yargs. And, as I'm [always eager][62] to ["optimize" my workflows][63], I
+yargs. And, as I'm [always eager][63] to ["optimize" my workflows][64], I
 wondered how much of the boilerplate behind my "conventional use" of yargs could
 be abstracted away, making my next CLIs more stable upon release, much faster to
 build, and more pleasant to test. But perhaps most importantly, I could ensure
@@ -1990,71 +2009,72 @@ specification. Contributions of any kind welcome!
 [1]: https://yargs.js.org
 [2]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
 [3]: https://github.com/Xunnamius/black-flag-extensions
-[4]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[5]: https://github.com/yargs/yargs/issues/793
-[6]:
+[4]: #irrelevant-differences
+[5]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
+[6]: https://github.com/yargs/yargs/issues/793
+[7]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/api.md
-[7]: #differences-between-black-flag-and-yargs
-[8]: #built-in-support-for-dynamic-options-
-[9]: https://github.com/Xunnamius/black-flag-demo
-[10]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[11]: ./docs/index/functions/runProgram.md
-[12]:
+[8]: #differences-between-black-flag-and-yargs
+[9]: #built-in-support-for-dynamic-options-
+[10]: https://github.com/Xunnamius/black-flag-demo
+[11]: ./docs/index/type-aliases/Configuration.md#type-declaration
+[12]: ./docs/index/functions/runProgram.md
+[13]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[13]: ./docs/index/functions/configureProgram.md
-[14]: ./docs/util/type-aliases/PreExecutionContext.md
-[15]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[16]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
-[17]: ./docs/util/classes/AssertionFailedError.md
-[18]: ./docs/util/functions/makeRunner.md
-[19]: ./docs/index/enumerations/FrameworkExitCode.md
-[20]: #built-in-debug-integration-for-runtime-insights-
-[21]: https://www.npmjs.com/package/debug
-[22]: https://www.npmjs.com/package/debug#usage
-[23]: ./docs/index/type-aliases/RootConfiguration.md
-[24]: ./docs/index/type-aliases/ParentConfiguration.md
-[25]: ./docs/index/type-aliases/ChildConfiguration.md
-[26]: ./docs/index/type-aliases/Configuration.md
-[27]: #building-and-running-your-cli
-[28]: https://github.com/Xunnamius/xunnctl
-[29]: #features
-[30]: https://nodejs.org/api/packages.html#type
-[31]: ./docs/util/type-aliases/ExecutionContext.md
-[32]: ./docs/index/type-aliases/ConfigureExecutionContext.md
-[33]:
+[14]: ./docs/index/functions/configureProgram.md
+[15]: ./docs/util/type-aliases/PreExecutionContext.md
+[16]: https://en.wikipedia.org/wiki/Convention_over_configuration
+[17]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
+[18]: ./docs/util/classes/AssertionFailedError.md
+[19]: ./docs/util/functions/makeRunner.md
+[20]: ./docs/index/enumerations/FrameworkExitCode.md
+[21]: #built-in-debug-integration-for-runtime-insights-
+[22]: https://www.npmjs.com/package/debug
+[23]: https://www.npmjs.com/package/debug#usage
+[24]: ./docs/index/type-aliases/RootConfiguration.md
+[25]: ./docs/index/type-aliases/ParentConfiguration.md
+[26]: ./docs/index/type-aliases/ChildConfiguration.md
+[27]: ./docs/index/type-aliases/Configuration.md
+[28]: #building-and-running-your-cli
+[29]: https://github.com/Xunnamius/xunnctl
+[30]: #features
+[31]: https://nodejs.org/api/packages.html#type
+[32]: ./docs/util/type-aliases/ExecutionContext.md
+[33]: ./docs/index/type-aliases/ConfigureExecutionContext.md
+[34]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[34]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
-[35]: https://www.npmjs.com/package/alpha-sort
-[36]:
+[35]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
+[36]: https://www.npmjs.com/package/alpha-sort
+[37]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
-[37]: https://www.npmjs.com/package/jest
-[38]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[39]: https://jestjs.io/docs/jest-object#jestresetmodules
-[40]: https://github.com/yargs/yargs/issues/2191
-[41]: #advanced-usage
-[42]:
+[38]: https://www.npmjs.com/package/jest
+[39]: https://builtin.com/software-engineering-perspectives/currying-javascript
+[40]: https://jestjs.io/docs/jest-object#jestresetmodules
+[41]: https://github.com/yargs/yargs/issues/2191
+[42]: #advanced-usage
+[43]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[43]: ./docs/util/type-aliases/Program.md
-[44]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[45]:
-  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[44]: ./docs/util/type-aliases/Program.md
+[45]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [46]:
+  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[47]:
   https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[47]: ./docs/index/type-aliases/ConfigureArguments.md
-[48]: https://github.com/yargs/yargs/issues/733
-[49]: https://github.com/yargs/yargs/issues/1323
-[50]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
-[51]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[52]: #generating-help-text
-[53]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
-[54]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
-[55]: https://github.com/yargs/yargs/issues/1137
-[56]: #execution-flow-diagram
-[57]: ./docs/util/type-aliases/ProgramMetadata.md
-[58]: #irrelevant-differences
-[59]: ./example-1.png
-[60]: ./example-2.png
-[61]: https://asciiflow.com
-[62]: https://xkcd.com/1205
-[63]:
+[48]: ./docs/index/type-aliases/ConfigureArguments.md
+[49]: https://github.com/yargs/yargs/issues/733
+[50]: https://github.com/yargs/yargs/issues/1323
+[51]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
+[52]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
+[53]: #generating-help-text
+[54]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
+[55]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
+[56]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
+[57]: https://github.com/yargs/yargs/issues/1137
+[58]: #execution-flow-diagram
+[59]: ./docs/util/type-aliases/ProgramMetadata.md
+[60]: ./example-1.png
+[61]: ./example-2.png
+[62]: https://asciiflow.com
+[63]: https://xkcd.com/1205
+[64]:
   https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
