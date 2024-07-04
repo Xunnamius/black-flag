@@ -2,7 +2,7 @@
 /// <reference path="../index.d.ts"/>
 
 /**
- * @type {Type.ParentConfig}
+ * @type {Type.RootConfig}
  */
 const commandModule = {
   name: 'conflict'
