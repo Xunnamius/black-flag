@@ -2810,7 +2810,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('accounts for bugs in vanilla yargs when outputting help text', async () => {
+  it('omits current command from "commands" list and accounts for other bugs in vanilla yargs when outputting help text', async () => {
     expect.hasAssertions();
 
     // * https://github.com/Xunnamius/black-flag/tree/main#generating-help-text
@@ -2827,15 +2827,18 @@ describe('<command module auto-discovery>', () => {
 
       expect(logSpy.mock.calls).toStrictEqual([
         [
+          // ? First command in command list is direct child
           expect.stringMatching(
             /Commands:\n\s+nsf n\s+Parent program description text\s+\[aliases: parent, p] \[deprecated]\n\nOptions:/
           )
         ],
         [
+          // ? First command in command list is direct child
           expect.stringMatching(
             /Commands:\n\s+nsf n f\s+Child program description text\s+\[aliases: child-1] \[deprecated]\n\s+nsf n s\s+Child program description text\s+\[aliases: child-2]\n\s+nsf n t\s+Child program description text\s+\[aliases: child-3]\n\nOptions:/
           )
         ],
+        // ? Pure child command has no children to list
         [expect.not.stringContaining('Commands:')]
       ]);
     });
