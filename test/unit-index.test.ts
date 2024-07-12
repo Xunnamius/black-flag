@@ -1962,6 +1962,168 @@ describe('::CliError', () => {
       expect(errorSpy.mock.calls).toStrictEqual([[capitalize(ErrorMessage.Generic())]]);
     });
   });
+
+  it('sets correct properties given various inputs', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy }) => {
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError('1');
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '1',
+        cause: undefined,
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError(new Error('2'));
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '2',
+        cause: expect.any(Error),
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const cause = new Error('3', { cause: '4' });
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError(cause);
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '3',
+        cause,
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const causeCause = new Error('5');
+      const cause = new Error('4', { cause: causeCause });
+
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError(cause);
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: cause.message,
+        cause,
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const cause = new Error('7');
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError(new Error('5', { cause: new Error('6') }), { cause });
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '5',
+        cause,
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError(new Error('6', { cause: new Error('7') }), {
+              cause: '8'
+            });
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '6',
+        cause: '8',
+        dangerouslyFatal: false,
+        showHelp: false,
+        suggestedExitCode: bf.FrameworkExitCode.DefaultError
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy }) => {
+      const { execute } = await bf.configureProgram(
+        getFixturePath('one-file-log-handler'),
+        {
+          configureArguments() {
+            throw new bf.CliError('7', {
+              dangerouslyFatal: true,
+              showHelp: true,
+              suggestedExitCode: 500
+            });
+          }
+        }
+      );
+
+      await expect(execute()).rejects.toMatchObject({
+        message: '7',
+        cause: undefined,
+        dangerouslyFatal: true,
+        showHelp: true,
+        suggestedExitCode: 500
+      });
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
 });
 
 describe('::isPreExecutionContext', () => {
