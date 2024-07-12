@@ -31,7 +31,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:150](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L150)
+[src/error.ts:197](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L197)
 
 ## Properties
 
@@ -45,7 +45,7 @@ implemented.
 
 #### Defined in
 
-[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L145)
+[src/error.ts:192](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L192)
 
 ***
 
@@ -60,6 +60,43 @@ implemented.
 #### Defined in
 
 node\_modules/typescript/lib/lib.es2022.error.d.ts:24
+
+***
+
+### dangerouslyFatal
+
+> **dangerouslyFatal**: `boolean` = `false`
+
+This option is similar in intent to yargs's `exitProcess()` function,
+except applied more granularly.
+
+Normally, [runProgram](../../index/functions/runProgram.md) never throws and never calls `process.exit`,
+instead setting `process.exitCode` when an error occurs.
+
+However, it is at times prudent to kill Node.js as soon as possible after
+error handling happens. For example: the execa library struggles to abort
+concurrent subcommand promises in a timely manner, and doesn't prevent them
+from dumping output to stdout even after Black Flag has finished executing.
+To work around this, we can set `dangerouslyFatal` to `true`, forcing Black
+Flag to call `process.exit` immediately after error handling completes.
+
+More generally, enabling `dangerouslyFatal` is a quick way to get rid of
+strange behavior that can happen when your microtask queue isn't empty
+(i.e. the event loop still has work to do) by the time Black Flag's error
+handling code completes. **However, doing this without proper consideration
+of _why_ you still have hanging promises and/or other microtasks adding
+work to the event loop can lead to faulty/glitchy/flaky software and
+heisenbugs.** You will also have to specially handle `process.exit` when
+running unit/integration tests and executing command handlers within other
+command handlers. Tread carefully.
+
+#### Inherited from
+
+[`CliError`](../../index/classes/CliError.md).[`dangerouslyFatal`](../../index/classes/CliError.md#dangerouslyfatal)
+
+#### Defined in
+
+[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L133)
 
 ***
 
@@ -111,7 +148,7 @@ false
 
 #### Defined in
 
-[src/error.ts:94](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L94)
+[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L132)
 
 ***
 
@@ -148,7 +185,7 @@ FrameworkExitCode.DefaultError
 
 #### Defined in
 
-[src/error.ts:93](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L93)
+[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L131)
 
 ***
 
@@ -157,10 +194,6 @@ FrameworkExitCode.DefaultError
 > `static` `optional` **prepareStackTrace**: (`err`, `stackTraces`) => `any`
 
 Optional override for formatting stack traces
-
-#### See
-
-https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Parameters
 
@@ -171,6 +204,10 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 #### Returns
 
 `any`
+
+#### See
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 

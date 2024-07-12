@@ -22,10 +22,6 @@ by yargs but with several differences and should be preferred.
 
 **`Internal`**
 
-#### See
-
-_Program.command
-
 #### Parameters
 
 • **command**: `string`[]
@@ -43,6 +39,10 @@ _Program.command
 #### Returns
 
 [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+
+#### See
+
+_Program.command
 
 ### command\_deferred
 
@@ -63,13 +63,13 @@ _Program.command
 
 **`Internal`**
 
-#### See
-
-Program.command_deferred
-
 #### Returns
 
 `void`
+
+#### See
+
+Program.command_deferred
 
 ### showHelpOnFail()
 
@@ -83,10 +83,6 @@ message, use a configuration hook or `yargs::epilogue`.
 Invoking this method will affect all programs in your command hierarchy,
 not just the program on which it was invoked.
 
-#### See
-
-_Program.showHelpOnFail
-
 #### Parameters
 
 • **enabled**: `boolean`
@@ -94,6 +90,10 @@ _Program.showHelpOnFail
 #### Returns
 
 [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+
+#### See
+
+_Program.showHelpOnFail
 
 ## Type Parameters
 
@@ -103,4 +103,4 @@ _Program.showHelpOnFail
 
 ## Defined in
 
-[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/program.ts#L44)
+[types/program.ts:44](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/types/program.ts#L44)

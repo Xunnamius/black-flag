@@ -20,4 +20,4 @@ Type-guard for [PreExecutionContext](../type-aliases/PreExecutionContext.md).
 
 ## Defined in
 
-[src/util.ts:434](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L434)
+[src/util.ts:441](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L441)

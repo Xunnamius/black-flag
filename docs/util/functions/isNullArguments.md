@@ -20,4 +20,4 @@ Type-guard for [NullArguments](../../index/type-aliases/NullArguments.md).
 
 ## Defined in
 
-[src/util.ts:447](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L447)
+[src/util.ts:454](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L454)

@@ -38,7 +38,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:172](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L172)
+[src/util.ts:173](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L173)
 
 ## runProgram(args)
 
@@ -72,7 +72,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:193](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L193)
+[src/util.ts:194](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L194)
 
 ## runProgram(args)
 
@@ -107,7 +107,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:214](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L214)
+[src/util.ts:215](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L215)
 
 ## runProgram(args)
 
@@ -142,7 +142,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:238](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L238)
+[src/util.ts:239](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L239)
 
 ## runProgram(args)
 
@@ -177,7 +177,7 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:260](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L260)
+[src/util.ts:261](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L261)
 
 ## runProgram(args)
 
@@ -213,4 +213,4 @@ if any other error occurs, or `Arguments` otherwise.
 
 ### Defined in
 
-[src/util.ts:286](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L286)
+[src/util.ts:287](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L287)

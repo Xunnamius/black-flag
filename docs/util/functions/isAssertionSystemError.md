@@ -20,4 +20,4 @@ Type-guard for Node's "ERR_ASSERTION" so-called `SystemError`.
 
 ## Defined in
 
-[src/util.ts:472](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/util.ts#L472)
+[src/util.ts:479](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L479)

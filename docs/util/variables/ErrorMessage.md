@@ -356,4 +356,4 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 ## Defined in
 
-[src/error.ts:200](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L200)
+[src/error.ts:251](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L251)

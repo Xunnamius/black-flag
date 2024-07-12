@@ -20,4 +20,4 @@ Type guard for [CommandNotImplementedError](../classes/CommandNotImplementedErro
 
 ## Defined in
 
-[src/error.ts:53](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/error.ts#L53)
+[src/error.ts:57](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/error.ts#L57)

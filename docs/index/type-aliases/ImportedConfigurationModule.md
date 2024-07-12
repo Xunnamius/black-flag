@@ -8,9 +8,9 @@
 
 > **ImportedConfigurationModule**\<`CustomCliArguments`, `CustomExecutionContext`\>: (`context`) => `Promisable`\<`Partial`\<[`RootConfiguration`](RootConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ParentConfiguration`](ParentConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ChildConfiguration`](ChildConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\>\> \| `Partial`\<[`RootConfiguration`](RootConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ParentConfiguration`](ParentConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ChildConfiguration`](ChildConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\> & `object`
 
-Represents a Configuration object imported from a CJS/ESM module external to
-the CLI framework (e.g. importing an auto-discovered config module from a
-file).
+Represents a [Configuration](Configuration.md) object imported from a CJS/ESM module
+external to the CLI framework (e.g. importing an auto-discovered config
+module from a file).
 
 ## Type declaration
 
@@ -26,4 +26,4 @@ file).
 
 ## Defined in
 
-[types/module.ts:168](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/types/module.ts#L168)
+[types/module.ts:168](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/types/module.ts#L168)

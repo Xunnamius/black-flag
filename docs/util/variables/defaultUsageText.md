@@ -15,4 +15,4 @@ description (`description` export) respectively.
 
 ## Defined in
 
-[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L13)
+[src/constant.ts:13](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L13)

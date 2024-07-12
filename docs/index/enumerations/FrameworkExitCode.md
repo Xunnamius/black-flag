@@ -22,7 +22,7 @@ In most cases, this exit code is indicative of improper use of Black Flag.
 
 #### Defined in
 
-[src/constant.ts:60](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L60)
+[src/constant.ts:60](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L60)
 
 ***
 
@@ -34,7 +34,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 #### Defined in
 
-[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L48)
+[src/constant.ts:48](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L48)
 
 ***
 
@@ -46,7 +46,7 @@ The exit code used when executing an unimplemented child command.
 
 #### Defined in
 
-[src/constant.ts:52](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L52)
+[src/constant.ts:52](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L52)
 
 ***
 
@@ -58,4 +58,4 @@ The exit code used when execution succeeds and exits gracefully.
 
 #### Defined in
 
-[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/cdc6af55387aac92b7d9fc16a57790068e4b6d49/src/constant.ts#L44)
+[src/constant.ts:44](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L44)
