@@ -363,7 +363,7 @@ export async function discoverCommands(
           ) {
             debug_.warn(
               'a recoverable failure occurred while attempting to load configuration: %O',
-              `${error}`
+              error
             );
           } else {
             throw error;
@@ -514,7 +514,7 @@ export async function discoverCommands(
       } catch (error) {
         debug_.error(
           'an irrecoverable failure occurred while loading configuration: %O',
-          `${error}`
+          error
         );
 
         throw error;

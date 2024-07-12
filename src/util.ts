@@ -320,7 +320,6 @@ export async function runProgram<
   let configurationHooks: ConfigurationHooks | undefined = undefined;
   let preExecutionContext: PreExecutionContext | undefined = undefined;
   let successfullyHandledErrorViaConfigurationHook = false;
-  let alreadyDidErrorHandling = false;
 
   try {
     if (typeof args[1] === 'string' || Array.isArray(args[1])) {
@@ -394,21 +393,6 @@ export async function runProgram<
     debug_('runProgram invocation succeeded');
     return parsedArgv;
   } catch (error) {
-    if (alreadyDidErrorHandling) {
-      debug_.warn(
-        `discarding exception from ${
-          preExecutionContext ? '::execute' : '::configureProgram'
-        } because error handling already happened: %O`,
-        error
-      );
-
-      debug_.message(
-        'note that seeing the above message may be a code smell. Check the documentation on CliError::dangerouslyFatal for more information'
-      );
-    }
-
-    alreadyDidErrorHandling = true;
-
     debug_.error(
       `handling irrecoverable exception from ${
         preExecutionContext ? '::execute' : '::configureProgram'
