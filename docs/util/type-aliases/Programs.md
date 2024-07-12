@@ -19,4 +19,4 @@ aptly-named values in an object.
 
 ## Defined in
 
-[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/types/program.ts#L173)
+[types/program.ts:173](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/types/program.ts#L173)

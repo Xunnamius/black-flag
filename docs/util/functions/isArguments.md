@@ -20,4 +20,4 @@ Type-guard for [Arguments](../../index/type-aliases/Arguments.md).
 
 ## Defined in
 
-[src/util.ts:465](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/util.ts#L465)
+[src/util.ts:481](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/util.ts#L481)

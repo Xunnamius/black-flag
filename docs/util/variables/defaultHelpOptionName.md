@@ -13,4 +13,4 @@ Hard-coded default option name for dumping help text to stdout. For example:
 
 ## Defined in
 
-[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L19)
+[src/constant.ts:19](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/constant.ts#L19)

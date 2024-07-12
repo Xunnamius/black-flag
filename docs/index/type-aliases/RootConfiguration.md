@@ -20,4 +20,4 @@ files that will eventually get imported via auto-discovery.
 
 ## Defined in
 
-[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/types/module.ts#L138)
+[types/module.ts:138](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/types/module.ts#L138)

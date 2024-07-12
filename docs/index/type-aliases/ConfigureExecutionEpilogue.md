@@ -32,4 +32,4 @@ This function is the complement of [ConfigureExecutionPrologue](ConfigureExecuti
 
 ## Defined in
 
-[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/types/configure.ts#L64)
+[types/configure.ts:64](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/types/configure.ts#L64)

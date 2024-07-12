@@ -13,4 +13,4 @@ example: `--${defaultVersionOptionName}`.
 
 ## Defined in
 
-[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/20623d626b4c283cf81bd3e79356045673c5c3fb/src/constant.ts#L30)
+[src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/constant.ts#L30)
