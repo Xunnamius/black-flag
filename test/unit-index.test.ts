@@ -1916,6 +1916,20 @@ describe('::runProgram and util::makeRunner', () => {
       ]);
     });
   });
+
+  it('calls process.exit when CliError::dangerouslyFatal is true', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, exitSpy, getExitCode }) => {
+      await expect(
+        bf.runProgram(getFixturePath('one-file-throws-handler-fatal'))
+      ).toReject();
+
+      expect(getExitCode()).not.toBe(0);
+      expect(exitSpy).toHaveBeenCalledTimes(1);
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
 });
 
 describe('::CliError', () => {

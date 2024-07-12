@@ -17,6 +17,7 @@ import {
 } from 'universe/error';
 
 import type { Promisable } from 'type-fest';
+
 import type { ConfigurationHooks } from 'types/configure';
 
 import type {
@@ -423,6 +424,12 @@ export async function runProgram<
     }
 
     debug_('runProgram invocation "succeeded" (via error handler)');
+
+    if (isCliError(error) && error.dangerouslyFatal) {
+      debug_('error has dangerouslyFatal flag enabled; process.exit will be called');
+      // eslint-disable-next-line unicorn/no-process-exit
+      process.exit();
+    }
 
     return undefined;
   }

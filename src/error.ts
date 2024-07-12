@@ -80,6 +80,41 @@ export type CliErrorOptions = {
    * @default false
    */
   showHelp?: boolean;
+  /**
+   * This option is similar in intent to yargs's `exitProcess()` function,
+   * except applied more granularly.
+   *
+   * Normally, {@link runProgram} never throws and never calls `process.exit`,
+   * instead setting `process.exitCode` when an error occurs.
+   *
+   * However, it sometimes becomes prudent to kill Node.js as soon as possible
+   * after error handling happens. For example: the execa library struggles to
+   * abort concurrent subcommand promises (e.g. via `Promise.all`) in a timely
+   * manner, and doesn't prevent them from dumping output to stdout even after
+   * Black Flag has finished executing. To work around this, we can set
+   * `dangerouslyFatal` to `true`, forcing Black Flag to call `process.exit`
+   * immediately after error handling completes.
+   *
+   * More generally, enabling `dangerouslyFatal` is a quick way to get rid of
+   * strange behavior that can happen when your microtask queue isn't empty (the
+   * event loop still has work to do) by the time Black Flag's error handling
+   * code completes. **However, doing this without proper consideration of _why_
+   * you still have hanging promises and/or other microtasks adding work to the
+   * event loop can lead to faulty/glitchy/flaky software and heisenbugs.** You
+   * will also have to specially handle `process.exit` when running
+   * unit/integration tests and executing command handlers within other command
+   * handlers. Tread carefully.
+   */
+  dangerouslyFatal?: boolean;
+  /**
+   * By default, if an {@link Error} object is passed to `CliError`,
+   * `Error.cause` will be passed through as `CliError.cause` and
+   * `Error.message` will be passed through as `CliError.message`.
+   *
+   * Use this option to override this default behavior and instead set
+   * `CliError.cause` manually.
+   */
+  cause?: ErrorOptions['cause'];
 };
 
 /**
@@ -92,38 +127,43 @@ export type CliErrorOptions = {
 export class CliError extends AppError implements NonNullable<CliErrorOptions> {
   suggestedExitCode = FrameworkExitCode.DefaultError;
   showHelp = false;
+  dangerouslyFatal = false;
   // TODO: this prop should be added by makeNamedError or whatever other fn
   [$type] = ['CliError'];
   /**
    * Represents a CLI-specific error, optionally with suggested exit code and
    * other context.
    */
-  constructor(cause: Error | string, options?: CliErrorOptions);
+  constructor(reason: Error | string, options?: CliErrorOptions);
   /**
    * This constructor syntax is used by subclasses when calling this constructor
    * via `super`.
    */
   constructor(
-    cause: Error | string,
+    reason: Error | string,
     options: CliErrorOptions,
     message: string,
     superOptions: ErrorOptions
   );
   constructor(
-    cause: Error | string,
-    { suggestedExitCode, showHelp }: CliErrorOptions = {},
+    reason: Error | string,
+    options: CliErrorOptions = {},
     message: string | undefined = undefined,
     superOptions: ErrorOptions = {}
   ) {
-    super(
+    const { suggestedExitCode, showHelp, dangerouslyFatal } = options;
+    let { cause } = options;
+
+    message =
       message ??
-        (typeof cause === 'string' ? cause : cause?.message) ??
-        ErrorMessage.Generic(),
-      {
-        cause,
-        ...superOptions
-      }
-    );
+      (typeof reason === 'string' ? reason : reason?.message) ??
+      ErrorMessage.Generic();
+
+    if (!('cause' in options)) {
+      cause = typeof reason === 'string' ? undefined : reason?.cause ?? reason;
+    }
+
+    super(message, { cause, ...superOptions });
 
     if (suggestedExitCode !== undefined) {
       this.suggestedExitCode = suggestedExitCode;
@@ -131,6 +171,10 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
 
     if (showHelp !== undefined) {
       this.showHelp = showHelp;
+    }
+
+    if (dangerouslyFatal !== undefined) {
+      this.dangerouslyFatal = dangerouslyFatal;
     }
   }
 }
@@ -170,7 +214,11 @@ export class GracefulEarlyExitError extends CliError {
    * (`0`).
    */
   constructor() {
-    super(ErrorMessage.GracefulEarlyExit(), { suggestedExitCode: FrameworkExitCode.Ok });
+    super(ErrorMessage.GracefulEarlyExit(), {
+      suggestedExitCode: FrameworkExitCode.Ok,
+      // * Is ignored by runProgram anyway
+      dangerouslyFatal: false
+    });
   }
 }
 makeNamedError(GracefulEarlyExitError, 'GracefulEarlyExitError');
