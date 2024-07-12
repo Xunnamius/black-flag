@@ -49,7 +49,7 @@ other context.
 
 #### Defined in
 
-[src/error.ts:140](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L140)
+[src/error.ts:140](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L140)
 
 ### new CliError()
 
@@ -78,7 +78,7 @@ via `super`.
 
 #### Defined in
 
-[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L145)
+[src/error.ts:145](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L145)
 
 ## Properties
 
@@ -88,7 +88,7 @@ via `super`.
 
 #### Defined in
 
-[src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L135)
+[src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L135)
 
 ***
 
@@ -143,7 +143,7 @@ command handlers. Tread carefully.
 
 #### Defined in
 
-[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L133)
+[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L133)
 
 ***
 
@@ -195,7 +195,7 @@ false
 
 #### Defined in
 
-[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L132)
+[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L132)
 
 ***
 
@@ -232,7 +232,7 @@ FrameworkExitCode.DefaultError
 
 #### Defined in
 
-[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L131)
+[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L131)
 
 ***
 

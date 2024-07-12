@@ -20,4 +20,4 @@ Type guard for [CliError](../classes/CliError.md).
 
 ## Defined in
 
-[src/error.ts:29](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L29)
+[src/error.ts:29](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L29)

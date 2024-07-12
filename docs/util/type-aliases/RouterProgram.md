@@ -18,4 +18,4 @@ Represents an "router" [Program](Program.md) instance.
 
 ## Defined in
 
-[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/types/program.ts#L141)
+[types/program.ts:141](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/types/program.ts#L141)

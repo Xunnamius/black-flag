@@ -34,7 +34,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:219](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L219)
+[src/error.ts:219](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L219)
 
 ## Properties
 
@@ -48,7 +48,7 @@ termination of the application but with an exit code indicating success
 
 #### Defined in
 
-[src/error.ts:213](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L213)
+[src/error.ts:213](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L213)
 
 ***
 
@@ -99,7 +99,7 @@ command handlers. Tread carefully.
 
 #### Defined in
 
-[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L133)
+[src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L133)
 
 ***
 
@@ -151,7 +151,7 @@ false
 
 #### Defined in
 
-[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L132)
+[src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L132)
 
 ***
 
@@ -188,7 +188,7 @@ FrameworkExitCode.DefaultError
 
 #### Defined in
 
-[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/error.ts#L131)
+[src/error.ts:131](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/error.ts#L131)
 
 ***
 

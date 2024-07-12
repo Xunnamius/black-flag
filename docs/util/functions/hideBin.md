@@ -22,4 +22,4 @@ https://yargs.js.org/docs/#api-reference
 
 ## Defined in
 
-[src/exports/util.ts:48](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/src/exports/util.ts#L48)
+[src/exports/util.ts:48](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/src/exports/util.ts#L48)

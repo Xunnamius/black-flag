@@ -26,4 +26,4 @@ module from a file).
 
 ## Defined in
 
-[types/module.ts:168](https://github.com/Xunnamius/black-flag/blob/99e2b3aa8ebef83fdf414dda22ad11405c1907df/types/module.ts#L168)
+[types/module.ts:168](https://github.com/Xunnamius/black-flag/blob/96ce293f8a136c82839c1e658d19dc9a2441c0ab/types/module.ts#L168)
