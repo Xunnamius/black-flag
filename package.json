@@ -115,7 +115,7 @@
     "@types/jest": "^29.5.12",
     "@types/lodash.mergewith": "^4.6.9",
     "@types/merge-descriptors": "^1.0.3",
-    "@types/node": "^20.14.10",
+    "@types/node": "^22.0.0",
     "@types/spellchecker": "^3.5.2",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
