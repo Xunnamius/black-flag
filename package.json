@@ -117,7 +117,7 @@
     "@types/merge-descriptors": "^1.0.3",
     "@types/node": "^20.14.10",
     "@types/spellchecker": "^3.5.2",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^7.16.0",
     "@xunnamius/conventional-changelog-projector": "^1.2.1",
     "@xunnamius/jest-types": "^1.1.3",
