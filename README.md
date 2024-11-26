@@ -3,6 +3,7 @@
 </p>
 
 <p align="center" width="100%">
+  A declarative wrapper around yargs for building beautiful, fluent command line interfaces<br />
   <code>$ black-pearl hoist the colors --black-flag</code>
 </p>
 
