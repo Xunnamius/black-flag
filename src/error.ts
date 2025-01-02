@@ -317,5 +317,8 @@ export const ErrorMessage = {
   },
   AssertionFailureReachedTheUnreachable() {
     return 'an unreachable block of code was somehow reached';
+  },
+  AssertionUnsupportedNodeVersion(currentVersion: string, validVersionRange: string) {
+    return `the current Node.js runtime version (${currentVersion}) is not supported by Black Flag; valid Node.js versions: ${validVersionRange}`;
   }
 };

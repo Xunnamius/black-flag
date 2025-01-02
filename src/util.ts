@@ -1,6 +1,9 @@
 import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
+import { satisfies } from 'semver';
+import { engines as packageEngines } from 'package';
+
 import { $executionContext, FrameworkExitCode } from 'universe/constant';
 import { getRootDebugLogger } from 'universe/debug';
 
@@ -315,6 +318,8 @@ export async function runProgram<
   const debug_ = debug.extend('runProgram');
   debug_('runProgram was invoked');
 
+  assertMinimumNodeJsVersion();
+
   const commandModulePath = args[0];
   let argv: string | string[] | undefined = undefined;
   let configurationHooks: ConfigurationHooks | undefined = undefined;
@@ -507,4 +512,15 @@ export function wrapExecutionContext(context: ExecutionContext) {
  */
 export function capitalize(str: string) {
   return (str.at(0)?.toUpperCase() || '') + str.slice(1);
+}
+
+function assertMinimumNodeJsVersion() {
+  assert(
+    // ? So we don't throw in non-Nodejs runtimes
+    !process ||
+      !process.versions ||
+      !process.versions.node ||
+      satisfies(process.versions.node, packageEngines.node),
+    new AssertionFailedError(ErrorMessage.AssertionFailureBadParameterCombination())
+  );
 }
