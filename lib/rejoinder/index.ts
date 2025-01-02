@@ -73,7 +73,7 @@ type _ExtendedLogger<T> = Omit<ExtendedDebugger, keyof DebuggerExtension> &
 const metadata = {
   stdout: [] as ExtendedLogger[],
   debug: [] as ExtendedDebugger[],
-  blacklist: new Set<string>()
+  denylist: new Set<string>()
 };
 
 /**
@@ -248,7 +248,7 @@ export function disableLoggingByTag({
    */
   tags: string[];
 }) {
-  tags.forEach((tag) => metadata.blacklist.add(tag));
+  tags.forEach((tag) => metadata.denylist.add(tag));
 }
 
 /**
@@ -262,7 +262,7 @@ export function enableLoggingByTag({
    */
   tags: string[];
 }) {
-  tags.forEach((tag) => metadata.blacklist.delete(tag));
+  tags.forEach((tag) => metadata.denylist.delete(tag));
 }
 
 /**
@@ -273,7 +273,7 @@ export function enableLoggingByTag({
 export function resetInternalState() {
   metadata.debug.length = 0;
   metadata.stdout.length = 0;
-  metadata.blacklist.clear();
+  metadata.denylist.clear();
 }
 
 /**
@@ -325,8 +325,7 @@ function makeExtendedLogger(
 
 /**
  * Allows logging to be disabled via tags at the fine-grain message level. Set
- * `trapdoorArgLength` to the number of params necessary to trigger
- * blacklisting.
+ * `trapdoorArgLength` to the number of params necessary to trigger denylisting.
  */
 function decorateWithTagSupport<T extends (...args: unknown[]) => unknown>(
   fn: T,
@@ -335,7 +334,7 @@ function decorateWithTagSupport<T extends (...args: unknown[]) => unknown>(
   // * Note that this does NOT rebind fn's methods!
   return overwriteDescriptors((...args: unknown[]) => {
     if (args.length >= trapdoorArgsMinLength && Array.isArray(args[0])) {
-      if (args[0].some((tag) => metadata.blacklist.has(tag))) {
+      if (args[0].some((tag) => metadata.denylist.has(tag))) {
         return undefined;
       }
 
