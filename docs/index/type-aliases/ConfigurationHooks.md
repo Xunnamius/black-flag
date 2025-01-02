@@ -75,7 +75,7 @@ programs that constitute the command line interface.
 All commands and sub-commands known to Black Flag are available in the
 ExecutionContext.commands map, which can be accessed from the
 `context` parameter or from the [Arguments](Arguments.md) object returned by
-`Program::parseAsync` et al.
+`Program::parseAsync` etc.
 
 This function is the complement of [ConfigureExecutionEpilogue](ConfigureExecutionEpilogue.md).
 
