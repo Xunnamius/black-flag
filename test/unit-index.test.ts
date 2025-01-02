@@ -5,6 +5,8 @@
 
 import assert from 'node:assert';
 
+import { engines as packageEngines } from 'package';
+
 import { ErrorMessage } from 'universe/error';
 import * as bf from 'universe/exports/index';
 import * as bf_util from 'universe/exports/util';
@@ -1770,6 +1772,32 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('UNHANDLED FRAMEWORK')]
       ]);
+    });
+  });
+
+  it('exits with bf.FrameworkExitCode.AssertionFailed iff current runtime is an unsupported Node version', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async () => {
+      const realProcessVersionsNode = process.versions.node;
+
+      try {
+        Object.defineProperty(process.versions, 'node', { value: '1.2.3' });
+        await expect(
+          bf.runProgram(getFixturePath('one-file-log-handler'), {
+            configureArguments: () => undefined as any
+          })
+        ).rejects.toMatchObject({
+          message: ErrorMessage.AssertionUnsupportedNodeVersion(
+            '1.2.3',
+            packageEngines.node
+          )
+        });
+      } finally {
+        Object.defineProperty(process.versions, 'node', {
+          value: realProcessVersionsNode
+        });
+      }
     });
   });
 
