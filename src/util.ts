@@ -521,6 +521,11 @@ function assertMinimumNodeJsVersion() {
       !process.versions ||
       !process.versions.node ||
       satisfies(process.versions.node, packageEngines.node),
-    new AssertionFailedError(ErrorMessage.AssertionFailureBadParameterCombination())
+    new AssertionFailedError(
+      ErrorMessage.AssertionUnsupportedNodeVersion(
+        process.versions.node,
+        packageEngines.node
+      )
+    )
   );
 }
