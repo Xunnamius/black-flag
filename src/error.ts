@@ -137,7 +137,7 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
    * Represents a CLI-specific error, optionally with suggested exit code and
    * other context.
    */
-  constructor(reason: Error | string, options?: CliErrorOptions);
+  constructor(reason?: Error | string, options?: CliErrorOptions);
   /**
    * This constructor syntax is used by subclasses when calling this constructor
    * via `super`.
@@ -149,7 +149,7 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
     superOptions: ErrorOptions
   );
   constructor(
-    reason: Error | string,
+    reason: Error | string | undefined,
     options: CliErrorOptions = {},
     message: string | undefined = undefined,
     superOptions: ErrorOptions = {}

@@ -368,7 +368,7 @@ export async function configureProgram<
   };
 
   function getRootCommand() {
-    const root = context.commands.get(context.commands.keys().next().value);
+    const root = context.commands.get(context.commands.keys().next().value!);
     assert(root !== undefined, ErrorMessage.GuruMeditation());
     return root;
   }
