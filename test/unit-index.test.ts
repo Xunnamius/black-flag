@@ -2690,13 +2690,13 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath('nested-bad-names'))
       ).rejects.toMatchObject({
-        message: ErrorMessage.InvalidCharacters('<bad>', '|, <, >, [, ], {, or }')
+        message: ErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
       });
 
       await expect(
-        bf.configureProgram(getFixturePath(['nested-bad-names', '<bad>']))
+        bf.configureProgram(getFixturePath(['nested-bad-names', '[bad]']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.InvalidCharacters('<bad>', '|, <, >, [, ], {, or }')
+        message: ErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
       });
 
       await expect(
