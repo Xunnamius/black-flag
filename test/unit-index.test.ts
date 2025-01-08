@@ -3,6 +3,9 @@
 
 // * These tests ensure all exports function as expected.
 
+// ! Make sure not to get caught up expecting a certain order when different
+// ! OSes and Node.js versions walk the filesystem in different orders!
+
 import assert from 'node:assert';
 
 import { engines as packageEngines } from 'package';
@@ -124,7 +127,7 @@ describe('::configureProgram', () => {
         getFixturePath('nested-several-files-empty')
       );
 
-      expect(Array.from(context.commands.keys())).toStrictEqual([
+      expect(Array.from(context.commands.keys())).toIncludeSameMembers([
         'test',
         'test nested',
         'test nested first',
@@ -147,7 +150,7 @@ describe('::configureProgram', () => {
         getFixturePath('nested-several-files-empty')
       );
 
-      expect(Array.from(context.commands.keys())).toStrictEqual([
+      expect(Array.from(context.commands.keys())).toIncludeSameMembers([
         'nested-several-files-empty',
         'nested-several-files-empty nested',
         'nested-several-files-empty nested first',
@@ -2208,7 +2211,7 @@ describe('<command module auto-discovery>', () => {
     await withMocks(async () => {
       const context = await bf.configureProgram(getFixturePath('nested-depth'));
 
-      expect(Array.from(context.commands.keys())).toStrictEqual([
+      expect(Array.from(context.commands.keys())).toIncludeSameMembers([
         'test',
         'test good1',
         'test good1 good2',
@@ -3355,8 +3358,7 @@ describe('<command module auto-discovery>', () => {
   it("throws when adding a command that has the same name or alias as a sibling command's name or alias", async () => {
     expect.hasAssertions();
 
-    // ! Might have to do something about these tests expecting a certain order
-    // ! when different OSes might end up swapping the order
+    // ! We must account for variations in order when walking the filesystem
 
     await withMocks(async ({ logSpy }) => {
       await expect(
@@ -3374,24 +3376,16 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'alias-name']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
-          'name1-alias1',
-          'name1-alias1',
-          'name',
-          'name1-alias1',
-          'alias'
+        message: expect.stringMatching(
+          /of "name1-alias1" are.+"name1-alias1" \(name|alias\) conflicts with "name1-alias1" \(name|alias\)/
         )
       });
 
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'name-alias']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
-          'test',
-          'name',
-          'name',
-          'name',
-          'alias'
+        message: expect.stringMatching(
+          /of "test" are.+"name" \(name|alias\) conflicts with "name" \(name|alias\)/
         )
       });
 
@@ -3410,24 +3404,16 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'self']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
-          undefined,
-          'name-alias',
-          'name',
-          'name-alias',
-          'alias'
+        message: expect.stringMatching(
+          /the root command is.+"name-alias" \(name|alias\) conflicts with "name-alias" \(name|alias\)/
         )
       });
 
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'self-self']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
-          'test',
-          'name-alias',
-          'name',
-          'name-alias',
-          'alias'
+        message: expect.stringMatching(
+          /of "test" are.+"name-alias" \(name|alias\) conflicts with "name-alias" \(name|alias\)/
         )
       });
 
