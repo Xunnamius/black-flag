@@ -7,7 +7,6 @@ import { join } from 'node:path';
 import { exports as pkgExports, name as pkgName } from 'package';
 
 import { debugFactory } from 'multiverse/debug-extended';
-import { run } from 'multiverse/run';
 
 import {
   dummyFilesFixture,
@@ -48,6 +47,7 @@ import type {
   Programs,
   RouterProgram
 } from 'universe/exports/util';
+import { access } from 'node:fs/promises';
 
 // * These tests verify that each of Black Flag's exports can be imported into
 // * node in both an ESM and CJS context and run without incident.
@@ -81,7 +81,12 @@ beforeAll(async () => {
 
   await Promise.all(
     pkgMainPaths.map(async (pkgMainPath) => {
-      if ((await run('test', ['-e', pkgMainPath])).code != 0) {
+      if (
+        await access(pkgMainPath).then(
+          () => false,
+          () => true
+        )
+      ) {
         debug(`unable to find main distributable: ${pkgMainPath}`);
         throw new Error('must build distributables first (try `npm run build:dist`)');
       }

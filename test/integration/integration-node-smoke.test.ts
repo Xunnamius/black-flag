@@ -3,10 +3,10 @@
 
 import assert from 'node:assert';
 import { join } from 'node:path';
+import { access } from 'node:fs/promises';
 import { exports as pkgExports, name as pkgName } from 'package';
 
 import { debugFactory } from 'multiverse/debug-extended';
-import { run } from 'multiverse/run';
 
 import {
   dummyFilesFixture,
@@ -51,7 +51,12 @@ beforeAll(async () => {
 
   await Promise.all(
     pkgMainPaths.map(async (pkgMainPath) => {
-      if ((await run('test', ['-e', pkgMainPath])).code != 0) {
+      if (
+        await access(pkgMainPath).then(
+          () => false,
+          () => true
+        )
+      ) {
         debug(`unable to find main distributable: ${pkgMainPath}`);
         throw new Error('must build distributables first (try `npm run build:dist`)');
       }
