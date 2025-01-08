@@ -90,7 +90,6 @@
   },
   "dependencies": {
     "@types/debug": "^4.1.12",
-    "alpha-sort": "^5.0.0",
     "core-js": "3.37.1",
     "debug": "^4.3.5",
     "merge-descriptors": "^2.0.0",

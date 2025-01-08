@@ -38,6 +38,7 @@ import type { Configuration, ImportedConfigurationModule } from 'types/module';
 import type { Options } from 'yargs';
 
 const hasSpacesRegExp = /\s+/;
+const alphaSort = new Intl.Collator(undefined, { numeric: true });
 
 // ! We disable ExperimentalWarning outputs because they're very annoying and
 // ! hard to deal with
@@ -903,7 +904,6 @@ export async function discoverCommands(
 
     debug_('creating new proto-%O program (awaiting full configuration)', descriptor);
 
-    const alphaSort = (await import('alpha-sort')).default;
     const vanillaYargs = makeVanillaYargs();
 
     // * Disable built-in help functionality; we only want a --help option, not
@@ -1096,9 +1096,6 @@ export async function discoverCommands(
                 descriptor
               );
 
-              // ? Sort in alphabetical order with naturally sorted numbers.
-              const sort = alphaSort({ natural: true });
-
               deferredCommandArgs.sort(([firstCommands], [secondCommands]) => {
                 const firstCommand = [firstCommands].flat()[0];
                 const secondCommand = [secondCommands].flat()[0];
@@ -1110,7 +1107,7 @@ export async function discoverCommands(
                   ? -1
                   : secondCommand.startsWith('$0')
                     ? 1
-                    : sort(firstCommand, secondCommand);
+                    : alphaSort.compare(firstCommand, secondCommand);
               });
 
               debug_(
