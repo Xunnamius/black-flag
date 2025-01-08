@@ -331,8 +331,12 @@ export type ExecutionContext = {
    * associated {@link ProgramMetadata} as singular object values with their
    * respective _full names_ as keys.
    *
-   * Note that key-value pairs will always be iterated in insertion order,
-   * implying the first pair in the Map will always be the root command.
+   * Note that the insertion order of these entries is for all intents and
+   * purposes non-deterministic with the exception of the first entry, which
+   * will always be the root command. This is because Black Flag inserts entries
+   * as they are encountered while walking the filesystem. **This means you can
+   * NEVER rely on insertion order remaining consistent between OSes,
+   * filesystems, or even Node.js versions.**
    */
   commands: Map<string, { programs: Programs; metadata: ProgramMetadata }>;
   /**

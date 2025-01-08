@@ -351,7 +351,7 @@ export async function discoverCommands(
         let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
 
         try {
-          // TODO: maybe just replace this with fs.readFile?
+          // TODO: defer importing the command/config until later?
           // eslint-disable-next-line no-await-in-loop
           maybeImportedConfig = await import(maybeConfigPath);
         } catch (error) {
@@ -406,6 +406,7 @@ export async function discoverCommands(
 
           if (typeof maybeImportedConfig === 'function') {
             debug_('configuration returned a function');
+            // TODO: defer calling the command() function until it is needed...
             // eslint-disable-next-line no-await-in-loop
             rawConfig = await maybeImportedConfig(context);
           } else {
