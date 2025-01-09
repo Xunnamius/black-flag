@@ -1,7 +1,7 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import url from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { isNativeError, isPromise } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
@@ -67,38 +67,38 @@ suppressNodeWarnings('ExperimentalWarning');
  * `PreExecutionContext::execute` is called.
  */
 export async function discoverCommands(
-  basePath: string,
+  basePath_: string,
   context: ExecutionContext
 ): Promise<void> {
   // ! Invariant: first command to be discovered, if any, is the root command.
   let alreadyLoadedRootCommand = false;
 
-  const basePath_ = basePath?.startsWith?.('file://')
-    ? url.fileURLToPath(basePath)
-    : basePath;
+  const basePath = basePath_?.startsWith?.('file://')
+    ? fileURLToPath(basePath_)
+    : basePath_;
 
   const debug = context.debug.extend('discover');
   const debug_load = debug.extend('load');
 
-  debug('ensuring base path directory exists and is readable: "%O"', basePath_);
+  debug('ensuring base path directory exists and is readable: "%O"', basePath);
 
   try {
-    await fs.access(basePath_, fs.constants.R_OK);
-    if (!(await fs.stat(basePath_)).isDirectory()) {
+    await fs.access(basePath, fs.constants.R_OK);
+    if (!(await fs.stat(basePath)).isDirectory()) {
       // ? This will be caught and re-thrown as an AssertionFailedError 👍🏿
       throw new Error('path is not a directory');
     }
   } catch (error) {
-    debug.error('failed due to invalid base path "%O": %O', basePath_, error);
+    debug.error('failed due to invalid base path "%O": %O', basePath, error);
     throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureBadConfigurationPath(basePath_)
+      ErrorMessage.AssertionFailureBadConfigurationPath(basePath)
     );
   }
 
-  debug('searching upwards for nearest package.json file starting at %O', basePath_);
+  debug('searching upwards for nearest package.json file starting at %O', basePath);
 
   const pkg = {
-    path: await (await import('pkg-up')).pkgUp({ cwd: basePath_ }),
+    path: await (await import('package-up')).packageUp({ cwd: basePath }),
     name: undefined as string | undefined,
     version: undefined as string | undefined
   };
@@ -136,9 +136,9 @@ export async function discoverCommands(
     }
   }
 
-  debug('beginning configuration module auto-discovery at %O', basePath_);
+  debug('beginning configuration module auto-discovery at %O', basePath);
 
-  await discover(basePath_);
+  await discover(basePath);
 
   debug('configuration module auto-discovery completed');
 
@@ -151,7 +151,7 @@ export async function discoverCommands(
     debug_load.message('%O', context.commands);
   } else {
     throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath_)
+      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath)
     );
   }
 
@@ -347,14 +347,21 @@ export async function discoverCommands(
     while (maybeConfigPaths.length) {
       try {
         const maybeConfigPath = maybeConfigPaths.shift()!;
-        debug_('attempting to load configuration file: %O', maybeConfigPath);
+        const maybeConfigFileURL = pathToFileURL(maybeConfigPath).toString();
+
+        debug_(
+          'attempting to load configuration file url: %O (real path: %O)',
+          maybeConfigFileURL,
+          maybeConfigPath
+        );
 
         let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
 
         try {
-          // TODO: defer importing the command/config until later?
+          // TODO: Defer importing the command/config until later (will require
+          // TODO: major refactor)
           // eslint-disable-next-line no-await-in-loop
-          maybeImportedConfig = await import(maybeConfigPath);
+          maybeImportedConfig = await import(maybeConfigFileURL);
         } catch (error) {
           if (
             isUnknownFileExtensionError(error) ||
@@ -375,7 +382,7 @@ export async function discoverCommands(
           const meta = {
             hasChildren: false,
             filename: path.basename(maybeConfigPath),
-            filepath: maybeConfigPath,
+            filepath: maybeConfigFileURL,
             parentDirName: path.basename(path.dirname(maybeConfigPath))
           } as ProgramMetadata;
 
@@ -407,7 +414,8 @@ export async function discoverCommands(
 
           if (typeof maybeImportedConfig === 'function') {
             debug_('configuration returned a function');
-            // TODO: defer calling the command() function until it is needed...
+            // TODO: Defer invoking default export until later (will require
+            // TODO: major refactor)
             // eslint-disable-next-line no-await-in-loop
             rawConfig = await maybeImportedConfig(context);
           } else {
@@ -1321,10 +1329,10 @@ function defaultCommandHandler() {
 }
 
 /**
- * Replace all the ASCII#32 space characters in a string with hyphens.
+ * Replace all space characters in a string with hyphens.
  */
 function replaceSpaces(str: string) {
-  return str.replaceAll(' ', '-');
+  return str.replaceAll(/\s/g, '-');
 }
 
 /**

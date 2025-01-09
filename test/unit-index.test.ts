@@ -7,6 +7,7 @@
 // ! OSes and Node.js versions walk the filesystem in different orders!
 
 import assert from 'node:assert';
+import fsPromises from 'node:fs/promises';
 
 import { engines as packageEngines } from 'package';
 
@@ -140,10 +141,15 @@ describe('::configureProgram', () => {
   it('uses "name" from directory or filename without extension as root program name if no name is provided and no package.json is found', async () => {
     expect.hasAssertions();
 
-    const pkgUpNamespace = await import('pkg-up');
-    jest
-      .spyOn(pkgUpNamespace, 'pkgUp')
-      .mockImplementation(() => Promise.resolve(undefined));
+    jest.spyOn(fsPromises, 'stat').mockImplementation(async (path) => {
+      const realResult = fsPromises.lstat(path);
+
+      if (path.toString().endsWith('package.json')) {
+        return Promise.resolve({ ...(await realResult), isFile: () => false });
+      }
+
+      return realResult;
+    });
 
     await withMocks(async () => {
       const context = await bf.configureProgram(

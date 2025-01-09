@@ -94,9 +94,10 @@
     "debug": "^4.3.5",
     "merge-descriptors": "^2.0.0",
     "named-app-errors": "^4.0.2",
-    "pkg-up": "^5.0.0",
+    "package-up": "^5.0.0",
     "supports-color": "^8.1.1",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.3",
@@ -196,7 +197,6 @@
     "remark-tight-comments": "^2.0.0",
     "remark-validate-links": "^13.0.1",
     "semantic-release": "https://xunn.at/semantic-release-atam@22.0.7",
-    "semver": "^7.6.3",
     "sort-package-json": "^2.10.0",
     "spellchecker": "^3.7.1",
     "text-extensions": "^3.0.0",

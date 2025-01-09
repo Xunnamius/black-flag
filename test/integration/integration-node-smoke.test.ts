@@ -81,7 +81,7 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mod
           '..',
           'fixtures',
           'several-files-cjs-esm'
-        )}', 'js cjs');`
+        ).replaceAll('\\', '/')}', 'js cjs');`
       }
     }
   );
@@ -111,7 +111,7 @@ export default runProgram('${join(
           '..',
           'fixtures',
           'several-files-cjs-esm'
-        )}', 'js mjs');`
+        ).replaceAll('\\', '/')}', 'js mjs');`
       }
     }
   );

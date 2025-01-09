@@ -115,7 +115,7 @@ describe("import {...} from '@black-flag/core'", () => {
             '..',
             'fixtures',
             'one-file-index'
-          )}').then(({execute}) => execute(['--version']));`
+          ).replaceAll('\\', '/')}').then(({execute}) => execute(['--version']));`
         }
       }
     );
@@ -138,7 +138,7 @@ describe("import {...} from '@black-flag/core'", () => {
             '..',
             'fixtures',
             'one-file-index'
-          )}', '--version');`
+          ).replaceAll('\\', '/')}', '--version');`
         }
       }
     );
@@ -388,7 +388,7 @@ console.log(require('@black-flag/core/util').isPreExecutionContext({}) === false
         initialFileContents: {
           'src/index.cjs': `
 require('@black-flag/core/util').makeRunner({
-  commandModulePath: '${join(__dirname, '..', 'fixtures', 'one-file-index')}'
+  commandModulePath: '${join(__dirname, '..', 'fixtures', 'one-file-index').replaceAll('\\', '/')}'
 })('--help');`
         }
       }
