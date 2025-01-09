@@ -95,11 +95,12 @@
     "merge-descriptors": "^2.0.0",
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
+    "semver": "^7.6.3",
     "supports-color": "^8.1.1",
-    "yargs": "^17.7.2",
-    "semver": "^7.6.3"
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@-xun/symbiote": "^2.6.0",
     "@arethetypeswrong/cli": "^0.15.3",
     "@babel/cli": "^7.24.8",
     "@babel/eslint-parser": "^7.24.8",
