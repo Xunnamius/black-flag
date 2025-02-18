@@ -83,6 +83,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --scope unlimited --coverage"
   },
   "dependencies": {
+    "@types/yargs": "^17.0.33",
     "core-js": "^3.40.0",
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
