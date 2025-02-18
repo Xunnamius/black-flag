@@ -88,12 +88,12 @@
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
     "semver": "^7.7.1",
-    "type-fest": "^4.33.0",
+    "type-fest": "^4.35.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@-xun/run": "^0.0.1",
-    "@-xun/symbiote": "^2.20.0",
+    "@-xun/run": "^1.0.1",
+    "@-xun/symbiote": "^2.25.1",
     "@types/glob": "^8.1.0",
     "@types/lodash.mergewith": "^4.6.9",
     "@types/semver": "^7.5.8",
