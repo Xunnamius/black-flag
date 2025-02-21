@@ -1,14 +1,14 @@
-export { configureProgram } from 'universe/index';
-export { runProgram } from 'universe/util';
+export { configureProgram } from 'universe';
+export { runProgram } from 'universe:util.ts';
 
-export { $executionContext, FrameworkExitCode } from 'universe/constant';
+export { $executionContext, FrameworkExitCode } from 'universe:constant.ts';
 
 export {
   CliError,
   GracefulEarlyExitError,
   isCliError,
   isGracefulEarlyExitError
-} from 'universe/error';
+} from 'universe:error.ts';
 
 export type {
   ConfigurationHooks,
@@ -17,7 +17,7 @@ export type {
   ConfigureExecutionContext,
   ConfigureExecutionEpilogue,
   ConfigureExecutionPrologue
-} from 'types/configure';
+} from 'typeverse:configure.ts';
 
 export type {
   ChildConfiguration,
@@ -25,6 +25,6 @@ export type {
   ImportedConfigurationModule,
   ParentConfiguration,
   RootConfiguration
-} from 'types/module';
+} from 'typeverse:module.ts';
 
-export type { Arguments, NullArguments } from 'types/program';
+export type { Arguments, NullArguments } from 'typeverse:program.ts';

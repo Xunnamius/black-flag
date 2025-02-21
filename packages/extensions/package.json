@@ -13,7 +13,7 @@
     "black-flag",
     "optparser"
   ],
-  "homepage": "https://github.com/Xunnamius/black-flag-extensions#readme",
+  "homepage": "https://github.com/Xunnamius/black-flag-extensions/tree/main/packages/extensions#readme",
   "bugs": {
     "url": "https://github.com/Xunnamius/black-flag-extensions/issues"
   },
@@ -27,8 +27,8 @@
   "type": "commonjs",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/packages/extensions/src/index.d.ts",
+      "default": "./dist/packages/extensions/src/index.js"
     },
     "./package": "./package.json",
     "./package.json": "./package.json"
@@ -36,7 +36,7 @@
   "typesVersions": {
     "*": {
       "index": [
-        "dist/src/index.d.ts"
+        "dist/packages/extensions/src/index.d.ts"
       ],
       "package": [
         "package.json"
@@ -62,18 +62,14 @@
     "lint:packages": "symbiote lint --env NODE_NO_WARNINGS=1 --hush --scope unlimited",
     "lint:project": "symbiote project lint --env NODE_NO_WARNINGS=1",
     "list-tasks": "symbiote list-tasks --env NODE_NO_WARNINGS=1 --scope this-package",
-    "prepare": "symbiote project prepare --env NODE_NO_WARNINGS=1",
     "release": "symbiote release --env NODE_NO_WARNINGS=1",
-    "renovate": "symbiote project renovate --env NODE_NO_WARNINGS=1 --github-reconfigure-repo --regenerate-assets --assets-preset basic lib",
-    "renovate:aliases": "symbiote project renovate --env NODE_NO_WARNINGS=1 --regenerate-assets --assets-preset basic lib --only-aliases",
     "start": "symbiote start --env NODE_NO_WARNINGS=1 --",
     "test": "npm run test:package:unit --",
     "test:package:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --coverage",
     "test:package:e2e": "symbiote test --env NODE_NO_WARNINGS=1 --tests end-to-end",
     "test:package:integration": "symbiote test --env NODE_NO_WARNINGS=1 --tests integration",
     "test:package:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit type",
-    "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage",
-    "test:packages:all:unit": "symbiote test --env NODE_NO_WARNINGS=1 --tests unit --scope unlimited --coverage"
+    "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
     "core-js": "^3.40.0",

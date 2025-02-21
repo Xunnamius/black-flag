@@ -2,33 +2,33 @@ import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
 import { satisfies } from 'semver';
-import { engines as packageEngines } from 'package';
+import { engines as packageEngines } from 'rootverse:package.json';
 
-import { $executionContext, FrameworkExitCode } from 'universe/constant';
-import { getRootDebugLogger } from 'universe/debug';
+import { $executionContext, FrameworkExitCode } from 'universe:constant.ts';
+import { getRootDebugLogger } from 'universe:debug.ts';
 
 import {
   configureProgram,
   defaultErrorHandlingEpilogueConfigurationHook
-} from 'universe/index';
+} from 'universe';
 
 import {
   AssertionFailedError,
   ErrorMessage,
   isCliError,
   isGracefulEarlyExitError
-} from 'universe/error';
+} from 'universe:error.ts';
 
 import type { Promisable } from 'type-fest';
 
-import type { ConfigurationHooks } from 'types/configure';
+import type { ConfigurationHooks } from 'typeverse:configure.ts';
 
 import type {
   Arguments,
   ExecutionContext,
   NullArguments,
   PreExecutionContext
-} from 'types/program';
+} from 'typeverse:program.ts';
 
 const debug = getRootDebugLogger().extend('util');
 
@@ -133,7 +133,8 @@ export function makeRunner<
           args.at(-1) as Exclude<(typeof args)[0], string | string[]>
         ).then(async (lastArgument) => {
           if (configurationHooks && !isPreExecutionContext(lastArgument)) {
-            const highOrderConfigurationHooks = await Promise.resolve(configurationHooks);
+            const highOrderConfigurationHooks =
+              await Promise.resolve(configurationHooks);
             const lowOrderConfigurationHooks = lastArgument;
 
             // ? Custom config hooks at the runProgram level are merged with
@@ -197,7 +198,10 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [commandModulePath: string, configurationHooks: Promisable<ConfigurationHooks>]
+  ...args: [
+    commandModulePath: string,
+    configurationHooks: Promisable<ConfigurationHooks>
+  ]
 ): Promise<NullArguments | Arguments<CustomCliArguments> | undefined>;
 /**
  * Invokes the `preExecutionContext.execute()` function.
@@ -431,7 +435,9 @@ export async function runProgram<
     debug_('runProgram invocation "succeeded" (via error handler)');
 
     if (isCliError(error) && error.dangerouslyFatal) {
-      debug_.warn('error has dangerouslyFatal flag enabled; process.exit will be called');
+      debug_.warn(
+        'error has dangerouslyFatal flag enabled; process.exit will be called'
+      );
       // eslint-disable-next-line unicorn/no-process-exit
       process.exit();
     }
@@ -481,7 +487,9 @@ export function isArguments(obj: unknown): obj is Arguments {
 /**
  * Type-guard for Node's "ERR_ASSERTION" so-called `SystemError`.
  */
-export function isAssertionSystemError(error: unknown): error is NodeJS.ErrnoException & {
+export function isAssertionSystemError(
+  error: unknown
+): error is NodeJS.ErrnoException & {
   generatedMessage: boolean;
   code: 'ERR_ASSERTION';
   actual?: unknown;

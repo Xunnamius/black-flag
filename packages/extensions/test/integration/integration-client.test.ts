@@ -4,4 +4,33 @@
 // * (e.g. mocking output handling and mocking networking while eschewing
 // * filesystem mocking) in favor of testing a "fully integrated" system.
 
+import { toAbsolutePath, toDirname } from '@-xun/fs';
+import { createDebugLogger } from 'rejoinder';
+
+import {
+  exports as packageExports,
+  name as packageName
+} from 'rootverse+extensions:package.json';
+
+import {
+  ensurePackageHasBeenBuilt,
+  reconfigureJestGlobalsToSkipTestsInThisFileIfRequested
+} from 'testverse:util.ts';
+
+const TEST_IDENTIFIER = `${packageName.split('/').at(-1)!}-client`;
+const debug = createDebugLogger({ namespace: 'extensions' }).extend(TEST_IDENTIFIER);
+const nodeVersion = process.env.XPIPE_MATRIX_NODE_VERSION || process.version;
+
+debug(`nodeVersion: "${nodeVersion}" (process.version=${process.version})`);
+
+reconfigureJestGlobalsToSkipTestsInThisFileIfRequested({ it: true, test: true });
+
+beforeAll(async () => {
+  await ensurePackageHasBeenBuilt(
+    toDirname(toAbsolutePath(require.resolve('rootverse+extensions:package.json'))),
+    packageName,
+    packageExports
+  );
+});
+
 test.todo('this');

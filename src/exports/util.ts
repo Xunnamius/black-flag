@@ -8,7 +8,7 @@ export {
   isNullArguments,
   isPreExecutionContext,
   makeRunner
-} from 'universe/util';
+} from 'universe:util.ts';
 
 export {
   defaultHelpOptionName,
@@ -16,7 +16,7 @@ export {
   defaultUsageText,
   defaultVersionOptionName,
   defaultVersionTextDescription
-} from 'universe/constant';
+} from 'universe:constant.ts';
 
 export {
   AssertionFailedError,
@@ -24,7 +24,7 @@ export {
   ErrorMessage,
   isCommandNotImplementedError,
   type CliErrorOptions
-} from 'universe/error';
+} from 'universe:error.ts';
 
 export type {
   DescriptorToProgram,
@@ -40,7 +40,7 @@ export type {
   ProgramType,
   Programs,
   RouterProgram
-} from 'types/program';
+} from 'typeverse:program.ts';
 
 /**
  * @see https://yargs.js.org/docs/#api-reference

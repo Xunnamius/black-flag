@@ -6,11 +6,11 @@ import {
   makeNamedError
 } from 'named-app-errors';
 
-import { FrameworkExitCode } from 'universe/constant';
+import { FrameworkExitCode } from 'universe:constant.ts';
 
 // ? This import is referenced in a type comment
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe/util';
+import type { runProgram } from 'universe:util.ts';
 
 // TODO: replace a lot of all that follows with the official package(s),
 // TODO: including the symbol use below

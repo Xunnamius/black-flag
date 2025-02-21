@@ -7,11 +7,11 @@
 declare namespace Type {
   export type DummyArgs = { handled_by: string };
   export type ChildConfig =
-    import('../../types/module').ChildConfiguration<DummyArgs>;
+    import('typeverse:module.ts').ChildConfiguration<DummyArgs>;
   export type ParentConfig =
-    import('../../types/module').ParentConfiguration<DummyArgs>;
+    import('typeverse:module.ts').ParentConfiguration<DummyArgs>;
   export type RootConfig =
-    import('../../types/module').RootConfiguration<DummyArgs>;
+    import('typeverse:module.ts').RootConfiguration<DummyArgs>;
   export type ConfigModule =
-    import('../../types/module').ImportedConfigurationModule<DummyArgs>;
+    import('typeverse:module.ts').ImportedConfigurationModule<DummyArgs>;
 }

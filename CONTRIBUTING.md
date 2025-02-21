@@ -11,7 +11,7 @@ started, [take a look at this quick and easy guide][how-to-contribute]. 💜
 
 This repository uses a [fully automated][github-actions] [continuous
 linting][husky-cl] (CL), integration testing (CI), and deployment (CD)
-[projector][projector]-based pipeline for integrating PRs and publishing
+[xpipeline][xpipeline]-based pipeline for integrating PRs and publishing
 releases. The neat thing about a fully automated pipeline is that anyone
 anywhere can make a contribution quickly and with minimal tedium.
 
@@ -30,8 +30,8 @@ The ideal contributor flow is as follows:
      more sense to use `npm install` feel free to use that instead.
      - **If you're getting an EINTEGRITY error from npm, you need to delete
        package-lock.json before running `npm install` (not `npm ci`).**
-   - If `.env.example` exists, consider copying it to `.env` and configuring
-     sensible defaults.
+   - If `.env.default` exists, consider copying it to `.env` for sensible
+     pre-configured defaults.
 3. Before making any changes, ensure all unit tests are passing with
    `npm run test`.
 4. _(optional but recommended)_ Create a new branch, usually off `main`.
@@ -79,7 +79,8 @@ At this point, you're ready to create your PR and ✨ contribute ✨!
 
 [atomic-commits]: https://www.codewithjason.com/atomic-commits-testing
 [choose-new-issue]: https://github.com/Xunnamius/black-flag/issues/new/choose
-[code-of-conduct]: /.github/CODE_OF_CONDUCT.md
+[code-of-conduct]:
+  https://github.com/Xunnamius/black-flag/.github/CODE_OF_CONDUCT.md
 [codecov]: https://about.codecov.io
 [conventional-commits]: https://www.conventionalcommits.org/en/v1.0.0#summary
 [cosmetic-commits]:
@@ -95,4 +96,4 @@ At this point, you're ready to create your PR and ✨ contribute ✨!
 [pkg-debug]: https://www.npmjs.com/package/debug
 [pkg-debug-wildcards]: https://www.npmjs.com/package/debug#wildcards
 [pr-compare]: https://github.com/Xunnamius/black-flag/compare
-[projector]: https://github.com/Xunnamius/black-flag#readme
+[xpipeline]: https://github.com/Xunnamius/xpipeline#readme

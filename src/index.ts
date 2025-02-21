@@ -4,9 +4,9 @@ import { isNativeError } from 'node:util/types';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { getRootDebugLogger } from 'universe/debug';
-import { discoverCommands } from 'universe/discover';
-import { capitalize, wrapExecutionContext } from 'universe/util';
+import { getRootDebugLogger } from 'universe:debug.ts';
+import { discoverCommands } from 'universe:discover.ts';
+import { capitalize, wrapExecutionContext } from 'universe:util.ts';
 
 import {
   AssertionFailedError,
@@ -15,7 +15,7 @@ import {
   isCliError,
   isCommandNotImplementedError,
   isGracefulEarlyExitError
-} from 'universe/error';
+} from 'universe:error.ts';
 
 import {
   $executionContext,
@@ -24,10 +24,13 @@ import {
   defaultHelpTextDescription,
   defaultVersionOptionName,
   defaultVersionTextDescription
-} from 'universe/constant';
+} from 'universe:constant.ts';
 
 import type { Promisable } from 'type-fest';
-import type { ConfigurationHooks, ConfigureErrorHandlingEpilogue } from 'types/configure';
+import type {
+  ConfigurationHooks,
+  ConfigureErrorHandlingEpilogue
+} from 'typeverse:configure.ts';
 
 import type {
   ExecutionContext,
@@ -37,11 +40,11 @@ import type {
   // ? Used by intellisense and in auto-generated documentation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Program
-} from 'types/program';
+} from 'typeverse:program.ts';
 
 // ? Used by intellisense and in auto-generated documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe/util';
+import type { runProgram } from 'universe:util.ts';
 
 const debug = getRootDebugLogger().extend('index');
 
@@ -227,7 +230,8 @@ export async function configureProgram<
         const versionFlag = `${versionOption.length > 1 ? '--' : '-'}${versionOption}`;
         const versionFlagIndex = argv.indexOf(versionFlag);
         context.state.isHandlingVersionOption =
-          versionFlagIndex >= 0 && (!hasDoubleDash || versionFlagIndex < doubleDashIndex);
+          versionFlagIndex >= 0 &&
+          (!hasDoubleDash || versionFlagIndex < doubleDashIndex);
       } else {
         debug.warn(
           'disabled built-in version option since context.state.globalVersionOption was falsy'
@@ -309,14 +313,16 @@ export async function configureProgram<
       debug_error('final parsed argv: %O', finalArgv);
 
       if (isGracefulEarlyExitError(error)) {
-        debug.message('caught (and released) graceful early exit "error" in catch block');
+        debug.message(
+          'caught (and released) graceful early exit "error" in catch block'
+        );
       } else {
         // ? Ensure [$executionContext] always exists
         finalArgv[$executionContext] ??= context;
 
         let message = ErrorMessage.Generic();
         let exitCode = FrameworkExitCode.DefaultError;
-        const { isAssertionSystemError } = await import('universe/util');
+        const { isAssertionSystemError } = await import('universe:util.ts');
 
         if (typeof error === 'string') {
           message = error;

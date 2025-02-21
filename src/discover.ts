@@ -6,10 +6,8 @@ import { isNativeError, isPromise } from 'node:util/types';
 
 import makeVanillaYargs from 'yargs/yargs';
 
-import { suppressNodeWarnings } from 'multiverse/suppress-warnings';
-
-import { defaultUsageText } from 'universe/constant';
-import { capitalize, wrapExecutionContext } from 'universe/util';
+import { defaultUsageText } from 'universe:constant.ts';
+import { capitalize, wrapExecutionContext } from 'universe:util.ts';
 
 import {
   AssertionFailedError,
@@ -19,7 +17,7 @@ import {
   GracefulEarlyExitError,
   isCliError,
   isCommandNotImplementedError
-} from 'universe/error';
+} from 'universe:error.ts';
 
 import type {
   EffectorProgram,
@@ -31,18 +29,14 @@ import type {
   ProgramType,
   Programs,
   RouterProgram
-} from 'types/program';
+} from 'typeverse:program.ts';
 
 import type { PackageJson } from 'type-fest';
-import type { Configuration, ImportedConfigurationModule } from 'types/module';
+import type { Configuration, ImportedConfigurationModule } from 'typeverse:module.ts';
 import type { Options } from 'yargs';
 
 const hasSpacesRegExp = /\s+/;
 const alphaSort = new Intl.Collator(undefined, { numeric: true });
-
-// ! We disable ExperimentalWarning outputs because they're very annoying and
-// ! hard to deal with
-suppressNodeWarnings('ExperimentalWarning');
 
 /**
  * Recursively scans the filesystem for valid index files starting at
@@ -178,12 +172,13 @@ export async function discoverCommands(
       ErrorMessage.GuruMeditation()
     );
 
-    const { configuration: parentConfig, metadata: parentMeta } = await loadConfiguration(
-      ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
-        path.join(configPath, `index.${extension}`)
-      ),
-      context
-    );
+    const { configuration: parentConfig, metadata: parentMeta } =
+      await loadConfiguration(
+        ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
+          path.join(configPath, `index.${extension}`)
+        ),
+        context
+      );
 
     if (!parentConfig) {
       debug.warn(
@@ -386,7 +381,10 @@ export async function discoverCommands(
             parentDirName: path.basename(path.dirname(maybeConfigPath))
           } as ProgramMetadata;
 
-          meta.filenameWithoutExtension = meta.filename.split('.').slice(0, -1).join('.');
+          meta.filenameWithoutExtension = meta.filename
+            .split('.')
+            .slice(0, -1)
+            .join('.');
 
           const isParentProgram = meta.filenameWithoutExtension === 'index';
 
@@ -573,7 +571,10 @@ export async function discoverCommands(
 
       if (seenParentFullName === parentFullName) {
         command.metadata.reservedCommandNames.forEach((reservedName, index) => {
-          assert(index !== 0 || seenName === reservedName, ErrorMessage.GuruMeditation());
+          assert(
+            index !== 0 || seenName === reservedName,
+            ErrorMessage.GuruMeditation()
+          );
 
           checkCount++;
           if (reservedName === config.name) {
@@ -822,7 +823,10 @@ export async function discoverCommands(
           context.state.didOutputHelpOrVersionText
         );
 
-        assert(!meta.hasChildren || type !== 'pure child', ErrorMessage.GuruMeditation());
+        assert(
+          !meta.hasChildren || type !== 'pure child',
+          ErrorMessage.GuruMeditation()
+        );
 
         // ? Only helpers of "parous" parents should send help text to stderr
         const isParousParentHelperHandlingCommandNotImplementedError =
@@ -1360,6 +1364,8 @@ function isUnknownFileExtensionError(error: unknown): error is Error & {
   code: 'ERR_UNKNOWN_FILE_EXTENSION';
 } {
   return (
-    isNativeError(error) && 'code' in error && error.code === 'ERR_UNKNOWN_FILE_EXTENSION'
+    isNativeError(error) &&
+    'code' in error &&
+    error.code === 'ERR_UNKNOWN_FILE_EXTENSION'
   );
 }

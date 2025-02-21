@@ -1,15 +1,17 @@
+<!-- symbiote-template-region-start 1 -->
+
 <p align="center" width="100%">
-  <img width="300" src="./black-flag.png">
+  <img width="300" src="https://raw.githubusercontent.com/Xunnamius/black-flag/refs/heads/main/logo.png">
 </p>
 
 <p align="center" width="100%">
-  A declarative wrapper around yargs for building beautiful, fluent command line interfaces<br />
+<!-- symbiote-template-region-end -->
+A declarative wrapper around yargs for building beautiful, fluent command line interfaces<br />
   <code>$ black-pearl hoist the colors --black-flag</code>
+<!-- symbiote-template-region-start 2 -->
 </p>
 
 <hr />
-
-<!-- badges-start -->
 
 <div align="center">
 
@@ -20,32 +22,35 @@
 [![Uses Semantic Release!][x-badge-semanticrelease-image]][x-badge-semanticrelease-link]
 
 [![NPM version][x-badge-npm-image]][x-badge-npm-link]
-[![Monthly Downloads][x-badge-downloads-image]][x-badge-npm-link]
+[![Monthly Downloads][x-badge-downloads-image]][x-badge-downloads-link]
 
 </div>
 
-<!-- badges-end -->
-
 <br />
 
-# Black Flag
+# Black Flag 🏴
+
+<!-- symbiote-template-region-end -->
 
 Black Flag is a fairly thin library that wraps [yargs][1], extending its
 capabilities with several powerful _declarative_ features. It can be used to
 create simple single-level CLIs or deeply nested sprawling interfaces alike.
 
-Black Flag tries to be a drop-in replacement for vanilla yargs, specifically for
-users of [`yargs::commandDir()`][2].
+Black Flag was built as a drop-in replacement for vanilla yargs, specifically
+for users of [`yargs::commandDir()`][2].
 
-Tested on Ubuntu and Windows.
+Tested on Ubuntu and Windows, and on Node.js LTS versions.
 
 > If you find yourself a fan of Black Flag's more declarative DX, check out
 > [Black Flag Extensions][3] (BFE). BFE also protects you from [a couple yargs
 > footguns][4] that Black Flag by itself cannot.
 
+<!-- symbiote-template-region-start 3 -->
+
 ---
 
 <!-- remark-ignore-start -->
+<!-- symbiote-template-region-end -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -74,9 +79,16 @@ Tested on Ubuntu and Windows.
   - [Contributors](#contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- symbiote-template-region-start 4 -->
 <!-- remark-ignore-end -->
 
+<br />
+
 ## Install
+
+<!-- symbiote-template-region-end -->
+
+To install:
 
 ```shell
 npm install @black-flag/core
@@ -1317,7 +1329,11 @@ Ran all test suites.
 
 Neat! 📸
 
+<!-- symbiote-template-region-start 5 -->
+
 ## Appendix 🏴
+
+<!-- symbiote-template-region-end -->
 
 Further documentation can be found under [`docs/`][x-repo-docs].
 
@@ -1859,12 +1875,17 @@ myself and others in perpetuity.
 
 Throw in a re-watch of the PotC series and Black Flag was born! 🏴‍☠🍾
 
+<!-- symbiote-template-region-start 6 -->
+
 ### Published Package Details
 
 This is a [CJS2 package][x-pkg-cjs-mojito] with statically-analyzable exports
-built by Babel for Node.js versions that are not end-of-life. For TypeScript
-users, this package supports both `"Node10"` and `"Node16"` module resolution
-strategies.
+built by Babel for use in Node.js versions that are not end-of-life. For
+TypeScript users, this package supports both `"Node10"` and `"Node16"` module
+resolution strategies.
+
+<!-- symbiote-template-region-end -->
+<!-- symbiote-template-region-start 7 -->
 
 <details><summary>Expand details</summary>
 
@@ -1880,39 +1901,55 @@ Each entry point (i.e. `ENTRY`) in [`package.json`'s
 `exports[ENTRY]`][x-repo-package-json] object includes one or more [export
 conditions][x-pkg-exports-conditions]. These entries may or may not include: an
 [`exports[ENTRY].types`][x-pkg-exports-types-key] condition pointing to a type
-declarations file for TypeScript and IDEs, an
+declaration file for TypeScript and IDEs, a
 [`exports[ENTRY].module`][x-pkg-exports-module-key] condition pointing to
-(usually ESM) source for Webpack/Rollup, an `exports[ENTRY].node` condition
-pointing to (usually CJS2) source for Node.js `require` _and `import`_, an
-`exports[ENTRY].default` condition pointing to source for browsers and other
-environments, and [other conditions][x-pkg-exports-conditions] not enumerated
-here. Check the [package.json][x-repo-package-json] file to see which export
-conditions are supported.
+(usually ESM) source for Webpack/Rollup, a `exports[ENTRY].node` and/or
+`exports[ENTRY].default` condition pointing to (usually CJS2) source for Node.js
+`require`/`import` and for browsers and other environments, and [other
+conditions][x-pkg-exports-conditions] not enumerated here. Check the
+[package.json][x-repo-package-json] file to see which export conditions are
+supported.
 
-Though [`package.json`][x-repo-package-json] includes
-[`{ "type": "commonjs" }`][x-pkg-type], note that any ESM-only entry points will
-be ES module (`.mjs`) files. Finally, [`package.json`][x-repo-package-json] also
-includes the [`sideEffects`][x-pkg-side-effects-key] key, which is `false` for
+Note that, regardless of the [`{ "type": "..." }`][x-pkg-type] specified in
+[`package.json`][x-repo-package-json], any JavaScript files written in ESM
+syntax (including distributables) will always have the `.mjs` extension. Note
+also that [`package.json`][x-repo-package-json] may include the
+[`sideEffects`][x-pkg-side-effects-key] key, which is almost always `false` for
 optimal [tree shaking][x-pkg-tree-shaking] where appropriate.
+
+<!-- symbiote-template-region-end -->
+<!-- TODO: additional package details here -->
+<!-- symbiote-template-region-start 8 -->
 
 </details>
 
 ### License
 
+<!-- symbiote-template-region-end -->
+
 See [LICENSE][x-repo-license].
+
+<!-- TODO: additional license information and/or sections here -->
+<!-- symbiote-template-region-start 9 -->
 
 ## Contributing and Support
 
 **[New issues][x-repo-choose-new-issue] and [pull requests][x-repo-pr-compare]
 are always welcome and greatly appreciated! 🤩** Just as well, you can [star 🌟
-this project][x-badge-repo-link] to let me know you found it useful! ✊🏿 Or you
-could [buy me a beer][x-repo-sponsor] 🥺 Thank you!
+this project][x-badge-repo-link] to let me know you found it useful! ✊🏿 Or [buy
+me a beer][x-repo-sponsor], I'd appreciate it. Thank you!
 
 See [CONTRIBUTING.md][x-repo-contributing] and [SUPPORT.md][x-repo-support] for
 more information.
 
+<!-- symbiote-template-region-end -->
+<!-- TODO: additional contribution/support sections here -->
+<!-- symbiote-template-region-start 10 -->
+
 ### Contributors
 
+<!-- symbiote-template-region-end -->
+<!-- symbiote-template-region-start root-package-only -->
 <!-- remark-ignore-start -->
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
@@ -1954,17 +1991,23 @@ key][x-repo-all-contributors-emojis]):
 This project follows the [all-contributors][x-repo-all-contributors]
 specification. Contributions of any kind welcome!
 
+<!-- symbiote-template-region-end -->
+<!-- symbiote-template-region-start workspace-package-only -->
+<!-- (section elided by symbiote) -->
+<!-- symbiote-template-region-end -->
+
 [x-badge-blm-image]: https://xunn.at/badge-blm 'Join the movement!'
 [x-badge-blm-link]: https://xunn.at/donate-blm
 [x-badge-codecov-image]:
-  https://img.shields.io/codecov/c/github/Xunnamius/black-flag/main?style=flat-square&token=HWRIOBAAPW
+  https://img.shields.io/codecov/c/github/Xunnamius/black-flag/main?style=flat-square&token=HWRIOBAAPW&flag=package.main_root
   'Is this package well-tested?'
 [x-badge-codecov-link]: https://codecov.io/gh/Xunnamius/black-flag
 [x-badge-downloads-image]:
   https://img.shields.io/npm/dm/@black-flag/core?style=flat-square
   'Number of times this package has been downloaded per month'
+[x-badge-downloads-link]: https://npmtrends.com/@black-flag/core
 [x-badge-lastcommit-image]:
-  https://img.shields.io/github/last-commit/xunnamius/black-flag?style=flat-square
+  https://img.shields.io/github/last-commit/Xunnamius/black-flag?style=flat-square
   'Latest commit timestamp'
 [x-badge-license-image]:
   https://img.shields.io/npm/l/@black-flag/core?style=flat-square
@@ -1974,8 +2017,8 @@ specification. Contributions of any kind welcome!
 [x-badge-npm-image]:
   https://xunn.at/npm-pkg-version/@black-flag/core
   'Install this package using npm or yarn!'
-[x-badge-npm-link]: https://www.npmjs.com/package/@black-flag/core
-[x-badge-repo-link]: https://github.com/xunnamius/black-flag
+[x-badge-npm-link]: https://npm.im/@black-flag/core
+[x-badge-repo-link]: https://github.com/Xunnamius/black-flag
 [x-badge-semanticrelease-image]:
   https://xunn.at/badge-semantic-release
   'This repo practices continuous integration and deployment!'
@@ -1999,12 +2042,12 @@ specification. Contributions of any kind welcome!
 [x-repo-all-contributors]: https://github.com/all-contributors/all-contributors
 [x-repo-all-contributors-emojis]: https://allcontributors.org/docs/en/emoji-key
 [x-repo-choose-new-issue]:
-  https://github.com/xunnamius/black-flag/issues/new/choose
+  https://github.com/Xunnamius/black-flag/issues/new/choose
 [x-repo-contributing]: /CONTRIBUTING.md
 [x-repo-docs]: docs
 [x-repo-license]: ./LICENSE
 [x-repo-package-json]: package.json
-[x-repo-pr-compare]: https://github.com/xunnamius/black-flag/compare
+[x-repo-pr-compare]: https://github.com/Xunnamius/black-flag/compare
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
 [1]: https://yargs.js.org

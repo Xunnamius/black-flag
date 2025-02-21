@@ -1,5 +1,5 @@
-import { createDebugLogger } from 'multiverse/rejoinder';
-import { name as pkgName } from 'package';
+import { createDebugLogger } from 'rejoinder';
+import { name as pkgName } from 'rootverse:package.json';
 
 const rootDebugLogger = createDebugLogger({ namespace: pkgName });
 
