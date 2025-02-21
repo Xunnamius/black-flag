@@ -92,8 +92,8 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@-xun/run": "^1.0.1",
-    "@-xun/symbiote": "^2.25.1",
+    "@-xun/run": "^1.0.2",
+    "@-xun/symbiote": "^3.1.3",
     "@types/glob": "^8.1.0",
     "@types/lodash.mergewith": "^4.6.9",
     "@types/semver": "^7.5.8",
