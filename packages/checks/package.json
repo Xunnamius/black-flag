@@ -1,0 +1,56 @@
+{
+  "name": "@black-flag/checks",
+  "version": "1.0.0",
+  "description": "A collection of general purpose check functions for yargs and Black Flag",
+  "keywords": [
+    "cli",
+    "commandline",
+    "command-line",
+    "yargs",
+    "command-line-interface",
+    "opt",
+    "optparse",
+    "black-flag",
+    "optparser"
+  ],
+  "homepage": "https://github.com/Xunnamius/black-flag#readme",
+  "bugs": {
+    "url": "https://github.com/Xunnamius/black-flag/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xunnamius/black-flag.git"
+  },
+  "license": "MIT",
+  "author": "Xunnamius",
+  "sideEffects": false,
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./package": "./package.json",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "index": [
+        "dist/src/index.d.ts"
+      ],
+      "package": [
+        "package.json"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@black-flag/core": ">=1.3.2"
+  },
+  "engines": {
+    "node": "^18.20.0 || ^20.18.0 || ^22.12.0 || >=23.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}

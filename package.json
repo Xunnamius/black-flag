@@ -58,6 +58,9 @@
     "/package.json",
     "/README.md"
   ],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "build": "npm run build:dist --",
     "build:changelog": "symbiote build changelog --env NODE_NO_WARNINGS=1",
