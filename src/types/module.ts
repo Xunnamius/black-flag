@@ -1,7 +1,7 @@
 import type { Promisable } from 'type-fest';
 import type { Options as _Options, Argv as _Program } from 'yargs';
 
-import type { Arguments, EffectorProgram, ExecutionContext } from 'types/program';
+import type { Arguments, EffectorProgram, ExecutionContext } from 'typeverse:program.ts';
 
 /**
  * A replacement for the `CommandModule` type that comes with yargs.
@@ -183,4 +183,6 @@ export type ImportedConfigurationModule<
       | ParentConfiguration<CustomCliArguments, CustomExecutionContext>
       | ChildConfiguration<CustomCliArguments, CustomExecutionContext>
     >
-) & { default?: ImportedConfigurationModule<CustomCliArguments, CustomExecutionContext> };
+) & {
+  default?: ImportedConfigurationModule<CustomCliArguments, CustomExecutionContext>;
+};

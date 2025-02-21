@@ -1,7 +1,7 @@
 import type { Promisable } from 'type-fest';
 
-import type { Arguments, ExecutionContext, Programs } from 'types/program';
-import type { $executionContext } from 'universe/constant';
+import type { Arguments, ExecutionContext, Programs } from 'typeverse:program.ts';
+import type { $executionContext } from 'universe:constant.ts';
 
 // ! Note that comments are repeated here: once for the exported type and once
 // ! for the exported amalgum type.

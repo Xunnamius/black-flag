@@ -1,14 +1,14 @@
 import type { ArgumentsCamelCase as _Arguments, Argv as _Program } from 'yargs';
 
-import type { ExtendedDebugger } from 'multiverse/rejoinder';
-import type { ConfigureArguments } from 'types/configure';
-import type { Configuration } from 'types/module';
-import type { $executionContext } from 'universe/constant';
-import type { CliError } from 'universe/error';
+import type { ExtendedDebugger } from 'rejoinder';
+import type { ConfigureArguments } from 'typeverse:configure.ts';
+import type { Configuration } from 'typeverse:module.ts';
+import type { $executionContext } from 'universe:constant.ts';
+import type { CliError } from 'universe:error.ts';
 
 // ? Used by intellisense and in auto-generated documentation
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe/util';
+import type { runProgram } from 'universe:util.ts';
 
 /**
  * Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
