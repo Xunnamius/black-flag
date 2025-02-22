@@ -1,10 +1,3 @@
-**@black-flag/core** • **Docs**
+# Black Flag Documentation
 
-***
-
-# @black-flag/core
-
-## Modules
-
-- [index](index/README.md)
-- [util](util/README.md)
+- TODO

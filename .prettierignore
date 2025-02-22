@@ -55,3 +55,6 @@ __*__
 .DS_Store
 
 # Custom
+# ? This negation must end in "/**" to be interpreted properly.
+!docs/**
+docs/api
