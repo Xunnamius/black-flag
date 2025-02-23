@@ -21,7 +21,7 @@ export {
 export {
   AssertionFailedError,
   CommandNotImplementedError,
-  ErrorMessage,
+  ErrorMessage as BfErrorMessage,
   isCommandNotImplementedError,
   type CliErrorOptions
 } from 'universe:error.ts';
