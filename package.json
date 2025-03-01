@@ -99,7 +99,7 @@
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
     "rejoinder": "^1.2.5",
-    "type-fest": "^4.35.0",
+    "type-fest": "^4.36.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
