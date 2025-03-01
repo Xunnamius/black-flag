@@ -93,23 +93,18 @@
     "test:topological": "symbiote project topology --run test --env NODE_NO_WARNINGS=1"
   },
   "dependencies": {
+    "@-xun/fs": "^1.0.0",
     "@types/yargs": "^17.0.33",
     "core-js": "^3.40.0",
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
-    "semver": "^7.7.1",
+    "rejoinder": "^1.2.5",
     "type-fest": "^4.35.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@-xun/run": "^1.0.2",
-    "@-xun/symbiote": "^3.1.4",
-    "@types/glob": "^8.1.0",
-    "@types/lodash.mergewith": "^4.6.9",
-    "@types/semver": "^7.5.8",
-    "glob": "^11.0.1",
-    "lodash.mergewith": "^4.6.2",
-    "unique-filename": "^4.0.0"
+    "@-xun/project": "^1.0.3",
+    "@-xun/symbiote": "^3.3.0"
   },
   "engines": {
     "node": "^18.20.0 || ^20.18.0 || ^22.12.0 || >=23.3.0"
