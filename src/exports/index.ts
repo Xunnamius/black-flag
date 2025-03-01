@@ -1,5 +1,4 @@
-export { configureProgram } from 'universe';
-export { runProgram } from 'universe:util.ts';
+export { configureProgram, runProgram } from 'universe';
 
 export { $executionContext, FrameworkExitCode } from 'universe:constant.ts';
 
@@ -17,7 +16,7 @@ export type {
   ConfigureExecutionContext,
   ConfigureExecutionEpilogue,
   ConfigureExecutionPrologue
-} from 'typeverse:configure.ts';
+} from 'universe:types/configure.ts';
 
 export type {
   ChildConfiguration,
@@ -25,6 +24,6 @@ export type {
   ImportedConfigurationModule,
   ParentConfiguration,
   RootConfiguration
-} from 'typeverse:module.ts';
+} from 'universe:types/module.ts';
 
-export type { Arguments, NullArguments } from 'typeverse:program.ts';
+export type { Arguments, NullArguments } from 'universe:types/program.ts';

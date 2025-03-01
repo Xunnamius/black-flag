@@ -1,23 +1,34 @@
 import assert from 'node:assert';
 import fs from 'node:fs/promises';
-import path from 'node:path';
-import { pathToFileURL, fileURLToPath } from 'node:url';
+import { basename } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isNativeError, isPromise } from 'node:util/types';
 
+import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
 import makeVanillaYargs from 'yargs/yargs';
 
 import { defaultUsageText } from 'universe:constant.ts';
-import { capitalize, wrapExecutionContext } from 'universe:util.ts';
 
 import {
   AssertionFailedError,
+  BfErrorMessage,
   CliError,
   CommandNotImplementedError,
-  ErrorMessage,
   GracefulEarlyExitError,
   isCliError,
   isCommandNotImplementedError
 } from 'universe:error.ts';
+
+import { capitalize, wrapExecutionContext } from 'universe:util.ts';
+
+import type { AbsolutePath } from '@-xun/fs';
+import type { Arrayable, PackageJson } from 'type-fest';
+import type { Options } from 'yargs';
+
+import type {
+  Configuration,
+  ImportedConfigurationModule
+} from 'universe:types/module.ts';
 
 import type {
   EffectorProgram,
@@ -26,14 +37,10 @@ import type {
   Program,
   ProgramDescriptor,
   ProgramMetadata,
-  ProgramType,
   Programs,
+  ProgramType,
   RouterProgram
-} from 'typeverse:program.ts';
-
-import type { PackageJson } from 'type-fest';
-import type { Configuration, ImportedConfigurationModule } from 'typeverse:module.ts';
-import type { Options } from 'yargs';
+} from 'universe:types/program.ts';
 
 const hasSpacesRegExp = /\s+/;
 const alphaSort = new Intl.Collator(undefined, { numeric: true });

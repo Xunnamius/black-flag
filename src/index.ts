@@ -1,38 +1,50 @@
 import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
+import { createDebugLogger } from 'rejoinder';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
 
-import { getRootDebugLogger } from 'universe:debug.ts';
+import {
+  $executionContext,
+  defaultHelpOptionName,
+  defaultHelpTextDescription,
+  defaultVersionOptionName,
+  defaultVersionTextDescription,
+  FrameworkExitCode,
+  globalDebuggerNamespace,
+  nullArguments$0
+} from 'universe:constant.ts';
+
 import { discoverCommands } from 'universe:discover.ts';
-import { capitalize, wrapExecutionContext } from 'universe:util.ts';
 
 import {
   AssertionFailedError,
+  BfErrorMessage,
   CliError,
-  ErrorMessage,
   isCliError,
   isCommandNotImplementedError,
   isGracefulEarlyExitError
 } from 'universe:error.ts';
 
 import {
-  $executionContext,
-  FrameworkExitCode,
-  defaultHelpOptionName,
-  defaultHelpTextDescription,
-  defaultVersionOptionName,
-  defaultVersionTextDescription
-} from 'universe:constant.ts';
+  capitalize,
+  getDeepestErrorCause,
+  isArguments,
+  isAssertionSystemError,
+  isPreExecutionContext,
+  wrapExecutionContext
+} from 'universe:util.ts';
 
 import type { Promisable } from 'type-fest';
+
 import type {
   ConfigurationHooks,
   ConfigureErrorHandlingEpilogue
-} from 'typeverse:configure.ts';
+} from 'universe:types/configure.ts';
 
 import type {
+  Arguments,
   ExecutionContext,
   Executor,
   NullArguments,
@@ -40,11 +52,7 @@ import type {
   // ? Used by intellisense and in auto-generated documentation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Program
-} from 'typeverse:program.ts';
-
-// ? Used by intellisense and in auto-generated documentation
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe:util.ts';
+} from 'universe:types/program.ts';
 
 const debug = getRootDebugLogger().extend('index');
 

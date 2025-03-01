@@ -2,12 +2,13 @@
 
 import { hideBin as hideBin_ } from 'yargs/helpers';
 
+export { makeRunner } from 'universe';
+
 export {
   isArguments,
   isAssertionSystemError,
   isNullArguments,
-  isPreExecutionContext,
-  makeRunner
+  isPreExecutionContext
 } from 'universe:util.ts';
 
 export {
@@ -20,8 +21,8 @@ export {
 
 export {
   AssertionFailedError,
+  BfErrorMessage,
   CommandNotImplementedError,
-  ErrorMessage as BfErrorMessage,
   isCommandNotImplementedError,
   type CliErrorOptions
 } from 'universe:error.ts';
@@ -37,10 +38,10 @@ export type {
   Program,
   ProgramDescriptor,
   ProgramMetadata,
-  ProgramType,
   Programs,
+  ProgramType,
   RouterProgram
-} from 'typeverse:program.ts';
+} from 'universe:types/program.ts';
 
 /**
  * @see https://yargs.js.org/docs/#api-reference

@@ -1,14 +1,16 @@
+import type { ExtendedDebugger } from 'rejoinder';
 import type { ArgumentsCamelCase as _Arguments, Argv as _Program } from 'yargs';
 
-import type { ExtendedDebugger } from 'rejoinder';
-import type { ConfigureArguments } from 'typeverse:configure.ts';
-import type { Configuration } from 'typeverse:module.ts';
-import type { $executionContext } from 'universe:constant.ts';
-import type { CliError } from 'universe:error.ts';
+import type {
+  // ? Used by intellisense and in auto-generated documentation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  runProgram
+} from 'universe';
 
-// ? Used by intellisense and in auto-generated documentation
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe:util.ts';
+import type { $executionContext, nullArguments$0 } from 'universe:constant.ts';
+import type { CliError } from 'universe:error.ts';
+import type { ConfigureArguments } from 'universe:types/configure.ts';
+import type { Configuration } from 'universe:types/module.ts';
 
 /**
  * Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
@@ -30,7 +32,7 @@ export type Arguments<
 export type NullArguments<
   CustomExecutionContext extends ExecutionContext = ExecutionContext
 > = {
-  $0: '<NullArguments: no parse result available due to exception>';
+  $0: typeof nullArguments$0;
   _: [];
 } & FrameworkArguments<CustomExecutionContext>;
 
@@ -65,22 +67,20 @@ export type Program<
    * @see {@link _Program.command}
    * @internal
    */
-  command: {
-    (
-      command: string[],
-      description: Configuration<
-        CustomCliArguments,
-        CustomExecutionContext
-      >['description'],
-      builder:
-        | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
-        | Record<string, never>,
-      handler: Configuration<CustomCliArguments, CustomExecutionContext>['handler'],
-      // ? configureArguments already handles this use case, so...
-      middlewares: [],
-      deprecated: Configuration<CustomCliArguments, CustomExecutionContext>['deprecated']
-    ): Program<CustomCliArguments, CustomExecutionContext>;
-  };
+  command: (
+    command: string[],
+    description: Configuration<
+      CustomCliArguments,
+      CustomExecutionContext
+    >['description'],
+    builder:
+      | ((yargs: _Program, helpOrVersionSet: boolean) => _Program)
+      | Record<string, never>,
+    handler: Configuration<CustomCliArguments, CustomExecutionContext>['handler'],
+    // ? configureArguments already handles this use case, so...
+    middlewares: [],
+    deprecated: Configuration<CustomCliArguments, CustomExecutionContext>['deprecated']
+  ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**
    * Like `yargs::showHelpOnFail` except (1) it also determines if help text is

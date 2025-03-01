@@ -1,4 +1,15 @@
 /**
+ * The project-wide namespace that appears in debugger output.
+ */
+export const globalDebuggerNamespace = 'bf';
+
+/**
+ * The `NullArguments::$0` constant value.
+ */
+export const nullArguments$0 =
+  '<NullArguments: no parse result available due to exception>';
+
+/**
  * A symbol allowing access to the `ExecutionContext` object "hidden" within
  * each `Arguments` instance.
  */
