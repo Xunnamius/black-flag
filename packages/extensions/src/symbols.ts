@@ -2,7 +2,7 @@ import type {
   // ? Used in documentation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getInvocableExtendedHandler
-} from 'universe';
+} from 'universe+extensions';
 
 /**
  * Represents any value for the given argument.

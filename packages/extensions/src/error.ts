@@ -1,6 +1,6 @@
 import { ErrorMessage as UpstreamErrorMessage } from '@black-flag/core/util';
 
-import { $exists } from 'universe:symbols.ts';
+import { $exists } from 'universe+extensions:symbols.ts';
 
 import type { Entries } from 'type-fest';
 
@@ -11,7 +11,7 @@ export type KeyValueEntry = KeyValueEntries[number];
  * A collection of possible error and warning messages.
  */
 /* istanbul ignore next */
-export const ErrorMessage = {
+export const BfeErrorMessage = {
   ...UpstreamErrorMessage,
   FalsyCommandExport() {
     return 'supposed command argument unexpectedly resolved to a falsy value';
@@ -62,7 +62,7 @@ export const ErrorMessage = {
     firstArgument: KeyValueEntry,
     secondArgument: KeyValueEntry
   ) {
-    return ErrorMessage.DemandGenericXorViolation([firstArgument, secondArgument]);
+    return BfeErrorMessage.DemandGenericXorViolation([firstArgument, secondArgument]);
   },
   CheckFailed(currentArgument: string) {
     return `check failed for argument "${currentArgument}"`;
@@ -82,6 +82,7 @@ function keyValueToString(keyValueEntry: KeyValueEntry) {
     try {
       return JSON.stringify(value);
     } catch {
+      /* istanbul ignore next */
       return String(value);
     }
   })();

@@ -3,11 +3,13 @@
 
 // * These tests ensure the exported interface under test functions as expected.
 
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { setTimeout as delay } from 'node:timers/promises';
 import { isDeepStrictEqual } from 'node:util';
 import { isNativeError } from 'node:util/types';
 
-import { $executionContext, isCliError } from '@black-flag/core';
+import { $executionContext, CliError, isCliError } from '@black-flag/core';
 import { isCommandNotImplementedError } from '@black-flag/core/util';
 import deepMerge from 'lodash.merge';
 
@@ -15,10 +17,10 @@ import {
   getInvocableExtendedHandler,
   withBuilderExtensions,
   withUsageExtensions
-} from 'universe';
+} from 'universe+extensions';
 
-import { ErrorMessage } from 'universe:error.ts';
-import { $artificiallyInvoked, $exists } from 'universe:symbols.ts';
+import { BfeErrorMessage } from 'universe+extensions:error.ts';
+import { $artificiallyInvoked, $exists } from 'universe+extensions:symbols.ts';
 
 import type { Arguments } from '@black-flag/core';
 import type { ExecutionContext } from '@black-flag/core/util';
@@ -26,7 +28,7 @@ import type { PartialDeep } from 'type-fest';
 // ? We use the version of yargs bundled with black flag
 // {@symbiote/notInvalid yargs}
 import type { ParserConfigurationOptions } from 'yargs';
-import type { AsStrictExecutionContext } from 'universe';
+import type { AsStrictExecutionContext } from 'universe+extensions';
 
 describe('::withBuilderExtensions', () => {
   describe('"requires" configuration', () => {
@@ -58,7 +60,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', $exists]])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', $exists]])
         });
       }
     });
@@ -107,7 +109,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [
+          message: BfeErrorMessage.RequiresViolation('x', [
             ['y', 'one'],
             ['z', $exists]
           ])
@@ -117,14 +119,14 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('z', [['y', $exists]])
+          message: BfeErrorMessage.RequiresViolation('z', [['y', $exists]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: 'string' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [
+          message: BfeErrorMessage.RequiresViolation('x', [
             ['y', 'one'],
             ['z', $exists]
           ])
@@ -134,21 +136,21 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: 'one' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['z', $exists]])
+          message: BfeErrorMessage.RequiresViolation('x', [['z', $exists]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true, y: 'string' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', 'one']])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', 'one']])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', 'one']])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', 'one']])
         });
       }
     });
@@ -211,7 +213,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
           });
         }
       }
@@ -247,7 +249,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
           });
         }
       }
@@ -285,7 +287,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
           });
         }
       }
@@ -316,7 +318,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
           });
         }
       }
@@ -352,7 +354,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.RequiresViolation('x-y', [['a-b-c', $exists]])
           });
         }
       }
@@ -391,21 +393,21 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: [] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', 5]])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', 5]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', 5]])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', 5]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 2] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('x', [['y', 5]])
+          message: BfeErrorMessage.RequiresViolation('x', [['y', 5]])
         });
       }
 
@@ -450,7 +452,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [['y', $exists]])
+          message: BfeErrorMessage.ConflictsViolation('x', [['y', $exists]])
         });
       }
     });
@@ -494,21 +496,21 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('z', [['y', $exists]])
+          message: BfeErrorMessage.ConflictsViolation('z', [['y', $exists]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: 'one' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [['y', 'one']])
+          message: BfeErrorMessage.ConflictsViolation('x', [['y', 'one']])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true, y: 'one' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [
+          message: BfeErrorMessage.ConflictsViolation('x', [
             ['y', 'one'],
             ['z', $exists]
           ])
@@ -518,7 +520,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [['z', $exists]])
+          message: BfeErrorMessage.ConflictsViolation('x', [['z', $exists]])
         });
       }
     });
@@ -565,7 +567,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
           });
         }
 
@@ -599,7 +601,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
           });
         }
 
@@ -634,7 +636,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
           });
         }
 
@@ -666,7 +668,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
           });
         }
 
@@ -701,7 +703,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
+            message: BfeErrorMessage.ConflictsViolation('x-y', [['a-b-c', $exists]])
           });
         }
 
@@ -766,14 +768,14 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: [5] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [['y', 5]])
+          message: BfeErrorMessage.ConflictsViolation('x', [['y', 5]])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 5, 2] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ConflictsViolation('x', [['y', 5]])
+          message: BfeErrorMessage.ConflictsViolation('x', [['y', 5]])
         });
       }
     });
@@ -844,7 +846,7 @@ describe('::withBuilderExtensions', () => {
         const { handlerResult } = await runner({ x: true, y: false });
 
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ImpliesViolation('x', [['y', false]])
+          message: BfeErrorMessage.ImpliesViolation('x', [['y', false]])
         });
       }
     });
@@ -890,7 +892,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
+            message: BfeErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
           });
         }
       }
@@ -926,7 +928,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
+            message: BfeErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
           });
         }
       }
@@ -964,7 +966,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
+            message: BfeErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
           });
         }
       }
@@ -995,7 +997,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
+            message: BfeErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
           });
         }
       }
@@ -1031,7 +1033,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
+            message: BfeErrorMessage.ImpliesViolation('x-y', [['a-b-c', 2]])
           });
         }
       }
@@ -1052,7 +1054,7 @@ describe('::withBuilderExtensions', () => {
         const { handlerResult } = await runner({ x: true, y: false });
 
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ImpliesViolation('x', [['y', false]])
+          message: BfeErrorMessage.ImpliesViolation('x', [['y', false]])
         });
       }
 
@@ -1104,7 +1106,7 @@ describe('::withBuilderExtensions', () => {
         const { handlerResult } = await runner({ x: [false], y: false });
 
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ImpliesViolation('x', [['y', false]])
+          message: BfeErrorMessage.ImpliesViolation('x', [['y', false]])
         });
       }
 
@@ -1120,7 +1122,7 @@ describe('::withBuilderExtensions', () => {
         const { handlerResult } = await runner({ x: 0, y: false });
 
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.ImpliesViolation('x', [['y', false]])
+          message: BfeErrorMessage.ImpliesViolation('x', [['y', false]])
         });
       }
     });
@@ -1141,7 +1143,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runner({ x: false, y: false });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x', [['y', false]])
+            message: BfeErrorMessage.ImpliesViolation('x', [['y', false]])
           });
         }
 
@@ -1154,7 +1156,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runner({ x: true, y: 'hello' });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.ImpliesViolation('x', [['y', 'hello']])
+            message: BfeErrorMessage.ImpliesViolation('x', [['y', 'hello']])
           });
         }
       }
@@ -1242,7 +1244,7 @@ describe('::withBuilderExtensions', () => {
       const { firstPassResult } = await runner({ x: true });
       expect(firstPassResult).toMatchObject({
         message: expect.stringContaining(
-          ': ' + ErrorMessage.ReferencedNonExistentOption('x', 'y-y')
+          ': ' + BfeErrorMessage.ReferencedNonExistentOption('x', 'y-y')
         )
       });
     });
@@ -1288,21 +1290,21 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('y', ['x', $exists])
+          message: BfeErrorMessage.DemandIfViolation('y', ['x', $exists])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('z', ['x', $exists])
+          message: BfeErrorMessage.DemandIfViolation('z', ['x', $exists])
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('y', ['x', $exists])
+          message: BfeErrorMessage.DemandIfViolation('y', ['x', $exists])
         });
       }
     });
@@ -1356,28 +1358,28 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['z', $exists])
+          message: BfeErrorMessage.DemandIfViolation('x', ['z', $exists])
         });
       }
 
       {
         const { handlerResult } = await runner({ y: 'one' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['y', 'one'])
+          message: BfeErrorMessage.DemandIfViolation('x', ['y', 'one'])
         });
       }
 
       {
         const { handlerResult } = await runner({ y: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['z', $exists])
+          message: BfeErrorMessage.DemandIfViolation('x', ['z', $exists])
         });
       }
 
       {
         const { handlerResult } = await runner({ y: 'one', z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['y', 'one'])
+          message: BfeErrorMessage.DemandIfViolation('x', ['y', 'one'])
         });
       }
     });
@@ -1440,7 +1442,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
+            message: BfeErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
           });
         }
       }
@@ -1476,7 +1478,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
+            message: BfeErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
           });
         }
       }
@@ -1514,7 +1516,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
+            message: BfeErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
           });
         }
       }
@@ -1545,7 +1547,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
+            message: BfeErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
           });
         }
       }
@@ -1581,7 +1583,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
+            message: BfeErrorMessage.DemandIfViolation('a-b-c', ['x-y', $exists])
           });
         }
       }
@@ -1645,14 +1647,14 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [5] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['y', 5])
+          message: BfeErrorMessage.DemandIfViolation('x', ['y', 5])
         });
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 5, 2] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandIfViolation('x', ['y', 5])
+          message: BfeErrorMessage.DemandIfViolation('x', ['y', 5])
         });
       }
     });
@@ -1735,7 +1737,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', $exists],
             ['z', $exists],
             ['x', $exists]
@@ -1798,7 +1800,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -1809,7 +1811,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -1820,7 +1822,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: 'string' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -1884,7 +1886,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerNoCamelCaseExpansion({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandOrViolation([
+            message: BfeErrorMessage.DemandOrViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -1920,7 +1922,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripAliases({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandOrViolation([
+            message: BfeErrorMessage.DemandOrViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -1958,7 +1960,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripDashes({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandOrViolation([
+            message: BfeErrorMessage.DemandOrViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -1990,7 +1992,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripBoth({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandOrViolation([
+            message: BfeErrorMessage.DemandOrViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2027,7 +2029,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerAll({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandOrViolation([
+            message: BfeErrorMessage.DemandOrViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2049,7 +2051,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2059,7 +2061,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2069,7 +2071,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [1] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2079,7 +2081,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [1, 2] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandOrViolation([
+          message: BfeErrorMessage.DemandOrViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2159,7 +2161,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', $exists],
             ['x', $exists]
           ])
@@ -2169,7 +2171,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['w', $exists],
             ['z', $exists]
           ])
@@ -2179,7 +2181,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['w', $exists],
             ['z', $exists]
           ])
@@ -2189,7 +2191,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', $exists],
             ['x', $exists]
           ])
@@ -2199,7 +2201,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', $exists],
             ['x', $exists]
           ])
@@ -2209,7 +2211,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['y', $exists],
             ['x', $exists]
           )
@@ -2219,7 +2221,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ z: true, w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', $exists],
             ['x', $exists]
           ])
@@ -2229,7 +2231,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['y', $exists],
             ['x', $exists]
           )
@@ -2239,7 +2241,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['y', $exists],
             ['x', $exists]
           )
@@ -2249,7 +2251,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true, w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['y', $exists],
             ['x', $exists]
           )
@@ -2259,7 +2261,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, z: true, w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['w', $exists],
             ['z', $exists]
           )
@@ -2269,7 +2271,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true, z: true, w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['w', $exists],
             ['z', $exists]
           )
@@ -2279,7 +2281,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: true, z: true, w: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['y', $exists],
             ['x', $exists]
           )
@@ -2326,7 +2328,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -2337,7 +2339,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -2348,7 +2350,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: 'string' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 'one'],
             ['z', $exists],
             ['x', $exists]
@@ -2359,14 +2361,17 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: 'one' });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(['y', 'one'], ['x', $exists])
+          message: BfeErrorMessage.DemandSpecificXorViolation(
+            ['y', 'one'],
+            ['x', $exists]
+          )
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['z', $exists],
             ['x', $exists]
           )
@@ -2376,14 +2381,17 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: 'one', z: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(['y', 'one'], ['z', $exists])
+          message: BfeErrorMessage.DemandSpecificXorViolation(
+            ['y', 'one'],
+            ['z', $exists]
+          )
         });
       }
 
       {
         const { handlerResult } = await runner({ x: true, z: true, y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandSpecificXorViolation(
+          message: BfeErrorMessage.DemandSpecificXorViolation(
             ['z', $exists],
             ['x', $exists]
           )
@@ -2433,7 +2441,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandSpecificXorViolation(
+            message: BfeErrorMessage.DemandSpecificXorViolation(
               ['a-b-c', $exists],
               ['x-y', $exists]
             )
@@ -2472,7 +2480,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerNoCamelCaseExpansion({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandGenericXorViolation([
+            message: BfeErrorMessage.DemandGenericXorViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2496,7 +2504,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandSpecificXorViolation(
+            message: BfeErrorMessage.DemandSpecificXorViolation(
               ['a-b-c', $exists],
               ['x-y', $exists]
             )
@@ -2533,7 +2541,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripAliases({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandGenericXorViolation([
+            message: BfeErrorMessage.DemandGenericXorViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2558,7 +2566,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandSpecificXorViolation(
+            message: BfeErrorMessage.DemandSpecificXorViolation(
               ['a-b-c', $exists],
               ['x-y', $exists]
             )
@@ -2597,7 +2605,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripDashes({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandGenericXorViolation([
+            message: BfeErrorMessage.DemandGenericXorViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2619,7 +2627,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandSpecificXorViolation(
+            message: BfeErrorMessage.DemandSpecificXorViolation(
               ['a-b-c', $exists],
               ['x-y', $exists]
             )
@@ -2652,7 +2660,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerStripBoth({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandGenericXorViolation([
+            message: BfeErrorMessage.DemandGenericXorViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2679,7 +2687,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandSpecificXorViolation(
+            message: BfeErrorMessage.DemandSpecificXorViolation(
               ['a-b-c', $exists],
               ['x-y', $exists]
             )
@@ -2712,7 +2720,7 @@ describe('::withBuilderExtensions', () => {
           const { handlerResult } = await runnerAll({});
 
           expect(handlerResult).toMatchObject({
-            message: ErrorMessage.DemandGenericXorViolation([
+            message: BfeErrorMessage.DemandGenericXorViolation([
               ['a-b-c', $exists],
               ['x-y', $exists]
             ])
@@ -2734,7 +2742,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({});
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2744,7 +2752,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2754,7 +2762,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [1] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2764,7 +2772,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: [1, 2] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2789,7 +2797,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ x: true, y: [5] });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.DemandGenericXorViolation([
+          message: BfeErrorMessage.DemandGenericXorViolation([
             ['y', 5],
             ['x', $exists]
           ])
@@ -2814,33 +2822,64 @@ describe('::withBuilderExtensions', () => {
   });
 
   describe('"check" configuration', () => {
-    it('re-throws thrown exceptions as-is', async () => {
+    it('re-throws thrown CliErrors as-is, wraps others', async () => {
       expect.hasAssertions();
 
-      const error = new Error(`"x" must be between 0 and 10 (inclusive), saw: -1`);
+      {
+        const errorMessage = `"x" must be between 0 and 10 (inclusive), saw: -1`;
 
-      const runner = makeMockBuilderRunner({
-        customBuilder: {
-          x: {
-            check: function (currentXArgValue: number) {
-              if (currentXArgValue < 0 || currentXArgValue > 10) {
-                throw error;
+        const runner = makeMockBuilderRunner({
+          customBuilder: {
+            x: {
+              check: function (currentXArgValue: number) {
+                if (currentXArgValue < 0 || currentXArgValue > 10) {
+                  throw new Error(errorMessage);
+                }
+
+                return true;
               }
-
-              return true;
             }
           }
-        }
-      });
+        });
 
-      {
-        const { handlerResult } = await runner({ x: 5 });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        {
+          const { handlerResult } = await runner({ x: 5 });
+          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        }
+
+        {
+          const { handlerResult } = await runner({ x: -1 });
+          expect(handlerResult).toBeInstanceOf(CliError);
+          expect(handlerResult).toMatchObject({ message: errorMessage });
+        }
       }
 
       {
-        const { handlerResult } = await runner({ x: -1 });
-        expect(handlerResult).toBe(error);
+        const error = new CliError(`"x" must be between 0 and 10 (inclusive), saw: -1`);
+
+        const runner = makeMockBuilderRunner({
+          customBuilder: {
+            x: {
+              check: function (currentXArgValue: number) {
+                if (currentXArgValue < 0 || currentXArgValue > 10) {
+                  throw error;
+                }
+
+                return true;
+              }
+            }
+          }
+        });
+
+        {
+          const { handlerResult } = await runner({ x: 5 });
+          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        }
+
+        {
+          const { handlerResult } = await runner({ x: -1 });
+          expect(handlerResult).toBe(error);
+        }
       }
     });
 
@@ -2946,6 +2985,17 @@ describe('::withBuilderExtensions', () => {
         customBuilder: {
           x: {
             check: function () {
+              // ? Make this function take longer than the others to prove sync
+              const hash = createHash('sha512');
+
+              hash.update(
+                readFileSync(
+                  require.resolve('rootverse+extensions:package.json'),
+                  'utf8'
+                )
+              );
+
+              hash.digest('hex');
               runOrder.push(1);
               return true;
             }
@@ -3541,7 +3591,7 @@ describe('::withBuilderExtensions', () => {
       {
         const { handlerResult } = await runner({ y: true });
         expect(handlerResult).toMatchObject({
-          message: ErrorMessage.RequiresViolation('y', [['x', $exists]])
+          message: BfeErrorMessage.RequiresViolation('y', [['x', $exists]])
         });
       }
 
@@ -4313,7 +4363,7 @@ describe('::withBuilderExtensions', () => {
 
       expect(firstPassResult).toStrictEqual(secondPassResult);
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.DemandOrViolation([
+        message: BfeErrorMessage.DemandOrViolation([
           ['d', $exists],
           ['f', $exists]
         ])
@@ -4348,7 +4398,7 @@ describe('::withBuilderExtensions', () => {
 
       expect(firstPassResult).toStrictEqual(secondPassResult);
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.DemandGenericXorViolation([
+        message: BfeErrorMessage.DemandGenericXorViolation([
           ['h', $exists],
           ['g', $exists]
         ])
@@ -4731,7 +4781,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({});
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.DemandOrViolation([
+        message: BfeErrorMessage.DemandOrViolation([
           ['f', 3],
           ['e', $exists]
         ])
@@ -4742,7 +4792,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ f: 3, a: true });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.RequiresViolation('a', [['b', 3]])
+        message: BfeErrorMessage.RequiresViolation('a', [['b', 3]])
       });
     }
 
@@ -4750,7 +4800,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ f: 3, a: true, b: 3, c: 3 });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.ConflictsViolation('b', [['c', 3]])
+        message: BfeErrorMessage.ConflictsViolation('b', [['c', 3]])
       });
     }
 
@@ -4758,7 +4808,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ f: 3, a: true, b: 3, c: true, d: true });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.ImpliesViolation('c', [['d', true]])
+        message: BfeErrorMessage.ImpliesViolation('c', [['d', true]])
       });
     }
 
@@ -4766,7 +4816,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ f: 3, a: true, b: 3, c: true, e: 3 });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.DemandIfViolation('d', ['e', 3])
+        message: BfeErrorMessage.DemandIfViolation('d', ['e', 3])
       });
     }
 
@@ -4780,7 +4830,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.DemandGenericXorViolation([
+        message: BfeErrorMessage.DemandGenericXorViolation([
           ['g', 3],
           ['f', $exists]
         ])
@@ -4825,7 +4875,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ a: true });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.RequiresViolation('a', [
+        message: BfeErrorMessage.RequiresViolation('a', [
           ['b', 1],
           ['c', 2],
           ['d', 3]
@@ -4837,7 +4887,7 @@ describe('::withBuilderExtensions', () => {
       const { handlerResult } = await runner({ b: true, e: 1, f: 2, g: 3 });
 
       expect(handlerResult).toMatchObject({
-        message: ErrorMessage.ConflictsViolation('b', [
+        message: BfeErrorMessage.ConflictsViolation('b', [
           ['e', 1],
           ['f', 2],
           ['g', 3]
@@ -4914,7 +4964,7 @@ describe('::withBuilderExtensions', () => {
 
     expect(firstPassResult).toMatchObject({
       message: expect.stringContaining(
-        ': ' + ErrorMessage.IllegalExplicitlyUndefinedDefault()
+        ': ' + BfeErrorMessage.IllegalExplicitlyUndefinedDefault()
       )
     });
   });
@@ -4925,7 +4975,7 @@ describe('::withBuilderExtensions', () => {
     const [, withHandlerExtensions] = withBuilderExtensions();
 
     await expect(withHandlerExtensions()({} as any)).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.IllegalHandlerInvocation())
+      message: expect.stringContaining(': ' + BfeErrorMessage.IllegalHandlerInvocation())
     });
   });
 
@@ -4936,7 +4986,7 @@ describe('::withBuilderExtensions', () => {
 
     expect(() =>
       builder({ group: jest.fn() /* getInternalMethods */ } as any, false, undefined)
-    ).toThrow(ErrorMessage.UnexpectedValueFromInternalYargsMethod());
+    ).toThrow(BfeErrorMessage.UnexpectedValueFromInternalYargsMethod());
   });
 
   it('throws framework error if BF instance is missing parsed.defaulted sub-property', async () => {
@@ -4974,7 +5024,7 @@ describe('::withBuilderExtensions', () => {
         false,
         {} as any
       )
-    ).toThrow(': ' + ErrorMessage.UnexpectedlyFalsyDetailedArguments());
+    ).toThrow(': ' + BfeErrorMessage.UnexpectedlyFalsyDetailedArguments());
   });
 
   it('throws framework error if any option names, aliases, or expansions conflict', async () => {
@@ -4995,7 +5045,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { alias: 'a' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('a')
+        BfeErrorMessage.DuplicateOptionName('a')
       );
     }
 
@@ -5003,7 +5053,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: {}, b: { alias: 'a' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('a')
+        BfeErrorMessage.DuplicateOptionName('a')
       );
     }
 
@@ -5011,7 +5061,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ c: { alias: 'a' }, b: { alias: 'a' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('a')
+        BfeErrorMessage.DuplicateOptionName('a')
       );
     }
 
@@ -5022,7 +5072,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('cA')
+        BfeErrorMessage.DuplicateOptionName('cA')
       );
     }
 
@@ -5033,7 +5083,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('c-b')
+        BfeErrorMessage.DuplicateOptionName('c-b')
       );
     }
 
@@ -5044,7 +5094,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.DuplicateOptionName('cBA')
+        BfeErrorMessage.DuplicateOptionName('cBA')
       );
     }
   });
@@ -5067,7 +5117,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { requires: 'b' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5077,7 +5127,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { requires: ['b'] } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5085,7 +5135,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { requires: { b: 1 } } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5093,7 +5143,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { requires: [{ b: 1 }] } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5104,7 +5154,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'c')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'c')
       );
     }
 
@@ -5115,7 +5165,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'c')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'c')
       );
     }
 
@@ -5126,7 +5176,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5138,7 +5188,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'c')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'c')
       );
     }
 
@@ -5148,7 +5198,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { conflicts: 'b' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5156,7 +5206,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { implies: { b: true } } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5164,7 +5214,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { demandThisOptionIf: 'b' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5172,7 +5222,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { demandThisOptionOr: 'b' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
 
@@ -5180,7 +5230,7 @@ describe('::withBuilderExtensions', () => {
       const [builder] = withBuilderExtensions({ a: { demandThisOptionXor: 'b' } });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
-        ErrorMessage.ReferencedNonExistentOption('a', 'b')
+        BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
       );
     }
   });
@@ -5282,6 +5332,31 @@ describe('::withBuilderExtensions', () => {
         // * Second pass
         [['b'], 'Optional Options:'],
         [['help', 'version', 'a'], 'Common Options:']
+      ]);
+    });
+
+    it('can configure 0 common options', async () => {
+      expect.hasAssertions();
+
+      const mockGroupMethod = jest.fn();
+
+      const runner = makeMockBuilderRunner({
+        group: mockGroupMethod,
+        customBuilder: {
+          a: { requires: 'b' },
+          b: {}
+        },
+        builderExtensionsConfig: { commonOptions: [] }
+      });
+
+      const { handlerResult } = await runner({});
+
+      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(mockGroupMethod.mock.calls).toStrictEqual([
+        // * First pass
+        [['a', 'b'], 'Optional Options:'],
+        // * Second pass
+        [['a', 'b'], 'Optional Options:']
       ]);
     });
 
@@ -5755,14 +5830,14 @@ describe('::getInvocableExtendedHandler', () => {
       // @ts-expect-error: bad parameter
       getInvocableExtendedHandler(undefined, generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.FalsyCommandExport())
+      message: expect.stringContaining(': ' + BfeErrorMessage.FalsyCommandExport())
     });
 
     await expect(
       // @ts-expect-error: bad parameter
       getInvocableExtendedHandler(Promise.resolve(), generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.FalsyCommandExport())
+      message: expect.stringContaining(': ' + BfeErrorMessage.FalsyCommandExport())
     });
 
     await expect(
@@ -5772,7 +5847,7 @@ describe('::getInvocableExtendedHandler', () => {
         generateFakeExecutionContext()
       )
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.FalsyCommandExport())
+      message: expect.stringContaining(': ' + BfeErrorMessage.FalsyCommandExport())
     });
 
     await expect(
@@ -5782,7 +5857,7 @@ describe('::getInvocableExtendedHandler', () => {
         generateFakeExecutionContext()
       )
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.FalsyCommandExport())
+      message: expect.stringContaining(': ' + BfeErrorMessage.FalsyCommandExport())
     });
   });
 
@@ -5792,21 +5867,27 @@ describe('::getInvocableExtendedHandler', () => {
     await expect(
       getInvocableExtendedHandler({}, generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.CommandHandlerNotAFunction())
+      message: expect.stringContaining(
+        ': ' + BfeErrorMessage.CommandHandlerNotAFunction()
+      )
     });
 
     await expect(
       // @ts-expect-error: bad parameter
       getInvocableExtendedHandler({ command: false }, generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.CommandHandlerNotAFunction())
+      message: expect.stringContaining(
+        ': ' + BfeErrorMessage.CommandHandlerNotAFunction()
+      )
     });
 
     await expect(
       // @ts-expect-error: bad parameter
       getInvocableExtendedHandler({ command: {} }, generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.CommandHandlerNotAFunction())
+      message: expect.stringContaining(
+        ': ' + BfeErrorMessage.CommandHandlerNotAFunction()
+      )
     });
   });
 
@@ -5816,7 +5897,7 @@ describe('::getInvocableExtendedHandler', () => {
     await expect(
       getInvocableExtendedHandler(Promise.reject(), generateFakeExecutionContext())
     ).rejects.toMatchObject({
-      message: expect.stringContaining(': ' + ErrorMessage.FalsyCommandExport())
+      message: expect.stringContaining(': ' + BfeErrorMessage.FalsyCommandExport())
     });
   });
 });
@@ -6035,7 +6116,9 @@ test('example #1 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.ImpliesViolation('only-production', [['only-preview', true]])
+      message: BfeErrorMessage.ImpliesViolation('only-production', [
+        ['only-preview', true]
+      ])
     });
   }
 
@@ -6050,7 +6133,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6066,7 +6149,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('to-path', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('to-path', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6082,7 +6165,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6110,7 +6193,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6125,7 +6208,9 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('to-path', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('to-path', [
+        ['target', DeployTarget.Ssh]
+      ])
     });
   }
 
@@ -6141,7 +6226,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6158,7 +6243,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6173,7 +6258,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('only-preview', [
+      message: BfeErrorMessage.RequiresViolation('only-preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6190,7 +6275,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('only-preview', [
+      message: BfeErrorMessage.RequiresViolation('only-preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6204,7 +6289,7 @@ test('example #1 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('only-production', [
+      message: BfeErrorMessage.RequiresViolation('only-production', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6221,7 +6306,7 @@ test('example #1 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('only-preview', [
+      message: BfeErrorMessage.RequiresViolation('only-preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6526,7 +6611,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6541,7 +6626,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('to-path', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('to-path', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6556,7 +6641,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
+      message: BfeErrorMessage.DemandIfViolation('host', ['target', DeployTarget.Ssh])
     });
   }
 
@@ -6582,7 +6667,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6596,7 +6681,9 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('to-path', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('to-path', [
+        ['target', DeployTarget.Ssh]
+      ])
     });
   }
 
@@ -6611,7 +6698,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6627,7 +6714,7 @@ test('example #2 functions as expected', async () => {
     );
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
+      message: BfeErrorMessage.RequiresViolation('host', [['target', DeployTarget.Ssh]])
     });
   }
 
@@ -6638,7 +6725,7 @@ test('example #2 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('preview', [
+      message: BfeErrorMessage.RequiresViolation('preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6651,7 +6738,7 @@ test('example #2 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('preview', [
+      message: BfeErrorMessage.RequiresViolation('preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6665,7 +6752,7 @@ test('example #2 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('production', [
+      message: BfeErrorMessage.RequiresViolation('production', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6678,7 +6765,7 @@ test('example #2 functions as expected', async () => {
     });
 
     expect(handlerResult).toMatchObject({
-      message: ErrorMessage.RequiresViolation('preview', [
+      message: BfeErrorMessage.RequiresViolation('preview', [
         ['target', DeployTarget.Vercel]
       ])
     });
@@ -6906,13 +6993,13 @@ it('subOptionOf examples function as expected', async () => {
     });
 
     expect(result1).toMatchObject({
-      message: ErrorMessage.ImpliesViolation('generate-types', [
+      message: BfeErrorMessage.ImpliesViolation('generate-types', [
         ['skip-output-checks', false]
       ])
     });
 
     expect(result2).toMatchObject({
-      message: ErrorMessage.ImpliesViolation('skip-output-checks', [
+      message: BfeErrorMessage.ImpliesViolation('skip-output-checks', [
         ['skip-output-checks', false]
       ])
     });
@@ -6966,16 +7053,12 @@ function makeMockBuilderRunner({
       }
     };
 
-    const argv: Arguments = Object.assign(
-      {
-        _: [],
-        $0: 'fake'
-      },
-      dummyArgv,
-      {
-        [$executionContext]: deepMerge(generateFakeExecutionContext(), context)
-      }
-    );
+    const argv: Arguments = {
+      _: [],
+      $0: 'fake',
+      ...dummyArgv,
+      [$executionContext]: deepMerge(generateFakeExecutionContext(), context)
+    };
 
     const [builder, withHandlerExtensions] = withBuilderExtensions(
       customBuilder,

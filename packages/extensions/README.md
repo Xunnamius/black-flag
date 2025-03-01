@@ -31,25 +31,18 @@ A collection of set-theoretic declarative-first APIs for yargs and <a href="http
 
 <!-- symbiote-template-region-end -->
 
-Black Flag Extensions (BFE) is a collection of high-order functions that wrap
-Black Flag commands' exports to provide a bevy of new declarative features, some
-of which are heavily inspired by [yargs's GitHub Issues reports][1]. It's like
-type-fest or jest-extended, but for Black Flag and yargs!
-
-The goal of these extensions is to collect validation behavior that I find
-myself constantly re-implementing while also standardizing my workarounds for a
-few of yargs's rough edges. That said, it's important to note that BFE does not
-represent a complete propositional logic and so cannot describe every possible
-relation between arguments. Nor should it; BFE makes it easy to fall back to
-using the yargs API imperatively when required.
+Black Flag Extensions (BFE) is a collection of surprisingly simple set-theoretic
+APIs that wrap Black Flag commands' exports to provide a bevy of new declarative
+features, some of which are heavily inspired by [yargs's GitHub Issues
+reports][1]. It's like type-fest or jest-extended, but for Black Flag and yargs!
 
 In exchange for straying a bit from the vanilla yargs API, BFE greatly increases
 Black Flag's declarative powers.
 
-> [!NOTE]
->
-> See also: [why are @black-flag/extensions and @black-flag/core separate
-> packages?][2]
+Note that BFE does not represent a [complete][2] [propositional logic][57] and
+so cannot describe every possible relation between arguments. Nor should it; BFE
+makes it easy to fall back to using the yargs API imperatively in those rare
+instances it's necessary.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -2270,7 +2263,7 @@ See the [table of contributors][x-repo-contributors].
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
 [1]: https://github.com/yargs/yargs/issues
-[2]: #black-flag-versus-black-flag-extensions
+[2]: https://en.wikipedia.org/wiki/Completeness_(logic)
 [3]: #differences-between-black-flag-extensions-and-yargs
 [4]: ./docs/src/functions/withBuilderExtensions.md
 [5]:
@@ -2335,3 +2328,4 @@ See the [table of contributors][x-repo-contributors].
 [55]: https://yargs.js.org/docs#api-reference-coercekey-fn
 [56]:
   https://github.com/Xunnamius/black-flag/blob/main/docs/index/functions/runProgram.md
+[57]: https://en.wikipedia.org/wiki/Propositional_calculus

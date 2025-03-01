@@ -11,15 +11,15 @@ import { createDebugLogger } from 'rejoinder';
 // {@symbiote/notInvalid yargs}
 import makeVanillaYargs from 'yargs/yargs';
 
-import { globalDebuggerNamespace } from 'universe:constant.ts';
-import { ErrorMessage } from 'universe:error.ts';
+import { globalDebuggerNamespace } from 'universe+extensions:constant.ts';
+import { BfeErrorMessage } from 'universe+extensions:error.ts';
 
 import {
   $artificiallyInvoked,
   $canonical,
   $exists,
   $genesis
-} from 'universe:symbols.ts';
+} from 'universe+extensions:symbols.ts';
 
 import type {
   Arguments,
@@ -44,7 +44,7 @@ import type {
 // ? We use the version of yargs bundled with black flag
 // {@symbiote/notInvalid yargs}
 import type { ParserConfigurationOptions } from 'yargs';
-import type { KeyValueEntry } from 'universe:error.ts';
+import type { KeyValueEntry } from 'universe+extensions:error.ts';
 
 /**
  * Internal metadata derived from analysis of a {@link BfeBuilderObject}.
@@ -152,7 +152,7 @@ type FlattenedExtensionValue = Record<
   BfeBuilderObjectValueExtensionObject[string] | typeof $exists
 > & { [$genesis]?: string };
 
-export { $artificiallyInvoked, ErrorMessage as BfeErrorMessage };
+export { $artificiallyInvoked, BfeErrorMessage };
 
 /**
  * The function type of the `builder` export accepted by Black Flag.
@@ -739,11 +739,11 @@ export function withBuilderExtensions<
     disableAutomaticGrouping = false
   }: WithBuilderExtensionsConfig<CustomCliArguments> = {}
 ): WithBuilderExtensionsReturnType<CustomCliArguments, CustomExecutionContext> {
-  const wbeDebug = createDebugLogger({
+  const xbuilderDebug = createDebugLogger({
     namespace: `${globalDebuggerNamespace}:withBuilderExtensions`
   });
 
-  wbeDebug('entered withBuilderExtensions function');
+  xbuilderDebug('entered withBuilderExtensions function');
 
   // * Defined by second-pass builder; used by handler
   let optionsMetadata: OptionsMetadata | undefined = undefined;
@@ -767,19 +767,19 @@ export function withBuilderExtensions<
   let previousBfParserConfiguration: Partial<ParserConfigurationOptions> | undefined =
     undefined;
 
-  wbeDebug('exited withBuilderExtensions function');
+  xbuilderDebug('exited withBuilderExtensions function');
 
   return [
     function builder(blackFlag, helpOrVersionSet, argv) {
-      const debug = wbeDebug.extend('builder');
+      const builderDebug = xbuilderDebug.extend('builder');
       const isFirstPass = !argv;
       const isSecondPass = !isFirstPass;
 
-      debug('entered withBuilderExtensions::builder wrapper function');
+      builderDebug('entered withBuilderExtensions::builder wrapper function');
 
-      debug('isFirstPass: %O', isFirstPass);
-      debug('isSecondPass: %O', isSecondPass);
-      debug('current argv: %O', argv);
+      builderDebug('isFirstPass: %O', isFirstPass);
+      builderDebug('isSecondPass: %O', isSecondPass);
+      builderDebug('current argv: %O', argv);
 
       let defaultedOptions: Record<string, true> | undefined = undefined;
 
@@ -790,7 +790,10 @@ export function withBuilderExtensions<
           }
         ).parsed?.defaulted;
 
-        assertHard(defaultedOptions, ErrorMessage.UnexpectedlyFalsyDetailedArguments());
+        hardAssert(
+          defaultedOptions,
+          BfeErrorMessage.UnexpectedlyFalsyDetailedArguments()
+        );
 
         // ? We delete defaulted arguments from argv so that the end developer's
         // ? custom builder doesn't see them either (includes expansions/aliases)
@@ -799,7 +802,7 @@ export function withBuilderExtensions<
 
       latestBfInstance = blackFlag as unknown as EffectorProgram;
 
-      debug('calling customBuilder (if a function) and returning builder object');
+      builderDebug('calling customBuilder (if a function) and returning builder object');
       // ? We make a deep clone of whatever options object we're passed
       // ? since there's a good chance we may be committing some light mutating
       const builderObject = safeDeepClone(
@@ -818,7 +821,7 @@ export function withBuilderExtensions<
           : customBuilder) || {}
       );
 
-      debug('builderObject: %O', builderObject);
+      builderDebug('builderObject: %O', builderObject);
 
       if (isSecondPass) {
         // * Apply the subOptionOf key per option config and then elide it
@@ -826,12 +829,12 @@ export function withBuilderExtensions<
           const { subOptionOf } = subOptionConfig;
 
           if (subOptionOf) {
-            debug('evaluating suboption configuration for %O', subOption);
+            builderDebug('evaluating suboption configuration for %O', subOption);
 
             Object.entries(subOptionOf).forEach(([superOption, updaters_]) => {
               const updaters = [updaters_].flat();
 
-              debug(
+              builderDebug(
                 'saw entry for super-option %O (%O potential updates)',
                 superOption,
                 updaters.length
@@ -844,14 +847,14 @@ export function withBuilderExtensions<
                       ? update(subOptionConfig, argv)
                       : update;
 
-                  debug(
+                  builderDebug(
                     'accepted configuration update #%o to suboption %O: %O',
                     index + 1,
                     subOption,
                     subOptionConfig
                   );
                 } else {
-                  debug(
+                  builderDebug(
                     'rejected configuration update #%o to suboption %O: when() returned falsy',
                     index + 1,
                     subOption
@@ -861,7 +864,10 @@ export function withBuilderExtensions<
             });
 
             builderObject[subOption] = subOptionConfig;
-            debug('applied suboption configuration for %O', builderObject[subOption]);
+            builderDebug(
+              'applied suboption configuration for %O',
+              builderObject[subOption]
+            );
           }
 
           delete subOptionConfig.subOptionOf;
@@ -875,11 +881,11 @@ export function withBuilderExtensions<
         parserConfiguration
       });
 
-      debug('option local metadata: %O', optionLocalMetadata);
+      builderDebug('option local metadata: %O', optionLocalMetadata);
 
       // * Automatic grouping happens on both first pass and second pass
       if (!disableAutomaticGrouping) {
-        debug(
+        builderDebug(
           `commencing automatic options grouping (${isFirstPass ? 'first' : 'second'} pass)`
         );
 
@@ -893,7 +899,7 @@ export function withBuilderExtensions<
 
         if (demanded.length) {
           blackFlag.group(demanded, 'Required Options:');
-          debug('added "Required" grouping: %O', demanded);
+          builderDebug('added "Required" grouping: %O', demanded);
         }
 
         demandedAtLeastOne.forEach((group, index) => {
@@ -905,7 +911,11 @@ export function withBuilderExtensions<
             `Required Options ${demandedAtLeastOne.length > 1 ? `${count} ` : ''}(at least one):`
           );
 
-          debug(`added "Required (at least one)" grouping #%O: %O`, count, options);
+          builderDebug(
+            `added "Required (at least one)" grouping #%O: %O`,
+            count,
+            options
+          );
         });
 
         demandedMutuallyExclusive.forEach((group, index) => {
@@ -917,7 +927,7 @@ export function withBuilderExtensions<
             `Required Options ${demandedAtLeastOne.length > 1 ? `${count} ` : ''}(mutually exclusive):`
           );
 
-          debug(
+          builderDebug(
             `added "Required (mutually exclusive)" grouping #%O: %O`,
             count,
             options
@@ -926,43 +936,43 @@ export function withBuilderExtensions<
 
         for (const [groupName, options] of Object.entries(customGroups)) {
           blackFlag.group(options, groupName);
-          debug(`added custom "${groupName}" grouping: %O`, options);
+          builderDebug(`added custom "${groupName}" grouping: %O`, options);
         }
 
         if (optional.length) {
           blackFlag.group(optional, 'Optional Options:');
-          debug('added "Optional" grouping: %O', optional);
+          builderDebug('added "Optional" grouping: %O', optional);
         }
 
         if (commonOptions.length) {
           const commonOptions_ = commonOptions.map((o) => String(o));
           blackFlag.group(commonOptions_, 'Common Options:');
-          debug('added "Common" grouping: %O', commonOptions_);
+          builderDebug('added "Common" grouping: %O', commonOptions_);
         }
       } else {
-        debug(
+        builderDebug(
           `automatic options grouping disabled (at ${isFirstPass ? 'first' : 'second'} pass)`
         );
       }
 
       if (isSecondPass) {
         optionsMetadata = optionLocalMetadata;
-        debug('stored option local metadata => option metadata');
+        builderDebug('stored option local metadata => option metadata');
       }
 
       previousBfBuilderObject = builderObject;
       previousBfParserConfiguration = parserConfiguration;
 
-      debug('stored previousBfBuilderObject and previousBfParserConfiguration');
-      debug('transmuting BFE builder to BF builder');
+      builderDebug('stored previousBfBuilderObject and previousBfParserConfiguration');
+      builderDebug('transmuting BFE builder to BF builder');
 
       const finalBuilderObject = transmuteBFEBuilderToBFBuilder({
         builderObject,
         deleteGroupProps: !disableAutomaticGrouping
       });
 
-      debug('final transmuted builderObject: %O', finalBuilderObject);
-      debug('exited withBuilderExtensions::builder wrapper function');
+      builderDebug('final transmuted builderObject: %O', finalBuilderObject);
+      builderDebug('exited withBuilderExtensions::builder wrapper function');
 
       return finalBuilderObject;
     },
@@ -975,7 +985,7 @@ export function withBuilderExtensions<
         debug('entered withHandlerExtensions::handler wrapper function');
         debug('option metadata: %O', optionsMetadata);
 
-        assertHard(optionsMetadata, ErrorMessage.IllegalHandlerInvocation());
+        hardAssert(optionsMetadata, BfeErrorMessage.IllegalHandlerInvocation());
 
         debug('real argv: %O', realArgv);
 
@@ -994,9 +1004,9 @@ export function withBuilderExtensions<
           ).parsed?.defaulted;
 
           debug('defaultedOptions: %O', defaultedOptions);
-          assertHard(
+          hardAssert(
             defaultedOptions,
-            ErrorMessage.UnexpectedlyFalsyDetailedArguments()
+            BfeErrorMessage.UnexpectedlyFalsyDetailedArguments()
           );
 
           deleteDefaultedArguments({ argv: realArgv, defaultedOptions });
@@ -1018,9 +1028,9 @@ export function withBuilderExtensions<
 
           // * Run requires checks
           optionsMetadata.required.forEach(({ [$genesis]: requirer, ...requireds }) => {
-            assertHard(
+            hardAssert(
               requirer !== undefined,
-              ErrorMessage.MetadataInvariantViolated('requires')
+              BfeErrorMessage.MetadataInvariantViolated('requires')
             );
 
             if (canonicalArgv.has(requirer)) {
@@ -1045,9 +1055,9 @@ export function withBuilderExtensions<
                 }
               });
 
-              assertSoft(
+              softAssert(
                 !missingRequiredKeyValues.length,
-                ErrorMessage.RequiresViolation(requirer, missingRequiredKeyValues)
+                BfeErrorMessage.RequiresViolation(requirer, missingRequiredKeyValues)
               );
             }
           });
@@ -1055,9 +1065,9 @@ export function withBuilderExtensions<
           // * Run conflicts checks
           optionsMetadata.conflicted.forEach(
             ({ [$genesis]: conflicter, ...conflicteds }) => {
-              assertHard(
+              hardAssert(
                 conflicter !== undefined,
-                ErrorMessage.MetadataInvariantViolated('conflicts')
+                BfeErrorMessage.MetadataInvariantViolated('conflicts')
               );
 
               if (canonicalArgv.has(conflicter)) {
@@ -1082,9 +1092,12 @@ export function withBuilderExtensions<
                   }
                 });
 
-                assertSoft(
+                softAssert(
                   !seenConflictingKeyValues.length,
-                  ErrorMessage.ConflictsViolation(conflicter, seenConflictingKeyValues)
+                  BfeErrorMessage.ConflictsViolation(
+                    conflicter,
+                    seenConflictingKeyValues
+                  )
                 );
               }
             }
@@ -1093,9 +1106,9 @@ export function withBuilderExtensions<
           // * Run demandThisOptionIf checks
           optionsMetadata.demandedIf.forEach(
             ({ [$genesis]: demanded, ...demanders }) => {
-              assertHard(
+              hardAssert(
                 demanded !== undefined,
-                ErrorMessage.MetadataInvariantViolated('demandThisOptionIf')
+                BfeErrorMessage.MetadataInvariantViolated('demandThisOptionIf')
               );
 
               const sawDemanded = canonicalArgv.has(demanded);
@@ -1115,9 +1128,9 @@ export function withBuilderExtensions<
                     (!givenValueIsArray &&
                       isDeepStrictEqual(givenValue, demanderValue)));
 
-                assertSoft(
+                softAssert(
                   !sawADemander || sawDemanded,
-                  ErrorMessage.DemandIfViolation(demanded, demander)
+                  BfeErrorMessage.DemandIfViolation(demanded, demander)
                 );
               });
             }
@@ -1140,7 +1153,7 @@ export function withBuilderExtensions<
               );
             });
 
-            assertSoft(sawAtLeastOne, ErrorMessage.DemandOrViolation(groupEntries));
+            softAssert(sawAtLeastOne, BfeErrorMessage.DemandOrViolation(groupEntries));
           });
 
           // * Run demandThisOptionXor checks
@@ -1161,9 +1174,9 @@ export function withBuilderExtensions<
                   (!givenValueIsArray && isDeepStrictEqual(givenValue, value)))
               ) {
                 if (sawAtLeastOne !== undefined) {
-                  assertSoft(
+                  softAssert(
                     false,
-                    ErrorMessage.DemandSpecificXorViolation(sawAtLeastOne, keyValue)
+                    BfeErrorMessage.DemandSpecificXorViolation(sawAtLeastOne, keyValue)
                   );
                 }
 
@@ -1171,9 +1184,9 @@ export function withBuilderExtensions<
               }
             });
 
-            assertSoft(
+            softAssert(
               sawAtLeastOne,
-              ErrorMessage.DemandGenericXorViolation(groupEntries)
+              BfeErrorMessage.DemandGenericXorViolation(groupEntries)
             );
           });
 
@@ -1188,9 +1201,9 @@ export function withBuilderExtensions<
               [$canonical]: canonicalImplications,
               ...expandedImplications
             }) => {
-              assertHard(
+              hardAssert(
                 implier !== undefined,
-                ErrorMessage.MetadataInvariantViolated('implies')
+                BfeErrorMessage.MetadataInvariantViolated('implies')
               );
 
               if (
@@ -1215,9 +1228,9 @@ export function withBuilderExtensions<
                     }
                   });
 
-                  assertSoft(
+                  softAssert(
                     !seenConflictingKeyValues.length,
-                    ErrorMessage.ImpliesViolation(implier, seenConflictingKeyValues)
+                    BfeErrorMessage.ImpliesViolation(implier, seenConflictingKeyValues)
                   );
                 }
               }
@@ -1227,7 +1240,11 @@ export function withBuilderExtensions<
           Object.assign(
             realArgv,
             // ? given overrides implied > overrides defaults > merged into argv
-            Object.assign({}, optionsMetadata.defaults, impliedKeyValues, realArgv)
+            {
+              ...optionsMetadata.defaults,
+              ...impliedKeyValues,
+              ...realArgv
+            }
           );
 
           debug('final argv (defaults and implies merged): %O', realArgv);
@@ -1241,18 +1258,26 @@ export function withBuilderExtensions<
             if (currentArgument in realArgv) {
               const checkFunctions = [checkFunctions_].flat();
 
+              // ? When we receive an array of normal functions, this construct
+              // ? should be synchronous due to the rules of JavaScript!
               // eslint-disable-next-line no-await-in-loop
               await Promise.all(
                 checkFunctions.map(async (checkFn) => {
-                  // ! check functions might return a promise, so WATCH OUT!
-                  const result = await checkFn(realArgv[currentArgument], realArgv);
+                  let result;
+
+                  try {
+                    // ! check functions might return a promise, so WATCH OUT!
+                    result = await checkFn(realArgv[currentArgument], realArgv);
+                  } catch (error) {
+                    result = error;
+                  }
 
                   if (!result || typeof result === 'string' || isNativeError(result)) {
                     throw isCliError(result)
                       ? result
                       : new CliError(
                           (result as string | Error | false) ||
-                            ErrorMessage.CheckFailed(currentArgument)
+                            BfeErrorMessage.CheckFailed(currentArgument)
                         );
                   }
                 })
@@ -1282,8 +1307,8 @@ export function withBuilderExtensions<
     argv: Arguments<CustomCliArguments, CustomExecutionContext>;
     defaultedOptions: Record<string, true>;
   }): void {
-    assertHard(previousBfBuilderObject, ErrorMessage.GuruMeditation());
-    assertHard(previousBfParserConfiguration, ErrorMessage.GuruMeditation());
+    hardAssert(previousBfBuilderObject, BfeErrorMessage.GuruMeditation());
+    hardAssert(previousBfParserConfiguration, BfeErrorMessage.GuruMeditation());
 
     Object.keys(defaultedOptions).forEach((defaultedOption) => {
       expandOptionNameAndAliasesWithRespectToParserConfiguration({
@@ -1398,13 +1423,16 @@ export async function getInvocableExtendedHandler<
     >;
   } catch (error) {
     // ? We do this instead of a hard assert because we want to track the cause
-    throw new CliError(ErrorMessage.FrameworkError(ErrorMessage.FalsyCommandExport()), {
-      cause: error,
-      suggestedExitCode: FrameworkExitCode.AssertionFailed
-    });
+    throw new CliError(
+      BfeErrorMessage.FrameworkError(BfeErrorMessage.FalsyCommandExport()),
+      {
+        cause: error,
+        suggestedExitCode: FrameworkExitCode.AssertionFailed
+      }
+    );
   }
 
-  assertHard(command, ErrorMessage.FalsyCommandExport());
+  hardAssert(command, BfeErrorMessage.FalsyCommandExport());
 
   // ? ESM <=> CJS interop. If there's a default property, we'll use it.
   if (command.default !== undefined) {
@@ -1424,10 +1452,10 @@ export async function getInvocableExtendedHandler<
     config = await command(context);
   } else {
     // ! We cannot trust the type of command if we've reached this point
-    assertHard(
+    hardAssert(
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       command && typeof command === 'object',
-      ErrorMessage.FalsyCommandExport()
+      BfeErrorMessage.FalsyCommandExport()
     );
 
     // * Now we can trust its type :)
@@ -1435,7 +1463,7 @@ export async function getInvocableExtendedHandler<
   }
 
   const { builder, handler } = config;
-  assertHard(handler, ErrorMessage.CommandHandlerNotAFunction());
+  hardAssert(handler, BfeErrorMessage.CommandHandlerNotAFunction());
 
   debug('returned immediately invocable handler function');
 
@@ -1460,6 +1488,7 @@ export async function getInvocableExtendedHandler<
         configuration: new Proxy(
           {} as Exclude<typeof dummyYargs.parsed, boolean>['configuration'],
           {
+            /* istanbul ignore next */
             get() {
               return true;
             }
@@ -1598,9 +1627,11 @@ function analyzeBuilderObject<
       allPossibleOptionNamesAndAliasesSet
     );
 
-    assertHard(
+    hardAssert(
       conflictingNamesSet.size === 0,
-      ErrorMessage.DuplicateOptionName(getFirstValueFromNonEmptySet(conflictingNamesSet))
+      BfeErrorMessage.DuplicateOptionName(
+        getFirstValueFromNonEmptySet(conflictingNamesSet)
+      )
     );
 
     metadata.optionNames = metadata.optionNames.union(
@@ -1797,33 +1828,33 @@ function expandOptionNameAndAliasesWithRespectToParserConfiguration({
   return expandedNamesSet;
 
   function add(name: string) {
-    assertHard(!expandedNamesSet.has(name), ErrorMessage.DuplicateOptionName(name));
+    hardAssert(!expandedNamesSet.has(name), BfeErrorMessage.DuplicateOptionName(name));
     expandedNamesSet.add(name);
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getParserConfigurationFromBlackFlagInstance(blackFlag: any) {
-  assertHard(
+  hardAssert(
     typeof blackFlag.getInternalMethods === 'function',
-    ErrorMessage.UnexpectedValueFromInternalYargsMethod()
+    BfeErrorMessage.UnexpectedValueFromInternalYargsMethod()
   );
 
   const yargsInternalMethods = blackFlag.getInternalMethods();
 
-  assertHard(
+  hardAssert(
     typeof yargsInternalMethods.getParserConfiguration === 'function',
-    ErrorMessage.UnexpectedValueFromInternalYargsMethod()
+    BfeErrorMessage.UnexpectedValueFromInternalYargsMethod()
   );
 
   const parserConfiguration: Partial<ParserConfigurationOptions> =
     yargsInternalMethods.getParserConfiguration();
 
-  assertHard(
+  hardAssert(
     // ! We cannot trust the type of parserConfiguration, hence the next line:
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     parserConfiguration && typeof parserConfiguration === 'object',
-    ErrorMessage.UnexpectedValueFromInternalYargsMethod()
+    BfeErrorMessage.UnexpectedValueFromInternalYargsMethod()
   );
 
   return parserConfiguration;
@@ -1887,9 +1918,9 @@ function separateExtensionsFromBuilderObjectValue<
     subOptionOf
   };
 
-  assertHard(
+  hardAssert(
     !('default' in builderObjectValue) || default_ !== undefined,
-    ErrorMessage.IllegalExplicitlyUndefinedDefault()
+    BfeErrorMessage.IllegalExplicitlyUndefinedDefault()
   );
 
   return [
@@ -1919,9 +1950,9 @@ function validateAndFlattenExtensionValue(
   }
 
   Object.keys(mergedConfig).forEach((referredOptionName) => {
-    assertHard(
+    hardAssert(
       referredOptionName in builderObject,
-      ErrorMessage.ReferencedNonExistentOption(optionName, referredOptionName)
+      BfeErrorMessage.ReferencedNonExistentOption(optionName, referredOptionName)
     );
   });
 
@@ -1976,9 +2007,10 @@ function getFirstValueFromNonEmptySet<T extends Set<unknown>>(
  * Copied over from cli-utils to break a dependency cycle.
  * @internal
  */
-function assertSoft(valueOrMessage: unknown, message?: string): asserts valueOrMessage {
+function softAssert(valueOrMessage: unknown, message?: string): asserts valueOrMessage {
   let shouldThrow = true;
 
+  /* istanbul ignore next*/
   if (typeof message === 'string') {
     const value = valueOrMessage;
     shouldThrow = !value;
@@ -1995,9 +2027,10 @@ function assertSoft(valueOrMessage: unknown, message?: string): asserts valueOrM
  * Copied over from cli-utils to break a dependency cycle.
  * @internal
  */
-function assertHard(valueOrMessage: unknown, message?: string): asserts valueOrMessage {
+function hardAssert(valueOrMessage: unknown, message?: string): asserts valueOrMessage {
   let shouldThrow = true;
 
+  /* istanbul ignore next*/
   if (typeof message === 'string') {
     const value = valueOrMessage;
     shouldThrow = !value;
@@ -2006,7 +2039,7 @@ function assertHard(valueOrMessage: unknown, message?: string): asserts valueOrM
   }
 
   if (shouldThrow) {
-    throw new CliError(ErrorMessage.FrameworkError(message), {
+    throw new CliError(BfeErrorMessage.FrameworkError(message), {
       suggestedExitCode: FrameworkExitCode.AssertionFailed
     });
   }
