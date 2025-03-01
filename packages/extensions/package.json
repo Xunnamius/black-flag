@@ -72,7 +72,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
-    "core-js": "^3.40.0",
+    "core-js": "^3.41.0",
     "lodash.camelcase": "^4.3.0",
     "lodash.clone": "^4.5.0",
     "lodash.clonedeepwith": "^4.5.0",
