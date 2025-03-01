@@ -85,18 +85,16 @@ export function capitalize(str: string) {
   return (str.at(0)?.toUpperCase() || '') + str.slice(1);
 }
 
-function assertMinimumNodeJsVersion() {
-  assert(
-    // ? So we don't throw in non-Nodejs runtimes
-    !process ||
-      !process.versions ||
-      !process.versions.node ||
-      satisfies(process.versions.node, packageEngines.node),
-    new AssertionFailedError(
-      ErrorMessage.AssertionUnsupportedNodeVersion(
-        process.versions.node,
-        packageEngines.node
-      )
-    )
-  );
+/**
+ * Accepts an `error` and returns the value of its `.cause` property if (1)
+ * `error` extends {@link Error} and (2) the `.cause` property exists and is not
+ * falsy; otherwise, `error` itself is returned. This action is performed
+ * recursively (.e.g. `error.cause.cause.cause...`) until a value without a
+ * non-falsy `.cause` property is encountered.
+ *
+ * This function can be used to extract the true cause of a `CliError` and/or
+ * nested `Error`s.
+ */
+export function getDeepestErrorCause(error: unknown): unknown {
+  return isNativeError(error) && error.cause ? getDeepestErrorCause(error.cause) : error;
 }
