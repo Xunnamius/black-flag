@@ -8,9 +8,11 @@ import {
 
 import { FrameworkExitCode } from 'universe:constant.ts';
 
-// ? This import is referenced in a type comment
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { runProgram } from 'universe:util.ts';
+import type {
+  // ? This import is referenced in a type comment
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  runProgram
+} from 'universe';
 
 // TODO: replace a lot of all that follows with the official package(s),
 // TODO: including the symbol use below
@@ -160,7 +162,7 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
     message =
       message ??
       (typeof reason === 'string' ? reason : reason?.message) ??
-      ErrorMessage.Generic();
+      BfErrorMessage.Generic();
 
     if (!('cause' in options)) {
       cause = typeof reason === 'string' ? undefined : reason;
@@ -189,13 +191,15 @@ makeNamedError(CliError, 'CliError');
 // TODO: replace with named-app-error (or whatever it's called now) class
 export class CommandNotImplementedError extends CliError {
   // TODO: this prop should be added by makeNamedError or whatever other fn
-  [$type] = ['CommandNotImplementedError', 'CliError'];
+  override [$type] = ['CommandNotImplementedError', 'CliError'];
   /**
    * Represents trying to execute a CLI command that has not yet been
    * implemented.
    */
-  constructor() {
-    super(ErrorMessage.CommandNotImplemented(), {
+  constructor(error?: Error, options?: CliErrorOptions) {
+    super(error ? error.message : BfErrorMessage.CommandNotImplemented(), {
+      ...(error ? { cause: error } : {}),
+      ...options,
       suggestedExitCode: FrameworkExitCode.NotImplemented
     });
   }
@@ -206,18 +210,26 @@ makeNamedError(CommandNotImplementedError, 'CommandNotImplementedError');
  * Represents an exceptional event that should result in the immediate
  * termination of the application but with an exit code indicating success
  * (`0`).
+ *
+ * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
+ * ignored.
  */
 // TODO: replace with named-app-error (or whatever it's called now) class
 export class GracefulEarlyExitError extends CliError {
   // TODO: this prop should be added by makeNamedError or whatever other fn
-  [$type] = ['GracefulEarlyExitError', 'CliError'];
+  override [$type] = ['GracefulEarlyExitError', 'CliError'];
   /**
    * Represents an exceptional event that should result in the immediate
    * termination of the application but with an exit code indicating success
    * (`0`).
+   *
+   * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
+   * ignored.
    */
-  constructor() {
-    super(ErrorMessage.GracefulEarlyExit(), {
+  constructor(error?: Error, options?: CliErrorOptions) {
+    super(error ? error.message : BfErrorMessage.GracefulEarlyExit(), {
+      ...(error ? { cause: error } : {}),
+      ...options,
       suggestedExitCode: FrameworkExitCode.Ok,
       // * Is ignored by runProgram anyway
       dangerouslyFatal: false
@@ -232,14 +244,25 @@ makeNamedError(GracefulEarlyExitError, 'GracefulEarlyExitError');
 // TODO: replace with named-app-error (or whatever it's called now) class
 export class AssertionFailedError extends CliError {
   // TODO: this prop should be added by makeNamedError or whatever other fn
-  [$type] = ['AssertionFailedError', 'CliError'];
+  override [$type] = ['AssertionFailedError', 'CliError'];
   /**
    * Represents a failed sanity check.
    */
-  constructor(message: string) {
-    super(message, {
-      suggestedExitCode: FrameworkExitCode.AssertionFailed
-    });
+  constructor(error: Error, options?: CliErrorOptions);
+  constructor(message: string, options?: CliErrorOptions);
+  constructor(errorOrMessage?: Error | string, options?: CliErrorOptions);
+  /**
+   * Represents a failed sanity check.
+   */
+  constructor(errorOrMessage?: Error | string, options?: CliErrorOptions) {
+    super(
+      typeof errorOrMessage === 'string' ? errorOrMessage : errorOrMessage?.message,
+      {
+        ...options,
+        suggestedExitCode: FrameworkExitCode.AssertionFailed,
+        cause: errorOrMessage
+      }
+    );
   }
 }
 makeNamedError(AssertionFailedError, 'AssertionFailedError');
@@ -248,7 +271,7 @@ makeNamedError(AssertionFailedError, 'AssertionFailedError');
  * A collection of possible error and warning messages emitted by Black Flag.
  */
 /* istanbul ignore next */
-export const ErrorMessage = {
+export const BfErrorMessage = {
   ...NamedErrorMessage,
   Generic() {
     return 'an error occurred that caused this software to crash';
@@ -260,7 +283,9 @@ export const ErrorMessage = {
     return 'invalid sub-command: you must call this with a valid sub-command argument';
   },
   FrameworkError(error: unknown) {
-    return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application.\nError: ${error}`;
+    return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application. For more information about this error, rerun the command with the DEBUG='bf:*' environment variable set.\n\nError: ${
+      isNativeError(error) ? error.stack || error : String(error)
+    }`;
   },
   GracefulEarlyExit() {
     return 'execution is ending exceptionally early, which is not a bad thing!';
@@ -271,13 +296,22 @@ export const ErrorMessage = {
   InvalidConfigureArgumentsReturnType() {
     return 'configureArguments must return typeof process.argv';
   },
+  InvalidConfigureExecutionEpilogueReturnType() {
+    return 'configureExecutionEpilogue must return Arguments';
+  },
   InvalidConfigureExecutionContextReturnType() {
     return 'configureExecutionContext must return ExecutionContext';
+  },
+  InvalidExecutionContextBadField(fieldName: string) {
+    return `encountered invalid or impossible value for ExecutionContext field "${fieldName}"`;
   },
   InvalidCharacters(str: string, violation: string) {
     return `string "${str}" contains one or more illegal characters: ${violation}`;
   },
-  AssertionFailureDuplicateCommandName(
+  PathIsNotDirectory() {
+    return 'path is not a directory';
+  },
+  DuplicateCommandName(
     parentFullName: string | undefined,
     name1: string,
     type1: 'name' | 'alias',
@@ -291,34 +325,25 @@ export const ErrorMessage = {
       ` attempting to register conflicting command names and/or aliases: "${name1}" (${type1}) conflicts with "${name2}" (${type2})`
     );
   },
-  AssertionFailureConfigureExecutionEpilogue() {
-    return 'configureExecutionEpilogue must return Arguments';
-  },
-  AssertionFailureInvalidCommandExport(name: string) {
+  InvalidCommandExport(name: string) {
     return `the ${name}'s command export must start with either "$0" or "$0 "`;
   },
-  AssertionFailureNoConfigurationLoaded(path: string) {
+  NoConfigurationLoaded(path: string) {
     return `auto-discovery failed to find any valid configuration files or directories at path: ${path}`;
   },
-  AssertionFailureBadConfigurationPath(path: unknown) {
-    return `auto-discovery failed because configuration module path is unreadable or does not exist: "${path}"`;
+  BadConfigurationPath(path: unknown) {
+    return `auto-discovery failed because configuration module path is unreadable or does not exist: "${String(path)}"`;
   },
-  AssertionFailureInvocationNotAllowed(name: string) {
+  InvocationNotAllowed(name: string) {
     return `invocation of method "${name}" is not allowed here. See documentation for details`;
   },
-  AssertionFailureCannotExecuteMultipleTimes() {
+  CannotExecuteMultipleTimes() {
     return 'yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
   },
-  AssertionFailureBadParameterCombination() {
+  BadParameterCombination() {
     return 'cannot provide both "configurationHooks" and "preExecutionContext" properties';
   },
-  AssertionFailureUseParseAsyncInstead() {
+  UseParseAsyncInstead() {
     return '"parseSync" is not supported. Use "parseAsync" instead';
-  },
-  AssertionFailureReachedTheUnreachable() {
-    return 'an unreachable block of code was somehow reached';
-  },
-  AssertionUnsupportedNodeVersion(currentVersion: string, validVersionRange: string) {
-    return `the current Node.js runtime version (${currentVersion}) is not supported by Black Flag; valid Node.js versions: ${validVersionRange}`;
   }
 };
