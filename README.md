@@ -36,50 +36,47 @@ capabilities with several powerful **declarative** features. It can be used to
 create simple single-level CLIs or deeply nested sprawling interfaces alike.
 
 Black Flag was built as a drop-in replacement for vanilla Yargs, specifically
-for users of [`yargs::commandDir()`][2].
+for users of [`yargs::commandDir()`][2]. Its features include:
 
-Its killer features include:
+- [Declarative-first APIs][6] ✨
+- [Zero configuration required][7] ✨
+- [It's still yargs all the way down][8] ✨ (nothing brand new to learn!)
+- [Built-in support for dynamic options][9] ✨ (a Yargs [white whale][11])
+- [Consistent and safe CLI execution][12] ✨
+- [Simple comprehensive error handling and reporting][13] ✨
+- [A pleasant unit, integration, and e2e testing experience][14] ✨
+- [Extensive intellisense support via TypeScript][15] ✨
 
-- [Declarative-first APIs](#declaratively-build-deep-command-hierarchies-) ✨
-- [Zero configuration required](#convention-over-configuration-) ✨
-- [It's still yargs all the way down](#its-yargs-all-the-way-down-) ✨ (nothing
-  brand new to learn!)
-- [Built-in support for dynamic options](#built-in-support-for-dynamic-options-)
-  ✨ (a Yargs [white whale](https://github.com/yargs/yargs/issues/793))
-- [Consistent and safe CLI execution](#run-your-tool-safely-and-consistently-)
-  ✨
-- [Simple comprehensive error handling and reporting](#simple-comprehensive-error-handling-and-reporting-)
-  ✨
-- [A pleasant unit, integration, and e2e testing experience](#a-pleasant-testing-experience-)
-  ✨
-- [Extensive intellisense support via TypeScript](#extensive-intellisense-support-)
-  ✨
+<br />
 
 Black Flag is tested on Ubuntu and Windows 10, and like Yargs tracks Node.js LTS
 versions.
 
-- [Quick start](#quick-start)
-- [Step-by-step getting started guide][28]
-- [Black Flag versus vanilla Yargs][5]
-- [Simple demo CLI project][10] (or `npx -p @black-flag/demo myctl --help`)
-- [Black Flag recipes for solving common CLI design problems](./examples)
-- [Yargs's intro documentation][5]
+<!-- prettier-ignore-start -->
+
+‌ ‌ ‌  ‌❖ ‌ ‌ [Quick start][16]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Step-by-step getting started guide][28]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag versus vanilla Yargs][5]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][10] (or `npx -p @black-flag/demo myctl --help`)\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][17]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Yargs's intro documentation][5]
+
+<!-- prettier-ignore-end -->
+
+<br />
 
 > [!TIP]
 >
 > If you find yourself a fan of Black Flag's more declarative DX and want to go
 > all the way, check out [Black Flag Extensions][3] (BFE). BFE is a collection
 > of surprisingly simple set-theoretic APIs that build on
-> [`yargs::options()`](https://yargs.js.org/docs/#api-reference-optionskey-opt)
-> for a **fully declarative developer experience**. BFE also protects you from
-> [a couple Yargs footguns][4] that Black Flag by itself cannot.
+> [`yargs::options()`][18] for a **fully declarative developer experience**. BFE
+> also protects you from [a couple Yargs footguns][4] that Black Flag by itself
+> cannot.
 >
-> You may also be interested in
-> [Black Flag Checks](https://github.com/Xunnamius/black-flag/blob/main/packages/checks)
-> (BFC), which offers several pluggable
-> [`yargs::check`](https://yargs.js.org/docs/#api-reference-checkfn-globaltrue)
-> functions—like `checkIsNotNegative` and `checkArrayNotEmpty`—built to work
-> with BFE.
+> You may also be interested in [Black Flag Checks][19] (BFC), which offers
+> several pluggable [`yargs::check`][20] functions—like `checkIsNotNegative` and
+> `checkArrayNotEmpty`—built to work with BFE.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -91,23 +88,9 @@ versions.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Install](#install)
-- [Features](#features)
-  - [Declaratively Build Deep Command Hierarchies ✨](#declaratively-build-deep-command-hierarchies-)
-  - [Built-In Support for Dynamic Options ✨](#built-in-support-for-dynamic-options-)
-  - [It's Yargs All the Way down ✨](#its-yargs-all-the-way-down-)
-  - [Run Your Tool Safely and Consistently ✨](#run-your-tool-safely-and-consistently-)
-  - [Convention over Configuration ✨](#convention-over-configuration-)
-  - [Simple Comprehensive Error Handling and Reporting ✨](#simple-comprehensive-error-handling-and-reporting-)
-  - [A Pleasant Testing Experience ✨](#a-pleasant-testing-experience-)
-  - [Built-In `debug` Integration for Runtime Insights ✨](#built-in-debug-integration-for-runtime-insights-)
-  - [Extensive Intellisense Support ✨](#extensive-intellisense-support-)
-- [Usage](#usage)
-  - [Building and Running Your CLI](#building-and-running-your-cli)
-  - [Testing Your CLI](#testing-your-cli)
+- [Quick Start](#quick-start)
 - [Appendix 🏴](#appendix-)
   - [Terminology](#terminology)
-  - [Differences between Black Flag and Yargs](#differences-between-black-flag-and-yargs)
-  - [Advanced Usage](#advanced-usage)
   - [Inspiration](#inspiration)
   - [Published Package Details](#published-package-details)
   - [License](#license)
@@ -146,7 +129,7 @@ See also:
 - [Step-by-step getting started guide][28]
 - [Black Flag versus vanilla Yargs][5]
 - [Simple demo CLI project][10] (or `npx -p @black-flag/demo myctl --help`)
-- [Black Flag recipes for solving common CLI design problems](./examples)
+- [Black Flag recipes for solving common CLI design problems][17]
 - [Yargs's intro documentation][5]
 
 For an example of a production CLI tool that puts Black Flag through its paces,
@@ -157,8 +140,8 @@ check out the source code for my meta project: [`@-xun/symbiote`][29].
 <!-- symbiote-template-region-end -->
 
 Further documentation can be found under [`docs/`][x-repo-docs] and
-[`docs/api`](./docs/api). Common CLI design "recipes" can be found under
-[`examples/`](./examples).
+[`docs/api`][21]. Common CLI design "recipes" can be found under
+[`examples/`][17].
 
 ### Terminology
 
@@ -365,68 +348,29 @@ specification. Contributions of any kind welcome!
 [3]: https://github.com/Xunnamius/black-flag/blob/main/packages/extensions
 [4]: #irrelevant-differences
 [5]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[6]: https://github.com/yargs/yargs/issues/793
-[7]:
-  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/api.md
-[8]: #differences-between-black-flag-and-yargs
+[6]: #declaratively-build-deep-command-hierarchies-
+[7]: #convention-over-configuration-
+[8]: #its-yargs-all-the-way-down-
 [9]: #built-in-support-for-dynamic-options-
 [10]: https://github.com/Xunnamius/black-flag-demo
-[11]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[12]: ./docs/index/functions/runProgram.md
-[13]:
-  https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[14]: ./docs/index/functions/configureProgram.md
-[15]: ./docs/util/type-aliases/PreExecutionContext.md
-[16]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[17]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
-[18]: ./docs/util/classes/AssertionFailedError.md
-[19]: ./docs/util/functions/makeRunner.md
-[20]: ./docs/index/enumerations/FrameworkExitCode.md
-[21]: #built-in-debug-integration-for-runtime-insights-
-[22]: https://www.npmjs.com/package/debug
-[23]: https://www.npmjs.com/package/debug#usage
-[24]: ./docs/index/type-aliases/RootConfiguration.md
-[25]: ./docs/index/type-aliases/ParentConfiguration.md
-[26]: ./docs/index/type-aliases/ChildConfiguration.md
+[11]: https://github.com/yargs/yargs/issues/793
+[12]: #run-your-tool-safely-and-consistently-
+[13]: #simple-comprehensive-error-handling-and-reporting-
+[14]: #a-pleasant-testing-experience-
+[15]: #extensive-intellisense-support-
+[16]: #quick-start
+[17]: ./examples
+[18]: https://yargs.js.org/docs#api-reference-optionskey-opt
+[19]: https://github.com/Xunnamius/black-flag/blob/main/packages/checks
+[20]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
+[21]: ./docs/api
 [27]: ./docs/index/type-aliases/Configuration.md
 [28]: #building-and-running-your-cli
 [29]: https://github.com/Xunnamius/symbiote/blob/main/src
-[30]: #features
-[31]: https://nodejs.org/api/packages.html#type
-[32]: ./docs/util/type-aliases/ExecutionContext.md
-[33]: ./docs/index/type-aliases/ConfigureExecutionContext.md
-[34]:
-  https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[35]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
-[36]: https://www.npmjs.com/package/alpha-sort
-[37]:
-  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
-[38]: https://www.npmjs.com/package/jest
-[39]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[40]: https://jestjs.io/docs/jest-object#jestresetmodules
-[41]: https://github.com/yargs/yargs/issues/2191
 [42]: #advanced-usage
 [43]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
 [44]: ./docs/util/type-aliases/Program.md
 [45]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[46]:
-  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
-[47]:
-  https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[48]: ./docs/index/type-aliases/ConfigureArguments.md
-[49]: https://github.com/yargs/yargs/issues/733
-[50]: https://github.com/yargs/yargs/issues/1323
-[51]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
-[52]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[53]: #generating-help-text
-[54]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
-[55]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
-[56]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
-[57]: https://github.com/yargs/yargs/issues/1137
-[58]: #execution-flow-diagram
-[59]: ./docs/util/type-aliases/ProgramMetadata.md
-[60]: ./example-1.png
-[61]: ./example-2.png
 [63]: https://xkcd.com/1205
 [64]: https://i.redd.it/0cm6yx27tez21.jpg
