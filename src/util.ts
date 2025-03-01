@@ -16,6 +16,9 @@ export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext 
   return (
     !!obj &&
     typeof obj === 'object' &&
+    'commands' in obj &&
+    'debug' in obj &&
+    'state' in obj &&
     'execute' in obj &&
     'rootPrograms' in obj &&
     'executionContext' in obj
@@ -26,11 +29,7 @@ export function isPreExecutionContext(obj: unknown): obj is PreExecutionContext 
  * Type-guard for {@link NullArguments}.
  */
 export function isNullArguments(obj: unknown): obj is NullArguments {
-  return (
-    isArguments(obj) &&
-    obj.$0 === '<NullArguments: no parse result available due to exception>' &&
-    obj._.length === 0
-  );
+  return isArguments(obj) && obj.$0 === nullArguments$0 && obj._.length === 0;
 }
 
 /**
@@ -43,7 +42,8 @@ export function isArguments(obj: unknown): obj is Arguments {
     '$0' in obj &&
     typeof obj.$0 === 'string' &&
     '_' in obj &&
-    Array.isArray(obj._)
+    Array.isArray(obj._) &&
+    $executionContext in obj
   );
 }
 
