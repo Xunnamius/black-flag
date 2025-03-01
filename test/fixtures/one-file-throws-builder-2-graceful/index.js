@@ -10,7 +10,7 @@ let called = false;
  * @type {Type.ConfigModule}
  */
 module.exports = async function () {
-  const GracefulEarlyExitError = (await import('universe/error')).GracefulEarlyExitError;
+  const GracefulEarlyExitError = (await import('universe:error.ts')).GracefulEarlyExitError;
 
   return {
     usage: `usage text for root program ${name}`,

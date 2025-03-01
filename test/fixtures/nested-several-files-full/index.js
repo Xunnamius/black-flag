@@ -14,7 +14,7 @@ const commandModule = {
   description: 'root program description text',
   handler: async (argv) => {
     argv.handled_by = __filename;
-    argv[(await import('universe/constant')).$executionContext].mutated_by = __filename;
+    argv[(await import('universe:constant.ts')).$executionContext].mutated_by = __filename;
   }
 };
 

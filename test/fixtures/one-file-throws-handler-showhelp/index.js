@@ -13,6 +13,6 @@ module.exports = {
     return blackFlag.option(name, { boolean: true });
   },
   handler: async (_argv) => {
-    throw new (await import('universe/error')).CliError('problems!', { showHelp: true });
+    throw new (await import('universe:error.ts')).CliError('problems!', { showHelp: true });
   }
 };

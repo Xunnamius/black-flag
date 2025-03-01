@@ -1,86 +1,76 @@
-/* eslint-disable jest/require-hook */
-/* eslint-disable jest/no-conditional-in-test, jest/no-conditional-expect */
-
 // * These brutally minimal "smoke" tests ensure this software can be invoked
 // * and, when it is, exits cleanly. Functionality testing is not the goal here.
 
-import assert from 'node:assert';
-import { join } from 'node:path';
-import { access } from 'node:fs/promises';
-import { exports as pkgExports, name as pkgName } from 'rootverse:package.json';
+import { pathToFileURL } from 'node:url';
 
+import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
+import { readXPackageJsonAtRoot } from '@-xun/project';
 import { createDebugLogger } from 'rejoinder';
+
+import { exports as packageExports, name as packageName } from 'rootverse:package.json';
 
 import {
   dummyFilesFixture,
   dummyNpmPackageFixture,
-  mockFixtureFactory,
+  ensurePackageHasBeenBuilt,
+  mockFixturesFactory,
   nodeImportAndRunTestFixture,
-  npmCopySelfFixture
-} from 'testverse:setup.ts';
+  npmCopyPackageFixture,
+  reconfigureJestGlobalsToSkipTestsInThisFileIfRequested
+} from 'testverse:util.ts';
+
+const TEST_IDENTIFIER = `${packageName.split('/').at(-1)!}-client`;
+const debug = createDebugLogger({ namespace: 'core' }).extend(TEST_IDENTIFIER);
+const nodeVersion = process.env.XPIPE_MATRIX_NODE_VERSION || process.version;
+
+debug(`nodeVersion: "${nodeVersion}" (process.version=${process.version})`);
+
+reconfigureJestGlobalsToSkipTestsInThisFileIfRequested({ it: true, test: true });
+
+beforeAll(async () => {
+  await ensurePackageHasBeenBuilt(
+    toDirname(toAbsolutePath(require.resolve('rootverse:package.json'))),
+    packageName,
+    packageExports
+  );
+});
 
 // TODO: good fable candidate here
 
-const TEST_IDENTIFIER = 'integration-node-smoke';
-const debug = createDebugLogger({ namespace: `${pkgName}:${TEST_IDENTIFIER}` });
-
-const pkgMainPaths = Object.values(pkgExports)
-  .map((xport) =>
-    typeof xport === 'string'
-      ? null
-      : `${__dirname}/../../${'node' in xport ? xport.node : xport.default}`
-  )
-  .filter(Boolean) as string[];
-
-const withMockedFixture = mockFixtureFactory(TEST_IDENTIFIER, {
-  performCleanup: true,
-  pkgRoot: `${__dirname}/../..`,
-  pkgName,
-  use: [
-    dummyNpmPackageFixture(),
-    dummyFilesFixture(),
-    npmCopySelfFixture(),
-    nodeImportAndRunTestFixture()
+const packageRoot = toPath(toAbsolutePath(__dirname), '../..');
+const withMockedFixture = mockFixturesFactory(
+  [
+    dummyNpmPackageFixture,
+    dummyFilesFixture,
+    npmCopyPackageFixture,
+    nodeImportAndRunTestFixture
   ],
-  npmInstall: []
-});
-
-beforeAll(async () => {
-  debug('pkgMainPaths: %O', pkgMainPaths);
-
-  await Promise.all(
-    pkgMainPaths.map(async (pkgMainPath) => {
-      if (
-        await access(pkgMainPath).then(
-          () => false,
-          () => true
-        )
-      ) {
-        debug(`unable to find main distributable: ${pkgMainPath}`);
-        throw new Error('must build distributables first (try `npm run build:dist`)');
-      }
-    })
-  );
-});
+  {
+    performCleanup: true,
+    initialVirtualFiles: {},
+    packageUnderTest: {
+      root: packageRoot,
+      attributes: { cjs: true },
+      json: readXPackageJsonAtRoot.sync(packageRoot, { useCached: true })
+    },
+    identifier: TEST_IDENTIFIER
+  }
+);
 
 it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mode', async () => {
   expect.hasAssertions();
 
   await withMockedFixture(
     async (context) => {
-      assert(context.testResult, 'must use node-import-and-run-test fixture');
       expect(context.testResult.stderr).toBeEmpty();
-      expect(context.testResult.code).toBe(0);
+      expect(context.testResult.exitCode).toBe(0);
       expect(context.testResult.stdout).toBe('first success');
     },
     {
-      initialFileContents: {
-        'src/index.cjs': `require('@black-flag/core').runProgram('${join(
-          __dirname,
-          '..',
-          'fixtures',
-          'several-files-cjs-esm'
-        ).replaceAll('\\', '/')}', 'js cjs');`
+      initialVirtualFiles: {
+        'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
+          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
+        ).toString()}', 'js cjs');`
       }
     }
   );
@@ -91,13 +81,12 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node ESM mod
 
   await withMockedFixture(
     async (context) => {
-      assert(context.testResult, 'must use node-import-and-run-test fixture');
       expect(context.testResult.stderr).toBeEmpty();
-      expect(context.testResult.code).toBe(0);
+      expect(context.testResult.exitCode).toBe(0);
       expect(context.testResult.stdout).toBe('second success');
     },
     {
-      initialFileContents: {
+      initialVirtualFiles: {
         'src/index.mjs': `
 import { runProgram } from '@black-flag/core';
 
@@ -105,12 +94,9 @@ if(typeof module !== 'undefined' || typeof require !== 'undefined') {
   throw new Error('expected ESM runtime but detected CJS');
 }
 
-export default runProgram('${join(
-          __dirname,
-          '..',
-          'fixtures',
-          'several-files-cjs-esm'
-        ).replaceAll('\\', '/')}', 'js mjs');`
+export default runProgram('${pathToFileURL(
+          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
+        ).toString()}', 'js mjs');`
       }
     }
   );

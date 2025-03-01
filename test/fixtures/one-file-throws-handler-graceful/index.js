@@ -13,6 +13,6 @@ module.exports = {
     return blackFlag.option(name, { boolean: true });
   },
   handler: async (_argv) => {
-    throw new (await import('universe/error')).GracefulEarlyExitError();
+    throw new (await import('universe:error.ts')).GracefulEarlyExitError();
   }
 };

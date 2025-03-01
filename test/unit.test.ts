@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable jest/no-conditional-in-test */
 
 // * These tests ensure the exported interfaces under test function as expected.
 
@@ -9,21 +8,19 @@
 import assert from 'node:assert';
 import fsPromises from 'node:fs/promises';
 
-import { engines as packageEngines } from 'rootverse:package.json';
-
-import { ErrorMessage } from 'universe:error.ts';
+import { nullArguments$0 } from 'universe:constant.ts';
+import { CliError, BfErrorMessage } from 'universe:error.ts';
 import * as bf from 'universe:exports/index.ts';
 import * as bf_util from 'universe:exports/util.ts';
 import { capitalize } from 'universe:util.ts';
 
-import { expectedCommandsRegex, getFixturePath } from 'testverse:helpers.ts';
-import { withMocks } from 'testverse:setup.ts';
+import { expectedCommandsRegex, getFixturePath, withMocks } from 'testverse:util.ts';
 
-import type { Arguments, ExecutionContext } from 'typeverse:program.ts';
 import type { Argv } from 'yargs';
+import type { Arguments, ExecutionContext } from 'universe:types/program.ts';
 
 const mockNullArguments: bf.NullArguments = {
-  $0: '<NullArguments: no parse result available due to exception>',
+  $0: nullArguments$0,
   _: [],
   [bf.$executionContext]: expect.objectContaining({
     commands: expect.any(Map),
@@ -33,7 +30,7 @@ const mockNullArguments: bf.NullArguments = {
 };
 
 const capitalizedCommandNotImplementedErrorMessage = capitalize(
-  ErrorMessage.CommandNotImplemented()
+  BfErrorMessage.CommandNotImplemented()
 );
 
 describe('::configureProgram', () => {
@@ -105,24 +102,24 @@ describe('::configureProgram', () => {
     await withMocks(async () => {
       // @ts-expect-error: testing bad call
       await expect(bf.configureProgram()).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath(undefined)
+        message: BfErrorMessage.BadConfigurationPath(undefined)
       });
 
       await expect(bf.configureProgram('')).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath('')
+        message: BfErrorMessage.BadConfigurationPath('')
       });
 
       await expect(bf.configureProgram('/does-not-exist')).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath('/does-not-exist')
+        message: BfErrorMessage.BadConfigurationPath('/does-not-exist')
       });
 
       // @ts-expect-error: testing bad call
       await expect(bf.configureProgram({})).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath({})
+        message: BfErrorMessage.BadConfigurationPath({})
       });
 
       await expect(bf.configureProgram('', {})).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath('')
+        message: BfErrorMessage.BadConfigurationPath('')
       });
     });
   });
@@ -152,7 +149,8 @@ describe('::configureProgram', () => {
       const realResult = fsPromises.lstat(path);
 
       if (path.toString().endsWith('package.json')) {
-        return Promise.resolve({ ...(await realResult), isFile: () => false });
+        // eslint-disable-next-line @typescript-eslint/no-misused-spread
+        return { ...(await realResult), isFile: () => false };
       }
 
       return realResult;
@@ -215,7 +213,9 @@ describe('::configureProgram', () => {
         configureExecutionPrologue({ effector, helper, router }) {
           expect(effector.boolean('key')).toBe(effector);
           expect(helper.options({ option: { boolean: true } })).toBe(helper);
-          expect(router.command(['x'], false, {}, () => {}, [], false)).toBe(router);
+          expect(router.command(['x'], false, {}, () => undefined, [], false)).toBe(
+            router
+          );
           succeeded = true;
         }
       });
@@ -267,23 +267,23 @@ describe('::configureProgram', () => {
           const asYargs = (o: unknown): Argv => o as Argv;
 
           expect(() => asYargs(effector).help(false)).toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+            BfErrorMessage.InvocationNotAllowed('help')
           );
           expect(() => asYargs(helper).help(false)).toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+            BfErrorMessage.InvocationNotAllowed('help')
           );
           expect(() => asYargs(router).help(false)).toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('help')
+            BfErrorMessage.InvocationNotAllowed('help')
           );
 
           expect(() => asYargs(effector).parseSync()).toThrow(
-            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+            BfErrorMessage.UseParseAsyncInstead()
           );
           expect(() => asYargs(helper).parseSync()).toThrow(
-            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+            BfErrorMessage.UseParseAsyncInstead()
           );
           expect(() => asYargs(router).parseSync()).toThrow(
-            ErrorMessage.AssertionFailureUseParseAsyncInstead()
+            BfErrorMessage.UseParseAsyncInstead()
           );
 
           expect(asYargs(effector).argv).toBeUndefined();
@@ -291,13 +291,13 @@ describe('::configureProgram', () => {
           expect(asYargs(router).argv).toBeUndefined();
 
           expect(() => asYargs(effector).showHelpOnFail(false)).not.toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+            BfErrorMessage.InvocationNotAllowed('showHelpOnFail')
           );
           expect(() => asYargs(helper).showHelpOnFail(false)).not.toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+            BfErrorMessage.InvocationNotAllowed('showHelpOnFail')
           );
           expect(() => asYargs(router).showHelpOnFail(false)).toThrow(
-            ErrorMessage.AssertionFailureInvocationNotAllowed('showHelpOnFail')
+            BfErrorMessage.InvocationNotAllowed('showHelpOnFail')
           );
 
           expect(asYargs(effector).parsed).toBeFalse();
@@ -372,7 +372,12 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       const expectedArgv = ['a', 'b', 'c'];
-      const expectedResult = { something: 'else' } as unknown as Arguments;
+      const expectedResult: Arguments = {
+        $0: '$0',
+        _: expectedArgv,
+        [bf.$executionContext]: {} as ExecutionContext,
+        something: 'else'
+      };
 
       await withMocks(async () => {
         const { execute } = await bf.configureProgram(getFixturePath('one-file-loose'), {
@@ -650,7 +655,12 @@ describe('::configureProgram', () => {
       expect.hasAssertions();
 
       const configureErrorHandlingEpilogueSpy = jest.fn();
-      const configureExecutionEpilogueSpy = jest.fn(() => ({}) as Arguments);
+      const configureExecutionEpilogueSpy = jest.fn(() => ({
+        $0: '$0',
+        _: [],
+        [bf.$executionContext]: {} as ExecutionContext,
+        something: 'else'
+      }));
 
       await withMocks(async () => {
         const { execute } = await bf.configureProgram(
@@ -826,7 +836,23 @@ describe('::configureProgram', () => {
           ).execute()
         ).rejects.toMatchObject({ message: 'error thrown in handler' });
 
-        expect(errorSpy.mock.calls).toStrictEqual([['Error thrown in handler']]);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.objectContaining({ message: 'error thrown in handler' })]
+        ]);
+      });
+
+      await withMocks(async ({ errorSpy }) => {
+        await expect(
+          (
+            await bf.configureProgram(getFixturePath('one-file-throws-handler-1'), {
+              configureArguments() {
+                throw new CliError('super bad error');
+              }
+            })
+          ).execute()
+        ).rejects.toMatchObject({ message: 'super bad error' });
+
+        expect(errorSpy.mock.calls).toStrictEqual([['Super bad error']]);
       });
     });
 
@@ -847,7 +873,7 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('one-file-positionals-no-handler'))
           ).execute(['first', 'second'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.CommandNotImplemented()
+          message: BfErrorMessage.CommandNotImplemented()
         });
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -867,7 +893,7 @@ describe('::configureProgram', () => {
         await expect(
           (await bf.configureProgram(getFixturePath('empty-index-file'))).execute()
         ).rejects.toMatchObject({
-          message: ErrorMessage.CommandNotImplemented()
+          message: BfErrorMessage.CommandNotImplemented()
         });
 
         // * Pure child
@@ -876,7 +902,7 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('nested-several-files-empty'))
           ).execute(['nested', 'first'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.CommandNotImplemented()
+          message: BfErrorMessage.CommandNotImplemented()
         });
 
         // * Childless parent
@@ -885,7 +911,7 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('nested-one-file-index-empty'))
           ).execute(['nested'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.CommandNotImplemented()
+          message: BfErrorMessage.CommandNotImplemented()
         });
 
         expect(errorSpy.mock.calls).toStrictEqual([
@@ -906,13 +932,13 @@ describe('::configureProgram', () => {
             await bf.configureProgram(getFixturePath('nested-several-files-empty'))
           ).execute(['nested'])
         ).rejects.toMatchObject({
-          message: ErrorMessage.InvalidSubCommandInvocation()
+          message: BfErrorMessage.InvalidSubCommandInvocation()
         });
 
         expect(errorSpy.mock.calls).toStrictEqual([
           [expect.stringContaining('--help')],
           [],
-          [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
+          [capitalize(BfErrorMessage.InvalidSubCommandInvocation())]
         ]);
       });
     });
@@ -971,7 +997,7 @@ describe('::configureProgram', () => {
 
         await expect(execute()).resolves.toBeDefined();
         await expect(execute()).rejects.toMatchObject({
-          message: ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
+          message: BfErrorMessage.CannotExecuteMultipleTimes()
         });
       });
     });
@@ -987,7 +1013,7 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('Error #1 thrown in builder')]
+          [expect.objectContaining({ message: 'error #1 thrown in builder' })]
         ]);
       });
     });
@@ -1003,7 +1029,11 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('Error #2 thrown in builder')]
+          [
+            expect.objectContaining({
+              message: 'error #2 thrown in builder'
+            })
+          ]
         ]);
       });
     });
@@ -1019,7 +1049,11 @@ describe('::configureProgram', () => {
         await expect(execute()).rejects.toBeDefined();
 
         expect(errorSpy.mock.calls).toStrictEqual([
-          [expect.stringContaining('Error thrown in handler')]
+          [
+            expect.objectContaining({
+              message: 'error thrown in handler'
+            })
+          ]
         ]);
       });
     });
@@ -1033,7 +1067,9 @@ describe('::configureProgram', () => {
         );
 
         await expect(execute()).rejects.toBeDefined();
-        expect(errorSpy.mock.calls).toStrictEqual([['Error thrown in handler']]);
+        expect(errorSpy.mock.calls).toStrictEqual([
+          [expect.objectContaining({ message: 'error thrown in handler' })]
+        ]);
       });
     });
 
@@ -1071,11 +1107,11 @@ describe('::configureProgram', () => {
               }
             })
           ).execute(['--help'])
-        ).rejects.toMatchObject({ message: ErrorMessage.GracefulEarlyExit() });
+        ).rejects.toMatchObject({ message: BfErrorMessage.GracefulEarlyExit() });
 
         await expect(
           (await bf.configureProgram(getFixturePath('empty-index-file'))).execute()
-        ).rejects.toMatchObject({ message: ErrorMessage.CommandNotImplemented() });
+        ).rejects.toMatchObject({ message: BfErrorMessage.CommandNotImplemented() });
 
         expect(errorSpy).toHaveBeenCalledTimes(1);
       });
@@ -1591,16 +1627,8 @@ describe('::runProgram and util::makeRunner', () => {
         expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
         expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.AssertionFailed);
         expect(errorSpy.mock.calls).toStrictEqual([
-          [
-            expect.stringContaining(
-              ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
-            )
-          ],
-          [
-            expect.stringContaining(
-              ErrorMessage.AssertionFailureCannotExecuteMultipleTimes()
-            )
-          ]
+          [expect.stringContaining(BfErrorMessage.CannotExecuteMultipleTimes())],
+          [expect.stringContaining(BfErrorMessage.CannotExecuteMultipleTimes())]
         ]);
       });
     });
@@ -1617,7 +1645,7 @@ describe('::runProgram and util::makeRunner', () => {
         configurationHooks: {},
         preExecutionContext: {} as unknown as bf_util.PreExecutionContext
       })()
-    ).toThrow(ErrorMessage.AssertionFailureBadParameterCombination());
+    ).toThrow(BfErrorMessage.BadParameterCombination());
   });
 
   it('exits with bf.FrameworkExitCode.Ok upon success', async () => {
@@ -1694,7 +1722,7 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())]
       ]);
     });
 
@@ -1709,7 +1737,7 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())]
       ]);
 
       await run('nested');
@@ -1718,10 +1746,10 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())]
       ]);
     });
   });
@@ -1753,7 +1781,7 @@ describe('::runProgram and util::makeRunner', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.AssertionFailed and outputs unhandled error text if any to stderr when sanity check or node assert fails', async () => {
+  it('exits with bf.FrameworkExitCode.AssertionFailed and outputs full unhandled error to stderr when sanity check or node assert fails', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -1763,7 +1791,11 @@ describe('::runProgram and util::makeRunner', () => {
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
       expect(errorSpy.mock.calls).toStrictEqual([
-        [capitalize(ErrorMessage.InvalidConfigureArgumentsReturnType())]
+        [
+          expect.objectContaining({
+            message: BfErrorMessage.InvalidConfigureArgumentsReturnType()
+          })
+        ]
       ]);
     });
 
@@ -1776,7 +1808,9 @@ describe('::runProgram and util::makeRunner', () => {
       await run({ configureArguments: () => assert.fail() });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.AssertionFailed);
-      expect(errorSpy.mock.calls).toStrictEqual([['Failed']]);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [expect.objectContaining({ message: 'Failed' })]
+      ]);
     });
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
@@ -1791,32 +1825,6 @@ describe('::runProgram and util::makeRunner', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('UNHANDLED FRAMEWORK')]
       ]);
-    });
-  });
-
-  it('exits with bf.FrameworkExitCode.AssertionFailed iff current runtime is an unsupported Node version', async () => {
-    expect.hasAssertions();
-
-    await withMocks(async () => {
-      const realProcessVersionsNode = process.versions.node;
-
-      try {
-        Object.defineProperty(process.versions, 'node', { value: '1.2.3' });
-        await expect(
-          bf.runProgram(getFixturePath('one-file-log-handler'), {
-            configureArguments: () => undefined as any
-          })
-        ).rejects.toMatchObject({
-          message: ErrorMessage.AssertionUnsupportedNodeVersion(
-            '1.2.3',
-            packageEngines.node
-          )
-        });
-      } finally {
-        Object.defineProperty(process.versions, 'node', {
-          value: realProcessVersionsNode
-        });
-      }
     });
   });
 
@@ -1854,6 +1862,7 @@ describe('::runProgram and util::makeRunner', () => {
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
+          // eslint-disable-next-line @typescript-eslint/only-throw-error
           throw 'problems!';
         }
       });
@@ -1884,6 +1893,7 @@ describe('::runProgram and util::makeRunner', () => {
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await bf.runProgram(getFixturePath('one-file-log-handler'), {
         configureArguments() {
+          // eslint-disable-next-line @typescript-eslint/only-throw-error
           throw {
             toString() {
               return 'wtf is this?';
@@ -1901,6 +1911,7 @@ describe('::runProgram and util::makeRunner', () => {
         getFixturePath('one-file-log-handler'),
         await bf.configureProgram(getFixturePath('one-file-log-handler'), {
           configureArguments() {
+            // eslint-disable-next-line @typescript-eslint/only-throw-error
             throw {
               toString() {
                 return 'wtf is this?';
@@ -1979,6 +1990,68 @@ describe('::runProgram and util::makeRunner', () => {
   });
 });
 
+describe('::CommandNotImplementedError', () => {
+  it('works with and without arguments', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          const protoError = new Error('something');
+          const error = new bf_util.CommandNotImplementedError(protoError);
+
+          expect(error.cause).toBe(protoError);
+          throw error;
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.NotImplemented);
+      expect(errorSpy).toHaveBeenCalled();
+    });
+
+    await withMocks(async ({ errorSpy, getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          throw new bf_util.CommandNotImplementedError();
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.NotImplemented);
+      expect(errorSpy).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('::GracefulEarlyExitError', () => {
+  it('works with and without arguments', async () => {
+    expect.hasAssertions();
+
+    await withMocks(async ({ getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          const protoError = new Error('something');
+          const error = new bf.GracefulEarlyExitError(protoError);
+
+          expect(error.cause).toBe(protoError);
+          throw error;
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+    });
+
+    await withMocks(async ({ getExitCode }) => {
+      await bf.runProgram(getFixturePath('one-file-log-handler'), {
+        configureArguments() {
+          throw new bf.GracefulEarlyExitError();
+        }
+      });
+
+      expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
+    });
+  });
+});
+
 describe('::CliError', () => {
   it('can wrap other errors', async () => {
     expect.hasAssertions();
@@ -2006,7 +2079,9 @@ describe('::CliError', () => {
       });
 
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
-      expect(errorSpy.mock.calls).toStrictEqual([[capitalize(ErrorMessage.Generic())]]);
+      expect(errorSpy.mock.calls).toStrictEqual([
+        [capitalize(BfErrorMessage.Generic())]
+      ]);
     });
   });
 
@@ -2446,7 +2521,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath('one-file-throws-command'))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureInvalidCommandExport('test')
+        message: BfErrorMessage.InvalidCommandExport('test')
       });
     });
   });
@@ -2706,22 +2781,24 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath('nested-bad-names'))
       ).rejects.toMatchObject({
-        message: ErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
+        message: BfErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
       });
 
       await expect(
         bf.configureProgram(getFixturePath(['nested-bad-names', '[bad]']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
+        message: BfErrorMessage.InvalidCharacters('[bad]', '|, <, >, [, ], {, or }')
       });
 
       await expect(
         bf.configureProgram(getFixturePath(['nested-bad-names', 'bad']))
-      ).rejects.toMatchObject({ message: ErrorMessage.InvalidCharacters('$0', '$0') });
+      ).rejects.toMatchObject({ message: BfErrorMessage.InvalidCharacters('$0', '$0') });
 
       await expect(
         bf.configureProgram(getFixturePath(['nested-bad-names', 'bad2']))
-      ).rejects.toMatchObject({ message: ErrorMessage.InvalidCharacters('$111', '$1') });
+      ).rejects.toMatchObject({
+        message: BfErrorMessage.InvalidCharacters('$111', '$1')
+      });
     });
   });
 
@@ -2732,9 +2809,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath('empty-dir'))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureNoConfigurationLoaded(
-          getFixturePath('empty-dir')
-        )
+        message: BfErrorMessage.NoConfigurationLoaded(getFixturePath('empty-dir'))
       });
     });
   });
@@ -2746,7 +2821,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath('several-files-bad-ext'))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureNoConfigurationLoaded(
+        message: BfErrorMessage.NoConfigurationLoaded(
           getFixturePath('several-files-bad-ext')
         )
       });
@@ -2760,7 +2835,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-several-files-full', 'index.js']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureBadConfigurationPath(
+        message: BfErrorMessage.BadConfigurationPath(
           getFixturePath(['nested-several-files-full', 'index.js'])
         )
       });
@@ -2915,64 +2990,68 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async () => {
       await expect(
-        (
-          await bf.configureProgram(getFixturePath('one-file-index'), {
-            configureExecutionContext(context) {
-              // @ts-expect-error: doing bad things with friends
-              context.state.globalHelpOption = {};
-              return context;
-            },
-            configureErrorHandlingEpilogue() {
-              /* silence is golden */
-            }
-          })
-        ).execute(['bad'])
-      ).rejects.toMatchObject({ message: 'bad context.state.globalHelpOption' });
+        bf.configureProgram(getFixturePath('one-file-index'), {
+          configureExecutionContext(context) {
+            // @ts-expect-error: doing bad things with friends
+            context.state.globalHelpOption = {};
+            return context;
+          },
+          configureErrorHandlingEpilogue() {
+            /* silence is golden */
+          }
+        })
+      ).rejects.toMatchObject({
+        message: BfErrorMessage.InvalidExecutionContextBadField('state.globalHelpOption')
+      });
 
       await expect(
-        (
-          await bf.configureProgram(getFixturePath('one-file-index'), {
-            configureExecutionContext(context) {
-              // @ts-expect-error: doing bad things with friends
-              context.state.globalHelpOption = { name: '' };
-              return context;
-            },
-            configureErrorHandlingEpilogue() {
-              /* silence is golden */
-            }
-          })
-        ).execute(['bad'])
-      ).rejects.toMatchObject({ message: 'bad context.state.globalHelpOption' });
+        bf.configureProgram(getFixturePath('one-file-index'), {
+          configureExecutionContext(context) {
+            // @ts-expect-error: doing bad things with friends
+            context.state.globalHelpOption = { name: '' };
+            return context;
+          },
+          configureErrorHandlingEpilogue() {
+            /* silence is golden */
+          }
+        })
+      ).rejects.toMatchObject({
+        message: BfErrorMessage.InvalidExecutionContextBadField('state.globalHelpOption')
+      });
 
       await expect(
-        (
-          await bf.configureProgram(getFixturePath('one-file-index'), {
-            configureExecutionContext(context) {
-              // @ts-expect-error: doing bad things with friends
-              context.state.globalVersionOption = {};
-              return context;
-            },
-            configureErrorHandlingEpilogue() {
-              /* silence is golden */
-            }
-          })
-        ).execute(['bad'])
-      ).rejects.toMatchObject({ message: 'bad context.state.globalVersionOption' });
+        bf.configureProgram(getFixturePath('one-file-index'), {
+          configureExecutionContext(context) {
+            // @ts-expect-error: doing bad things with friends
+            context.state.globalVersionOption = {};
+            return context;
+          },
+          configureErrorHandlingEpilogue() {
+            /* silence is golden */
+          }
+        })
+      ).rejects.toMatchObject({
+        message: BfErrorMessage.InvalidExecutionContextBadField(
+          'state.globalVersionOption'
+        )
+      });
 
       await expect(
-        (
-          await bf.configureProgram(getFixturePath('one-file-index'), {
-            configureExecutionContext(context) {
-              // @ts-expect-error: doing bad things with friends
-              context.state.globalVersionOption = { name: '' };
-              return context;
-            },
-            configureErrorHandlingEpilogue() {
-              /* silence is golden */
-            }
-          })
-        ).execute(['bad'])
-      ).rejects.toMatchObject({ message: 'bad context.state.globalVersionOption' });
+        bf.configureProgram(getFixturePath('one-file-index'), {
+          configureExecutionContext(context) {
+            // @ts-expect-error: doing bad things with friends
+            context.state.globalVersionOption = { name: '' };
+            return context;
+          },
+          configureErrorHandlingEpilogue() {
+            /* silence is golden */
+          }
+        })
+      ).rejects.toMatchObject({
+        message: BfErrorMessage.InvalidExecutionContextBadField(
+          'state.globalVersionOption'
+        )
+      });
     });
   });
 
@@ -3330,7 +3409,7 @@ describe('<command module auto-discovery>', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringMatching(/^Usage: /)],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringMatching(/^Usage: /)],
         [],
         ['Unknown argument: version']
@@ -3380,7 +3459,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'alias-alias']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+        message: BfErrorMessage.DuplicateCommandName(
           'name1',
           'alias1',
           'alias',
@@ -3408,7 +3487,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'name-name']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+        message: BfErrorMessage.DuplicateCommandName(
           'name',
           'name',
           'name',
@@ -3436,7 +3515,7 @@ describe('<command module auto-discovery>', () => {
       await expect(
         bf.configureProgram(getFixturePath(['nested-conflicting', 'ext']))
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureDuplicateCommandName(
+        message: BfErrorMessage.DuplicateCommandName(
           'ext',
           'name',
           'name',
@@ -3924,7 +4003,7 @@ describe('<command module auto-discovery>', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       expect(errorSpy.mock.calls).toStrictEqual([
-        ['Error thrown in handler'],
+        [expect.objectContaining({ message: 'error thrown in handler' })],
         ['Error string thrown in handler']
       ]);
     });
@@ -3953,10 +4032,10 @@ describe('<command module auto-discovery>', () => {
       expect(errorSpy.mock.calls).toStrictEqual([
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())],
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())],
         [expect.stringContaining('--help')],
         [],
-        [capitalize(ErrorMessage.InvalidSubCommandInvocation())]
+        [capitalize(BfErrorMessage.InvalidSubCommandInvocation())]
       ]);
 
       expect(logSpy.mock.calls).toStrictEqual([[expect.stringContaining('--help')]]);
@@ -3987,7 +4066,7 @@ describe('<command module auto-discovery>', () => {
           }
         })
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        message: BfErrorMessage.UseParseAsyncInstead()
       });
 
       await expect(
@@ -3998,7 +4077,7 @@ describe('<command module auto-discovery>', () => {
           }
         })
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        message: BfErrorMessage.UseParseAsyncInstead()
       });
 
       await expect(
@@ -4009,7 +4088,7 @@ describe('<command module auto-discovery>', () => {
           }
         })
       ).rejects.toMatchObject({
-        message: ErrorMessage.AssertionFailureUseParseAsyncInstead()
+        message: BfErrorMessage.UseParseAsyncInstead()
       });
     });
   });
