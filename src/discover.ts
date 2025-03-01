@@ -68,92 +68,99 @@ const alphaSort = new Intl.Collator(undefined, { numeric: true });
  * `PreExecutionContext::execute` is called.
  */
 export async function discoverCommands(
-  basePath_: string,
+  basePath_: unknown,
   context: ExecutionContext
 ): Promise<void> {
   // ! Invariant: first command to be discovered, if any, is the root command.
   let alreadyLoadedRootCommand = false;
 
-  const basePath = basePath_?.startsWith?.('file://')
-    ? fileURLToPath(basePath_)
-    : basePath_;
+  if (!basePath_ || typeof basePath_ !== 'string') {
+    throw new AssertionFailedError(BfErrorMessage.BadConfigurationPath(basePath_));
+  }
 
-  const debug = context.debug.extend('discover');
-  const debug_load = debug.extend('load');
+  const basePath = toAbsolutePath(
+    basePath_.startsWith('file://') ? fileURLToPath(basePath_) : basePath_
+  );
 
-  debug('ensuring base path directory exists and is readable: "%O"', basePath);
+  const discoverDebug = context.debug.extend('discover');
+  const discoveredDebug = discoverDebug.extend('discovered');
+
+  discoverDebug('ensuring base path directory exists and is readable: "%O"', basePath);
 
   try {
     await fs.access(basePath, fs.constants.R_OK);
     if (!(await fs.stat(basePath)).isDirectory()) {
       // ? This will be caught and re-thrown as an AssertionFailedError 👍🏿
-      throw new Error('path is not a directory');
+      throw new Error(BfErrorMessage.PathIsNotDirectory());
     }
   } catch (error) {
-    debug.error('failed due to invalid base path "%O": %O', basePath, error);
-    throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureBadConfigurationPath(basePath)
-    );
+    discoverDebug.error('failed due to invalid base path "%O": %O', basePath, error);
+    throw new AssertionFailedError(BfErrorMessage.BadConfigurationPath(basePath));
   }
 
-  debug('searching upwards for nearest package.json file starting at %O', basePath);
+  discoverDebug(
+    'searching upwards for nearest package.json file starting at %O',
+    basePath
+  );
 
-  const pkg = {
+  const package_ = {
     path: await (await import('package-up')).packageUp({ cwd: basePath }),
     name: undefined as string | undefined,
     version: undefined as string | undefined
   };
 
-  if (pkg.path) {
-    debug('loading package.json file from %O', pkg.path);
+  if (package_.path) {
+    discoverDebug('loading package.json file from %O', package_.path);
 
     try {
       const { name, version }: PackageJson = JSON.parse(
-        await fs.readFile(pkg.path, 'utf8')
+        await fs.readFile(package_.path, 'utf8')
       );
 
-      pkg.name = name;
-      pkg.version = version;
+      package_.name = name;
+      package_.version = version;
     } catch (error) {
       /* istanbul ignore next */
-      debug.warn('load failed: attempt to import %O failed: %O', pkg.path, error);
+      discoverDebug.warn(
+        'load failed: attempt to import %O failed: %O',
+        package_.path,
+        error
+      );
     }
   } else {
-    debug.warn('search failed: no package.json file found');
+    discoverDebug.warn('search failed: no package.json file found');
   }
 
-  debug('relevant cli package.json data discovered: %O', pkg);
+  discoverDebug('relevant cli package.json data discovered: %O', package_);
 
   if (context.state.globalVersionOption) {
     if (!context.state.globalVersionOption.text) {
-      context.state.globalVersionOption.text = pkg.version || '';
+      context.state.globalVersionOption.text = package_.version || '';
     }
 
     if (!context.state.globalVersionOption.text) {
       context.state.globalVersionOption = undefined;
-      debug.warn(
+      discoverDebug.warn(
         'disabled built-in version option (globalVersionOption=undefined) since no version info available'
       );
     }
   }
 
-  debug('beginning configuration module auto-discovery at %O', basePath);
+  discoverDebug('beginning configuration module auto-discovery at %O', basePath);
 
   await discover(basePath);
 
-  debug('configuration module auto-discovery completed');
+  discoverDebug('configuration module auto-discovery completed');
 
   if (context.commands.size) {
-    debug_load.message(
+    discoveredDebug.message(
       '%O commands loaded: %O',
       context.commands.size,
       context.commands.keys()
     );
-    debug_load.message('%O', context.commands);
+    discoveredDebug.message('%O', context.commands);
   } else {
-    throw new AssertionFailedError(
-      ErrorMessage.AssertionFailureNoConfigurationLoaded(basePath)
-    );
+    throw new AssertionFailedError(BfErrorMessage.NoConfigurationLoaded(basePath));
   }
 
   return;
@@ -161,7 +168,7 @@ export async function discoverCommands(
   // *** *** ***
 
   async function discover(
-    configPath: string,
+    configPath: AbsolutePath,
     lineage: string[] = [],
     grandparentPrograms: Programs | undefined = undefined,
     grandparentMeta: ProgramMetadata | undefined = undefined
@@ -171,24 +178,24 @@ export async function discoverCommands(
 
     const depth = lineage.length;
 
-    debug('initial parent lineage: %O', lineage);
-    debug('is root (aka "pure parent") command: %O', isRootCommand);
+    discoverDebug('initial parent lineage: %O', lineage);
+    discoverDebug('is root (aka "pure parent") command: %O', isRootCommand);
 
     assert(
       grandparentPrograms === undefined || !isRootCommand,
-      ErrorMessage.GuruMeditation()
+      BfErrorMessage.GuruMeditation()
     );
 
     const { configuration: parentConfig, metadata: parentMeta } =
       await loadConfiguration(
         ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
-          path.join(configPath, `index.${extension}`)
+          toPath(configPath, `index.${extension}`)
         ),
         context
       );
 
     if (!parentConfig) {
-      debug.warn(
+      discoverDebug.warn(
         `skipped ${parentType} configuration (depth: %O) due to missing or unloadable index file in directory %O`,
         depth,
         configPath
@@ -202,8 +209,8 @@ export async function discoverCommands(
     lineage = [...lineage, parentConfig.name];
     const parentConfigFullName = lineage.join(' ');
 
-    debug('updated parent lineage: %O', lineage);
-    debug('command full name: %O', parentConfigFullName);
+    discoverDebug('updated parent lineage: %O', lineage);
+    discoverDebug('command full name: %O', parentConfigFullName);
 
     const parentPrograms = await makeCommandPrograms(
       parentConfig,
@@ -217,7 +224,7 @@ export async function discoverCommands(
       metadata: parentMeta
     });
 
-    debug(`added ${parentType} command mapping to ExecutionContext::commands`);
+    discoverDebug(`added ${parentType} command mapping to ExecutionContext::commands`);
 
     linkChildRouterToParentRouter(
       parentPrograms.router,
@@ -236,7 +243,7 @@ export async function discoverCommands(
       grandparentMeta.hasChildren = true;
     }
 
-    debug_load(
+    discoveredDebug(
       `discovered ${parentType} configuration (depth: %O) for command %O`,
       depth,
       parentConfigFullName
@@ -249,33 +256,37 @@ export async function discoverCommands(
         /.*(?<!index)\.(?:js|mjs|cjs|ts|mts|cts)$/.test(entry.name) &&
         !entry.name.endsWith('.d.ts');
 
-      const entryFullPath = path.join(entry.path, entry.name);
+      // TODO: remove this when node@18 dies
+      // eslint-disable-next-line @typescript-eslint/no-deprecated
+      const entryFullPath = toPath(toAbsolutePath(entry.path), entry.name);
 
-      debug('saw potential child configuration file: %O', entryFullPath);
+      discoverDebug('saw potential child configuration file: %O', entryFullPath);
 
       if (entry.isDirectory()) {
-        debug('file is actually a directory, recursing');
+        discoverDebug('file is actually a directory, recursing');
         await discover(entryFullPath, lineage, parentPrograms, parentMeta);
       } else if (isPotentialChildConfigOfCurrentParent) {
-        debug('attempting to load file');
+        discoverDebug('attempting to load file');
 
         const { configuration: childConfig, metadata: childMeta } =
           await loadConfiguration(entryFullPath, context);
 
         /* istanbul ignore next */
         if (!childConfig) {
-          debug.error(
+          discoverDebug.error(
             `failed to load pure child configuration (depth: %O) due to missing or invalid file %O`,
             depth,
             entryFullPath
           );
 
-          throw new AssertionFailedError(ErrorMessage.ConfigLoadFailure(entryFullPath));
+          throw new AssertionFailedError(
+            BfErrorMessage.ConfigLoadFailure(entryFullPath)
+          );
         }
 
         const childConfigFullName = `${parentConfigFullName} ${childConfig.name}`;
 
-        debug('pure child full name (lineage): %O', childConfigFullName);
+        discoverDebug('pure child full name (lineage): %O', childConfigFullName);
 
         ensureConfigurationDoesNotConflictWithReservedNames(
           childConfig,
@@ -294,7 +305,7 @@ export async function discoverCommands(
           metadata: childMeta
         });
 
-        debug(`added pure child command mapping to ExecutionContext::commands`);
+        discoverDebug(`added pure child command mapping to ExecutionContext::commands`);
 
         linkChildRouterToParentRouter(
           childPrograms.router,
@@ -311,13 +322,13 @@ export async function discoverCommands(
 
         parentMeta.hasChildren = true;
 
-        debug_load(
+        discoveredDebug(
           `discovered pure child configuration (depth: %O) for command %O`,
           depth + 1,
           childConfigFullName
         );
       } else {
-        debug(
+        discoverDebug(
           'file was ignored (only non-index sibling JS files are considered at this stage)'
         );
       }
@@ -330,18 +341,18 @@ export async function discoverCommands(
    * {@link Configuration} object.
    */
   async function loadConfiguration(
-    configPath: string | string[],
+    configPath: Arrayable<AbsolutePath>,
     context: ExecutionContext
   ) {
     const isRootProgram = !alreadyLoadedRootCommand;
+    const loadDebug = discoverDebug.extend('load-configuration');
 
-    const debug_ = debug.extend('load-configuration');
     const maybeConfigPaths = [configPath]
       .flat()
       .map((p) => p.trim())
       .filter(Boolean);
 
-    debug_(
+    loadDebug(
       'loading new configuration from the first readable path: %O',
       maybeConfigPaths
     );
@@ -351,41 +362,44 @@ export async function discoverCommands(
         const maybeConfigPath = maybeConfigPaths.shift()!;
         const maybeConfigFileURL = pathToFileURL(maybeConfigPath).toString();
 
-        debug_(
+        loadDebug(
           'attempting to load configuration file url: %O (real path: %O)',
           maybeConfigFileURL,
           maybeConfigPath
         );
 
-        let maybeImportedConfig: ImportedConfigurationModule | undefined = undefined;
-
-        try {
-          // TODO: Defer importing the command/config until later (will require
-          // TODO: major refactor)
-          // eslint-disable-next-line no-await-in-loop
-          maybeImportedConfig = await import(maybeConfigFileURL);
-        } catch (error) {
-          if (
-            isUnknownFileExtensionError(error) ||
-            (isModuleNotFoundSystemError(error) &&
-              (error.moduleName?.endsWith(maybeConfigPath) ||
-                error.url?.endsWith(maybeConfigPath)))
-          ) {
-            debug_.warn(
-              'a recoverable failure occurred while attempting to load configuration: %O',
-              error
-            );
-          } else {
-            throw error;
+        // eslint-disable-next-line no-await-in-loop
+        const maybeImportedConfig = await (async () => {
+          try {
+            // TODO: Defer importing the command/config until later (will require
+            // TODO: major refactor)
+            return (await import(maybeConfigFileURL)) as ImportedConfigurationModule;
+          } catch (error) {
+            if (
+              isUnknownFileExtensionError(error) ||
+              (isModuleNotFoundSystemError(error) &&
+                (error.moduleName?.endsWith(maybeConfigPath) ||
+                  /* istanbul ignore next */
+                  error.url?.endsWith(maybeConfigPath)))
+            ) {
+              loadDebug.warn(
+                'a recoverable failure occurred while attempting to load configuration: %O',
+                error
+              );
+            } else {
+              throw error;
+            }
           }
-        }
+        })();
+
+        loadDebug('maybeImportedConfig: %O', maybeImportedConfig);
 
         if (maybeImportedConfig) {
           const meta = {
             hasChildren: false,
-            filename: path.basename(maybeConfigPath),
+            filename: basename(maybeConfigPath),
             filepath: maybeConfigFileURL,
-            parentDirName: path.basename(path.dirname(maybeConfigPath))
+            parentDirName: basename(toDirname(maybeConfigPath))
           } as ProgramMetadata;
 
           meta.filenameWithoutExtension = meta.filename
@@ -401,42 +415,50 @@ export async function discoverCommands(
               ? 'parent-child'
               : 'pure child';
 
-          debug_('configuration file metadata (w/o reservedCommandNames): %O', meta);
+          loadDebug('configuration file metadata (w/o reservedCommandNames): %O', meta);
 
-          // ? ESM <=> CJS interop. If there's a default property, we'll use it.
+          let maybeFinalConfig;
+
+          // ? ESM <=> CJS interop. If there's a default property, we'll use it
+          // ? (covered by integration tests)
+          /* istanbul ignore next */
           if (maybeImportedConfig.default) {
-            maybeImportedConfig = maybeImportedConfig.default;
+            maybeFinalConfig = maybeImportedConfig.default;
           }
 
           // ? ESM <=> CJS interop, again. See:
           // ? test/fixtures/several-files-cjs-esm/nested/first.cjs
+          // ? (covered by integration tests)
           /* istanbul ignore next */
-          if (maybeImportedConfig.default) {
-            maybeImportedConfig = maybeImportedConfig.default;
+          if (maybeFinalConfig?.default) {
+            maybeFinalConfig = maybeFinalConfig.default;
           }
 
           let rawConfig: Partial<Configuration>;
 
-          if (typeof maybeImportedConfig === 'function') {
-            debug_('configuration returned a function');
+          if (typeof maybeFinalConfig === 'function') {
+            loadDebug('configuration returned a function');
             // TODO: Defer invoking default export until later (will require
             // TODO: major refactor)
             // eslint-disable-next-line no-await-in-loop
-            rawConfig = await maybeImportedConfig(context);
+            rawConfig = await maybeFinalConfig(context);
           } else {
-            debug_('configuration returned an object (or something coerced into {})');
+            loadDebug('configuration returned an object (or something coerced into {})');
             rawConfig =
-              !!maybeImportedConfig && typeof maybeImportedConfig === 'object'
-                ? maybeImportedConfig
+              !!maybeFinalConfig && typeof maybeFinalConfig === 'object'
+                ? maybeFinalConfig
                 : {};
           }
 
           // ? Ensure configuration namespace is copied by value!
-          rawConfig = Object.assign({}, rawConfig);
+          rawConfig = { ...rawConfig };
 
-          const command = (rawConfig.command ?? '$0').trim() as '$0';
+          const command = (rawConfig.command ?? '$0').trim() as NonNullable<
+            typeof rawConfig.command
+          >;
 
           meta.isImplemented = rawConfig.handler !== undefined || command !== '$0';
+          const handlerDebug = loadDebug.extend('handler');
 
           const finalConfig: Configuration = {
             aliases: rawConfig.aliases?.map((str) => replaceSpaces(str).trim()) || [],
@@ -446,17 +468,14 @@ export async function discoverCommands(
             // ? This property is trimmed below
             description: rawConfig.description ?? '',
             handler(...args) {
-              debug_.extend('handler')(
-                'executing real handler function for %O',
-                finalConfig.name
-              );
+              handlerDebug('executing real handler function for %O', finalConfig.name);
 
               return (rawConfig.handler || defaultCommandHandler)(...args);
             },
             name: replaceSpaces(
               rawConfig.name ||
-                (isRootProgram && pkg.name
-                  ? pkg.name
+                (isRootProgram && package_.name
+                  ? package_.name
                   : isParentProgram
                     ? meta.parentDirName
                     : meta.filenameWithoutExtension)
@@ -472,23 +491,27 @@ export async function discoverCommands(
               ? capitalize(finalConfig.description).trim()
               : finalConfig.description;
 
-          debug_.message('successfully loaded configuration object: %O', finalConfig);
-          debug_('validating loaded configuration object for correctness');
+          loadDebug.message('successfully loaded configuration object: %O', finalConfig);
+          loadDebug('validating loaded configuration object for correctness');
 
           for (const name of [finalConfig.name, ...finalConfig.aliases]) {
             /* istanbul ignore next */
             if (hasSpacesRegExp.test(name)) {
               throw new AssertionFailedError(
-                ErrorMessage.InvalidCharacters(name, 'space(s)')
+                BfErrorMessage.InvalidCharacters(name, 'space(s)')
               );
             }
 
             if (name.includes('$0')) {
-              throw new AssertionFailedError(ErrorMessage.InvalidCharacters(name, '$0'));
+              throw new AssertionFailedError(
+                BfErrorMessage.InvalidCharacters(name, '$0')
+              );
             }
 
             if (name.includes('$1')) {
-              throw new AssertionFailedError(ErrorMessage.InvalidCharacters(name, '$1'));
+              throw new AssertionFailedError(
+                BfErrorMessage.InvalidCharacters(name, '$1')
+              );
             }
 
             if (
@@ -501,7 +524,7 @@ export async function discoverCommands(
               name.includes('}')
             ) {
               throw new AssertionFailedError(
-                ErrorMessage.InvalidCharacters(name, '|, <, >, [, ], {, or }')
+                BfErrorMessage.InvalidCharacters(name, '|, <, >, [, ], {, or }')
               );
             }
           }
@@ -512,22 +535,22 @@ export async function discoverCommands(
               !finalConfig.command.startsWith('$0 '))
           ) {
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureInvalidCommandExport(finalConfig.name)
+              BfErrorMessage.InvalidCommandExport(finalConfig.name)
             );
           }
 
-          debug_('configuration is valid!');
+          loadDebug('configuration is valid!');
 
           // ? The first configuration loaded is gonna be the root every time!
           alreadyLoadedRootCommand = true;
 
           meta.reservedCommandNames = [finalConfig.name, ...finalConfig.aliases];
-          debug_('metadata reserved command names: %O', meta.reservedCommandNames);
+          loadDebug('metadata reserved command names: %O', meta.reservedCommandNames);
 
           return { configuration: finalConfig, metadata: meta };
         }
       } catch (error) {
-        debug_.error(
+        loadDebug.error(
           'an irrecoverable failure occurred while loading configuration: %O',
           error
         );
@@ -556,7 +579,7 @@ export async function discoverCommands(
           if (reservedName === reservedName_) {
             /* istanbul ignore next */
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureDuplicateCommandName(
+              BfErrorMessage.DuplicateCommandName(
                 parentFullName,
                 reservedName,
                 index === 0 ? 'name' : 'alias',
@@ -569,7 +592,7 @@ export async function discoverCommands(
       );
     });
 
-    assert(typeof parentFullName === 'string', ErrorMessage.GuruMeditation());
+    assert(typeof parentFullName === 'string', BfErrorMessage.GuruMeditation());
 
     context.commands.forEach((command, commandName) => {
       const splitCommandName = commandName.split(' ');
@@ -580,14 +603,14 @@ export async function discoverCommands(
         command.metadata.reservedCommandNames.forEach((reservedName, index) => {
           assert(
             index !== 0 || seenName === reservedName,
-            ErrorMessage.GuruMeditation()
+            BfErrorMessage.GuruMeditation()
           );
 
           checkCount++;
           if (reservedName === config.name) {
             /* istanbul ignore next */
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureDuplicateCommandName(
+              BfErrorMessage.DuplicateCommandName(
                 parentFullName,
                 config.name,
                 'name',
@@ -602,7 +625,7 @@ export async function discoverCommands(
             if (reservedName === aliasName) {
               /* istanbul ignore next */
               throw new AssertionFailedError(
-                ErrorMessage.AssertionFailureDuplicateCommandName(
+                BfErrorMessage.DuplicateCommandName(
                   parentFullName,
                   aliasName,
                   'alias',
@@ -616,7 +639,10 @@ export async function discoverCommands(
       }
     });
 
-    debug('no reserved name conflicts detected (%O checks performed)', checkCount);
+    discoverDebug(
+      'no reserved name conflicts detected (%O checks performed)',
+      checkCount
+    );
   }
 
   /**
@@ -628,10 +654,10 @@ export async function discoverCommands(
     fullName: string,
     type: ProgramType
   ): Promise<Programs> {
-    const debug_ = debug.extend('make');
+    const makerDebug = discoverDebug.extend('make:programs');
 
     if (type === 'pure parent' && config.aliases.length) {
-      debug_.warn(
+      makerDebug.warn(
         'root command aliases will be ignored during routing and will not appear in help text: %O',
         config.aliases
       );
@@ -643,11 +669,11 @@ export async function discoverCommands(
       router: await makePartiallyConfiguredProgram('router')
     };
 
-    if (type === 'pure parent' && context.state.globalVersionOption?.name?.length) {
+    if (type === 'pure parent' && context.state.globalVersionOption?.name.length) {
       const { name: versionOptionName, description: versionOptionDescription } =
         context.state.globalVersionOption;
 
-      assert(versionOptionName.length, ErrorMessage.GuruMeditation());
+      assert(versionOptionName.length, BfErrorMessage.GuruMeditation());
 
       [programs.helper, programs.effector].forEach((program) =>
         program.option(versionOptionName, {
@@ -695,12 +721,14 @@ export async function discoverCommands(
 
     // * Link router program to helper program
 
+    const routerDebug = discoverDebug.extend('router@');
+
     programs.router.command(
       ['$0'],
       '[routed-1]',
       {},
       async function () {
-        debug.extend('router@')('control reserved; calling HelperProgram::parseAsync');
+        routerDebug('control reserved; calling HelperProgram::parseAsync');
         await programs.helper.parseAsync(
           context.state.rawArgv,
           wrapExecutionContext(context)
@@ -719,12 +747,16 @@ export async function discoverCommands(
       false,
       makeVanillaYargsBuilder(programs.helper, config, 'first-pass'),
       async (parsedArgv) => {
-        const debug_ = debug.extend('helper');
-        debug_('entered wrapper handler function for %O', config.name);
-        assert(context.state.firstPassArgv === undefined, ErrorMessage.GuruMeditation());
+        const helperDebug = discoverDebug.extend('helper');
+
+        helperDebug('entered wrapper handler function for %O', config.name);
+        assert(
+          context.state.firstPassArgv === undefined,
+          BfErrorMessage.GuruMeditation()
+        );
 
         if (context.state.isHandlingHelpOption) {
-          debug_(
+          helperDebug(
             'sending help text to stdout (triggered by the %O option)',
             /* istanbul ignore next */
             context.state.globalHelpOption?.name || '???'
@@ -734,10 +766,10 @@ export async function discoverCommands(
           programs.helper.showHelp('log');
           context.state.didOutputHelpOrVersionText = true;
 
-          debug_('gracefully exited wrapper handler function for %O', config.name);
+          helperDebug('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
         } else if (type === 'pure parent' && context.state.isHandlingVersionOption) {
-          debug_(
+          helperDebug(
             'sending version text to stdout (triggered by the %O option)',
             /* istanbul ignore next */
             context.state.globalVersionOption?.name || '???'
@@ -747,11 +779,11 @@ export async function discoverCommands(
           console.log(context.state.globalVersionOption?.text || '???');
           context.state.didOutputHelpOrVersionText = true;
 
-          debug_('gracefully exited wrapper handler function for %O', config.name);
+          helperDebug('gracefully exited wrapper handler function for %O', config.name);
           throw new GracefulEarlyExitError();
         } else {
           if (!meta.isImplemented && meta.hasChildren) {
-            debug_.message(
+            helperDebug.message(
               'short-circuited effector: command is both unimplemented and has children'
             );
             throw new CommandNotImplementedError();
@@ -766,18 +798,18 @@ export async function discoverCommands(
 
           assert(
             context.state.deepestParseResult === undefined,
-            ErrorMessage.GuruMeditation()
+            BfErrorMessage.GuruMeditation()
           );
 
           context.state.deepestParseResult = localArgv;
 
-          debug_(
+          helperDebug(
             'context.state.deepestParseResult set to EffectorProgram::parseAsync result: %O',
 
             localArgv
           );
 
-          debug_('exited wrapper handler function for %O', config.name);
+          helperDebug('exited wrapper handler function for %O', config.name);
         }
       },
       [],
@@ -798,7 +830,7 @@ export async function discoverCommands(
 
     // * Finished!
 
-    debug_(
+    makerDebug(
       'created and fully configured the effector, helper, and router programs for %O command %O',
       type,
       fullName
@@ -811,8 +843,8 @@ export async function discoverCommands(
       descriptor: ProgramDescriptor
     ) {
       return function (message?: string | null, error?: Error) {
-        const debug_ = debug.extend(`${descriptor}@`);
-        debug_.message('entered failure handler for command %O', fullName);
+        const descriptorDebug = discoverDebug.extend(`${descriptor}@`);
+        descriptorDebug.message('entered failure handler for command %O', fullName);
 
         // ? If a failure happened but error is not defined, it was *probably*
         // ? a yargs-specific error (e.g. argument validation failure).
@@ -820,19 +852,25 @@ export async function discoverCommands(
         // ! errors and third-party errors? Or is `!error` the best we can do?
         const isProbablyVanillaYargsError = !error;
 
-        debug_('message: %O', message);
-        debug_('error.message: %O', error?.message);
-        debug_('error is native error: %O', isNativeError(error));
-        debug_('is allowed to show help on fail: %O', context.state.showHelpOnFail);
-        debug_('is probably vanilla yargs error: %O', isProbablyVanillaYargsError);
-        debug_(
+        descriptorDebug('message: %O', message);
+        descriptorDebug('error.message: %O', error?.message);
+        descriptorDebug('error is native error: %O', isNativeError(error));
+        descriptorDebug(
+          'is allowed to show help on fail: %O',
+          context.state.showHelpOnFail
+        );
+        descriptorDebug(
+          'is probably vanilla yargs error: %O',
+          isProbablyVanillaYargsError
+        );
+        descriptorDebug(
           'did output help or version text: %O',
           context.state.didOutputHelpOrVersionText
         );
 
         assert(
           !meta.hasChildren || type !== 'pure child',
-          ErrorMessage.GuruMeditation()
+          BfErrorMessage.GuruMeditation()
         );
 
         // ? Only helpers of "parous" parents should send help text to stderr
@@ -841,13 +879,13 @@ export async function discoverCommands(
           descriptor === 'helper' &&
           isCommandNotImplementedError(error);
 
-        debug_(
+        descriptorDebug(
           'is parous parent helper handling CommandNotImplementedError: %O',
           isParousParentHelperHandlingCommandNotImplementedError
         );
 
         const forceShowHelp = isCliError(error) && error.showHelp;
-        debug_('will attempt to force output of help text: %O', forceShowHelp);
+        descriptorDebug('will attempt to force output of help text: %O', forceShowHelp);
 
         if (
           context.state.showHelpOnFail &&
@@ -856,7 +894,7 @@ export async function discoverCommands(
             isParousParentHelperHandlingCommandNotImplementedError ||
             forceShowHelp)
         ) {
-          debug_(
+          descriptorDebug(
             `sending help text to stderr (triggered by ${error ? 'black flag' : 'yargs'})`
           );
           // ! Note how only the most specific program gets to generate help
@@ -865,31 +903,31 @@ export async function discoverCommands(
           context.state.didOutputHelpOrVersionText = true;
 
           if (isParousParentHelperHandlingCommandNotImplementedError) {
-            debug_(
+            descriptorDebug(
               'exited failure handler: set finalError to CliError(InvalidSubCommandInvocation)'
             );
 
             context.state.finalError = new CliError(
-              ErrorMessage.InvalidSubCommandInvocation()
+              BfErrorMessage.InvalidSubCommandInvocation()
             );
           }
         }
 
         if (context.state.finalError === undefined) {
           if (isCliError(error)) {
-            debug_('exited failure handler: set finalError to error as-is');
+            descriptorDebug('exited failure handler: set finalError to error as-is');
             context.state.finalError = error;
           } else {
-            debug_(
+            descriptorDebug(
               'exited failure handler: set finalError to error wrapped with CliError'
             );
             context.state.finalError = new CliError(
               /* istanbul ignore next */
-              error || message || ErrorMessage.GuruMeditation()
+              error || message || BfErrorMessage.GuruMeditation()
             );
           }
         } else {
-          debug_('exited failure handler: finalError unchanged');
+          descriptorDebug('exited failure handler: finalError unchanged');
         }
 
         throw context.state.finalError;
@@ -918,10 +956,13 @@ export async function discoverCommands(
   async function makePartiallyConfiguredProgram(
     descriptor: ProgramDescriptor
   ): Promise<unknown> {
-    const debug_ = debug.extend('make');
+    const makerDebug = discoverDebug.extend('make:program:partial');
     const deferredCommandArgs: Parameters<Program['command']>[] = [];
 
-    debug_('creating new proto-%O program (awaiting full configuration)', descriptor);
+    makerDebug(
+      'creating new proto-%O program (awaiting full configuration)',
+      descriptor
+    );
 
     const vanillaYargs = makeVanillaYargs();
 
@@ -946,11 +987,11 @@ export async function discoverCommands(
         .strict(false)
         .exitProcess(false)
         .fail(false);
-    } else if (context.state.globalHelpOption?.name?.length) {
+    } else if (context.state.globalHelpOption?.name.length) {
       const { name: helpOptionName, description: helpOptionDescription } =
         context.state.globalHelpOption;
 
-      assert(helpOptionName.length, ErrorMessage.GuruMeditation());
+      assert(helpOptionName.length, BfErrorMessage.GuruMeditation());
 
       vanillaYargs.option(helpOptionName, {
         boolean: true,
@@ -988,21 +1029,19 @@ export async function discoverCommands(
         if (['help', 'version'].includes(property as string)) {
           return function () {
             throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureInvocationNotAllowed(property as string)
+              BfErrorMessage.InvocationNotAllowed(property as string)
             );
           };
         }
 
         if (property === 'parseSync') {
           return function () {
-            throw new AssertionFailedError(
-              ErrorMessage.AssertionFailureUseParseAsyncInstead()
-            );
+            throw new AssertionFailedError(BfErrorMessage.UseParseAsyncInstead());
           };
         }
 
         if (property === 'argv') {
-          debug_.warn(
+          makerDebug.warn(
             `discarded attempted access to disabled "${property}" magic property on %O program`,
             descriptor
           );
@@ -1026,7 +1065,7 @@ export async function discoverCommands(
             // * all that can be done here. Move along.
 
             return function () {
-              debug_(
+              makerDebug(
                 `discarded attempted access to disabled method "${property}" on %O program`,
                 descriptor
               );
@@ -1057,7 +1096,7 @@ export async function discoverCommands(
               const optionsShallowClone = Object.fromEntries(
                 Object.entries(options).map(([option, optionConfiguration]) => {
                   if ('demandOption' in optionConfiguration) {
-                    debug_(
+                    makerDebug(
                       `discarded attempted mutation of disabled yargs option configuration key "demandOption" (for the %O option) on %O program`,
                       option,
                       descriptor
@@ -1080,7 +1119,7 @@ export async function discoverCommands(
             return typeof target[property as keyof typeof target] === 'function'
               ? function () {
                   throw new AssertionFailedError(
-                    ErrorMessage.AssertionFailureInvocationNotAllowed(String(property))
+                    BfErrorMessage.InvocationNotAllowed(String(property))
                   );
                 }
               : void 'disabled by Black Flag (do not access routers directly)';
@@ -1102,7 +1141,7 @@ export async function discoverCommands(
 
           if (property === 'command_deferred') {
             return function (...args: Parameters<Program['command']>) {
-              debug_('::command call was deferred for %O program', descriptor);
+              makerDebug('::command call was deferred for %O program', descriptor);
               deferredCommandArgs.push(args);
               return proxy;
             };
@@ -1110,7 +1149,7 @@ export async function discoverCommands(
 
           if (property === 'command_finalize_deferred') {
             return function () {
-              debug_(
+              makerDebug(
                 'began alpha-sorting deferred command calls for %O program',
                 descriptor
               );
@@ -1122,14 +1161,14 @@ export async function discoverCommands(
                 // ? Ensure the root command is added first (though it probably
                 // ? doesn't matter either way).
                 /* istanbul ignore next */
-                return firstCommand.startsWith('$0')
+                return firstCommand?.startsWith('$0')
                   ? -1
-                  : secondCommand.startsWith('$0')
+                  : secondCommand?.startsWith('$0')
                     ? 1
-                    : alphaSort.compare(firstCommand, secondCommand);
+                    : alphaSort.compare(String(firstCommand), String(secondCommand));
               });
 
-              debug_(
+              makerDebug(
                 'calling ::command with %O deferred argument tuples for %O program',
                 deferredCommandArgs.length,
                 descriptor
@@ -1152,7 +1191,7 @@ export async function discoverCommands(
         }
 
         // ! This line (and any line like it) has to be gated behind the if
-        // ! statements above or terrrrrible things will happen!
+        // ! statements above or terrible things will happen!
         const value: unknown = target[property as keyof typeof target];
 
         if (typeof value === 'function') {
@@ -1194,21 +1233,21 @@ export async function discoverCommands(
       '[routed-2]',
       {},
       async function () {
-        const debug_ = debug.extend('router');
+        const routerDebug = discoverDebug.extend('router');
         const givenName = context.state.rawArgv.shift();
 
         /* istanbul ignore next */
-        if (debug_.enabled) {
+        if (routerDebug.enabled) {
           const splitName = childFullName.split(' ');
-          debug_.message(
+          routerDebug.message(
             'entered router handler function bridging %O ==> %O',
             splitName.slice(0, -1).join(' '),
             splitName.at(-1)
           );
 
-          debug_('shifted given name off rawArgv: %O', givenName);
-          debug_('new context.state.rawArgv: %O', context.state.rawArgv);
-          debug_("relinquishing control to child command's router program");
+          routerDebug('shifted given name off rawArgv: %O', givenName);
+          routerDebug('new context.state.rawArgv: %O', context.state.rawArgv);
+          routerDebug("relinquishing control to child command's router program");
         }
 
         // ? Only the root command handles the built-in version option, so if
@@ -1226,7 +1265,7 @@ export async function discoverCommands(
     );
 
     if (parentRouter) {
-      debug(
+      discoverDebug(
         "linked child command %O router program to its parent command's router program",
         childFullName
       );
@@ -1254,16 +1293,14 @@ export async function discoverCommands(
       makeVanillaYargsBuilder(parentHelper, childConfig, 'first-pass'),
       /* istanbul ignore next */
       async (_parsedArgv) => {
-        throw new AssertionFailedError(
-          ErrorMessage.AssertionFailureReachedTheUnreachable()
-        );
+        throw new AssertionFailedError(BfErrorMessage.GuruMeditation());
       },
       [],
       childConfig.deprecated
     );
 
     if (parentHelper) {
-      debug(
+      discoverDebug(
         "added an entry for child command %O to its parent command's helper program",
         childFullName
       );
@@ -1278,17 +1315,19 @@ export async function discoverCommands(
     program: EffectorProgram | HelperProgram,
     config: Configuration,
     pass: 'first-pass' | 'second-pass'
-    // eslint-disable-next-line @typescript-eslint/ban-types
-  ): Extract<Parameters<Program['command']>[2], Function> {
+  ): Extract<Parameters<Program['command']>[2], (...args: never[]) => unknown> {
     return (vanillaYargs, helpOrVersionSet) => {
-      const debug_ = debug.extend(pass === 'first-pass' ? 'helper' : 'effector');
-      debug_(`entered wrapper builder function (${pass}) for %O`, config.name);
+      const yargsDebug = discoverDebug.extend(
+        pass === 'first-pass' ? 'helper' : 'effector'
+      );
+
+      yargsDebug(`entered wrapper builder function (${pass}) for %O`, config.name);
 
       assert(
         pass === 'first-pass'
           ? context.state.firstPassArgv === undefined
           : context.state.firstPassArgv !== undefined,
-        ErrorMessage.GuruMeditation()
+        BfErrorMessage.GuruMeditation()
       );
 
       try {
@@ -1311,12 +1350,12 @@ export async function discoverCommands(
           );
         }
 
-        debug_(
+        yargsDebug(
           `exited wrapper builder function (${pass}) for %O (no errors)`,
           config.name
         );
       } catch (error) {
-        debug_.warn(
+        yargsDebug.warn(
           `exited wrapper builder function (${pass}) for %O (with error)`,
           config.name
         );
@@ -1356,6 +1395,7 @@ function isModuleNotFoundSystemError(error: unknown): error is Error & {
   url?: string;
   moduleName?: string;
 } {
+  /* istanbul ignore next */
   return (
     isNativeError(error) &&
     'code' in error &&
