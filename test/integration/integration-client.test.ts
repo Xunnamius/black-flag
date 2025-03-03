@@ -22,8 +22,9 @@ import {
   reconfigureJestGlobalsToSkipTestsInThisFileIfRequested
 } from 'testverse:util.ts';
 
-const TEST_IDENTIFIER = `${packageName.split('/').at(-1)!}-client`;
-const debug = createDebugLogger({ namespace: 'core' }).extend(TEST_IDENTIFIER);
+const shortIdentifier = packageName.split('/').at(-1)!;
+const TEST_IDENTIFIER = `${shortIdentifier}-client`;
+const debug = createDebugLogger({ namespace: shortIdentifier }).extend(TEST_IDENTIFIER);
 const nodeVersion = process.env.XPIPE_MATRIX_NODE_VERSION || process.version;
 
 debug(`nodeVersion: "${nodeVersion}" (process.version=${process.version})`);
