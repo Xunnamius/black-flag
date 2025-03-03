@@ -102,3 +102,54 @@ export default runProgram('${pathToFileURL(
     }
   );
 });
+
+it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mode without experimental-vm-modules', async () => {
+  expect.hasAssertions();
+
+  await withMockedFixture(
+    async (context) => {
+      expect(context.testResult.stderr).toBeEmpty();
+      expect(context.testResult.exitCode).toBe(0);
+      expect(context.testResult.stdout).toBe('first success');
+    },
+    {
+      runWith: {
+        args: ['--no-warnings']
+      },
+      initialVirtualFiles: {
+        'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
+          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
+        ).toString()}', 'js cjs');`
+      }
+    }
+  );
+});
+
+it('supports both CJS and ESM (js, mjs, cjs) configuration files in node ESM mode without experimental-vm-modules', async () => {
+  expect.hasAssertions();
+
+  await withMockedFixture(
+    async (context) => {
+      expect(context.testResult.stderr).toBeEmpty();
+      expect(context.testResult.exitCode).toBe(0);
+      expect(context.testResult.stdout).toBe('second success');
+    },
+    {
+      runWith: {
+        args: ['--no-warnings']
+      },
+      initialVirtualFiles: {
+        'src/index.mjs': `
+import { runProgram } from '@black-flag/core';
+
+if(typeof module !== 'undefined' || typeof require !== 'undefined') {
+  throw new Error('expected ESM runtime but detected CJS');
+}
+
+export default runProgram('${pathToFileURL(
+          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
+        ).toString()}', 'js mjs');`
+      }
+    }
+  );
+});
