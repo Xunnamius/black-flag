@@ -19,17 +19,17 @@ document.
 
 ## Terminology
 
-|      Term       | Description                                                                                                                                                                                                                                                                                                   |
-| :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][27] file and represented internally as a trio of programs: [effector, helper, and router][42]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
-|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][43] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][44] type.                                                                                                                                |
-|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                               |
-| default command | A "default command" is [yargs parlance][45] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
+|      Term       | Description                                                                                                                                                                                                                                                                                                 |
+| :-------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     command     | A "command" is a functional unit associated with a [configuration][3] file and represented internally as a trio of programs: [effector, helper, and router][4]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][5] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][6] type.                                                                                                                                |
+|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                             |
+| default command | A "default command" is [yargs parlance][7] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                     |
 
 ## Execution Flow Diagram
 
 What follows is a flow diagram illustrating Black Flag's execution flow using
-the `myctl` example from [`README.md`](./README.md).
+the `myctl` example from [`README.md`][8].
 
 ```text
                            `myctl --verbose`
@@ -175,76 +175,15 @@ user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using
-> [https://asciiflow.com](https://asciiflow.com)
+> The ascii art diagram was built using [https://asciiflow.com][9]
 
 [1]: https://github.com/Xunnamius/symbiote/wiki/Generic-Project-Architecture
 [2]: https://github.com/Xunnamius/symbiote
-[4]: #irrelevant-differences
-[5]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[6]: https://github.com/yargs/yargs/issues/793
-[7]:
-  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/api.md
-[8]: #differences-between-black-flag-and-yargs
-[9]: #built-in-support-for-dynamic-options-
-[10]: https://github.com/Xunnamius/black-flag-demo
-[11]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[12]: ./docs/index/functions/runProgram.md
-[13]:
-  https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[14]: ./docs/index/functions/configureProgram.md
-[15]: ./docs/util/type-aliases/PreExecutionContext.md
-[16]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[17]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
-[18]: ./docs/util/classes/AssertionFailedError.md
-[19]: ./docs/util/functions/makeRunner.md
-[20]: ./docs/index/enumerations/FrameworkExitCode.md
-[21]: #built-in-debug-integration-for-runtime-insights-
-[22]: https://www.npmjs.com/package/debug
-[23]: https://www.npmjs.com/package/debug#usage
-[24]: ./docs/index/type-aliases/RootConfiguration.md
-[25]: ./docs/index/type-aliases/ParentConfiguration.md
-[26]: ./docs/index/type-aliases/ChildConfiguration.md
-[27]: ./docs/index/type-aliases/Configuration.md
-[28]: #building-and-running-your-cli
-[29]: https://github.com/Xunnamius/xunnctl
-[30]: #features
-[31]: https://nodejs.org/api/packages.html#type
-[32]: ./docs/util/type-aliases/ExecutionContext.md
-[33]: ./docs/index/type-aliases/ConfigureExecutionContext.md
-[34]:
-  https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[35]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
-[36]: https://www.npmjs.com/package/alpha-sort
-[37]:
-  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
-[38]: https://www.npmjs.com/package/jest
-[39]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[40]: https://jestjs.io/docs/jest-object#jestresetmodules
-[41]: https://github.com/yargs/yargs/issues/2191
-[42]: #advanced-usage
-[43]:
+[3]: ./docs/index/type-aliases/Configuration.md
+[4]: #advanced-usage
+[5]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[44]: ./docs/util/type-aliases/Program.md
-[45]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[46]:
-  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
-[47]:
-  https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation
-[48]: ./docs/index/type-aliases/ConfigureArguments.md
-[49]: https://github.com/yargs/yargs/issues/733
-[50]: https://github.com/yargs/yargs/issues/1323
-[51]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
-[52]: https://developer.mozilla.org/en-US/docs/Glossary/Hoisting
-[53]: #generating-help-text
-[54]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
-[55]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
-[56]: https://yargs.js.org/docs#api-reference-parseargs-context-parsecallback
-[57]: https://github.com/yargs/yargs/issues/1137
-[58]: #execution-flow-diagram
-[59]: ./docs/util/type-aliases/ProgramMetadata.md
-[60]: ./example-1.png
-[61]: ./example-2.png
-[63]: https://xkcd.com/1205
-[64]:
-  https://www.reddit.com/r/ProgrammerHumor/comments/bqzc9m/i_would_rather_spend_hours_making_a_program_to_do
+[6]: ./docs/util/type-aliases/Program.md
+[7]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
+[8]: ./README.md
+[9]: https://asciiflow.com
