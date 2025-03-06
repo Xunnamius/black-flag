@@ -24,7 +24,7 @@ import {
 } from 'testverse:util.ts';
 
 const shortIdentifier = packageName.split('/').at(-1)!;
-const TEST_IDENTIFIER = `${shortIdentifier}-e2e`;
+const TEST_IDENTIFIER = `${shortIdentifier}-e2e-docs`;
 const debug = createDebugLogger({ namespace: shortIdentifier }).extend(TEST_IDENTIFIER);
 const nodeVersion = process.env.XPIPE_MATRIX_NODE_VERSION || process.version;
 
@@ -213,5 +213,40 @@ export async function handler(argv) {
         }
       }
     );
+  });
+});
+
+describe('./docs/features.md', () => {
+  test("it's yargs all the way down", async () => {
+    expect.hasAssertions();
+  });
+
+  test('run your tool safely and consistently', async () => {
+    expect.hasAssertions();
+  });
+
+  test('convention over configuration', async () => {
+    expect.hasAssertions();
+  });
+
+  test('simple comprehensive error handling and reporting', async () => {
+    expect.hasAssertions();
+  });
+  test('a pleasant testing experience', async () => {
+    expect.hasAssertions();
+  });
+
+  test('built-in debug integration for runtime insights', async () => {
+    expect.hasAssertions();
+  });
+
+  test('extensive intellisense support', async () => {
+    expect.hasAssertions();
+  });
+});
+
+describe('./docs/getting-started.md', () => {
+  test('todo', async () => {
+    expect.hasAssertions();
   });
 });
