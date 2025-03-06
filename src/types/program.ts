@@ -306,8 +306,8 @@ export type PreExecutionContext<
    * function that handles exceptions and sets the exit code for you.
    *
    * Note: when the special `GracefulEarlyExitError` exception is thrown _from
-   * within a command's handler or builder_, `Executor` will set
-   * `context.state.deepestParseResult` to `NullArguments` and
+   * within a command's handler or builder (or certain hooks)_, `Executor` will
+   * set `context.state.deepestParseResult` to `NullArguments` and
    * `context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
    * not** re-throw the exception in this special case, returning
    * `NullArguments` instead.
@@ -337,14 +337,20 @@ export type ExecutionContext = {
    * as they are encountered while walking the filesystem. **This means you can
    * NEVER rely on insertion order remaining consistent between OSes,
    * filesystems, or even Node.js versions.**
+   *
+   * This property is used internally by Black Flag.
    */
   commands: Map<string, { programs: Programs; metadata: ProgramMetadata }>;
   /**
    * The {@link ExtendedDebugger} for the current runtime level.
+   *
+   * This property is used internally by Black Flag.
    */
   debug: ExtendedDebugger;
   /**
    * The current state of the execution environment.
+   *
+   * This property is used internally by Black Flag.
    */
   state: {
     /**

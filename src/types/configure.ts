@@ -10,8 +10,9 @@ import type { Arguments, ExecutionContext, Programs } from 'universe:types/progr
  * `configureProgram` and should return what will become the global
  * {@link ExecutionContext} singleton.
  *
- * Note that any errors thrown this early in the initialization process will be
- * thrown as-is and will NOT trigger {@link ConfigureErrorHandlingEpilogue}.
+ * Note that any errors thrown this early in the initialization process will
+ * trigger a framework error and will NOT be handled by
+ * {@link ConfigureErrorHandlingEpilogue}.
  */
 export type ConfigureExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -30,8 +31,9 @@ export type ConfigureExecutionContext<
  *
  * This function is the complement of {@link ConfigureExecutionEpilogue}.
  *
- * Note that any errors thrown this early in the initialization process will be
- * thrown as-is and will NOT trigger {@link ConfigureErrorHandlingEpilogue}.
+ * Note that any errors thrown this early in the initialization process will
+ * trigger a framework error and will NOT be handled by
+ * {@link ConfigureErrorHandlingEpilogue}.
  */
 export type ConfigureExecutionPrologue<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -99,7 +101,7 @@ export type ConfigurationHooks = {
    * {@link ExecutionContext} singleton.
    *
    * Note that any errors thrown this early in the initialization process will
-   * be thrown as-is and will NOT trigger
+   * trigger a framework error and will NOT be handled by
    * {@link ConfigureErrorHandlingEpilogue}.
    */
   configureExecutionContext?: ConfigureExecutionContext;
@@ -117,7 +119,7 @@ export type ConfigurationHooks = {
    * This function is the complement of {@link ConfigureExecutionEpilogue}.
    *
    * Note that any errors thrown this early in the initialization process will
-   * be thrown as-is and will NOT trigger
+   * trigger a framework error and will NOT be handled by
    * {@link ConfigureErrorHandlingEpilogue}.
    */
   configureExecutionPrologue?: ConfigureExecutionPrologue;
@@ -126,7 +128,7 @@ export type ConfigurationHooks = {
    * `PreExecutionContext::execute` and should return a `process.argv`-like array.
    *
    * This is where yargs middleware and other argument pre-processing can be
-   * implemented.
+   * implemented, if desired.
    */
   configureArguments?: ConfigureArguments;
   /**
