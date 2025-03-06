@@ -1,4 +1,4 @@
-import { ErrorMessage as UpstreamErrorMessage } from '@black-flag/core/util';
+import { BfErrorMessage } from '@black-flag/core/util';
 
 import { $exists } from 'universe+extensions:symbols.ts';
 
@@ -12,7 +12,7 @@ export type KeyValueEntry = KeyValueEntries[number];
  */
 /* istanbul ignore next */
 export const BfeErrorMessage = {
-  ...UpstreamErrorMessage,
+  ...BfErrorMessage,
   FalsyCommandExport() {
     return 'supposed command argument unexpectedly resolved to a falsy value';
   },
