@@ -8,7 +8,6 @@ import type {
 } from 'universe';
 
 import type { $executionContext, nullArguments$0 } from 'universe:constant.ts';
-import type { CliError } from 'universe:error.ts';
 import type { ConfigureArguments } from 'universe:types/configure.ts';
 import type { Configuration } from 'universe:types/module.ts';
 
