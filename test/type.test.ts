@@ -3,7 +3,7 @@
 // * These tests ensure the exported types under test function as expected.
 
 import { createDebugLogger } from 'rejoinder';
-import { describe, expect, test } from 'tstyche';
+import { expect, test } from 'tstyche';
 
 import type {
   $executionContext,
@@ -29,10 +29,6 @@ import type {
   ProgramType,
   RouterProgram
 } from 'universe:exports/util.ts';
-
-describe('::todo', () => {
-  test.todo('this');
-});
 
 test('exports/index', async () => {
   expect({

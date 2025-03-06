@@ -5,7 +5,7 @@ import {
   checkArrayNotEmpty,
   checkIsNotNegative,
   checkIsNotNil
-} from 'multiverse+checks:index.ts';
+} from 'universe+checks';
 
 const argName = 'argName';
 
