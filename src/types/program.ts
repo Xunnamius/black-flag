@@ -386,6 +386,17 @@ export type ExecutionContext = {
      */
     isGracefullyExiting: boolean;
     /**
+     * If `true`, Black Flag already handled whatever error has made its way to
+     * the highest error handling layer (typically through the
+     * `configureErrorHandlingEpilogue` hook).
+     *
+     * Otherwise, if the error is unhandled by the time this property is
+     * checked, a framework error will occur.
+     *
+     * This property is ignored when no error has occurred.
+     */
+    didAlreadyHandleError: boolean;
+    /**
      * If `isHandlingHelpOption` is `true`, Black Flag is currently in the
      * process of getting yargs to generate help text for some command.
      *
@@ -509,9 +520,12 @@ export type ExecutionContext = {
      *
      * Instead of trying to deal with all that, we'll just handle it ourselves.
      *
+     * This property is also leveraged by `makeRunner`'s `errorHandlingBehavior`
+     * option.
+     *
      * @default undefined
      */
-    finalError: CliError | undefined;
+    finalError: unknown;
 
     [key: string]: unknown;
   };
