@@ -58,25 +58,30 @@ const coreDebug = createDebugLogger({ namespace: globalDebuggerNamespace });
 
 /**
  * The available call signature parameters of the {@link runProgram} function.
+ *
+ * The first parameter is always the required `commandModulesPath` string,
+ * optionally followed by `argv` string/array, and then either a
+ * {@link ConfigurationHooks} or {@link PreExecutionContext} instance (or a
+ * promise that returns them).
  */
 export type RunProgramParameters =
   // * Call signature 1
-  | [commandModulePath: string]
+  | [commandModulesPath: string]
   // * Call signature 2
-  | [commandModulePath: string, configurationHooks: Promisable<ConfigurationHooks>]
+  | [commandModulesPath: string, configurationHooks: Promisable<ConfigurationHooks>]
   // * Call signature 3
-  | [commandModulePath: string, preExecutionContext: Promisable<PreExecutionContext>]
+  | [commandModulesPath: string, preExecutionContext: Promisable<PreExecutionContext>]
   // * Call signature 4
-  | [commandModulePath: string, argv: string | string[]]
+  | [commandModulesPath: string, argv: string | string[]]
   // * Call signature 5
   | [
-      commandModulePath: string,
+      commandModulesPath: string,
       argv: string | string[],
       configurationHooks: Promisable<ConfigurationHooks>
     ]
   // * Call signature 6
   | [
-      commandModulePath: string,
+      commandModulesPath: string,
       argv: string | string[],
       preExecutionContext: Promisable<PreExecutionContext>
     ];
@@ -90,6 +95,9 @@ export type RunProgramReturnType<CustomCliArguments extends Record<string, unkno
 /**
  * The available call signature parameters of the low-order function returned by
  * {@link makeRunner}.
+ *
+ * This is the same thing as {@link RunProgramParameters} but with the first
+ * parameter (i.e. the `commandModulesPath` string) omitted.
  */
 export type FactoriedRunProgramParameters = RunProgramParameters extends [
   infer _,
@@ -99,11 +107,78 @@ export type FactoriedRunProgramParameters = RunProgramParameters extends [
   : [];
 
 /**
+ * The options accepted by the {@link makeRunner} function.
+ */
+export type MakeRunnerOptions = {
+  /**
+   * @see {@link runProgram}
+   */
+  commandModulesPath: string;
+  /**
+   * This is a special option exclusive to `makeRunner` that determines how
+   * errors will be surfaced, which can be useful during testing.
+   *
+   * In production and during testing, Black Flag surfaces errors via
+   * `process.stderr` (e.g. `console.error`), or whichever error handling
+   * method was implemented in {@link ConfigureErrorHandlingEpilogue}. This is
+   * the default behavior, and is what end-users will see and experience.
+   *
+   * However, by setting this option to `'throw'` instead of `'default'`,
+   * exceptions that would normally cause {@link runProgram} to return
+   * `undefined` (including framework errors) or `NullArguments` (such as
+   * `GracefulEarlyExitError`) will instead be thrown after they are handled
+   * by Black Flag.
+   *
+   * **Asserting expectations against how the CLI will actually behave in
+   * production, which is what end-users will actually experience, should be
+   * preferred over testing against an artificially surfaced error**. However,
+   * surfacing errors in test cases that are failing unexpectedly can be
+   * crucial when debugging. Discretion is advised.
+   *
+   * @default 'default'
+   */
+  errorHandlingBehavior?: 'default' | 'throw';
+  /**
+   * The {@link ConfigurationHooks} to be used by each low-order
+   * invocation by default. Each low-order function can provide its own
+   * {@link ConfigurationHooks} argument, which will be merged on top of
+   * this option. A low-order function supplying a
+   * {@link PreExecutionContext} argument instead will completely override
+   * this option.
+   *
+   * Note: this option cannot be used with `preExecutionContext`.
+   *
+   * @see {@link runProgram}
+   */
+  configurationHooks?: Promisable<ConfigurationHooks>;
+  /**
+   * The {@link PreExecutionContext} to be used by each low-order
+   * invocation. Each low-order function can provide its own
+   * {@link PreExecutionContext} or {@link ConfigurationHooks} argument,
+   * both of which which will completely override this option.
+   *
+   * Note: this option cannot be used with `configurationHooks`.
+   *
+   * @see {@link runProgram}
+   */
+  preExecutionContext?: Promisable<PreExecutionContext>;
+} & (
+  | {
+      configurationHooks?: Promisable<ConfigurationHooks>;
+      preExecutionContext?: undefined;
+    }
+  | {
+      preExecutionContext?: Promisable<PreExecutionContext>;
+      configurationHooks?: undefined;
+    }
+);
+
+/**
  * Create and return a {@link PreExecutionContext} containing fully-configured
  * {@link Program} instances and an {@link Executor} entry point function.
  *
- * Command auto-discovery will occur at `commandModulePath`. An exception will
- * occur if no commands are loadable from the given `commandModulePath`.
+ * Command auto-discovery will occur at `commandModulesPath`. An exception will
+ * occur if no commands are loadable from the given `commandModulesPath`.
  *
  * **This function throws whenever an exception occurs**, making it not ideal as
  * an entry point for a CLI, but perhaps useful during testing. See
@@ -112,12 +187,12 @@ export type FactoriedRunProgramParameters = RunProgramParameters extends [
  */
 export async function configureProgram(
   /**
-   * Command auto-discovery will occur at `commandModulePath`. An exception will
-   * occur if no commands are loadable from the given `commandModulePath`.
+   * Command auto-discovery will occur at `commandModulesPath`. An exception will
+   * occur if no commands are loadable from the given `commandModulesPath`.
    *
    * `'file://...'`-style URLs are also accepted.
    */
-  commandModulePath: string,
+  commandModulesPath: string,
   configurationHooks?: Promisable<ConfigurationHooks>
 ): Promise<PreExecutionContext> {
   try {
@@ -139,7 +214,7 @@ export async function configureProgram(
       )
     };
 
-    confDebug('command module auto-discovery path: %O', commandModulePath);
+    confDebug('command module auto-discovery path: %O', commandModulesPath);
     confDebug('configuration hooks: %O', finalConfigurationHooks);
     confDebug('entering configureExecutionContext');
 
@@ -195,7 +270,7 @@ export async function configureProgram(
       'to save space, ExecutionContext will be unenumerable from this point on'
     );
 
-    await discoverCommands(commandModulePath, context);
+    await discoverCommands(commandModulesPath, context);
 
     const { programs: rootPrograms } = getRootCommand();
 
@@ -435,9 +510,9 @@ export async function configureProgram(
 }
 
 /**
- * A "high-order" factory function that returns a "low-order" {@link runProgram}
- * function that can be called multiple times while only having to provide a
- * subset of the required parameters.
+ * A "high-order" factory function that returns a "low-order" curried
+ * {@link runProgram} function that can be called multiple times while only
+ * having to provide a subset of the required parameters.
  *
  * This is useful when unit/integration testing a CLI, which will likely require
  * multiple calls to `runProgram(...)`.
@@ -463,67 +538,7 @@ export async function configureProgram(
 export function makeRunner<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  options: {
-    /**
-     * @see {@link runProgram}
-     */
-    commandModulePath: string;
-    /**
-     * This is a special option exclusive to `makeRunner` that determines how
-     * errors will be surfaced, which can be useful during testing.
-     *
-     * In production and during testing, Black Flag surfaces errors via
-     * `process.stderr` (e.g. `console.error`), or whichever error handling
-     * method was implemented in {@link ConfigureErrorHandlingEpilogue}. This is
-     * the default behavior, and is what end-users will see and experience.
-     *
-     * However, by setting this option to `'throw'` instead of `'default'`,
-     * exceptions that would normally cause {@link runProgram} to return
-     * `undefined` (including framework errors) or `NullArguments` (such as
-     * `GracefulEarlyExitError`) will instead be thrown after they are handled
-     * by Black Flag.
-     *
-     * **Asserting expectations against how the CLI will actually behave in
-     * production, which is what end-users will actually experience, should be
-     * preferred over testing against an artificially surfaced error**. However,
-     * surfacing errors in test cases that are failing unexpectedly can be
-     * crucial when debugging. Discretion is advised.
-     *
-     * @default 'default'
-     */
-    errorHandlingBehavior?: 'default' | 'throw';
-  } & (
-    | {
-        /**
-         * The {@link ConfigurationHooks} to be used by each low-order
-         * invocation by default. Each low-order function can provide its own
-         * {@link ConfigurationHooks} argument, which will be merged on top of
-         * this option. A low-order function supplying a
-         * {@link PreExecutionContext} argument instead will completely override
-         * this option.
-         *
-         * Note: this option cannot be used with `preExecutionContext`.
-         *
-         * @see {@link runProgram}
-         */
-        configurationHooks?: Promisable<ConfigurationHooks>;
-        preExecutionContext?: undefined;
-      }
-    | {
-        /**
-         * The {@link PreExecutionContext} to be used by each low-order
-         * invocation. Each low-order function can provide its own
-         * {@link PreExecutionContext} or {@link ConfigurationHooks} argument,
-         * both of which which will completely override this option.
-         *
-         * Note: this option cannot be used with `configurationHooks`.
-         *
-         * @see {@link runProgram}
-         */
-        preExecutionContext?: Promisable<PreExecutionContext>;
-        configurationHooks?: undefined;
-      }
-  )
+  options: MakeRunnerOptions
 ): (...args: FactoriedRunProgramParameters) => RunProgramReturnType<CustomCliArguments> {
   const makerDebug = coreDebug.extend('makeRunner');
   makerDebug('returning curried runProgram function');
@@ -535,7 +550,7 @@ export function makeRunner<
     runDebug('options: %O', options);
 
     const {
-      commandModulePath,
+      commandModulesPath,
       configurationHooks: highConfigurationHooks,
       preExecutionContext: highPreExecutionContext,
       errorHandlingBehavior = 'default'
@@ -548,7 +563,7 @@ export function makeRunner<
       BfErrorMessage.BadParameterCombination()
     );
 
-    const lowParameters: RunProgramParameters = [commandModulePath, ...args];
+    const lowParameters: RunProgramParameters = [commandModulesPath, ...args];
 
     const derivedLowParameters = await deriveRunProgramParametersFromArgs(
       lowParameters,
@@ -607,13 +622,17 @@ export function makeRunner<
       const preExecutionContext = isPreExecutionContext(hooksOrContext)
         ? hooksOrContext
         : await runBadProgramIfPromiseRejects(
-            configureProgram(commandModulePath, hooksOrContext),
+            configureProgram(commandModulesPath, hooksOrContext),
             lowParameters
           );
 
       const promisedResult = lowArgv
-        ? runProgram<CustomCliArguments>(commandModulePath, lowArgv, preExecutionContext)
-        : runProgram<CustomCliArguments>(commandModulePath, preExecutionContext);
+        ? runProgram<CustomCliArguments>(
+            commandModulesPath,
+            lowArgv,
+            preExecutionContext
+          )
+        : runProgram<CustomCliArguments>(commandModulesPath, preExecutionContext);
 
       const result = await promisedResult;
 
@@ -631,7 +650,7 @@ export function makeRunner<
 
 /**
  * Invokes the dynamically imported
- * `configureProgram(commandModulePath).execute()` function.
+ * `configureProgram(commandModulesPath).execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an exception occurs,
@@ -648,9 +667,9 @@ export function makeRunner<
  */
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
->(...args: [commandModulePath: string]): RunProgramReturnType<CustomCliArguments>;
+>(commandModulesPath: string): RunProgramReturnType<CustomCliArguments>;
 /**
- * Invokes the dynamically imported `configureProgram(commandModulePath,
+ * Invokes the dynamically imported `configureProgram(commandModulesPath,
  * configurationHooks).execute()` function.
  *
  * This function is suitable for a CLI entry point since it will **never throw
@@ -669,10 +688,8 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [
-    commandModulePath: string,
-    configurationHooks: Promisable<ConfigurationHooks>
-  ]
+  commandModulesPath: string,
+  configurationHooks: Promisable<ConfigurationHooks>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
  * Invokes the `preExecutionContext.execute()` function.
@@ -695,14 +712,12 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [
-    commandModulePath: string,
-    preExecutionContext: Promisable<PreExecutionContext>
-  ]
+  commandModulesPath: string,
+  preExecutionContext: Promisable<PreExecutionContext>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
  * Invokes the dynamically imported
- * `configureProgram(commandModulePath).execute(argv)` function. If `argv` is a
+ * `configureProgram(commandModulesPath).execute(argv)` function. If `argv` is a
  * string, `argv = argv.split(' ')` is applied first.
  *
  * This function is suitable for a CLI entry point since it will **never throw
@@ -721,10 +736,11 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [commandModulePath: string, argv: string | string[]]
+  commandModulesPath: string,
+  argv: string | string[]
 ): RunProgramReturnType<CustomCliArguments>;
 /**
- * Invokes the dynamically imported `configureProgram(commandModulePath,
+ * Invokes the dynamically imported `configureProgram(commandModulesPath,
  * configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
  * argv.split(' ')` is applied first.
  *
@@ -744,11 +760,9 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [
-    commandModulePath: string,
-    argv: string | string[],
-    configurationHooks: Promisable<ConfigurationHooks>
-  ]
+  commandModulesPath: string,
+  argv: string | string[],
+  configurationHooks: Promisable<ConfigurationHooks>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
  * Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
@@ -772,14 +786,12 @@ export async function runProgram<
 export async function runProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
 >(
-  ...args: [
-    commandModulePath: string,
-    argv: string | string[],
-    preExecutionContext: Promisable<PreExecutionContext>
-  ]
+  commandModulesPath: string,
+  argv: string | string[],
+  preExecutionContext: Promisable<PreExecutionContext>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
- * Run the given program with the given configuration.
+ * Run the given program with the configuration given in `args`.
  *
  * This function is suitable for a CLI entry point since it will **never throw
  * or reject no matter what.** Instead, when an exception occurs,
@@ -806,7 +818,7 @@ export async function runProgram<
 
   try {
     parameters = await deriveRunProgramParametersFromArgs(args);
-    const { argv, commandModulePath, configurationHooks } = parameters;
+    const { argv, commandModulesPath, configurationHooks } = parameters;
 
     runDebug(
       parameters.preExecutionContext
@@ -815,7 +827,7 @@ export async function runProgram<
     );
 
     parameters.preExecutionContext ||= await configureProgram(
-      commandModulePath,
+      commandModulesPath,
       configurationHooks
     );
 
@@ -1008,7 +1020,7 @@ function noopConfigurationHook() {
 type DeriveRunProgramParametersFromArgsReturnType<Await extends boolean> = Promise<
   [
     {
-      commandModulePath: string;
+      commandModulesPath: string;
       argv: string | string[] | undefined;
       configurationHooks: ConfigurationHooks | undefined;
       preExecutionContext: PreExecutionContext | undefined;
@@ -1040,7 +1052,7 @@ async function deriveRunProgramParametersFromArgs(
 ): DeriveRunProgramParametersFromArgsReturnType<boolean> {
   const result: Awaited<DeriveRunProgramParametersFromArgsReturnType<true>> &
     Awaited<DeriveRunProgramParametersFromArgsReturnType<false>> = {
-    commandModulePath: args[0],
+    commandModulesPath: args[0],
     argv: undefined,
     configurationHooks: undefined,
     preExecutionContext: undefined,

@@ -2,6 +2,8 @@ export { configureProgram, runProgram } from 'universe';
 
 export { $executionContext, FrameworkExitCode } from 'universe:constant.ts';
 
+export type { RunProgramParameters, RunProgramReturnType } from 'universe';
+
 export {
   CliError,
   GracefulEarlyExitError,

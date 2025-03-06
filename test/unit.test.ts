@@ -154,7 +154,7 @@ describe('::configureProgram', () => {
     });
   });
 
-  it('throws when called with undefined or non-existent commandModulePath', async () => {
+  it('throws when called with undefined or non-existent commandModulesPath', async () => {
     expect.hasAssertions();
 
     await withMocks(async () => {
@@ -331,7 +331,7 @@ describe('::configureProgram', () => {
     }
   });
 
-  it('supports "file://..."-style URLs as commandModulePath', async () => {
+  it('supports "file://..."-style URLs as commandModulesPath', async () => {
     expect.hasAssertions();
 
     await withMocks(async ({ logSpy }) => {
@@ -806,7 +806,7 @@ describe('::configureProgram', () => {
 
       await withMocks(async ({ logSpy }) => {
         const run = bf_util.makeRunner({
-          commandModulePath: getFixturePath('nested-false-description-cjs')
+          commandModulesPath: getFixturePath('nested-false-description-cjs')
         });
 
         await expect(run('--help')).resolves.toBeDefined();
@@ -822,7 +822,7 @@ describe('::configureProgram', () => {
 
       await withMocks(async ({ logSpy }) => {
         const run = bf_util.makeRunner({
-          commandModulePath: getFixturePath('nested-false-description-esm')
+          commandModulesPath: getFixturePath('nested-false-description-esm')
         });
 
         await expect(run('--help')).resolves.toBeDefined();
@@ -1516,7 +1516,7 @@ describe('::configureProgram', () => {
 });
 
 describe('util::makeRunner', () => {
-  const cjsCommandModulePath = getFixturePath('one-file-log-handler-cjs');
+  const cjsCommandModulesPath = getFixturePath('one-file-log-handler-cjs');
 
   const configurationHooks: bf.ConfigurationHooks = {
     configureExecutionPrologue() {
@@ -1544,7 +1544,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, warnSpy }) => {
       await expect(
         bf_util.makeRunner({
-          commandModulePath: getFixturePath('one-file-loose-cjs'),
+          commandModulesPath: getFixturePath('one-file-loose-cjs'),
           configurationHooks
         })('--option1 --option2 --option3')
       ).resolves.toContainEntries([
@@ -1564,7 +1564,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ warnSpy, logSpy, getExitCode }) => {
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks
         })(['--one-file-log-handler-cjs'])
       ).resolves.toBeDefined();
@@ -1575,9 +1575,9 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           preExecutionContext: await bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             promisedConfigurationHooks
           )
         })(['--one-file-log-handler-cjs'])
@@ -1589,7 +1589,7 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: promisedConfigurationHooks
         })(['--one-file-log-handler-cjs'])
       ).resolves.toBeDefined();
@@ -1600,9 +1600,9 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           preExecutionContext: bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             promisedConfigurationHooks
           )
         })(['--one-file-log-handler-cjs'])
@@ -1618,7 +1618,7 @@ describe('util::makeRunner', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
-      const run = bf_util.makeRunner({ commandModulePath: cjsCommandModulePath });
+      const run = bf_util.makeRunner({ commandModulesPath: cjsCommandModulesPath });
 
       await run();
 
@@ -1650,7 +1650,7 @@ describe('util::makeRunner', () => {
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await run(await bf.configureProgram(cjsCommandModulePath, configurationHooks));
+      await run(await bf.configureProgram(cjsCommandModulesPath, configurationHooks));
 
       expect(logSpy.mock.calls).toHaveLength(6);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1]]);
@@ -1670,7 +1670,7 @@ describe('util::makeRunner', () => {
 
       await run(
         '--help',
-        await bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        await bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy.mock.calls).toHaveLength(9);
@@ -1679,14 +1679,14 @@ describe('util::makeRunner', () => {
 
       await run(
         '--help',
-        bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy.mock.calls).toHaveLength(10);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2], [2]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await run(bf.configureProgram(cjsCommandModulePath, configurationHooks));
+      await run(bf.configureProgram(cjsCommandModulesPath, configurationHooks));
 
       expect(logSpy.mock.calls).toHaveLength(11);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2], [2], [2], [1]]);
@@ -1699,7 +1699,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         configurationHooks: {
           ...configurationHooks,
           configureExecutionEpilogue(argv) {
@@ -1747,7 +1747,7 @@ describe('util::makeRunner', () => {
       expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.Ok);
 
       await run(
-        await bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        await bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy.mock.calls).toHaveLength(6);
@@ -1771,7 +1771,7 @@ describe('util::makeRunner', () => {
 
       await run(
         '--help',
-        await bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        await bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy.mock.calls).toHaveLength(9);
@@ -1782,7 +1782,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         configurationHooks: Promise.resolve({
           configureExecutionPrologue() {
             // eslint-disable-next-line no-console
@@ -1832,7 +1832,7 @@ describe('util::makeRunner', () => {
       expect(warnSpy.mock.calls).toStrictEqual(expectedWarnSpy);
       expect(getExitCode()).toStrictEqual(bf.FrameworkExitCode.Ok);
 
-      await run(await bf.configureProgram(cjsCommandModulePath, configurationHooks));
+      await run(await bf.configureProgram(cjsCommandModulesPath, configurationHooks));
 
       expect(logSpy.mock.calls).toHaveLength(6);
       expectedWarnSpy.push([1]);
@@ -1855,7 +1855,7 @@ describe('util::makeRunner', () => {
 
       await run(
         '--help',
-        await bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        await bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy.mock.calls).toHaveLength(9);
@@ -1866,8 +1866,8 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, logSpy, warnSpy, errorSpy }) => {
       const run1 = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
-        preExecutionContext: bf.configureProgram(cjsCommandModulePath, {
+        commandModulesPath: cjsCommandModulesPath,
+        preExecutionContext: bf.configureProgram(cjsCommandModulesPath, {
           configureExecutionPrologue() {
             // eslint-disable-next-line no-console
             console.warn(5);
@@ -1881,8 +1881,8 @@ describe('util::makeRunner', () => {
       });
 
       const run2 = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
-        preExecutionContext: await bf.configureProgram(cjsCommandModulePath, {
+        commandModulesPath: cjsCommandModulesPath,
+        preExecutionContext: await bf.configureProgram(cjsCommandModulesPath, {
           configureExecutionPrologue() {
             // eslint-disable-next-line no-console
             console.warn(5);
@@ -1928,7 +1928,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'default'
         });
 
@@ -1949,7 +1949,7 @@ describe('util::makeRunner', () => {
       {
         const error = new Error('bad');
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: {
             configureArguments() {
               throw error;
@@ -1968,7 +1968,7 @@ describe('util::makeRunner', () => {
     // * Framework errors (default behavior)
     await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         configurationHooks: {
           configureExecutionContext() {
             throw new Error('bad');
@@ -1989,7 +1989,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, logSpy, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw'
         });
 
@@ -2011,7 +2011,7 @@ describe('util::makeRunner', () => {
       {
         const error = new Error('bad');
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: {
             configureArguments() {
               throw error;
@@ -2032,7 +2032,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: {
             configureExecutionContext() {
               throw new Error('badness');
@@ -2053,7 +2053,7 @@ describe('util::makeRunner', () => {
 
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: Promise.resolve({
             configureExecutionContext() {
               throw new Error('badness');
@@ -2075,7 +2075,7 @@ describe('util::makeRunner', () => {
 
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           configurationHooks: Promise.reject<typeof configurationHooks>(
             new Error('badness')
           ),
@@ -2099,8 +2099,8 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
-          preExecutionContext: bf.configureProgram(cjsCommandModulePath, {
+          commandModulesPath: cjsCommandModulesPath,
+          preExecutionContext: bf.configureProgram(cjsCommandModulesPath, {
             configureExecutionContext() {
               throw new Error('badness');
             }
@@ -2120,9 +2120,9 @@ describe('util::makeRunner', () => {
 
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           preExecutionContext: bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve({
               configureExecutionContext() {
                 throw new Error('badness');
@@ -2148,7 +2148,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw',
           configurationHooks: errorConfigurationHooks
         })(['--one-file-log-handler-cjs'])
@@ -2159,10 +2159,10 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw',
           preExecutionContext: await bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve(errorConfigurationHooks)
           )
         })(['--one-file-log-handler-cjs'])
@@ -2173,7 +2173,7 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw',
           configurationHooks: Promise.resolve(errorConfigurationHooks)
         })(['--one-file-log-handler-cjs'])
@@ -2184,7 +2184,7 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw',
           configurationHooks: Promise.reject(new Error('badbadnotgood'))
         })(['--one-file-log-handler-cjs'])
@@ -2195,10 +2195,10 @@ describe('util::makeRunner', () => {
 
       await expect(
         bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw',
           preExecutionContext: bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve(errorConfigurationHooks)
           )
         })(['--one-file-log-handler-cjs'])
@@ -2216,7 +2216,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'default'
         });
 
@@ -2237,7 +2237,7 @@ describe('util::makeRunner', () => {
       {
         const error = new Error('bad');
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'default'
         });
 
@@ -2255,7 +2255,7 @@ describe('util::makeRunner', () => {
     // * Framework errors (default behavior)
     await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         errorHandlingBehavior: 'default'
       });
 
@@ -2275,7 +2275,7 @@ describe('util::makeRunner', () => {
     await withMocks(async ({ getExitCode, logSpy, errorSpy }) => {
       {
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw'
         });
 
@@ -2297,7 +2297,7 @@ describe('util::makeRunner', () => {
       {
         const error = new Error('bad');
         const run = bf_util.makeRunner({
-          commandModulePath: cjsCommandModulePath,
+          commandModulesPath: cjsCommandModulesPath,
           errorHandlingBehavior: 'throw'
         });
 
@@ -2318,7 +2318,7 @@ describe('util::makeRunner', () => {
     // * Framework errors (hooks) (throw behavior)
     await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         errorHandlingBehavior: 'throw'
       });
 
@@ -2376,14 +2376,14 @@ describe('util::makeRunner', () => {
     // * Framework errors (preExecutionContext) (throw behavior)
     await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         errorHandlingBehavior: 'throw'
       });
 
       await expect(
         run(
           '--flag-one --flag-two',
-          bf.configureProgram(cjsCommandModulePath, {
+          bf.configureProgram(cjsCommandModulesPath, {
             configureExecutionContext() {
               throw new Error('badness');
             }
@@ -2402,7 +2402,7 @@ describe('util::makeRunner', () => {
         run(
           '--flag-one --flag-two',
           bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve({
               configureExecutionContext() {
                 throw new Error('badness');
@@ -2424,7 +2424,7 @@ describe('util::makeRunner', () => {
     // * Errors across low-order signatures
     await withMocks(async ({ getExitCode, logSpy, warnSpy, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         errorHandlingBehavior: 'throw'
       });
 
@@ -2459,7 +2459,7 @@ describe('util::makeRunner', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       await expect(
-        run(await bf.configureProgram(cjsCommandModulePath, errorConfigurationHooks))
+        run(await bf.configureProgram(cjsCommandModulesPath, errorConfigurationHooks))
       ).toReject();
 
       expect(logSpy.mock.calls).toHaveLength(3);
@@ -2482,7 +2482,7 @@ describe('util::makeRunner', () => {
         run(
           '--help',
           await bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve(errorConfigurationHooks)
           )
         )
@@ -2496,7 +2496,7 @@ describe('util::makeRunner', () => {
         run(
           '--help',
           bf.configureProgram(
-            cjsCommandModulePath,
+            cjsCommandModulesPath,
             Promise.resolve(errorConfigurationHooks)
           )
         )
@@ -2507,7 +2507,7 @@ describe('util::makeRunner', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.DefaultError);
 
       await expect(
-        run(bf.configureProgram(cjsCommandModulePath, errorConfigurationHooks))
+        run(bf.configureProgram(cjsCommandModulesPath, errorConfigurationHooks))
       ).toReject();
 
       expect(logSpy.mock.calls).toHaveLength(3);
@@ -2525,7 +2525,7 @@ describe('util::makeRunner', () => {
     // * PreExecutionContext was passed directly!
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
-      const run = bf_util.makeRunner({ commandModulePath: cjsCommandModulePath });
+      const run = bf_util.makeRunner({ commandModulesPath: cjsCommandModulesPath });
 
       await run('--help', {
         configureExecutionContext() {
@@ -2541,13 +2541,13 @@ describe('util::makeRunner', () => {
     });
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
-      const preExecutionContext = bf.configureProgram(cjsCommandModulePath, {
+      const preExecutionContext = bf.configureProgram(cjsCommandModulesPath, {
         configureExecutionContext() {
           throw error;
         }
       });
 
-      const run = bf_util.makeRunner({ commandModulePath: cjsCommandModulePath });
+      const run = bf_util.makeRunner({ commandModulesPath: cjsCommandModulesPath });
       await run('--help', preExecutionContext);
 
       expect(errorSpy).toHaveBeenCalledExactlyOnceWith(
@@ -2563,7 +2563,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
       let surfacedError = undefined;
-      const run = bf_util.makeRunner({ commandModulePath: cjsCommandModulePath });
+      const run = bf_util.makeRunner({ commandModulesPath: cjsCommandModulesPath });
 
       await run('--flag-one --flag-two', {
         configureErrorHandlingEpilogue: ({ error }) => void (surfacedError = error)
@@ -2584,7 +2584,7 @@ describe('util::makeRunner', () => {
     await expect(
       // @ts-expect-error: testing illegal parameter
       bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         configurationHooks: {},
         preExecutionContext: {} as unknown as bf_util.PreExecutionContext
       })()
@@ -2596,7 +2596,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, logSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath
+        commandModulesPath: cjsCommandModulesPath
       });
 
       await run();
@@ -2616,7 +2616,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('not-implemented')
+        commandModulesPath: getFixturePath('not-implemented')
       });
 
       await run('cmd');
@@ -2644,7 +2644,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('not-implemented')
+        commandModulesPath: getFixturePath('not-implemented')
       });
 
       await run('nested');
@@ -2675,7 +2675,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ logSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('not-implemented')
+        commandModulesPath: getFixturePath('not-implemented')
       });
 
       await run('nested --help');
@@ -2695,7 +2695,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath,
+        commandModulesPath: cjsCommandModulesPath,
         configurationHooks: {
           configureArguments: () => undefined as any
         }
@@ -2715,7 +2715,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath
+        commandModulesPath: cjsCommandModulesPath
       });
 
       // ? Will be handled by ConfigureErrorHandlingEpilogue
@@ -2729,7 +2729,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath
+        commandModulesPath: cjsCommandModulesPath
       });
 
       // ? Will NOT be handled by ConfigureErrorHandlingEpilogue
@@ -2747,7 +2747,7 @@ describe('util::makeRunner', () => {
 
     await withMocks(async ({ getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: cjsCommandModulePath
+        commandModulesPath: cjsCommandModulesPath
       });
 
       await run({
@@ -2759,7 +2759,7 @@ describe('util::makeRunner', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await run(
-        bf.configureProgram(cjsCommandModulePath, {
+        bf.configureProgram(cjsCommandModulesPath, {
           configureExecutionContext: () => {
             throw new bf.GracefulEarlyExitError();
           }
@@ -2772,7 +2772,7 @@ describe('util::makeRunner', () => {
 });
 
 describe('::runProgram', () => {
-  const cjsCommandModulePath = getFixturePath('one-file-log-handler-cjs');
+  const cjsCommandModulesPath = getFixturePath('one-file-log-handler-cjs');
 
   const configurationHooks: bf.ConfigurationHooks = {
     configureExecutionPrologue() {
@@ -2798,61 +2798,61 @@ describe('::runProgram', () => {
       expect(warnSpy).toHaveBeenCalledTimes(0);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath);
+      await bf.runProgram(cjsCommandModulesPath);
 
       expect(logSpy).toHaveBeenCalledTimes(1);
       expect(warnSpy).toHaveBeenCalledTimes(0);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, '--help');
+      await bf.runProgram(cjsCommandModulesPath, '--help');
 
       expect(logSpy).toHaveBeenCalledTimes(2);
       expect(warnSpy).toHaveBeenCalledTimes(0);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, ['--help']);
+      await bf.runProgram(cjsCommandModulesPath, ['--help']);
 
       expect(logSpy).toHaveBeenCalledTimes(3);
       expect(warnSpy).toHaveBeenCalledTimes(0);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, configurationHooks);
+      await bf.runProgram(cjsCommandModulesPath, configurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(4);
       expect(warnSpy.mock.calls).toStrictEqual([[1]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, promisedConfigurationHooks);
+      await bf.runProgram(cjsCommandModulesPath, promisedConfigurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(5);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await bf.runProgram(
-        cjsCommandModulePath,
-        await bf.configureProgram(cjsCommandModulePath, configurationHooks)
+        cjsCommandModulesPath,
+        await bf.configureProgram(cjsCommandModulesPath, configurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(6);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, '--help', configurationHooks);
+      await bf.runProgram(cjsCommandModulesPath, '--help', configurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(7);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
-      await bf.runProgram(cjsCommandModulePath, ['--help'], promisedConfigurationHooks);
+      await bf.runProgram(cjsCommandModulesPath, ['--help'], promisedConfigurationHooks);
 
       expect(logSpy).toHaveBeenCalledTimes(8);
       expect(warnSpy.mock.calls).toStrictEqual([[1], [2], [1], [1], [2]]);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await bf.runProgram(
-        cjsCommandModulePath,
+        cjsCommandModulesPath,
         '--help',
-        await bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        await bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(9);
@@ -2860,9 +2860,9 @@ describe('::runProgram', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await bf.runProgram(
-        cjsCommandModulePath,
+        cjsCommandModulesPath,
         '--help',
-        bf.configureProgram(cjsCommandModulePath, promisedConfigurationHooks)
+        bf.configureProgram(cjsCommandModulesPath, promisedConfigurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(10);
@@ -2870,8 +2870,8 @@ describe('::runProgram', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await bf.runProgram(
-        cjsCommandModulePath,
-        bf.configureProgram(cjsCommandModulePath, configurationHooks)
+        cjsCommandModulesPath,
+        bf.configureProgram(cjsCommandModulesPath, configurationHooks)
       );
 
       expect(logSpy).toHaveBeenCalledTimes(11);
@@ -2903,7 +2903,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, logSpy }) => {
-      await bf.runProgram(cjsCommandModulePath);
+      await bf.runProgram(cjsCommandModulesPath);
 
       expect(logSpy).toHaveBeenCalledTimes(1);
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
@@ -2964,7 +2964,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments: () => undefined as any
       });
 
@@ -2980,7 +2980,7 @@ describe('::runProgram', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       // ? Will be handled by ConfigureErrorHandlingEpilogue
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments: () => assert.fail()
       });
 
@@ -2992,7 +2992,7 @@ describe('::runProgram', () => {
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
       // ? Will NOT be handled by ConfigureErrorHandlingEpilogue
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureExecutionContext: () => assert.fail()
       });
 
@@ -3007,7 +3007,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureExecutionContext: () => {
           throw new bf.GracefulEarlyExitError();
         }
@@ -3016,8 +3016,8 @@ describe('::runProgram', () => {
       expect(getExitCode()).toBe(bf.FrameworkExitCode.Ok);
 
       await bf.runProgram(
-        cjsCommandModulePath,
-        bf.configureProgram(cjsCommandModulePath, {
+        cjsCommandModulesPath,
+        bf.configureProgram(cjsCommandModulesPath, {
           configureExecutionContext: () => {
             throw new bf.GracefulEarlyExitError();
           }
@@ -3032,7 +3032,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments() {
           // eslint-disable-next-line @typescript-eslint/only-throw-error
           throw 'problems!';
@@ -3048,7 +3048,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments() {
           throw new Error('problems!');
         }
@@ -3063,7 +3063,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments() {
           // eslint-disable-next-line @typescript-eslint/only-throw-error
           throw {
@@ -3080,8 +3080,8 @@ describe('::runProgram', () => {
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
       await bf.runProgram(
-        cjsCommandModulePath,
-        await bf.configureProgram(cjsCommandModulePath, {
+        cjsCommandModulesPath,
+        await bf.configureProgram(cjsCommandModulesPath, {
           configureArguments() {
             // eslint-disable-next-line @typescript-eslint/only-throw-error
             throw {
@@ -3102,7 +3102,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ getExitCode, errorSpy }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureExecutionContext() {
           // ? Throw very early before Black Flag has a chance to wrap the error
           // ? or use configureErrorHandlingEpilogue.
@@ -3121,7 +3121,7 @@ describe('::runProgram', () => {
     expect.hasAssertions();
 
     await withMocks(async ({ errorSpy, getExitCode }) => {
-      await bf.runProgram(cjsCommandModulePath, {
+      await bf.runProgram(cjsCommandModulesPath, {
         configureArguments() {
           throw new bf.CliError('problems!', { suggestedExitCode: 5 });
         }
@@ -3511,7 +3511,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('different-exports-types-cjs')
+        commandModulesPath: getFixturePath('different-exports-types-cjs')
       });
 
       await expect(run('exports-function --exports-function')).resolves.toStrictEqual(
@@ -3555,7 +3555,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('different-exports-types-esm')
+        commandModulesPath: getFixturePath('different-exports-types-esm')
       });
 
       await expect(run('exports-function --exports-function')).resolves.toStrictEqual(
@@ -3623,7 +3623,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3659,7 +3659,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3699,7 +3699,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3735,7 +3735,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3775,7 +3775,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async () => {
@@ -3802,7 +3802,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async () => {
@@ -3840,7 +3840,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-positionals-cjs')
+        commandModulesPath: getFixturePath('nested-positionals-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3870,7 +3870,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-positionals-esm')
+        commandModulesPath: getFixturePath('nested-positionals-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3924,7 +3924,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3958,7 +3958,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -3996,7 +3996,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-deprecation-msg-cjs')
+        commandModulesPath: getFixturePath('nested-deprecation-msg-cjs')
       });
 
       await withMocks(async ({ logSpy, errorSpy }) => {
@@ -4012,7 +4012,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-deprecation-msg-esm')
+        commandModulesPath: getFixturePath('nested-deprecation-msg-esm')
       });
 
       await withMocks(async ({ logSpy, errorSpy }) => {
@@ -4032,7 +4032,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4054,7 +4054,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4080,7 +4080,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-empty-description-cjs')
+        commandModulesPath: getFixturePath('nested-empty-description-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4108,7 +4108,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-empty-description-esm')
+        commandModulesPath: getFixturePath('nested-empty-description-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4140,7 +4140,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async () => {
@@ -4167,7 +4167,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async () => {
@@ -4198,7 +4198,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async () => {
@@ -4214,7 +4214,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async () => {
@@ -4234,7 +4234,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4262,7 +4262,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await withMocks(async ({ logSpy }) => {
@@ -4326,7 +4326,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-with-spaces-cjs')
+        commandModulesPath: getFixturePath('nested-with-spaces-cjs')
       });
 
       await withMocks(async ({ logSpy, getExitCode }) => {
@@ -4371,7 +4371,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-with-spaces-esm')
+        commandModulesPath: getFixturePath('nested-with-spaces-esm')
       });
 
       await withMocks(async ({ logSpy, getExitCode }) => {
@@ -4541,7 +4541,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async () => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-cjs')
+        commandModulesPath: getFixturePath('nested-depth-cjs')
       });
 
       await expect(run('good1 good2 good3 command --command')).resolves.toStrictEqual(
@@ -4595,7 +4595,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async () => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-esm')
+        commandModulesPath: getFixturePath('nested-depth-esm')
       });
 
       await expect(run('good1 good2 good3 command --command')).resolves.toStrictEqual(
@@ -4654,7 +4654,7 @@ describe('<command module auto-discovery>', () => {
     {
       await withMocks(async ({ logSpy }) => {
         const run = bf_util.makeRunner({
-          commandModulePath: getFixturePath('nested-depth-cjs')
+          commandModulesPath: getFixturePath('nested-depth-cjs')
         });
 
         await run('--help');
@@ -4708,7 +4708,7 @@ describe('<command module auto-discovery>', () => {
     {
       await withMocks(async ({ logSpy }) => {
         const run = bf_util.makeRunner({
-          commandModulePath: getFixturePath('nested-depth-esm')
+          commandModulesPath: getFixturePath('nested-depth-esm')
         });
 
         await run('--help');
@@ -4765,7 +4765,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-index-cjs')
+        commandModulesPath: getFixturePath('one-file-index-cjs')
       });
 
       await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -4779,7 +4779,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-index-esm')
+        commandModulesPath: getFixturePath('one-file-index-esm')
       });
 
       await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -4933,7 +4933,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-cjs')
+        commandModulesPath: getFixturePath('nested-depth-cjs')
       });
 
       await run('--help');
@@ -4986,7 +4986,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-esm')
+        commandModulesPath: getFixturePath('nested-depth-esm')
       });
 
       await run('--help');
@@ -5045,7 +5045,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-full-cjs')
       });
 
       await run('--help');
@@ -5072,7 +5072,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-full-esm')
+        commandModulesPath: getFixturePath('nested-several-files-full-esm')
       });
 
       await run('--help');
@@ -5103,7 +5103,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-cjs')
+        commandModulesPath: getFixturePath('nested-depth-cjs')
       });
 
       await run('--help');
@@ -5156,7 +5156,7 @@ describe('<command module auto-discovery>', () => {
 
     await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-depth-esm')
+        commandModulesPath: getFixturePath('nested-depth-esm')
       });
 
       await run('--help');
@@ -5949,7 +5949,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-strict-cjs')
+        commandModulesPath: getFixturePath('one-file-strict-cjs')
       });
 
       await withMocks(async ({ errorSpy, logSpy, getExitCode }) => {
@@ -6000,7 +6000,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-strict-esm')
+        commandModulesPath: getFixturePath('one-file-strict-esm')
       });
 
       await withMocks(async ({ errorSpy, logSpy, getExitCode }) => {
@@ -6533,7 +6533,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-dynamic-cjs'),
+        commandModulesPath: getFixturePath('one-file-dynamic-cjs'),
         configurationHooks: {
           configureExecutionContext(context) {
             context.state.globalVersionOption = undefined;
@@ -6587,7 +6587,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-dynamic-esm'),
+        commandModulesPath: getFixturePath('one-file-dynamic-esm'),
         configurationHooks: {
           configureExecutionContext(context) {
             context.state.globalVersionOption = undefined;
@@ -6645,7 +6645,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-builder-object-literal-cjs')
+        commandModulesPath: getFixturePath('one-file-builder-object-literal-cjs')
       });
 
       await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -6677,7 +6677,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('one-file-builder-object-literal-esm')
+        commandModulesPath: getFixturePath('one-file-builder-object-literal-esm')
       });
 
       await withMocks(async ({ errorSpy, getExitCode }) => {
@@ -6777,7 +6777,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-empty-cjs')
+        commandModulesPath: getFixturePath('nested-several-files-empty-cjs')
       });
 
       await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {
@@ -6808,7 +6808,7 @@ describe('<command module auto-discovery>', () => {
 
     {
       const run = bf_util.makeRunner({
-        commandModulePath: getFixturePath('nested-several-files-empty-esm')
+        commandModulesPath: getFixturePath('nested-several-files-empty-esm')
       });
 
       await withMocks(async ({ logSpy, errorSpy, getExitCode }) => {

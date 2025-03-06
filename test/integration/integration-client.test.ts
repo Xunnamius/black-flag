@@ -305,7 +305,7 @@ console.log(require('@black-flag/core/util').isPreExecutionContext({}) === false
         initialVirtualFiles: {
           'src/index.cjs': `
 require('@black-flag/core/util').makeRunner({
-  commandModulePath: '${pathToFileURL(toPath(__dirname, '..', 'fixtures', 'one-file-index')).toString()}'
+  commandModulesPath: '${pathToFileURL(toPath(__dirname, '..', 'fixtures', 'one-file-index')).toString()}'
 })('--help');`
         }
       }

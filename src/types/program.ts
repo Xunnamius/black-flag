@@ -63,7 +63,7 @@ export type Program<
   // ? signature exposure in the Argv type exposed by yargs
 
   /**
-   * @see {@link _Program.command}
+   * @see https://yargs.js.org/docs/#api-reference-commandcmd-desc-builder-handler
    * @internal
    */
   command: (
@@ -90,7 +90,7 @@ export type Program<
    * Invoking this method will affect all programs in your command hierarchy,
    * not just the program on which it was invoked.
    *
-   * @see {@link _Program.showHelpOnFail}
+   * @see https://yargs.js.org/docs/#api-reference-showhelponfailenable-message
    */
   showHelpOnFail: (
     enabled: boolean
@@ -100,7 +100,7 @@ export type Program<
    * Identical to `yargs::command` except its execution is enqueued and
    * deferred until {@link Program.command_finalize_deferred} is called.
    *
-   * @see {@link _Program.command}
+   * @see https://yargs.js.org/docs/#api-reference-commandcmd-desc-builder-handler
    * @internal
    */
   command_deferred: Program<CustomCliArguments, CustomExecutionContext>['command'];
@@ -341,7 +341,7 @@ export type ExecutionContext = {
    */
   commands: Map<string, { programs: Programs; metadata: ProgramMetadata }>;
   /**
-   * The {@link ExtendedDebugger} for the current runtime level.
+   * The `ExtendedDebugger` for the current runtime level.
    *
    * This property is used internally by Black Flag.
    */

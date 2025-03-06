@@ -17,7 +17,8 @@ export {
   defaultHelpTextDescription,
   defaultUsageText,
   defaultVersionOptionName,
-  defaultVersionTextDescription
+  defaultVersionTextDescription,
+  nullArguments$0
 } from 'universe:constant.ts';
 
 export {
@@ -27,6 +28,8 @@ export {
   isCommandNotImplementedError,
   type CliErrorOptions
 } from 'universe:error.ts';
+
+export type { FactoriedRunProgramParameters, MakeRunnerOptions } from 'universe';
 
 export type {
   DescriptorToProgram,

@@ -39,8 +39,8 @@ reports][1]. It's like type-fest or jest-extended, but for Black Flag and yargs!
 In exchange for straying a bit from the vanilla yargs API, BFE greatly increases
 Black Flag's declarative powers.
 
-Note that BFE does not represent a [complete][2] [propositional logic][57] and
-so cannot describe every possible relation between arguments. Nor should it; BFE
+Note that BFE does not represent a [complete][2] [propositional logic][3] and so
+cannot describe every possible relation between arguments. Nor should it; BFE
 makes it easy to fall back to using the yargs API imperatively in those rare
 instances it's necessary.
 
@@ -89,11 +89,11 @@ npm install @black-flag/extensions
 
 > [!NOTE]
 >
-> See also: [differences between BFE and Yargs][3].
+> See also: [differences between BFE and Yargs][4].
 
 ### `withBuilderExtensions`
 
-> ⪢ API reference: [`withBuilderExtensions`][4]
+> ⪢ API reference: [`withBuilderExtensions`][5]
 
 This function enables several additional options-related units of functionality
 via analysis of the returned options configuration object and the parsed command
@@ -145,12 +145,12 @@ expansion will result in erroneous behavior.
 In the same vein, `withBuilderExtensions` will throw if you attempt to add a
 command option with a name, alias, or camel-case expansion that conflicts with
 another of that command's options. This sanity check takes into account the
-following [yargs-parser][51] configuration settings: `camel-case-expansion`,
+following [yargs-parser][6] configuration settings: `camel-case-expansion`,
 `strip-aliased`, `strip-dashed`.
 
 Also note how `withBuilderExtensions` returns a two-element array of the form:
 `[builder, withHandlerExtensions]`. `builder` should be exported as your
-command's [`builder`][5] function **without being invoked**. If you want to
+command's [`builder`][7] function **without being invoked**. If you want to
 implement additional imperative logic, pass a `customBuilder` _function_ to
 `withBuilderExtensions` as demonstrated in the previous example; otherwise, you
 should pass an options configuration _object_.
@@ -162,7 +162,7 @@ demonstrated in the previous example. You should pass a `customHandler` to
 call `withHandlerExtensions()` without providing a `customHandler`, a
 placeholder function that throws `CommandNotImplementedError` will be used
 instead, indicating that the command has not yet been implemented. This mirrors
-[Black Flag's default behavior for unimplemented command handlers][6].
+[Black Flag's default behavior for unimplemented command handlers][8].
 
 #### New Option Configuration Keys
 
@@ -172,16 +172,16 @@ vanilla yargs and Black Flag.
 
 Note that the checks enabled by these configuration keys:
 
-- Are run on Black Flag's [second parsing pass][7] except where noted. This
+- Are run on Black Flag's [second parsing pass][9] except where noted. This
   allows BFE to perform checks against argument _values_ in addition to the
   argument existence checks enabled by vanilla yargs.
 
-- Will ignore the existence of the [`default`][8] key ([unless it's a custom
-  check][9]). This means you can use keys like [`requires`][10] and
-  [`conflicts`][11] alongside [`default`][8] without causing unresolvable CLI
-  errors. This avoids a rather unintuitive [yargs footgun][12].
+- Will ignore the existence of the [`default`][10] key ([unless it's a custom
+  check][11]). This means you can use keys like [`requires`][12] and
+  [`conflicts`][13] alongside [`default`][10] without causing unresolvable CLI
+  errors. This avoids a rather unintuitive [yargs footgun][14].
 
-- Will take into account the following [yargs-parser settings][51] configuration
+- Will take into account the following [yargs-parser settings][6] configuration
   settings: `camel-case-expansion`, `strip-aliased`, `strip-dashed`. Note that
   `dot-notation` is _not_ currently recognized or considered by BFE, but may be
   in the future.
@@ -192,28 +192,28 @@ Note that the checks enabled by these configuration keys:
 >
 > In the below definitions, `P`, `Q`, and `R` are arguments (or argument-value
 > pairs) configured via a hypothetical call to
-> [`blackFlag.options({ P: { [key]: [Q, R] }})`][13]. The truth values of `P`,
+> [`blackFlag.options({ P: { [key]: [Q, R] }})`][15]. The truth values of `P`,
 > `Q`, and `R` represent the existence of each respective argument (and its
 > value) in the `argv` parse result. `gwav` is a predicate standing for "given
 > with any value," meaning the argument was given on the command line.
 
 | Key                         | Definition                                    |
 | :-------------------------- | :-------------------------------------------- |
-| [`requires`][10]            | `P ⟹ (Q ∧ R)` or `¬P ∨ (Q ∧ R)`               |
-| [`conflicts`][11]           | `P ⟹ (¬Q ∧ ¬R)` or `¬P ∨ (¬Q ∧ ¬R)`           |
-| [`implies`][14]             | `P ⟹ (Q ∧ R ∧ (gwav(Q) ⟹ Q) ∧ (gwav(R) ⟹ R))` |
-| [`demandThisOptionIf`][15]  | `(Q ∨ R) ⟹ P` or `P ∨ (¬Q ∧ ¬R)`              |
-| [`demandThisOption`][16]    | `P`                                           |
-| [`demandThisOptionOr`][17]  | `P ∨ Q ∨ R`                                   |
-| [`demandThisOptionXor`][18] | `P ⊕ Q ⊕ R`                                   |
+| [`requires`][12]            | `P ⟹ (Q ∧ R)` or `¬P ∨ (Q ∧ R)`               |
+| [`conflicts`][13]           | `P ⟹ (¬Q ∧ ¬R)` or `¬P ∨ (¬Q ∧ ¬R)`           |
+| [`implies`][16]             | `P ⟹ (Q ∧ R ∧ (gwav(Q) ⟹ Q) ∧ (gwav(R) ⟹ R))` |
+| [`demandThisOptionIf`][17]  | `(Q ∨ R) ⟹ P` or `P ∨ (¬Q ∧ ¬R)`              |
+| [`demandThisOption`][18]    | `P`                                           |
+| [`demandThisOptionOr`][19]  | `P ∨ Q ∨ R`                                   |
+| [`demandThisOptionXor`][20] | `P ⊕ Q ⊕ R`                                   |
 
 **Relational Keys**
 
 | Key                       |
 | :------------------------ |
-| [`check`][9]              |
-| [`subOptionOf`][19]       |
-| [`looseImplications`][20] |
+| [`check`][11]             |
+| [`subOptionOf`][21]       |
+| [`looseImplications`][22] |
 
 ---
 
@@ -222,7 +222,7 @@ Note that the checks enabled by these configuration keys:
 > [!IMPORTANT]
 >
 > `requires` is a superset of and replacement for vanilla yargs's
-> [`implies`][21]. BFE also has [its own implication implementation][14].
+> [`implies`][23]. BFE also has [its own implication implementation][16].
 
 > [!NOTE]
 >
@@ -264,7 +264,7 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 
 ###### `requires` versus `implies`
 
-Choose [BFE's `implies`][14] over `requires` when you want one argument to imply
+Choose [BFE's `implies`][16] over `requires` when you want one argument to imply
 the value of another _without_ requiring the other argument to be explicitly
 given in `argv` (e.g. via the command line).
 
@@ -274,7 +274,7 @@ given in `argv` (e.g. via the command line).
 
 > [!IMPORTANT]
 >
-> `conflicts` is a superset of vanilla yargs's [`conflicts`][22].
+> `conflicts` is a superset of vanilla yargs's [`conflicts`][24].
 
 > [!NOTE]
 >
@@ -317,7 +317,7 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 
 ###### `conflicts` versus `implies`
 
-Choose [BFE's `implies`][14] over `conflicts` when you want the existence of one
+Choose [BFE's `implies`][16] over `conflicts` when you want the existence of one
 argument to override the default/given value of another argument while not
 preventing the two arguments from being given simultaneously.
 
@@ -329,16 +329,16 @@ preventing the two arguments from being given simultaneously.
 >
 > BFE's `implies` replaces vanilla yargs's `implies` in a breaking way. The two
 > implementations are nothing alike. If you're looking for vanilla yargs's
-> functionality, see [`requires`][10].
+> functionality, see [`requires`][12].
 
 `implies` will set a default value for the specified arguments conditioned on
 the existence of another argument. This will _override_ the default value of the
 specified arguments.
 
-Unless [`looseImplications`][20] is set to `true`, if any of the specified
+Unless [`looseImplications`][22] is set to `true`, if any of the specified
 arguments are explicitly given in `argv` (e.g. via the command line), their
 values must match the specified argument-value pairs respectively (similar to
-[`requires`][10]/[`conflicts`][11]). For this reason, `implies` only accepts one
+[`requires`][12]/[`conflicts`][13]). For this reason, `implies` only accepts one
 or more argument-value pairs and not raw strings. For example:
 
 ```jsonc
@@ -356,7 +356,7 @@ existence_ and so allows the following arguments: no arguments (`∅`), `‑x`,
 Note that attempting to imply a value for a non-existent option will throw a
 framework error.
 
-Additionally, if any of the specified arguments have their own [`default`][8]s
+Additionally, if any of the specified arguments have their own [`default`][10]s
 configured, said defaults will be overridden by the values of `implies`. For
 example:
 
@@ -367,11 +367,11 @@ example:
 }
 ```
 
-Also note the [special behavior][52] of `implies` specifically in the case where
+Also note the [special behavior][25] of `implies` specifically in the case where
 an argument value in `argv` is strictly equal to `false`.
 
 For describing much more intricate implications between various arguments and
-their values, see [`subOptionOf`][19].
+their values, see [`subOptionOf`][21].
 
 ###### Handling Transitive Implications
 
@@ -392,23 +392,23 @@ configuration. For example:
 
 This has implications beyond just `implies`. **An implied value will not
 transitively satisfy any other BFE logic checks** (such as
-[`demandThisOptionXor`][18]) **or trigger any relational behavior** (such as
-with [`subOptionOf`][19]). The implied argument-value pair will simply be merged
-into `argv` as if you had done it manually in your command's [`handler`][23]. If
+[`demandThisOptionXor`][20]) **or trigger any relational behavior** (such as
+with [`subOptionOf`][21]). The implied argument-value pair will simply be merged
+into `argv` as if you had done it manually in your command's [`handler`][26]. If
 this is a problem, prefer the explicit direct relationships described by other
-[configuration keys][24] instead of relying on the implicit transitive
+[configuration keys][27] instead of relying on the implicit transitive
 relationships described by `implies`.
 
-Despite this constraint, any per-option [`check`][9]s you've configured, which
+Despite this constraint, any per-option [`check`][11]s you've configured, which
 are run last (at the very end of `withHandlerExtensions`), _will_ see the
-implied argument-value pairs. Therefore, use [`check`][9] to guarantee any
+implied argument-value pairs. Therefore, use [`check`][11] to guarantee any
 complex invariants, if necessary; ideally, you shouldn't be setting bad defaults
 via `implies`, but BFE won't stop you from doing so.
 
 ###### Handling Parser Configuration
 
 Like other BFE checks, `implies` _does_ take into account the [yargs-parser
-settings][51] `camel-case-expansion`, `strip-aliased`, and `strip-dashed`; but
+settings][6] `camel-case-expansion`, `strip-aliased`, and `strip-dashed`; but
 _does not_ currently pay attention to `dot-notation` or
 `duplicate-arguments-array`. `implies` may still work when using the latter
 parser configurations, but it is recommended you turn them off instead.
@@ -416,7 +416,7 @@ parser configurations, but it is recommended you turn them off instead.
 ###### `implies` versus `requires`/`conflicts`
 
 BFE's `implies`, since it sets arguments in `argv` if they are not explicitly
-given, is a weaker form of [`requires`][10]/[`conflicts`][11].
+given, is a weaker form of [`requires`][12]/[`conflicts`][13].
 
 Choose `requires` over BFE's `implies` when you want one argument to imply the
 value of another _while_ requiring the other argument to be explicitly given in
@@ -426,7 +426,7 @@ Choose `conflicts` over BFE's `implies` when you think you want to use `implies`
 but you don't actually need to override the default value of the implied
 argument and only want the conflict semantics.
 
-Alternatively, choose [`subOptionOf`][19] over BFE's `implies` when you want the
+Alternatively, choose [`subOptionOf`][21] over BFE's `implies` when you want the
 value of one argument to imply something complex about another argument and/or
 its value, such as updating the other argument's options configuration.
 
@@ -437,7 +437,7 @@ explicitly given in `argv` (e.g. via the command line), will _override_ any
 configured implications instead of causing an error. When `looseImplications` is
 set to `false`, which is the default, values explicitly given in `argv` must
 match the specified argument-value pairs respectively (similar to
-[`requires`][10]/[`conflicts`][11]).
+[`requires`][12]/[`conflicts`][13]).
 
 ###### `vacuousImplications`
 
@@ -468,9 +468,9 @@ If `‑x` (or `‑x=true`) is given, it is synonymous with `‑x ‑y` (or
 `‑x=false` _does not imply anything about `‑y`_; `‑x=false -y=true` and
 `‑x=false -y=false` are both accepted by BFE without incident.
 
-In this way, the configured implications of [`boolean`][25]-type options are
-_never [vacuously satisfied][53]_; a strictly `false` condition does not "imply"
-anything about its [consequent][54].
+In this way, the configured implications of [`boolean`][28]-type options are
+_never [vacuously satisfied][29]_; a strictly `false` condition does not "imply"
+anything about its [consequent][30].
 
 This feature reduces confusion for end users. For instance, suppose we had a CLI
 build tool that accepted the arguments `‑patch` and `‑only‑patch`. `‑patch`
@@ -540,7 +540,7 @@ To remedy this, BFE simply ignores the `implies` configurations of options when
 their argument value is strictly equal to `false` in `argv`. To disable this
 behavior for a specific option, set `vacuousImplications` to `true` (it is
 `false` by default) or consider using
-[`requires`][10]/[`conflicts`][11]/[`subOptionOf`][19] over `implies`.
+[`requires`][12]/[`conflicts`][13]/[`subOptionOf`][21] over `implies`.
 
 ---
 
@@ -548,7 +548,7 @@ behavior for a specific option, set `vacuousImplications` to `true` (it is
 
 > [!IMPORTANT]
 >
-> `demandThisOptionIf` is a superset of vanilla yargs's [`demandOption`][25].
+> `demandThisOptionIf` is a superset of vanilla yargs's [`demandOption`][28].
 
 > [!NOTE]
 >
@@ -592,7 +592,7 @@ that argument is configured as an array (`{ array: true }`), that array will be
 searched for said value. Otherwise, a strict deep equality check is performed.
 
 Also note that a more powerful implementation of `demandThisOptionIf` can be
-achieved via [`subOptionOf`][19].
+achieved via [`subOptionOf`][21].
 
 ---
 
@@ -600,7 +600,7 @@ achieved via [`subOptionOf`][19].
 
 > [!IMPORTANT]
 >
-> `demandThisOption` is an alias of vanilla yargs's [`demandOption`][25].
+> `demandThisOption` is an alias of vanilla yargs's [`demandOption`][28].
 > `demandOption` is disallowed by intellisense.
 
 > [!NOTE]
@@ -622,7 +622,7 @@ This configuration will trigger a check to ensure that `‑x` is given.
 
 > [!NOTE]
 >
-> As an alias of vanilla yargs's [`demandOption`][25], this check is outsourced
+> As an alias of vanilla yargs's [`demandOption`][28], this check is outsourced
 > to yargs, which means it runs on Black Flag's _first and second parsing
 > passes_ like any other configurations key coming from vanilla yargs.
 
@@ -632,7 +632,7 @@ This configuration will trigger a check to ensure that `‑x` is given.
 
 > [!IMPORTANT]
 >
-> `demandThisOptionOr` is a superset of vanilla yargs's [`demandOption`][25].
+> `demandThisOptionOr` is a superset of vanilla yargs's [`demandOption`][28].
 
 > [!NOTE]
 >
@@ -688,8 +688,8 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 
 > [!IMPORTANT]
 >
-> `demandThisOptionXor` is a superset of vanilla yargs's [`demandOption`][25] +
-> [`conflicts`][22].
+> `demandThisOptionXor` is a superset of vanilla yargs's [`demandOption`][28] +
+> [`conflicts`][24].
 
 > [!NOTE]
 >
@@ -746,7 +746,7 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 ##### `check`
 
 `check` is the declarative option-specific version of vanilla yargs's
-[`yargs::check()`][26].
+[`yargs::check()`][31].
 
 This function receives the `currentArgumentValue`, which you are free to type as
 you please, and the fully parsed `argv`. If this function throws, the exception
@@ -755,19 +755,19 @@ non-truthy value (including `undefined` or not returning anything), Black Flag
 will throw a `CliError` on your behalf.
 
 All `check` functions are run in definition order and always at the very end of
-the [second parsing pass][7], well after all other BFE checks have passed and
-all updates to `argv` have been applied (including from [`subOptionOf`][19] and
-[BFE's `implies`][14]). This means `check` always sees the _final_ version of
-`argv`, which is the same version that the command's [`handler`][23] is passed.
+the [second parsing pass][9], well after all other BFE checks have passed and
+all updates to `argv` have been applied (including from [`subOptionOf`][21] and
+[BFE's `implies`][16]). This means `check` always sees the _final_ version of
+`argv`, which is the same version that the command's [`handler`][26] is passed.
 
 > [!TIP]
 >
 > `check` functions are skipped if their corresponding argument does not exist
 > in `argv`.
 
-When a check fails, execution of its command's [`handler`][23] function will
-cease and [`configureErrorHandlingEpilogue`][27] will be invoked (unless you
-threw/returned a [`GracefulEarlyExitError`][28]). For example:
+When a check fails, execution of its command's [`handler`][26] function will
+cease and [`configureErrorHandlingEpilogue`][32] will be invoked (unless you
+threw/returned a [`GracefulEarlyExitError`][33]). For example:
 
 ```javascript
 export const [builder, withHandlerExtensions] = withBuilderExtensions({
@@ -842,17 +842,17 @@ function checkArgGreaterThan5(argName) {
 }
 ```
 
-See the yargs documentation on [`yargs::check()`][26] for more information.
+See the yargs documentation on [`yargs::check()`][31] for more information.
 
 ---
 
 ##### `subOptionOf`
 
-One of Black Flag's killer features is [native support for dynamic options][29].
-However, taking advantage of this feature in a command's [`builder`][5] export
+One of Black Flag's killer features is [native support for dynamic options][34].
+However, taking advantage of this feature in a command's [`builder`][7] export
 requires a strictly imperative approach.
 
-Take, for example, [the `init` command from @black-flag/demo][30]:
+Take, for example, [the `init` command from @black-flag/demo][35]:
 
 ```javascript
 // Taken at 06/04/2024 from @black-flag/demo "myctl" CLI
@@ -955,7 +955,7 @@ implementation details.
 > [!NOTE]
 >
 > `subOptionOf` updates are run and applied during Black Flag's [second parsing
-> pass][7].
+> pass][9].
 
 For example:
 
@@ -1221,7 +1221,7 @@ The following arguments as given conflict with the implications of "generate-typ
 #### Support for `default` with `conflicts`/`requires`/etc
 
 BFE (and, consequently, BF/yargs when not generating help text) will ignore the
-existence of the [`default`][8] key until near the end of BFE's execution.
+existence of the [`default`][10] key until near the end of BFE's execution.
 
 > [!IMPORTANT]
 >
@@ -1236,14 +1236,14 @@ existence of the [`default`][8] key until near the end of BFE's execution.
 > Flag, and yargs. This differs from yargs's default behavior, which is to
 > recognize `undefined` defaults.
 
-Defaults are set _before_ any [`check`][9] functions are run, _before_ any
-[implications][14] are set, and _before_ the relevant command [`handler`][23] is
+Defaults are set _before_ any [`check`][11] functions are run, _before_ any
+[implications][16] are set, and _before_ the relevant command [`handler`][26] is
 invoked, but _after_ all other BFE checks have succeeded. This enables the use
-of keys like [`requires`][10] and [`conflicts`][11] alongside [`default`][8]
-without causing [impossible configurations][31] that throw unresolvable CLI
+of keys like [`requires`][12] and [`conflicts`][13] alongside [`default`][10]
+without causing [impossible configurations][36] that throw unresolvable CLI
 errors.
 
-This workaround avoids a (in my opinion) rather unintuitive [yargs footgun][12],
+This workaround avoids a (in my opinion) rather unintuitive [yargs footgun][14],
 though there are decent arguments in support of vanilla yargs's behavior.
 
 #### Strange and Impossible Configurations
@@ -1288,23 +1288,23 @@ are strange and may not work as expected:
 > [!CAUTION]
 >
 > To support this functionality, options must be described declaratively.
-> [Defining options imperatively][3] will break this feature.
+> [Defining options imperatively][4] will break this feature.
 
-BFE supports automatic [grouping][32] of related options for improved UX. These
+BFE supports automatic [grouping][37] of related options for improved UX. These
 new groups are:
 
-- **"Required Options"**: options configured with [`demandThisOption`][16].
+- **"Required Options"**: options configured with [`demandThisOption`][18].
 - **"Required Options (at least one)"**: options configured with
-  [`demandThisOptionOr`][17].
+  [`demandThisOptionOr`][19].
 - **"Required Options (mutually exclusive)"**: options configured with
-  [`demandThisOptionXor`][18].
+  [`demandThisOptionXor`][20].
 - **"Common Options"**: options provided via `{ commonOptions: [...] }` to
   `withBuilderExtensions` as its second parameter:
   `withBuilderExtensions({/*...*/}, { commonOptions });`
 - **"Optional Options"**: remaining options that do not fall into any of the
   above categories.
 
-An example from [xunnctl][33]:
+An example from [xunnctl][38]:
 
 ```text
 $ x f b --help
@@ -1350,7 +1350,7 @@ Common Options:
                                 [string] [default: "/home/freelance/.config/xunnctl-nodejs/state.json"]
 ```
 
-By including an explicit [`group`][32] property in an option's configuration,
+By including an explicit [`group`][37] property in an option's configuration,
 the option will be included in said group _in addition to_ the result of
 automatic grouping, e.g.:
 
@@ -1369,7 +1369,7 @@ const [builder, withHandlerExtensions] = withBuilderExtensions({
 
 > [!NOTE]
 >
-> Options configured with an explicit [`group`][32] property will never be
+> Options configured with an explicit [`group`][37] property will never be
 > automatically included in the "Optional Options" group.
 
 This feature can be disabled entirely by passing
@@ -1387,7 +1387,7 @@ const [builder, withHandlerExtensions] = withBuilderExtensions(
 
 ### `withUsageExtensions`
 
-> ⪢ API reference: [`withUsageExtensions`][34]
+> ⪢ API reference: [`withUsageExtensions`][39]
 
 This thin wrapper function is used for more consistent and opinionated usage
 string generation.
@@ -1428,7 +1428,7 @@ Common Options:
 
 ### `getInvocableExtendedHandler`
 
-> ⪢ API reference: [`getInvocableExtendedHandler`][50]
+> ⪢ API reference: [`getInvocableExtendedHandler`][40]
 
 Unlike Black Flag, BFE puts strict constraints on the order in which command
 exports must be invoked and evaluated. Specifically: an extended command's
@@ -1467,7 +1467,7 @@ handler as-is.
 > after all BF/BFE checks have passed and all updates to argv have been applied.
 >
 > If you want to invoke a full Black Flag command programmatically, use
-> [`runProgram`][56]. If instead you want to call an individual command's
+> [`runProgram`][41]. If instead you want to call an individual command's
 > (relatively) lightweight handler function directly, use
 > `getInvocableExtendedHandler`.
 
@@ -1680,7 +1680,7 @@ export default function command({ state }: CustomExecutionContext) {
 
 ### Example 2
 
-Suppose we wanted a "deploy" command with the following [more realistic][35]
+Suppose we wanted a "deploy" command with the following [more realistic][42]
 feature set:
 
 - Ability to deploy to a Vercel production target, a Vercel preview target, or
@@ -2029,14 +2029,14 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 
 ### Differences between Black Flag Extensions and Yargs
 
-When using BFE, several options function differently, such as [`implies`][14].
-Other options have their effect deferred, like [`default`][8]. [`coerce`][55]
-will always receive an array when the same option also has [`array: true`][13].
-See the [configuration keys section][24] for a list of changes and their
+When using BFE, several options function differently, such as [`implies`][16].
+Other options have their effect deferred, like [`default`][10]. [`coerce`][43]
+will always receive an array when the same option also has [`array: true`][15].
+See the [configuration keys section][27] for a list of changes and their
 justifications.
 
 Additionally, command options must be configured by [returning an `opt`
-object][13] from your command's [`builder`][5] rather than imperatively invoking
+object][15] from your command's [`builder`][7] rather than imperatively invoking
 the yargs API.
 
 For example:
@@ -2093,7 +2093,7 @@ export function builder(blackFlag) {
 > The yargs API can and should still be invoked for purposes other than defining
 > options on a command, e.g. `blackFlag.strict(false)`.
 
-To this end, the following [yargs API functions][36] are soft-disabled via
+To this end, the following [yargs API functions][44] are soft-disabled via
 intellisense:
 
 - `option`
@@ -2101,27 +2101,27 @@ intellisense:
 
 However, no attempt is made by BFE to restrict your use of the yargs API at
 runtime. Therefore, using yargs's API to work around these artificial
-limitations, e.g. in your command's [`builder`][5] function or via the
-[`configureExecutionPrologue`][37] hook, will result in **undefined behavior**.
+limitations, e.g. in your command's [`builder`][7] function or via the
+[`configureExecutionPrologue`][45] hook, will result in **undefined behavior**.
 
 ### Black Flag versus Black Flag Extensions
 
-The goal of [Black Flag (@black-flag/core)][38] is to be as close to a drop-in
+The goal of [Black Flag (@black-flag/core)][46] is to be as close to a drop-in
 replacement as possible for vanilla yargs, specifically for users of
-[`yargs::commandDir()`][39]. This means Black Flag must go out of its way to
+[`yargs::commandDir()`][47]. This means Black Flag must go out of its way to
 maintain 1:1 parity with the vanilla yargs API ([with a few minor
-exceptions][40]).
+exceptions][48]).
 
 As a consequence, yargs's imperative nature tends to leak through Black Flag's
 abstraction at certain points, such as with [the `blackFlag` parameter of the
-`builder` export][5]. **This is a good thing!** Since we want access to all of
+`builder` export][7]. **This is a good thing!** Since we want access to all of
 yargs's killer features without Black Flag getting in the way.
 
 However, this comes with costs. For one, the yargs's API has suffered from a bit
-of feature creep over the years. A result of this is a rigid API [with][41]
-[an][12] [abundance][42] [of][43] [footguns][44] and an [inability][45] to
-[address][46] them without introducing [massively][47] [breaking][48]
-[changes][49].
+of feature creep over the years. A result of this is a rigid API [with][49]
+[an][14] [abundance][50] [of][51] [footguns][52] and an [inability][53] to
+[address][54] them without introducing [massively][55] [breaking][56]
+[changes][57].
 
 BFE takes the "YOLO" approach by exporting several functions that build on top
 of Black Flag's feature set without worrying too much about maintaining 1:1
@@ -2264,68 +2264,68 @@ See the [table of contributors][x-repo-contributors].
 [x-repo-support]: /.github/SUPPORT.md
 [1]: https://github.com/yargs/yargs/issues
 [2]: https://en.wikipedia.org/wiki/Completeness_(logic)
-[3]: #differences-between-black-flag-extensions-and-yargs
-[4]: ./docs/src/functions/withBuilderExtensions.md
-[5]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/Configuration.md#builder
-[6]:
-  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#its-yargs-all-the-way-down-
+[3]: https://en.wikipedia.org/wiki/Propositional_calculus
+[4]: #differences-between-black-flag-extensions-and-yargs
+[5]: ./docs/src/functions/withBuilderExtensions.md
+[6]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
 [7]:
+  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/Configuration.md#builder
+[8]:
+  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#its-yargs-all-the-way-down-
+[9]:
   https://github.com/Xunnamius/black-flag/tree/main?tab=readme-ov-file#motivation
-[8]: https://yargs.js.org/docs#api-reference-defaultkey-value-description
-[9]: #check
-[10]: #requires
-[11]: #conflicts
-[12]: https://github.com/yargs/yargs/issues/1442
-[13]: https://yargs.js.org/docs#api-reference-optionskey-opt
-[14]: #implies
-[15]: #demandthisoptionif
-[16]: #demandthisoption
-[17]: #demandthisoptionor
-[18]: #demandthisoptionxor
-[19]: #suboptionof
-[20]: #looseImplications
-[21]: https://yargs.js.org/docs#api-reference-impliesx-y
-[22]: https://yargs.js.org/docs#api-reference-conflictsx-y
-[23]:
+[10]: https://yargs.js.org/docs#api-reference-defaultkey-value-description
+[11]: #check
+[12]: #requires
+[13]: #conflicts
+[14]: https://github.com/yargs/yargs/issues/1442
+[15]: https://yargs.js.org/docs#api-reference-optionskey-opt
+[16]: #implies
+[17]: #demandthisoptionif
+[18]: #demandthisoption
+[19]: #demandthisoptionor
+[20]: #demandthisoptionxor
+[21]: #suboptionof
+[22]: #looseImplications
+[23]: https://yargs.js.org/docs#api-reference-impliesx-y
+[24]: https://yargs.js.org/docs#api-reference-conflictsx-y
+[25]: #vacuousimplications
+[26]:
   https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/Configuration.md#handler
-[24]: #new-option-configuration-keys
-[25]: https://yargs.js.org/docs#api-reference-demandoptionkey-msg-boolean
-[26]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
-[27]:
+[27]: #new-option-configuration-keys
+[28]: https://yargs.js.org/docs#api-reference-demandoptionkey-msg-boolean
+[29]: https://en.wikipedia.org/wiki/Vacuous_truth
+[30]: https://en.wikipedia.org/wiki/Consequent
+[31]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
+[32]:
   https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
-[28]:
+[33]:
   https://github.com/Xunnamius/black-flag/blob/main/docs/index/classes/GracefulEarlyExitError.md
-[29]:
+[34]:
   https://github.com/Xunnamius/black-flag/tree/main?tab=readme-ov-file#built-in-support-for-dynamic-options-
-[30]: https://github.com/Xunnamius/black-flag-demo/blob/main/commands/init.js
-[31]: #strange-and-impossible-configurations
-[32]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
-[33]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
-[34]: ./docs/src/functions/withUsageExtensions.md
-[35]: https://github.com/Xunnamius/symbiote/blob/main/src/commands/deploy.ts
-[36]: https://yargs.js.org/docs#api-reference
-[37]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/ConfigureExecutionPrologue.md
-[38]: https://npm.im/@black-flag/core
-[39]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
-[40]:
-  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#differences-between-black-flag-and-yargs
-[41]: https://github.com/yargs/yargs/issues/1323
-[42]: https://github.com/yargs/yargs/issues/2340
-[43]: https://github.com/yargs/yargs/issues/1322
-[44]: https://github.com/yargs/yargs/issues/2089
-[45]: https://github.com/yargs/yargs/issues/1975
-[46]: https://github.com/yargs/yargs-parser/issues/412
-[47]: https://github.com/yargs/yargs/issues/1680
-[48]: https://github.com/yargs/yargs/issues/1599
-[49]: https://github.com/yargs/yargs/issues/1611
-[50]: ./docs/src/functions/getInvocableExtendedHandler.md
-[51]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
-[52]: #vacuousimplications
-[53]: https://en.wikipedia.org/wiki/Vacuous_truth
-[54]: https://en.wikipedia.org/wiki/Consequent
-[55]: https://yargs.js.org/docs#api-reference-coercekey-fn
-[56]:
+[35]: https://github.com/Xunnamius/black-flag-demo/blob/main/commands/init.js
+[36]: #strange-and-impossible-configurations
+[37]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
+[38]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
+[39]: ./docs/src/functions/withUsageExtensions.md
+[40]: ./docs/src/functions/getInvocableExtendedHandler.md
+[41]:
   https://github.com/Xunnamius/black-flag/blob/main/docs/index/functions/runProgram.md
-[57]: https://en.wikipedia.org/wiki/Propositional_calculus
+[42]: https://github.com/Xunnamius/symbiote/blob/main/src/commands/deploy.ts
+[43]: https://yargs.js.org/docs#api-reference-coercekey-fn
+[44]: https://yargs.js.org/docs#api-reference
+[45]:
+  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/ConfigureExecutionPrologue.md
+[46]: https://npm.im/@black-flag/core
+[47]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
+[48]:
+  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#differences-between-black-flag-and-yargs
+[49]: https://github.com/yargs/yargs/issues/1323
+[50]: https://github.com/yargs/yargs/issues/2340
+[51]: https://github.com/yargs/yargs/issues/1322
+[52]: https://github.com/yargs/yargs/issues/2089
+[53]: https://github.com/yargs/yargs/issues/1975
+[54]: https://github.com/yargs/yargs-parser/issues/412
+[55]: https://github.com/yargs/yargs/issues/1680
+[56]: https://github.com/yargs/yargs/issues/1599
+[57]: https://github.com/yargs/yargs/issues/1611

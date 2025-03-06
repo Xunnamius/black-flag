@@ -87,7 +87,7 @@ export function capitalize(str: string) {
 
 /**
  * Accepts an `error` and returns the value of its `.cause` property if (1)
- * `error` extends {@link Error} and (2) the `.cause` property exists and is not
+ * `error` extends `Error` and (2) the `.cause` property exists and is not
  * falsy; otherwise, `error` itself is returned. This action is performed
  * recursively (.e.g. `error.cause.cause.cause...`) until a value without a
  * non-falsy `.cause` property is encountered.

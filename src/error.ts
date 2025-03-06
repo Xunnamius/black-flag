@@ -112,7 +112,7 @@ export type CliErrorOptions = {
    */
   dangerouslyFatal?: boolean;
   /**
-   * By default, if an {@link Error} object is passed to `CliError`, that
+   * By default, if an `Error` object is passed to `CliError`, that
    * `Error` instance will be passed through as `CliError.cause` and that
    * instance's `Error.message` will be passed through as `CliError.message`.
    *
