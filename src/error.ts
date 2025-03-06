@@ -283,7 +283,7 @@ export const BfErrorMessage = {
     return 'invalid sub-command: you must call this with a valid sub-command argument';
   },
   FrameworkError(error: unknown) {
-    return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application. For more information about this error, rerun the command with the DEBUG='bf:*' environment variable set.\n\nError: ${
+    return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application. For more information about this error, rerun the command with the DEBUG='bf:*' or DEBUG='*' environment variable set.\n\nException details: ${
       isNativeError(error) ? error.stack || error : String(error)
     }`;
   },
@@ -341,7 +341,7 @@ export const BfErrorMessage = {
     return 'yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
   },
   BadParameterCombination() {
-    return 'cannot provide both "configurationHooks" and "preExecutionContext" properties';
+    return 'must provide exactly one of the following options: configurationHooks, preExecutionContext';
   },
   UseParseAsyncInstead() {
     return '"parseSync" is not supported. Use "parseAsync" instead';
