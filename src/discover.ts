@@ -417,37 +417,34 @@ export async function discoverCommands(
 
           loadDebug('configuration file metadata (w/o reservedCommandNames): %O', meta);
 
-          let maybeFinalConfig;
+          let importedConfig = maybeImportedConfig;
 
           // ? ESM <=> CJS interop. If there's a default property, we'll use it
           // ? (covered by integration tests)
           /* istanbul ignore next */
-          if (maybeImportedConfig.default) {
-            maybeFinalConfig = maybeImportedConfig.default;
+          if (importedConfig.default) {
+            importedConfig = importedConfig.default;
           }
 
           // ? ESM <=> CJS interop, again. See:
           // ? test/fixtures/several-files-cjs-esm/nested/first.cjs
           // ? (covered by integration tests)
           /* istanbul ignore next */
-          if (maybeFinalConfig?.default) {
-            maybeFinalConfig = maybeFinalConfig.default;
+          if (importedConfig.default) {
+            importedConfig = importedConfig.default;
           }
 
           let rawConfig: Partial<Configuration>;
 
-          if (typeof maybeFinalConfig === 'function') {
+          if (typeof importedConfig === 'function') {
             loadDebug('configuration returned a function');
             // TODO: Defer invoking default export until later (will require
             // TODO: major refactor)
             // eslint-disable-next-line no-await-in-loop
-            rawConfig = await maybeFinalConfig(context);
+            rawConfig = await importedConfig(context);
           } else {
             loadDebug('configuration returned an object (or something coerced into {})');
-            rawConfig =
-              !!maybeFinalConfig && typeof maybeFinalConfig === 'object'
-                ? maybeFinalConfig
-                : {};
+            rawConfig = typeof importedConfig === 'object' ? importedConfig : {};
           }
 
           // ? Ensure configuration namespace is copied by value!
