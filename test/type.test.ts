@@ -89,6 +89,7 @@ test('exports/util', async () => {
       rawArgv: [],
       initialTerminalWidth: 5,
       isGracefullyExiting: true,
+      didAlreadyHandleError: true,
       isHandlingHelpOption: false,
       globalHelpOption: {
         name: '',
