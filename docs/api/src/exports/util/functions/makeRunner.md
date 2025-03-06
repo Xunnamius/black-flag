@@ -8,7 +8,7 @@
 
 > **makeRunner**\<`CustomCliArguments`\>(`options`): (...`args`) => [`RunProgramReturnType`](../../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:463](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L463)
+Defined in: [src/index.ts:536](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L536)
 
 A "high-order" factory function that returns a "low-order" [runProgram](../../functions/runProgram.md)
 function that can be called multiple times while only having to provide a
@@ -43,7 +43,7 @@ actual thrown error, set `makeRunner`'s `errorHandlingBehavior` option to
 
 ### options
 
-`object` & \{ `configurationHooks`: Promisable\<ConfigurationHooks\> \| undefined; `preExecutionContext`: `undefined`; \} \| \{ `configurationHooks`: `undefined`; `preExecutionContext`: Promisable\<PreExecutionContext\> \| undefined; \}
+[`MakeRunnerOptions`](../type-aliases/MakeRunnerOptions.md)
 
 ## Returns
 

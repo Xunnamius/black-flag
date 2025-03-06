@@ -8,7 +8,7 @@
 
 > **ConfigureArguments**\<`CustomContext`\>: (`rawArgv`, `context`) => `Promisable`\<*typeof* `process.argv`\>
 
-Defined in: [src/types/configure.ts:49](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/types/configure.ts#L49)
+Defined in: [src/types/configure.ts:49](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/types/configure.ts#L49)
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like array.

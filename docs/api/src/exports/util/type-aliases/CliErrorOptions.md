@@ -8,7 +8,7 @@
 
 > **CliErrorOptions**: `object`
 
-Defined in: [src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/error.ts#L73)
+Defined in: [src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/error.ts#L73)
 
 Options available when constructing a new `CliError` object.
 

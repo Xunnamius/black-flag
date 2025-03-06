@@ -21,6 +21,7 @@
 - [FactoriedRunProgramParameters](type-aliases/FactoriedRunProgramParameters.md)
 - [FrameworkArguments](type-aliases/FrameworkArguments.md)
 - [HelperProgram](type-aliases/HelperProgram.md)
+- [MakeRunnerOptions](type-aliases/MakeRunnerOptions.md)
 - [PreExecutionContext](type-aliases/PreExecutionContext.md)
 - [Program](type-aliases/Program.md)
 - [ProgramDescriptor](type-aliases/ProgramDescriptor.md)

@@ -8,9 +8,9 @@
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:649](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L649)
+Defined in: [src/index.ts:662](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L662)
 
 Invokes the dynamically imported
 `configureProgram(commandModulePath).execute()` function.
@@ -31,9 +31,9 @@ desired.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`\]
+`string`
 
 ### Returns
 
@@ -44,9 +44,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:669](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L669)
+Defined in: [src/index.ts:682](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L682)
 
 Invokes the dynamically imported `configureProgram(commandModulePath,
 configurationHooks).execute()` function.
@@ -67,9 +67,13 @@ desired.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`, `Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\>\]
+`string`
+
+#### configurationHooks
+
+`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\>
 
 ### Returns
 
@@ -80,9 +84,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`, `preExecutionContext`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:695](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L695)
+Defined in: [src/index.ts:706](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L706)
 
 Invokes the `preExecutionContext.execute()` function.
 
@@ -104,9 +108,13 @@ is returned.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`, `Promisable`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>\]
+`string`
+
+#### preExecutionContext
+
+`Promisable`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
 
 ### Returns
 
@@ -117,9 +125,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`, `argv`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:721](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L721)
+Defined in: [src/index.ts:730](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L730)
 
 Invokes the dynamically imported
 `configureProgram(commandModulePath).execute(argv)` function. If `argv` is a
@@ -141,9 +149,13 @@ desired.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`, `string` \| `string`[]\]
+`string`
+
+#### argv
+
+`string` | `string`[]
 
 ### Returns
 
@@ -154,9 +166,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`, `argv`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:744](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L744)
+Defined in: [src/index.ts:754](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L754)
 
 Invokes the dynamically imported `configureProgram(commandModulePath,
 configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
@@ -178,9 +190,17 @@ desired.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`, `string` \| `string`[], `Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\>\]
+`string`
+
+#### argv
+
+`string` | `string`[]
+
+#### configurationHooks
+
+`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\>
 
 ### Returns
 
@@ -191,9 +211,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
-> **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+> **runProgram**\<`CustomCliArguments`\>(`commandModulePath`, `argv`, `preExecutionContext`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:772](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L772)
+Defined in: [src/index.ts:780](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L780)
 
 Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
 string, `argv = argv.split(' ')` is applied first.
@@ -216,9 +236,17 @@ is returned.
 
 ### Parameters
 
-#### args
+#### commandModulePath
 
-...\[`string`, `string` \| `string`[], `Promisable`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>\]
+`string`
+
+#### argv
+
+`string` | `string`[]
+
+#### preExecutionContext
+
+`Promisable`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
 
 ### Returns
 
@@ -231,9 +259,9 @@ if any other exception occurs, or `Arguments` otherwise.
 
 > **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:794](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/index.ts#L794)
+Defined in: [src/index.ts:800](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L800)
 
-Run the given program with the given configuration.
+Run the given program with the configuration given in `args`.
 
 This function is suitable for a CLI entry point since it will **never throw
 or reject no matter what.** Instead, when an exception occurs,

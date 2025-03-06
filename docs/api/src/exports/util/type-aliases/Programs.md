@@ -8,7 +8,7 @@
 
 > **Programs**\<`CustomCliArguments`, `CustomExecutionContext`\>: `{ [Descriptor in ProgramDescriptor]: DescriptorToProgram<Descriptor, CustomCliArguments, CustomExecutionContext> }`
 
-Defined in: [src/types/program.ts:172](https://github.com/Xunnamius/black-flag/blob/a0f00d5a2809e5f4f75ecb90bce738d38590143c/src/types/program.ts#L172)
+Defined in: [src/types/program.ts:172](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/types/program.ts#L172)
 
 Represents the program types that represent every Black Flag command as
 aptly-named values in an object.
