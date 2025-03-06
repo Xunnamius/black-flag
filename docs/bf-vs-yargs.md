@@ -17,7 +17,7 @@ Flag, but are noted below nonetheless.
   earlier invocation_. This can lead to undefined or even dangerous behavior.
 
   > Who in their right mind is out here cloning Yargs instances, you may ask?
-  > \[Jest does so whenever you use certain asymmetric matchers]\[46].
+  > [Jest does so whenever you use certain asymmetric matchers][46].
 
   Regardless, you should never have to reach below Black Flag's abstraction over
   Yargs to call methods like `yargs::parse`, `yargs::parseAsync`, `yargs::argv`,
@@ -26,7 +26,7 @@ Flag, but are noted below nonetheless.
   Therefore, this is effectively a non-issue with proper declarative use of
   Black Flag.
 
-- Yargs \[middleware]\[47] isn't supported since the functionality is mostly
+- Yargs [middleware][47] isn't supported since the functionality is mostly
   covered by configuration hooks ~~and I didn't notice Yargs had this feature
   until after I wrote Black Flag~~.
 
@@ -176,3 +176,7 @@ Flag, but are noted below nonetheless.
 [20]: ./docs/util/type-aliases/PreExecutionContext.md
 [21]: ./docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
 [22]: #building-and-running-your-cli
+[46]:
+  https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
+[47]:
+  https://github.com/yargs/yargs/blob/HEAD/docs/api.md#user-content-middlewarecallbacks-applybeforevalidation

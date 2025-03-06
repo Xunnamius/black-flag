@@ -10,8 +10,8 @@
 | default command | A "default command" is [yargs parlance][107] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                       |
 
 > Note: you shouldn't need to reach below Black Flag's declarative abstraction
-> layer when building your tool. If you feel that you do, consider \[opening a
-> new issue]\[x-repo-choose-new-issue]!
+> layer when building your tool. If you feel that you do, consider [opening a
+> new issue][x-repo-choose-new-issue]!
 
 Since Black Flag is just a bunch of Yargs instances stacked on top of each other
 wearing a trench coat, you can muck around with the internal Yargs instances
@@ -362,6 +362,8 @@ user.<sup>R2🡒R1</sup>
 
 > The ascii art diagram was built using [https://asciiflow.com][109]
 
+[x-repo-choose-new-issue]:
+  https://github.com/Xunnamius/black-flag/issues/new/choose
 [1]: ./docs/index/type-aliases/Configuration.md#type-declaration
 [2]: ./docs/util/type-aliases/PreExecutionContext.md
 [3]: #execution-flow-diagram

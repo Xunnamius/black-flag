@@ -152,7 +152,7 @@ defaults:
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::usage(defaultUsageText)`
-  - Defaults to \[this]\[34].
+  - Defaults to [this][34].
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
     (such as in [`configureExecutionPrologue`][5]) will concatenate each
     invocation's arguments into one long usage string instead of overwriting
@@ -282,8 +282,8 @@ Options:
 
 Since different OSes walk different filesystems in different orders,
 auto-discovered commands will appear _in [alpha-sort][7] order_ in help text
-rather than in insertion order; \[command groupings]\[37] are still respected
-and each command's options are still enumerated in insertion order.
+rather than in insertion order; [command groupings][37] are still respected and
+each command's options are still enumerated in insertion order.
 
 > Black Flag offers a stronger sorting guarantee than
 > `yargs::parserConfiguration({ 'sort-commands': true })`.
@@ -466,3 +466,7 @@ Neat! 📸
 [11]: ./docs/index/functions/runProgram.md
 [12]: https://jestjs.io/docs/jest-object#jestresetmodules
 [13]: https://github.com/yargs/yargs/issues/2191
+[34]:
+  https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
+[37]:
+  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
