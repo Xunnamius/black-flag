@@ -1,4 +1,4 @@
-**@black-flag/core** • **Docs**
+**@black-flag/core**
 
 ***
 
@@ -6,5 +6,6 @@
 
 ## Modules
 
-- [index](index/README.md)
-- [util](util/README.md)
+- [src/exports](src/exports/README.md)
+- [src/exports/util](src/exports/util/README.md)
+- [test/util](test/util/README.md)
