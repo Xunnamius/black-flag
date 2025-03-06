@@ -50,7 +50,7 @@ for users of [`yargs::commandDir()`][2]. Its features include:
 <br />
 
 Black Flag is tested on Ubuntu and Windows 10, and like Yargs tracks Node.js LTS
-versions.
+versions. Also comes with first-class support for both CJS and ESM source.
 
 <!-- prettier-ignore-start -->
 
@@ -122,25 +122,171 @@ npm install @black-flag/extensions
 
 ## Quick Start
 
-TODO
+Install Black Flag:
 
-See also:
+```shell
+npm install @black-flag/core
+```
 
-- [Step-by-step getting started guide][28]
-- [Black Flag versus vanilla Yargs][5]
-- [Simple demo CLI project][10] (or `npx -p @black-flag/demo myctl --help`)
-- [Black Flag recipes for solving common CLI design problems][17]
-- [Yargs's intro documentation][5]
+Create the file that will run your CLI, perhaps at `./cli.js`:
+
+```js
+#!/usr/bin/env node
+
+import { runProgram } from '@black-flag/core';
+export default runProgram(import.meta.resolve('./commands'));
+```
+
+Then create your root command, perhaps at `./commands/index.js`:
+
+```js
+export const name = 'pirate-parser';
+```
+
+Finally, create your sub-command, perhaps at `./commands/hello.js`:
+
+```js
+export const command = '$0 [name]';
+
+export const usage = '$0 <cmd> [args]';
+
+export const description =
+  'Welcome ter black flag, a declarative wrapper around yargs!';
+
+export function builder(blackFlag, helpOrVersionSet, argv) {
+  blackFlag.positional('name', {
+    type: 'string',
+    default: 'Cambi',
+    describe: 'The name to say hello to'
+  });
+
+  // A special --attention flag only available when greeting the captain!
+  if (helpOrVersionSet || argv?._.at(0) === 'CAPTAIN') {
+    return {
+      attention: {
+        boolean: true,
+        description: 'Alert the watch that the captain is around'
+      }
+    };
+  }
+}
+
+export async function handler(argv) {
+  if (argv.attention) {
+    console.log('-!- Captain is on the bridge -!-');
+  }
+
+  console.log(`Hello ${argv.name}, welcome to Black Flag!`);
+}
+```
+
+Then run it:
+
+```shell
+node cli.js --help
+```
+
+```text
+Usage: pirate-parser
+
+Commands:
+  pirate-parser hello  Welcome ter black flag, a declarative wrapper around yargs!
+
+Options:
+  --help     Show help text                                                 [boolean]
+  --version  Show version number                                            [boolean]
+```
+
+---
+
+```shell
+node cli.js hello --help
+```
+
+```text
+pirate-parser hello <cmd> [args]
+
+Positionals:
+  name  The name to say hello to                          [string] [default: "Cambi"]
+
+Options:
+  --help       Show help text                                               [boolean]
+  --attention  Alert the watch that the captain is around                   [boolean]
+```
+
+---
+
+```shell
+node cli.js hello Parrot
+```
+
+```text
+Hello Parrot, welcome to Black Flag!
+```
+
+---
+
+```shell
+node cli.js hello CAPTAIN
+```
+
+```text
+Hello CAPTAIN, welcome to Black Flag!
+```
+
+---
+
+```shell
+node cli.js hello Parrot --attention
+```
+
+```text
+pirate-parser hello <cmd> [args]
+
+Positionals:
+  name  The name to say hello to                          [string] [default: "Cambi"]
+
+Options:
+  --help  Show help text                                                    [boolean]
+
+Unknown argument: attention
+```
+
+---
+
+```shell
+node cli.js hello CAPTAIN --attention
+```
+
+```text
+-!- Captain is on the bridge -!-
+Hello CAPTAIN, welcome to Black Flag!
+```
+
+> [!TIP]
+>
+> Not sure what makes Black Flag "more declarative" than Yargs? Compare this
+> quick start example to the
+> <a href="https://yargs.js.org" target="_blank">vanilla Yargs version</a>.
+
+Next steps:
+
+- [Check out the step-by-step getting started guide][28]
+- [Compare Black Flag versus vanilla Yargs][5]
+- [Play with a simple demo CLI project][10] (or
+  `npx -p @black-flag/demo myctl --help`)
+- [Review Black Flag recipes for solving common CLI design problems][17]
+- [Pull up Yargs's intro documentation][5]
 
 For an example of a production CLI tool that puts Black Flag through its paces,
-check out the source code for my meta project: [`@-xun/symbiote`][29].
+check out the source code for [`@-xun/symbiote`][29].
 
 ## Appendix 🏴
 
 <!-- symbiote-template-region-end -->
 
 Further documentation can be found under [`docs/`][x-repo-docs] and
-[`docs/api`][21]. Common CLI design "recipes" can be found under
+[`docs/api/`][21]. Common CLI design "recipes" can be found under
 [`examples/`][17].
 
 ### Terminology
