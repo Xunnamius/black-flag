@@ -8,15 +8,32 @@
 
 > **MakeRunnerOptions**: `object` & \{ `configurationHooks`: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>; `preExecutionContext`: `undefined`; \} \| \{ `configurationHooks`: `undefined`; `preExecutionContext`: `Promisable`\<[`PreExecutionContext`](PreExecutionContext.md)\>; \}
 
-Defined in: [src/index.ts:112](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L112)
+Defined in: [src/index.ts:112](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/index.ts#L112)
 
 The options accepted by the [makeRunner](../functions/makeRunner.md) function.
 
 ## Type declaration
 
-### commandModulePath
+### commandModulesPath
 
-> **commandModulePath**: `string`
+> **commandModulesPath**: `string`
+
+#### See
+
+[runProgram](../../functions/runProgram.md)
+
+### configurationHooks?
+
+> `optional` **configurationHooks**: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>
+
+The [ConfigurationHooks](../../type-aliases/ConfigurationHooks.md) to be used by each low-order
+invocation by default. Each low-order function can provide its own
+[ConfigurationHooks](../../type-aliases/ConfigurationHooks.md) argument, which will be merged on top of
+this option. A low-order function supplying a
+[PreExecutionContext](PreExecutionContext.md) argument instead will completely override
+this option.
+
+Note: this option cannot be used with `preExecutionContext`.
 
 #### See
 
@@ -51,3 +68,18 @@ crucial when debugging. Discretion is advised.
 ```ts
 'default'
 ```
+
+### preExecutionContext?
+
+> `optional` **preExecutionContext**: `Promisable`\<[`PreExecutionContext`](PreExecutionContext.md)\>
+
+The [PreExecutionContext](PreExecutionContext.md) to be used by each low-order
+invocation. Each low-order function can provide its own
+[PreExecutionContext](PreExecutionContext.md) or [ConfigurationHooks](../../type-aliases/ConfigurationHooks.md) argument,
+both of which which will completely override this option.
+
+Note: this option cannot be used with `configurationHooks`.
+
+#### See
+
+[runProgram](../../functions/runProgram.md)

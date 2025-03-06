@@ -6,15 +6,15 @@
 
 # Function: configureProgram()
 
-> **configureProgram**(`commandModulePath`, `configurationHooks`?): `Promise`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
+> **configureProgram**(`commandModulesPath`, `configurationHooks`?): `Promise`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
 
-Defined in: [src/index.ts:186](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L186)
+Defined in: [src/index.ts:188](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/index.ts#L188)
 
 Create and return a [PreExecutionContext](../util/type-aliases/PreExecutionContext.md) containing fully-configured
 [Program](../util/type-aliases/Program.md) instances and an [Executor](../util/type-aliases/Executor.md) entry point function.
 
-Command auto-discovery will occur at `commandModulePath`. An exception will
-occur if no commands are loadable from the given `commandModulePath`.
+Command auto-discovery will occur at `commandModulesPath`. An exception will
+occur if no commands are loadable from the given `commandModulesPath`.
 
 **This function throws whenever an exception occurs**, making it not ideal as
 an entry point for a CLI, but perhaps useful during testing. See
@@ -23,12 +23,12 @@ the exit code automatically.
 
 ## Parameters
 
-### commandModulePath
+### commandModulesPath
 
 `string`
 
-Command auto-discovery will occur at `commandModulePath`. An exception will
-occur if no commands are loadable from the given `commandModulePath`.
+Command auto-discovery will occur at `commandModulesPath`. An exception will
+occur if no commands are loadable from the given `commandModulesPath`.
 
 `'file://...'`-style URLs are also accepted.
 

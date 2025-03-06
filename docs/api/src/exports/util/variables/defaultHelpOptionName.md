@@ -8,7 +8,7 @@
 
 > `const` **defaultHelpOptionName**: `"help"` = `'help'`
 
-Defined in: [src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/constant.ts#L30)
+Defined in: [src/constant.ts:30](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/constant.ts#L30)
 
 Hard-coded default option name for dumping help text to stdout. For example:
 `--${defaultHelpOptionName}`.

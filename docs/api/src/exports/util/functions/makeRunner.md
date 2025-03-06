@@ -8,11 +8,11 @@
 
 > **makeRunner**\<`CustomCliArguments`\>(`options`): (...`args`) => [`RunProgramReturnType`](../../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:536](https://github.com/Xunnamius/black-flag/blob/e6eca023803f0a1815dfc34f6bdb68feb61e8119/src/index.ts#L536)
+Defined in: [src/index.ts:538](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/index.ts#L538)
 
-A "high-order" factory function that returns a "low-order" [runProgram](../../functions/runProgram.md)
-function that can be called multiple times while only having to provide a
-subset of the required parameters.
+A "high-order" factory function that returns a "low-order" curried
+[runProgram](../../functions/runProgram.md) function that can be called multiple times while only
+having to provide a subset of the required parameters.
 
 This is useful when unit/integration testing a CLI, which will likely require
 multiple calls to `runProgram(...)`.
