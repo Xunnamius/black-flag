@@ -11,6 +11,7 @@ const config = deepMergeConfig(
   moduleExport({ derivedAliases: getJestAliases(), ...assertEnvironment() }),
   {
     // Any custom configs here will be deep merged with moduleExport's result
+    transformIgnorePatterns: ['/node_modules/', '/test/fixtures/']
   }
 );
 
