@@ -1,9 +1,9 @@
-# Getting Started With Black Flag
+# Black Flag: Getting Started
 
-What follows is a simple step-by-step guide for building, running, and testing
-a brand new CLI tool from scratch. We'll call it: `myctl`.
+What follows is a simple step-by-step guide for building, running, and testing a
+brand new CLI tool from scratch. We'll call it: `myctl`.
 
-> There's also a functional [`myctl` demo repository][10]. And you can interact
+> There's also a functional [`myctl` demo repository][1]. And you can interact
 > with the published version on NPM: `npx -p @black-flag/demo myctl --help`.
 
 ### Building and Running Your CLI
@@ -65,7 +65,7 @@ touch commands/index.js
 Depending on how you invoke Black Flag (e.g. with Node, Deno, Babel+Node, etc),
 command files support a subset of the following extensions in precedence order:
 `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`. To keep things simple, we'll be
-using ES modules as `.js` files (note the [type][31] in `package.json`).
+using ES modules as `.js` files (note the [type][2] in `package.json`).
 
 Also note that empty files, and files that do not export a `handler` function or
 custom `command` string, are picked up by Black Flag as unfinished or
@@ -141,8 +141,8 @@ defaults:
 - `yargs::scriptName(fullName)`
 - `yargs::wrap(yargs::terminalWidth())`
   - If you want to tweak this across your entire command hierarchy, update
-    [`context.state.initialTerminalWidth`][32] directly in
-    [`configureExecutionContext`][33]
+    [`context.state.initialTerminalWidth`][3] directly in
+    [`configureExecutionContext`][4]
 - `yargs::exitProcess(false)`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
 - `yargs::help(false)::option('help', { description })`
@@ -152,9 +152,9 @@ defaults:
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::usage(defaultUsageText)`
-  - Defaults to [this][34].
+  - Defaults to \[this]\[34].
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
-    (such as in [`configureExecutionPrologue`][35]) will concatenate each
+    (such as in [`configureExecutionPrologue`][5]) will concatenate each
     invocation's arguments into one long usage string instead of overwriting
     previous invocations with later ones
 - `yargs::version(false)`
@@ -165,7 +165,7 @@ defaults:
 <!-- lint enable list-item-style -->
 
 Most of these defaults can be tweaked or overridden via each command's
-[`builder`][11] function, which gives you direct access to the Yargs API. Let's
+[`builder`][6] function, which gives you direct access to the Yargs API. Let's
 add one to `commands/index.js` along with a `handler` function and `usage`
 string:
 
@@ -281,9 +281,9 @@ Options:
 ```
 
 Since different OSes walk different filesystems in different orders,
-auto-discovered commands will appear _in [alpha-sort][36] order_ in help text
-rather than in insertion order; [command groupings][37] are still respected and
-each command's options are still enumerated in insertion order.
+auto-discovered commands will appear _in [alpha-sort][7] order_ in help text
+rather than in insertion order; \[command groupings]\[37] are still respected
+and each command's options are still enumerated in insertion order.
 
 > Black Flag offers a stronger sorting guarantee than
 > `yargs::parserConfiguration({ 'sort-commands': true })`.
@@ -337,7 +337,7 @@ we'll need some automated tests.
 Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
-First, let's install [jest][38]. We'll also create a file to hold our tests.
+First, let's install [jest][8]. We'll also create a file to hold our tests.
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -348,22 +348,22 @@ Since we set our root command to non-strict mode, let's test that it doesn't
 throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
-Note that we use [`makeRunner`][19] below, which is a factory function that
-returns a [curried][39] version of [`runProgram`][12] that is far less tedious
+Note that we use [`makeRunner`][9] below, which is a factory function that
+returns a [curried][10] version of [`runProgram`][11] that is far less tedious
 to invoke successively.
 
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
-> entire CLI _from scratch_. Other than stuff like [the require cache][40],
+> entire CLI _from scratch_. Other than stuff like [the require cache][12],
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
-> [common Yargs footgun][41].
+> [common Yargs footgun][13].
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
 
 // makeRunner is a factory function that returns runProgram functions with
 // curried arguments.
-const run = makeRunner({ commandModulePath: `${__dirname}/commands` });
+const run = makeRunner({ commandModulesPath: `${__dirname}/commands` });
 
 afterEach(() => {
   // Since runProgram (i.e. what is returned by makeRunner) sets
@@ -453,19 +453,16 @@ Neat! 📸
 
 <!-- symbiote-template-region-start 5 -->
 
-
-[10]: https://github.com/Xunnamius/black-flag-demo
-[31]: https://nodejs.org/api/packages.html#type
-[32]: ./docs/util/type-aliases/ExecutionContext.md
-[33]: ./docs/index/type-aliases/ConfigureExecutionContext.md
-[34]: 
-[35]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
-[11]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[36]: https://www.npmjs.com/package/alpha-sort
-[37]: 
-[38]: https://www.npmjs.com/package/jest
-[19]: ./docs/util/functions/makeRunner.md
-[39]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[12]: ./docs/index/functions/runProgram.md
-[40]: https://jestjs.io/docs/jest-object#jestresetmodules
-[41]: https://github.com/yargs/yargs/issues/2191
+[1]: https://github.com/Xunnamius/black-flag-demo
+[2]: https://nodejs.org/api/packages.html#type
+[3]: ./docs/util/type-aliases/ExecutionContext.md
+[4]: ./docs/index/type-aliases/ConfigureExecutionContext.md
+[5]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
+[6]: ./docs/index/type-aliases/Configuration.md#type-declaration
+[7]: https://www.npmjs.com/package/alpha-sort
+[8]: https://www.npmjs.com/package/jest
+[9]: ./docs/util/functions/makeRunner.md
+[10]: https://builtin.com/software-engineering-perspectives/currying-javascript
+[11]: ./docs/index/functions/runProgram.md
+[12]: https://jestjs.io/docs/jest-object#jestresetmodules
+[13]: https://github.com/yargs/yargs/issues/2191

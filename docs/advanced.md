@@ -1,8 +1,8 @@
 # Black Flag: Advanced Usage
 
 > Note: you shouldn't need to reach below Black Flag's declarative abstraction
-> layer when building your tool. If you feel that you do, consider [opening a
-> new issue][x-repo-choose-new-issue]!
+> layer when building your tool. If you feel that you do, consider \[opening a
+> new issue]\[x-repo-choose-new-issue]!
 
 Since Black Flag is just a bunch of Yargs instances stacked on top of each other
 wearing a trench coat, you can muck around with the internal Yargs instances
@@ -43,24 +43,24 @@ Each of these six commands is actually _three_ programs:
 
 1. The **effector** (`programs.effector`) programs are responsible for
    second-pass arguments parsing and comprehensive validation, executing each
-   command's actual [`handler`][11] function, generating specific help text
+   command's actual [`handler`][1] function, generating specific help text
    during errors, and ensuring the final parse result bubbles up to the router
    program.
 
 2. The **helper** (`programs.helper`) programs are responsible for generating
    generic help text as well as first-pass arguments parsing and initial
    validation. Said parse result is used as the `argv` third parameter passed to
-   the [`builder`][11] functions of effectors.
+   the [`builder`][1] functions of effectors.
 
 3. The **router** (`programs.router`) programs are responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and
    final parse results bubble up to the root Black Flag execution context
-   ([`PreExecutionContext::execute`][15]) for handling.
+   ([`PreExecutionContext::execute`][2]) for handling.
 
-> See the [flow chart][58] below for a visual overview.
+> See the [flow chart][3] below for a visual overview.
 
 These three programs representing the root command are accessible from the
-[`PreExecutionContext::rootPrograms`][15] property. They are also always the
+[`PreExecutionContext::rootPrograms`][2] property. They are also always the
 first item in the `PreExecutionContext::commands` map.
 
 ```typescript
@@ -78,41 +78,41 @@ await preExecutionContext.execute();
 ```
 
 Effectors do the heavy lifting in that they actually execute their command's
-[`handler`][11]. They are accessible via the [`programs.effector`][59] property
-of each object in [`PreExecutionContext::commands`][15], and can be configured
-as one might a typical Yargs instance.
+[`handler`][1]. They are accessible via the [`programs.effector`][4] property of
+each object in [`PreExecutionContext::commands`][2], and can be configured as
+one might a typical Yargs instance.
 
 Helpers are "clones" of their respective effectors and are accessible via the
-[`programs.helper`][59] property of each object in
-[`PreExecutionContext::commands`][15]. These instances have been reconfigured to
-address [a couple bugs][4] in Yargs help text output by excluding aliases from
+[`programs.helper`][4] property of each object in
+[`PreExecutionContext::commands`][2]. These instances have been reconfigured to
+address [a couple bugs][5] in Yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
 side-effect of this is that only effectors recognize top-level positional
 arguments, which isn't a problem Black Flag users have to worry about unless
 they're dangerously tampering with these programs directly.
 
 Routers are partially-configured just enough to proxy control to other routers
-or to helpers and are accessible via the [`programs.router`][59] property of
-each object in [`PreExecutionContext::commands`][15]. They cannot and _must not_
-have any configured strictness or validation logic.
+or to helpers and are accessible via the [`programs.router`][4] property of each
+object in [`PreExecutionContext::commands`][2]. They cannot and _must not_ have
+any configured strictness or validation logic.
 
 Therefore: if you want to tamper with the program responsible for running a
-command's [`handler`][11], operate on the effector program. If you want to
-tamper with a command's generic stdout help text, operate on the helper program.
-If you want to tamper with validation and parsing, operate on both the helper
-and effectors. If you want to tamper with the routing of control between
-commands, operate on the router program.
+command's [`handler`][1], operate on the effector program. If you want to tamper
+with a command's generic stdout help text, operate on the helper program. If you
+want to tamper with validation and parsing, operate on both the helper and
+effectors. If you want to tamper with the routing of control between commands,
+operate on the router program.
 
-See [the docs](api) for more details on Black Flag's internals.
+See [the docs][6] for more details on Black Flag's internals.
 
- Motivation
+Motivation
 
 Rather than chain singular Yargs instances together, the delegation of
 responsibility between helper and effectors facilitates the double-parsing
-necessary for [dynamic options][9] support. In implementing dynamic options,
+necessary for [dynamic options][7] support. In implementing dynamic options,
 Black Flag accurately parses the given arguments with the helper program on the
-first pass and feeds the result to the [`builder`][11] function of the effector
-on the second pass (via [`builder`'s new third parameter][9]).
+first pass and feeds the result to the [`builder`][1] function of the effector
+on the second pass (via [`builder`'s new third parameter][7]).
 
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
@@ -154,14 +154,14 @@ descendants—while still properly throwing an error when the end user tries to
 invoke a child command that does not exist or invoke a child command with
 gibberish arguments.
 
- Generating Help Text
+Generating Help Text
 
 Effectors are essentially Yargs instances with a registered [default
-command][45]. Unfortunately, when vanilla Yargs is asked to generate help text
+command][8]. Unfortunately, when vanilla Yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
 
-![Vanilla Yargs parseAsync help text example][60]
+![Vanilla Yargs parseAsync help text example][9]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
 root command is being reported alongside `subcmd` as if it were a child command
@@ -193,24 +193,23 @@ with permanent effects.
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][61]
+![Black Flag runProgram help text example][10]
 
 > Note 1: in this example, `runProgram` is a function returned by
-> [`makeRunner`][19].
+> [`makeRunner`][11].
 
 > Note 2: in the above image, the first line under "Commands:" is the root
 > command. In more recent versions of Black Flag, the root command is omitted
 > from the list of sub-commands.
 
-
-[x-repo-choose-new-issue]: 
-[11]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[15]: ./docs/util/type-aliases/PreExecutionContext.md
-[58]: #execution-flow-diagram
-[59]: ./docs/util/type-aliases/ProgramMetadata.md
-[4]: #irrelevant-differences
-[9]: #built-in-support-for-dynamic-options-
-[45]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[60]: ./example-1.png
-[61]: ./example-2.png
-[19]: ./docs/util/functions/makeRunner.md
+[1]: ./docs/index/type-aliases/Configuration.md#type-declaration
+[2]: ./docs/util/type-aliases/PreExecutionContext.md
+[3]: #execution-flow-diagram
+[4]: ./docs/util/type-aliases/ProgramMetadata.md
+[5]: #irrelevant-differences
+[6]: api
+[7]: #built-in-support-for-dynamic-options-
+[8]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
+[9]: ./example-1.png
+[10]: ./example-2.png
+[11]: ./docs/util/functions/makeRunner.md

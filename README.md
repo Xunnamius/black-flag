@@ -515,10 +515,10 @@ specification. Contributions of any kind welcome!
 [23]: ./docs/advanced.md
 [24]: https://github.com/Xunnamius/symbiote/blob/main/src
 [25]: ./docs/api
-[26]: ./docs/api/index/type-aliases/Configuration.md
+[26]: ./docs/api/src/exports/type-aliases/Configuration.md
 [27]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[28]: ./docs/api/util/type-aliases/Program.md
+[28]: ./docs/api/src/exports/util/type-aliases/Program.md
 [29]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [30]: https://xkcd.com/1205
 [31]: https://i.redd.it/0cm6yx27tez21.jpg

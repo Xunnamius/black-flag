@@ -1,3 +1,3 @@
-# Black Flag Examples
+# Black Flag: Recipes and Examples
 
 TODO
