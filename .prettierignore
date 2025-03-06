@@ -30,7 +30,7 @@ ignore.*
 **/build/**
 # ? This negation must end in "/**" to be interpreted properly.
 !**/src/**/build/**
-docs
+docs/api
 dist
 coverage
 .vercel
