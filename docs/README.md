@@ -11,7 +11,7 @@ interfaces.
 - [Complete getting started guide][4]
 - [Recipes and examples][5]
 - [Differences between Black Flag and Yargs][6]
-- [Repository structure][7]
+- [Notes on this repository's structure][7]
 
 [1]: https://npm.im/@black-flag/core
 [2]: ./features.md
