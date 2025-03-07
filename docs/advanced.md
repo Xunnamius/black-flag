@@ -10,26 +10,26 @@
 > when building your tool. Doing so is usually an anti-pattern. If you feel that
 > you must do this, consider [opening a new issue][x-repo-choose-new-issue]!
 
-## Anatomy of a Black Flag "Program"
+## Anatomy of a Black Flag CLI
 
 Since Black Flag is just a bunch of Yargs instances stacked on top of each other
 wearing a trench coat, you can muck around with the internal Yargs instances
 directly if you want.
 
-For example, you can retrieve a mapping of all commands known to Black Flag and
-their corresponding Yargs instances in the OS-specific order they were
+For example, you can retrieve a [mapping][2] of all commands known to Black Flag
+and their corresponding Yargs instances in the OS-specific order they were
 encountered during auto-discovery:
 
 ```typescript
-import { runCommand, $executionContext } from '@black-flag/core';
+import { runProgram, $executionContext } from '@black-flag/core';
 
-const argv = await runCommand('./commands');
+const argv = await runProgram('./commands');
 
 // The next two function calls result in identical console output
 
 console.log('commands:', argv[$executionContext].commands);
 
-await runCommand('./commands', {
+await runProgram('./commands', {
   configureExecutionEpilogue(_argv, { commands }) {
     console.log('commands:', commands);
   }
@@ -51,25 +51,28 @@ Each of these six commands is actually _three_ programs:
 
 1. The **effector** (`programs.effector`) programs are responsible for
    second-pass arguments parsing and comprehensive validation, executing each
-   command's actual [`handler`][2] function, generating specific help text
-   during errors, and ensuring the final parse result bubbles up to the router
-   program.
+   command's actual [`handler`][3] function, generating help text with respect
+   to dynamic options, and ensuring the final parse result bubbles up to the
+   router program.
 
 2. The **helper** (`programs.helper`) programs are responsible for generating
    generic help text as well as first-pass arguments parsing and initial
    validation. Said parse result is used as the `argv` third parameter passed to
-   the [`builder`][2] functions of effectors.
+   the [`builder`][4] functions of effectors.
 
 3. The **router** (`programs.router`) programs are responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and
    final parse results bubble up to the root Black Flag execution context
-   ([`PreExecutionContext::execute`][3]) for handling.
+   ([`PreExecutionContext::execute`][5]) for handling.
 
-> See the [flow chart][4] below for a visual overview.
+> [!TIP]
+>
+> See the [flow diagram][6] below for a visual overview of how these programs
+> are wired together.
 
-These three programs representing the root command are accessible from the
-[`PreExecutionContext::rootPrograms`][3] property. They are also always the
-first item in the `PreExecutionContext::commands` map.
+The effector, helper, and router specifically representing the root command are
+accessible from the [`PreExecutionContext::rootPrograms`][7] property. They are
+also always the first item in the [`ExecutionContext::commands`][2] map.
 
 ```typescript
 const preExecutionContext = configureProgram('./commands', {
@@ -86,90 +89,104 @@ await preExecutionContext.execute();
 ```
 
 Effectors do the heavy lifting in that they actually execute their command's
-[`handler`][2]. They are accessible via the [`programs.effector`][5] property of
-each object in [`PreExecutionContext::commands`][3], and can be configured as
-one might a typical Yargs instance.
+[`handler`][3]. They are accessible via the [`programs.effector`][8] property of
+each object in [`ExecutionContext::commands`][2], and can be configured as one
+might a typical Yargs instance.
 
 Helpers are "clones" of their respective effectors and are accessible via the
-[`programs.helper`][5] property of each object in
-[`PreExecutionContext::commands`][3]. These instances have been reconfigured to
-address [a couple bugs][6] in Yargs help text output by excluding aliases from
-certain output lines and excluding positional arguments from certain others. A
-side-effect of this is that only effectors recognize top-level positional
-arguments, which isn't a problem Black Flag users have to worry about unless
-they're dangerously tampering with these programs directly.
+[`programs.helper`][8] property of each object in
+[`ExecutionContext::commands`][2]. These instances have been reconfigured to
+address [a couple bugs][9] in [Yargs help text output][10] by excluding aliases
+from certain output lines and excluding positional arguments from certain
+others. A side-effect of this is that only effectors recognize top-level
+positional arguments, which isn't a problem Black Flag users have to worry about
+unless they're dangerously tampering with these programs directly.
 
 Routers are partially-configured just enough to proxy control to other routers
-or to helpers and are accessible via the [`programs.router`][5] property of each
-object in [`PreExecutionContext::commands`][3]. They cannot and _must not_ have
-any configured strictness or validation logic.
+or to helpers and are accessible via the [`programs.router`][8] property of each
+object in [`ExecutionContext::commands`][2]. They cannot and _must not_ have any
+configured strictness or validation logic.
 
-Therefore: if you want to tamper with the program responsible for running a
-command's [`handler`][2], operate on the effector program. If you want to tamper
-with a command's generic stdout help text, operate on the helper program. If you
-want to tamper with validation and parsing, operate on both the helper and
-effectors. If you want to tamper with the routing of control between commands,
-operate on the router program.
+Therefore: if you want to tamper with the Yargs instance responsible for running
+a command's [`handler`][3], operate on the effector program. If you want to
+tamper with a command's generic stdout help text, operate on the helper program.
+If you want to tamper with validation and parsing, operate on both the helper
+and effectors. If you want to tamper with the routing of control between Yargs
+instances, operate on the router program.
 
-See [the docs][7] for more details on Black Flag's internals.
+See [the docs][11] for implementation details on Black Flag's internal APIs.
 
-### Justification for Complexity
+### Justification for the Parent-Child and Tripartite-Program Design
 
-Rather than naively chain singular Yargs instances together, the delegation of
-responsibility between helper and effectors facilitates the double-parsing
-necessary for [dynamic options][8] support. In implementing dynamic options,
-Black Flag accurately parses the given arguments with the helper program on the
-first pass and feeds the result to the [`builder`][2] function of the effector
-on the second pass (via [`builder`'s new third parameter][8]).
+Rather than naively chain simple singular Yargs instances together, which was
+how the very first versions of Black Flag operated, splitting parsing
+responsibilities between the helper and effector programs facilitates the
+double-parsing necessary for _consistent_ [dynamic options][12] support.
 
-In the same vein, hoisting routing responsibilities to the router program allows
-Black Flag to make certain guarantees:
+Implementing dynamic options in this way allows Black Flag to _accurately_ parse
+the given arguments with the helper program on the first pass and feed the
+result to the [`builder`][4] function of the effector on the second pass (via
+[`builder`'s new third parameter][12]). It also allows Black Flag to send the
+user accurate help text depending on which dynamic options were given.
 
-- An end user trying to invoke a parent command with no implementation, or a
-  non-existent child command of such a parent, will cause help text to be
-  printed and an exception to be thrown with default error exit code. E.g.:
-  `myctl parent child1` and `myctl parent child2` work but we want
-  `myctl parent` to show help text listing the available commands ("child1" and
-  "child2") and exit with an error indicating the given command was not found.
+In the same consistency-accuracy vein, hoisting routing responsibilities to the
+router program allows Black Flag to make certain guarantees:
 
-- An end user trying to invoke a non-existent child of a strict pure child
-  command will cause help text to be printed and an exception to be thrown with
-  default error exit code. E.g.: we want `myctl exists noexist` and
-  `myctl noexist` to show help text listing the available commands ("exists")
-  and exit with an error indicating bad arguments.
+1. An end user trying to invoke a parent command with no implementation, or a
+   non-existent child command of such a parent, will _always_ cause help text to
+   be printed and an exception to be thrown with a default error exit code.
 
-- The right command gets to generate help and version text when triggered via
-  arguments. To this end, passing `--help`/`--version` or equivalent arguments
-  is effectively ignored by routers.
+> Example: executing `myctl parent child1` and `myctl parent child2` work, but
+> we want `myctl parent` to show help text listing the available commands
+> ("child1" and "child2") and exit with an error indicating the given command
+> was not found.
 
-With vanilla Yargs's strict mode, attempting to meet these guarantees would
-require disallowing any arguments unrecognized by the Yargs instances earlier in
-the chain, even if the instances down-chain _do_ recognize said arguments. This
-would break Black Flag's support for deep "chained" command hierarchies
-entirely.
+2. An end user trying to invoke a non-existent child of a strict pure child
+   command will _always_ cause help text to be printed and an exception to be
+   thrown with a default error exit code.
 
-However, without vanilla Yargs's strict mode, attempting to meet these
-guarantees would require allowing attempts to invoke non-existent child commands
-without throwing an error or throwing the wrong/confusing error. Worse, it would
-require a more rigid set of assumptions for the Yargs instances, meaning some
-API features would be unnecessarily disabled. This would result in a deeply
-flawed experience for developers and users.
+> Example: we want `myctl exists noexist` and `myctl noexist` to show help text
+> listing the available commands ("exists") and exit with an error indicating
+> bad arguments.
 
-Hence the need for a distinct _routing program_ which allows parent commands to
-recursively chain/route control to child commands in your hierarchy even when
-ancestor commands are not aware of the syntax accepted by their distant
-descendants—while still properly throwing an error when the end user tries to
-invoke a child command that does not exist or invoke a child command with
-gibberish arguments.
+3. The correct command _always_ gets to generate help and version text when
+   triggered via arguments. To this end, passing `--help`/`--version` or
+   equivalent arguments is effectively ignored by routers (i.e. exclusively
+   dealt with by helpers/effectors).
+
+Without router programs, attempting to meet these guarantees by enabling vanilla
+Yargs's strict mode on effectors/helpers would require disallowing any arguments
+unrecognized by the Yargs instances earlier in the chain (ancestor parent
+programs), even if the instances down-chain (descendant child programs) _do_
+recognize said arguments. This would break Black Flag's support for deep
+"chained" parent-child command hierarchies entirely, which is the whole point of
+Black Flag.
+
+However, disabling vanilla Yargs's strict mode to work around this issue would
+require allowing attempts to invoke non-existent child commands without throwing
+an error, or throwing the wrong/confusing error. This would make for a terrible
+UX.
+
+The only way to meet these guarantees without router programs would be to
+enforce a very rigid set of assumptions on the helpers and effectors, which very
+early versions of Black Flag did. This resulted in some well-known Yargs API
+features being disabled, which made for a terrible DX.
+
+Hence the need for distinct router programs, which allow parent commands to
+recursively route control to child commands even when ancestor commands are not
+aware of the syntax accepted by their distant descendants—while still properly
+throwing an error when the end user tries to invoke a child command that does
+not exist or invoke a child command with bad arguments.
 
 ## Generating Help Text
 
-Effectors are essentially Yargs instances with a registered [default
-command][9]. Unfortunately, when vanilla Yargs is asked to generate help text
-for a default command that has aliases and/or top-level positional arguments,
-you get the following:
+Effectors (and helpers) are essentially vanilla Yargs instances with a
+registered [default command][13]. Like mitochondria is to a cell, effectors are
+the powerhouses 🔌 of each Black Flag command. Unfortunately, when vanilla Yargs
+is asked to generate help text for a default command that has aliases and/or
+top-level positional arguments, you get the following:
 
-![Vanilla Yargs parseAsync help text example][10]
+![Vanilla Yargs parseAsync help text example][14]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
 root command is being reported alongside `subcmd` as if it were a child command
@@ -193,30 +210,40 @@ Positionals:
 ```
 
 It gets even worse. What if the description of `subcmd`'s `root-positional`
-argument is different than the root command's version, and with entirely
-different functionality? At that point the help text is actually _lying to the
+argument is different than the root command's version, and with **entirely
+different functionality**? At that point the help text is actually _lying to the
 user_, which could have drastic consequences when invoking powerful CLI commands
 with permanent effects.
 
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][11]
+![Black Flag runProgram help text example][15]
 
-> Note 1: in this example, `runProgram` is a function returned by
-> [`makeRunner`][12].
+> [!NOTE]
+>
+> In this example, `runProgram` is a function returned by [`makeRunner`][16].
 
-> Note 2: in the above image, the first line under "Commands:" is the root
-> command. In more recent versions of Black Flag, the root command is omitted
-> from the list of sub-commands.
+> [!NOTE]
+>
+> In the above image, the first line under "Commands:" is the root command. In
+> more recent versions of Black Flag, the root command is omitted from the list
+> of sub-commands entirely.
 
 ## Execution Flow Diagram
 
-What follows is a flow diagram illustrating Black Flag's execution flow using
-the `myctl` example from [`README.md`][13].
+What follows is a diagram illustrating Black Flag's command execution flow from
+start to finish. Three commands are executed from the `myctl` example in
+[`getting-started.md`][17]:
+
+- `myctl --verbose`
+- `myctl remote --help`
+- `myctl remote remove origin`
+
+---
 
 ```text
-                           `myctl --verbose`
+                           ⚡ myctl --verbose
                  ┌───────────────────────────────────┐
                  │                 2                 │
                  │             ┌─────►┌───────────┐  │
@@ -243,7 +270,7 @@ the `myctl` example from [`README.md`][13].
                  │      │ │                          │
                  └──────┼─┼──────────────────────────┘
                         │ │
-                        │ │`myctl remote --help`
+                        │ │⚡ myctl remote --help
                  ┌──────┼─┼──────────────────────────┐
                  │      │ │        4B                │
                  │      │ │    ┌─────►┌───────────┐  │
@@ -270,7 +297,7 @@ the `myctl` example from [`README.md`][13].
                  │      │ │                          │
                  └──────┼─┼──────────────────────────┘
                         │ │
-                        │ │`myctl remote remove origin`
+                        │ │⚡ myctl remote remove origin
                  ┌──────┼─┼──────────────────────────┐
                  │      │ │        6B                │
                  │      │ │    ┌─────►┌───────────┐  │
@@ -293,6 +320,8 @@ the `myctl` example from [`README.md`][13].
                  │                                   │
                  └───────────────────────────────────┘
 ```
+
+---
 
 Suppose the user executes `myctl --verbose`.<sup>🡒1</sup> Black Flag (using
 `runProgram`) calls your configuration hooks, discovers all available commands,
@@ -359,21 +388,27 @@ user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][14]
+> [!NOTE]
+>
+> The ascii art diagram was generated using [https://asciiflow.com][18]
 
 [x-repo-choose-new-issue]:
   https://github.com/Xunnamius/black-flag/issues/new/choose
 [1]: ../README.md#terminology
-[2]: ./api/src/exports/type-aliases/Configuration.md#type-declaration
-[3]: ./api/src/exports/util/type-aliases/PreExecutionContext.md
-[4]: #execution-flow-diagram
-[5]: ./api/src/exports/util/type-aliases/ProgramMetadata.md
-[6]: #irrelevant-differences
-[7]: api
-[8]: #built-in-support-for-dynamic-options-
-[9]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[10]: ./images/example-1.png
-[11]: ./images/example-2.png
-[12]: ./api/src/exports/util/functions/makeRunner.md
-[13]: ./README.md
-[14]: https://asciiflow.com
+[2]: ./api/src/exports/util/type-aliases/ExecutionContext.md#commands
+[3]: ./api/src/exports/type-aliases/Configuration.md#handler
+[4]: ./api/src/exports/type-aliases/Configuration.md#builder
+[5]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
+[6]: #execution-flow-diagram
+[7]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#rootprograms
+[8]: ./api/src/exports/util/type-aliases/ProgramMetadata.md
+[9]: ./bf-vs-yargs.md#irrelevant-differences
+[10]: ./advanced.md#generating-help-text
+[11]: ./api
+[12]: ./features.md#built-in-support-for-dynamic-options-
+[13]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
+[14]: ./images/example-1.png
+[15]: ./images/example-2.png
+[16]: ./api/src/exports/util/functions/makeRunner.md
+[17]: ./getting-started.md
+[18]: https://asciiflow.com
