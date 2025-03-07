@@ -36,13 +36,13 @@ capabilities with several powerful **declarative** features. It can be used to
 create simple single-level CLIs or deeply nested sprawling interfaces alike.
 
 Black Flag was built as a drop-in replacement for vanilla Yargs, specifically
-for users of [`yargs::commandDir()`][2] ([which][3] [has][4] [issues][5]). Its
-features include:
+for users of the [`yargs::commandDir()`][2] ([which][3] [has][4] [issues][5]).
+Its features include:
 
 - [Declarative-first sync/async APIs][6] ✨
 - [Zero configuration required][7] ✨
 - [It's still yargs all the way down][8] ✨ (nothing brand new to learn!)
-- [Built-in support for dynamic options][9] ✨ ([a][10] [popular][11]
+- [Built-in support for dynamic options][9] ✨ ([an][10] [infamous][11]
   [Yargs][12] [white][13] [whale][14])
 - [Consistent and safe CLI execution][15] ✨
 - [Simple comprehensive error handling and reporting][16] ✨
