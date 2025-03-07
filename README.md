@@ -36,18 +36,18 @@ capabilities with several powerful **declarative** features. It can be used to
 create simple single-level CLIs or deeply nested sprawling interfaces alike.
 
 Black Flag was built as a drop-in replacement for vanilla Yargs, specifically
-for users of the [`yargs::commandDir()`][2] ([which][3] [has][4] [issues][5]).
-Its features include:
+for users of the [`yargs::commandDir()`][2] ([which][3] [has][4] [its][5]
+[issues][6]). Its features include:
 
-- [Declarative-first sync/async APIs][6] ✨
-- [Zero configuration required][7] ✨
-- [It's still yargs all the way down][8] ✨ (nothing brand new to learn!)
-- [Built-in support for dynamic options][9] ✨ ([an][10] [infamous][11]
-  [Yargs][12] [white][13] [whale][14])
-- [Consistent and safe CLI execution][15] ✨
-- [Simple comprehensive error handling and reporting][16] ✨
-- [A pleasant unit, integration, and e2e testing experience][17] ✨
-- [Extensive intellisense support via TypeScript][18] ✨
+- [Declarative-first sync/async APIs][7] ✨
+- [Zero configuration required][8] ✨
+- [It's still yargs all the way down][9] ✨ (nothing brand new to learn!)
+- [Built-in support for dynamic options][10] ✨ ([an][11] [infamous][12]
+  [Yargs][13] [white][14] [whale][15])
+- [Consistent and safe CLI execution][16] ✨
+- [Simple comprehensive error handling and reporting][17] ✨
+- [A pleasant unit, integration, and e2e testing experience][18] ✨
+- [Extensive intellisense support via TypeScript][19] ✨
 
 <br />
 
@@ -56,12 +56,12 @@ versions. Also comes with first-class support for both CJS and ESM source.
 
 <!-- prettier-ignore-start -->
 
-‌ ‌ ‌  ‌❖ ‌ ‌ [Quick start][19]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Step-by-step getting started guide][20]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag versus vanilla Yargs][21]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][22] (or `npx -p @black-flag/demo myctl --help`)\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][23]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Yargs's intro documentation][24]
+‌ ‌ ‌  ‌❖ ‌ ‌ [Quick start][20]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Step-by-step getting started guide][21]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag versus vanilla Yargs][22]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][23] (or `npx -p @black-flag/demo myctl --help`)\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][24]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Yargs's intro documentation][25]
 
 <!-- prettier-ignore-end -->
 
@@ -70,14 +70,14 @@ versions. Also comes with first-class support for both CJS and ESM source.
 > [!TIP]
 >
 > If you find yourself a fan of Black Flag's more declarative DX and want to go
-> all the way, check out [Black Flag Extensions][25] (BFE). BFE is a collection
+> all the way, check out [Black Flag Extensions][26] (BFE). BFE is a collection
 > of surprisingly simple set-theoretic APIs that build on
-> [`yargs::options()`][26] for a **fully declarative developer experience**. BFE
-> also protects you from [a couple Yargs footguns][27] that Black Flag by itself
+> [`yargs::options()`][27] for a **fully declarative developer experience**. BFE
+> also protects you from [a couple Yargs footguns][28] that Black Flag by itself
 > cannot.
 >
-> You may also be interested in [Black Flag Checks][28] (BFC), which offers
-> several pluggable [`yargs::check`][29] functions—like `checkIsNotNegative` and
+> You may also be interested in [Black Flag Checks][29] (BFC), which offers
+> several pluggable [`yargs::check`][30] functions—like `checkIsNotNegative` and
 > `checkArrayNotEmpty`—built to work with BFE.
 
 <!-- symbiote-template-region-start 3 -->
@@ -116,7 +116,7 @@ npm install @black-flag/core
 ```
 
 And if you're ready to go all in on Black Flag's declarative API, check out
-[Black Flag Extensions][25]:
+[Black Flag Extensions][26]:
 
 ```shell
 npm install @black-flag/extensions
@@ -273,34 +273,34 @@ Hello CAPTAIN, welcome to Black Flag!
 
 Next steps:
 
-- [Check out the step-by-step getting started guide][20]
-- [Compare Black Flag versus vanilla Yargs][21]
-- [Play with a simple demo CLI project][22] (or
+- [Check out the step-by-step getting started guide][21]
+- [Compare Black Flag versus vanilla Yargs][22]
+- [Play with a simple demo CLI project][23] (or
   `npx -p @black-flag/demo myctl --help`)
-- [Review Black Flag recipes for solving common CLI design problems][23]
-- [Deep dive into Black Flag's internals][30]
-- [Pull up Yargs's intro documentation][24]
-- [Pore over Yargs's parser tricks][31] (which also apply to Black Flag)
+- [Review Black Flag recipes for solving common CLI design problems][24]
+- [Deep dive into Black Flag's internals][31]
+- [Pull up Yargs's intro documentation][25]
+- [Pore over Yargs's parser tricks][32] (which also apply to Black Flag)
 
 For an example of a production CLI tool that puts Black Flag through its paces,
-check out the source code for [`@-xun/symbiote`][32].
+check out the source code for [`@-xun/symbiote`][33].
 
 ## Appendix 🏴
 
 <!-- symbiote-template-region-end -->
 
 Further documentation can be found under [`docs/`][x-repo-docs] and
-[`docs/api/`][33]. Common CLI design "recipes" can be found under
-[`examples/`][23].
+[`docs/api/`][34]. Common CLI design "recipes" can be found under
+[`examples/`][24].
 
 ### Terminology
 
 |      Term       | Description                                                                                                                                                                                                                                                                                                   |
 | :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][34] file and represented internally as a trio of programs: [effector, helper, and router][30]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
-|     program     | A "program" is a Yargs instance wrapped in a [`Proxy`][35] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][36] type.                                                                                                                                |
+|     command     | A "command" is a functional unit associated with a [configuration][35] file and represented internally as a trio of programs: [effector, helper, and router][31]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     program     | A "program" is a Yargs instance wrapped in a [`Proxy`][36] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][37] type.                                                                                                                                |
 |      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                               |
-| default command | A "default command" is [Yargs parlance][37] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
+| default command | A "default command" is [Yargs parlance][38] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
 
 ### Inspiration
 
@@ -313,7 +313,7 @@ critical systems.
 As I was copying-and-pasting some configs from past projects for yet another
 tool, I realized the (irritatingly disparate 😖) structures of my CLI projects
 up until this point were converging on a set of personal conventions around
-Yargs. And, as I'm [always eager][38] to ["optimize" my workflows][39], I
+Yargs. And, as I'm [always eager][39] to ["optimize" my workflows][40], I
 wondered how much common functionality could be abstracted away.
 
 The goal: make my CLIs more stable upon release, much faster to build, and more
@@ -501,39 +501,40 @@ specification. Contributions of any kind welcome!
 [2]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
 [3]: https://github.com/yargs/yargs/issues/1306
 [4]: https://github.com/yargs/yargs/issues/1269
-[5]: https://github.com/yargs/yargs/issues/2152
-[6]: ./docs/features.md#declaratively-build-deep-command-hierarchies-
-[7]: ./docs/features.md#convention-over-configuration-
-[8]: ./docs/features.md#its-yargs-all-the-way-down-
-[9]: ./docs/features.md#built-in-support-for-dynamic-options-
-[10]: https://github.com/yargs/yargs/issues/793
-[11]: https://github.com/yargs/yargs/issues/2119
-[12]: https://github.com/yargs/yargs/issues/2256
-[13]: https://github.com/yargs/yargs/issues/2227
-[14]: https://github.com/yargs/yargs/issues/2133
-[15]: ./docs/features.md#run-your-tool-safely-and-consistently-
-[16]: ./docs/features.md#simple-comprehensive-error-handling-and-reporting-
-[17]: ./docs/features.md#a-pleasant-testing-experience-
-[18]: ./docs/features.md#extensive-intellisense-support-
-[19]: #quick-start
-[20]: ./docs/getting-started.md
-[21]: ./docs/bf-vs-yargs.md
-[22]: https://github.com/Xunnamius/black-flag-demo
-[23]: ./examples/README.md
-[24]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[25]: ./packages/extensions/README.md
-[26]: https://yargs.js.org/docs#api-reference-optionskey-opt
-[27]: ./docs/bf-vs-yargs.md#irrelevant-differences
-[28]: ./packages/checks/README.md
-[29]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
-[30]: ./docs/advanced.md
-[31]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
-[32]: https://github.com/Xunnamius/symbiote/blob/main/src
-[33]: ./docs/api/README.md
-[34]: ./docs/api/src/exports/type-aliases/Configuration.md
-[35]:
+[5]: https://github.com/yargs/yargs/issues/1975
+[6]: https://github.com/yargs/yargs/issues/2152
+[7]: ./docs/features.md#declaratively-build-deep-command-hierarchies-
+[8]: ./docs/features.md#convention-over-configuration-
+[9]: ./docs/features.md#its-yargs-all-the-way-down-
+[10]: ./docs/features.md#built-in-support-for-dynamic-options-
+[11]: https://github.com/yargs/yargs/issues/793
+[12]: https://github.com/yargs/yargs/issues/2119
+[13]: https://github.com/yargs/yargs/issues/2256
+[14]: https://github.com/yargs/yargs/issues/2227
+[15]: https://github.com/yargs/yargs/issues/2133
+[16]: ./docs/features.md#run-your-tool-safely-and-consistently-
+[17]: ./docs/features.md#simple-comprehensive-error-handling-and-reporting-
+[18]: ./docs/features.md#a-pleasant-testing-experience-
+[19]: ./docs/features.md#extensive-intellisense-support-
+[20]: #quick-start
+[21]: ./docs/getting-started.md
+[22]: ./docs/bf-vs-yargs.md
+[23]: https://github.com/Xunnamius/black-flag-demo
+[24]: ./examples/README.md
+[25]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
+[26]: ./packages/extensions/README.md
+[27]: https://yargs.js.org/docs#api-reference-optionskey-opt
+[28]: ./docs/bf-vs-yargs.md#irrelevant-differences
+[29]: ./packages/checks/README.md
+[30]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
+[31]: ./docs/advanced.md
+[32]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
+[33]: https://github.com/Xunnamius/symbiote/blob/main/src
+[34]: ./docs/api/README.md
+[35]: ./docs/api/src/exports/type-aliases/Configuration.md
+[36]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[36]: ./docs/api/src/exports/util/type-aliases/Program.md
-[37]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[38]: https://xkcd.com/1205
-[39]: https://i.redd.it/0cm6yx27tez21.jpg
+[37]: ./docs/api/src/exports/util/type-aliases/Program.md
+[38]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
+[39]: https://xkcd.com/1205
+[40]: https://i.redd.it/0cm6yx27tez21.jpg

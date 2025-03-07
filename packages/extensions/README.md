@@ -94,12 +94,12 @@ npm install @black-flag/extensions
 > [!WARNING]
 >
 > Most of the examples in this section are using hyphen characters followed by a
-> [word joiner character][6] to prevent breaking example awkwardly across lines.
+> [word joiner character][5] to prevent breaking example awkwardly across lines.
 > Be cautious copying and pasting examples.
 
 ### `withBuilderExtensions`
 
-> ⪢ API reference: [`withBuilderExtensions`][5]
+> ⪢ API reference: [`withBuilderExtensions`][6]
 
 This function enables several additional options-related units of functionality
 via analysis of the returned options configuration object and the parsed command
@@ -1540,7 +1540,7 @@ In this section are two example implementations of a "deploy" command.
 > [!WARNING]
 >
 > Some of the examples in this section are using hyphen characters followed by a
-> [word joiner character][6] to prevent breaking example awkwardly across lines.
+> [word joiner character][5] to prevent breaking example awkwardly across lines.
 > Be cautious copying and pasting examples.
 
 ### Example 1
@@ -2270,8 +2270,8 @@ See the [table of contributors][x-repo-contributors].
 [2]: https://en.wikipedia.org/wiki/Completeness_(logic)
 [3]: https://en.wikipedia.org/wiki/Propositional_calculus
 [4]: #differences-between-black-flag-extensions-and-yargs
-[5]: ./docs/index/functions/withBuilderExtensions.md
-[6]: https://en.wikipedia.org/wiki/Word_joiner
+[5]: https://en.wikipedia.org/wiki/Word_joiner
+[6]: ./docs/index/functions/withBuilderExtensions.md
 [7]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
 [8]: ../../docs/api/src/exports/type-aliases/Configuration.md#builder
 [9]: ../../docs/features.md#its-yargs-all-the-way-down-
