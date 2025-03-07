@@ -304,6 +304,8 @@ Further documentation can be found under [`docs/`][x-repo-docs] and
 
 ### Inspiration
 
+<details><summary>Expand details</summary>
+
 I love Yargs 💕 Yargs is the greatest! I've made dozens of CLI tools with Yargs,
 each with drastically different interfaces and requirements. Some help manage
 critical systems.
@@ -320,6 +322,8 @@ most important: I wanted CLIs that would remain simple and consistent to
 maintain.
 
 Throw in a re-watch of the PotC series and Black Flag was born! 🏴‍☠🍾
+
+</details>
 
 <!-- symbiote-template-region-start 6 -->
 
