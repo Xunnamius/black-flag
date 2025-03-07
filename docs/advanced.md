@@ -2,12 +2,12 @@
 
 ## Terminology
 
-|      Term       | Description                                                                                                                                                                                                                                                                                                     |
-| :-------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][103] file and represented internally as a trio of programs: [effector, helper, and router][104]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
-|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][105] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][106] type.                                                                                                                                |
-|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                                 |
-| default command | A "default command" is [yargs parlance][107] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                       |
+|      Term       | Description                                                                                                                                                                                                                                                                                                 |
+| :-------------: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|     command     | A "command" is a functional unit associated with a [configuration][1] file and represented internally as a trio of programs: [effector, helper, and router][2]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     program     | A "program" is a yargs instance wrapped in a [`Proxy`][3] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][4] type.                                                                                                                                |
+|      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                             |
+| default command | A "default command" is [yargs parlance][5] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                     |
 
 > Note: you shouldn't need to reach below Black Flag's declarative abstraction
 > layer when building your tool. If you feel that you do, consider [opening a
@@ -52,24 +52,24 @@ Each of these six commands is actually _three_ programs:
 
 1. The **effector** (`programs.effector`) programs are responsible for
    second-pass arguments parsing and comprehensive validation, executing each
-   command's actual [`handler`][1] function, generating specific help text
+   command's actual [`handler`][6] function, generating specific help text
    during errors, and ensuring the final parse result bubbles up to the router
    program.
 
 2. The **helper** (`programs.helper`) programs are responsible for generating
    generic help text as well as first-pass arguments parsing and initial
    validation. Said parse result is used as the `argv` third parameter passed to
-   the [`builder`][1] functions of effectors.
+   the [`builder`][6] functions of effectors.
 
 3. The **router** (`programs.router`) programs are responsible for proxying
    control to other routers and to helpers, and for ensuring exceptions and
    final parse results bubble up to the root Black Flag execution context
-   ([`PreExecutionContext::execute`][2]) for handling.
+   ([`PreExecutionContext::execute`][7]) for handling.
 
-> See the [flow chart][3] below for a visual overview.
+> See the [flow chart][8] below for a visual overview.
 
 These three programs representing the root command are accessible from the
-[`PreExecutionContext::rootPrograms`][2] property. They are also always the
+[`PreExecutionContext::rootPrograms`][7] property. They are also always the
 first item in the `PreExecutionContext::commands` map.
 
 ```typescript
@@ -87,41 +87,41 @@ await preExecutionContext.execute();
 ```
 
 Effectors do the heavy lifting in that they actually execute their command's
-[`handler`][1]. They are accessible via the [`programs.effector`][4] property of
-each object in [`PreExecutionContext::commands`][2], and can be configured as
+[`handler`][6]. They are accessible via the [`programs.effector`][9] property of
+each object in [`PreExecutionContext::commands`][7], and can be configured as
 one might a typical Yargs instance.
 
 Helpers are "clones" of their respective effectors and are accessible via the
-[`programs.helper`][4] property of each object in
-[`PreExecutionContext::commands`][2]. These instances have been reconfigured to
-address [a couple bugs][5] in Yargs help text output by excluding aliases from
+[`programs.helper`][9] property of each object in
+[`PreExecutionContext::commands`][7]. These instances have been reconfigured to
+address [a couple bugs][10] in Yargs help text output by excluding aliases from
 certain output lines and excluding positional arguments from certain others. A
 side-effect of this is that only effectors recognize top-level positional
 arguments, which isn't a problem Black Flag users have to worry about unless
 they're dangerously tampering with these programs directly.
 
 Routers are partially-configured just enough to proxy control to other routers
-or to helpers and are accessible via the [`programs.router`][4] property of each
-object in [`PreExecutionContext::commands`][2]. They cannot and _must not_ have
+or to helpers and are accessible via the [`programs.router`][9] property of each
+object in [`PreExecutionContext::commands`][7]. They cannot and _must not_ have
 any configured strictness or validation logic.
 
 Therefore: if you want to tamper with the program responsible for running a
-command's [`handler`][1], operate on the effector program. If you want to tamper
+command's [`handler`][6], operate on the effector program. If you want to tamper
 with a command's generic stdout help text, operate on the helper program. If you
 want to tamper with validation and parsing, operate on both the helper and
 effectors. If you want to tamper with the routing of control between commands,
 operate on the router program.
 
-See [the docs][6] for more details on Black Flag's internals.
+See [the docs][11] for more details on Black Flag's internals.
 
 Motivation
 
 Rather than chain singular Yargs instances together, the delegation of
 responsibility between helper and effectors facilitates the double-parsing
-necessary for [dynamic options][7] support. In implementing dynamic options,
+necessary for [dynamic options][12] support. In implementing dynamic options,
 Black Flag accurately parses the given arguments with the helper program on the
-first pass and feeds the result to the [`builder`][1] function of the effector
-on the second pass (via [`builder`'s new third parameter][7]).
+first pass and feeds the result to the [`builder`][6] function of the effector
+on the second pass (via [`builder`'s new third parameter][12]).
 
 In the same vein, hoisting routing responsibilities to the router program allows
 Black Flag to make certain guarantees:
@@ -166,11 +166,11 @@ gibberish arguments.
 Generating Help Text
 
 Effectors are essentially Yargs instances with a registered [default
-command][8]. Unfortunately, when vanilla Yargs is asked to generate help text
+command][5]. Unfortunately, when vanilla Yargs is asked to generate help text
 for a default command that has aliases and/or top-level positional arguments,
 you get the following:
 
-![Vanilla Yargs parseAsync help text example][9]
+![Vanilla Yargs parseAsync help text example][13]
 
 This is not ideal output for several reasons. For one, the `"cmd"` alias of the
 root command is being reported alongside `subcmd` as if it were a child command
@@ -202,10 +202,10 @@ with permanent effects.
 On the other hand, given the same configuration, Black Flag outputs the
 following:
 
-![Black Flag runProgram help text example][10]
+![Black Flag runProgram help text example][14]
 
 > Note 1: in this example, `runProgram` is a function returned by
-> [`makeRunner`][11].
+> [`makeRunner`][15].
 
 > Note 2: in the above image, the first line under "Commands:" is the root
 > command. In more recent versions of Black Flag, the root command is omitted
@@ -214,7 +214,7 @@ following:
 ## Execution Flow Diagram
 
 What follows is a flow diagram illustrating Black Flag's execution flow using
-the `myctl` example from [`README.md`][108].
+the `myctl` example from [`README.md`][16].
 
 ```text
                            `myctl --verbose`
@@ -360,27 +360,25 @@ user.<sup>R2🡒R1</sup>
 > `myctl remote` command. It has no children itself, making it a "pure child"
 > command.
 
-> The ascii art diagram was built using [https://asciiflow.com][109]
+> The ascii art diagram was built using [https://asciiflow.com][17]
 
 [x-repo-choose-new-issue]:
   https://github.com/Xunnamius/black-flag/issues/new/choose
-[1]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[2]: ./docs/util/type-aliases/PreExecutionContext.md
-[3]: #execution-flow-diagram
-[4]: ./docs/util/type-aliases/ProgramMetadata.md
-[5]: #irrelevant-differences
-[6]: api
-[7]: #built-in-support-for-dynamic-options-
-[8]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[9]: ./images/example-1.png
-[10]: ./images/example-2.png
-[11]: ./docs/util/functions/makeRunner.md
-[103]: ./docs/index/type-aliases/Configuration.md
-[104]: #advanced-usage
-[105]:
+[1]: ./api/src/exports/type-aliases/Configuration.md
+[2]: #advanced-usage
+[3]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-[106]: ./docs/util/type-aliases/Program.md
-[107]:
-  https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
-[108]: ./README.md
-[109]: https://asciiflow.com
+[4]: ./api/src/exports/util/type-aliases/Program.md
+[5]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
+[6]: ./api/src/exports/type-aliases/Configuration.md#type-declaration
+[7]: ./api/src/exports/util/type-aliases/PreExecutionContext.md
+[8]: #execution-flow-diagram
+[9]: ./api/src/exports/util/type-aliases/ProgramMetadata.md
+[10]: #irrelevant-differences
+[11]: api
+[12]: #built-in-support-for-dynamic-options-
+[13]: ./images/example-1.png
+[14]: ./images/example-2.png
+[15]: ./api/src/exports/util/functions/makeRunner.md
+[16]: ./README.md
+[17]: https://asciiflow.com

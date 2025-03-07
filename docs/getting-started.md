@@ -152,9 +152,9 @@ defaults:
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::usage(defaultUsageText)`
-  - Defaults to [this][34].
+  - Defaults to [this][5].
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
-    (such as in [`configureExecutionPrologue`][5]) will concatenate each
+    (such as in [`configureExecutionPrologue`][6]) will concatenate each
     invocation's arguments into one long usage string instead of overwriting
     previous invocations with later ones
 - `yargs::version(false)`
@@ -165,7 +165,7 @@ defaults:
 <!-- lint enable list-item-style -->
 
 Most of these defaults can be tweaked or overridden via each command's
-[`builder`][6] function, which gives you direct access to the Yargs API. Let's
+[`builder`][7] function, which gives you direct access to the Yargs API. Let's
 add one to `commands/index.js` along with a `handler` function and `usage`
 string:
 
@@ -281,8 +281,8 @@ Options:
 ```
 
 Since different OSes walk different filesystems in different orders,
-auto-discovered commands will appear _in [alpha-sort][7] order_ in help text
-rather than in insertion order; [command groupings][37] are still respected and
+auto-discovered commands will appear _in [alpha-sort][8] order_ in help text
+rather than in insertion order; [command groupings][9] are still respected and
 each command's options are still enumerated in insertion order.
 
 > Black Flag offers a stronger sorting guarantee than
@@ -337,7 +337,7 @@ we'll need some automated tests.
 Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
-First, let's install [jest][8]. We'll also create a file to hold our tests.
+First, let's install [jest][10]. We'll also create a file to hold our tests.
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -348,15 +348,15 @@ Since we set our root command to non-strict mode, let's test that it doesn't
 throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
-Note that we use [`makeRunner`][9] below, which is a factory function that
-returns a [curried][10] version of [`runProgram`][11] that is far less tedious
+Note that we use [`makeRunner`][11] below, which is a factory function that
+returns a [curried][12] version of [`runProgram`][13] that is far less tedious
 to invoke successively.
 
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
-> entire CLI _from scratch_. Other than stuff like [the require cache][12],
+> entire CLI _from scratch_. Other than stuff like [the require cache][14],
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
-> [common Yargs footgun][13].
+> [common Yargs footgun][15].
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
@@ -455,18 +455,18 @@ Neat! 📸
 
 [1]: https://github.com/Xunnamius/black-flag-demo
 [2]: https://nodejs.org/api/packages.html#type
-[3]: ./docs/util/type-aliases/ExecutionContext.md
-[4]: ./docs/index/type-aliases/ConfigureExecutionContext.md
-[5]: ./docs/index/type-aliases/ConfigureExecutionPrologue.md
-[6]: ./docs/index/type-aliases/Configuration.md#type-declaration
-[7]: https://www.npmjs.com/package/alpha-sort
-[8]: https://www.npmjs.com/package/jest
-[9]: ./docs/util/functions/makeRunner.md
-[10]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[11]: ./docs/index/functions/runProgram.md
-[12]: https://jestjs.io/docs/jest-object#jestresetmodules
-[13]: https://github.com/yargs/yargs/issues/2191
-[34]:
+[3]: ./api/src/exports/util/type-aliases/ExecutionContext.md
+[4]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
+[5]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[37]:
+[6]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
+[7]: ./api/src/exports/type-aliases/Configuration.md#type-declaration
+[8]: https://www.npmjs.com/package/alpha-sort
+[9]:
   https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
+[10]: https://www.npmjs.com/package/jest
+[11]: ./api/src/exports/util/functions/makeRunner.md
+[12]: https://builtin.com/software-engineering-perspectives/currying-javascript
+[13]: ./api/src/exports/functions/runProgram.md
+[14]: https://jestjs.io/docs/jest-object#jestresetmodules
+[15]: https://github.com/yargs/yargs/issues/2191

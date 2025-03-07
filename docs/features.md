@@ -311,12 +311,12 @@ when testing, in production, when importing your CLI as a dependency, etc.
 > [!IMPORTANT]
 >
 > <ins>**`runProgram` never throws**</ins>, and never calls `process.exit` since
-> that's [ dangerous][15]. When testing your CLI, [prefer `makeRunner`][35]
+> that's [ dangerous][15]. When testing your CLI, [prefer `makeRunner`][16]
 > which can be made to throw.
 
-Under the hood, `runProgram` calls [`configureProgram`][16], which
+Under the hood, `runProgram` calls [`configureProgram`][17], which
 auto-discovers and collects all the configurations exported from your command
-files, followed by [`PreExecutionContext::execute`][17], which is a wrapper
+files, followed by [`PreExecutionContext::execute`][18], which is a wrapper
 around `yargs::parseAsync` and `yargs::hideBin`.
 
 ```javascript
@@ -358,7 +358,7 @@ export default parsedArgv;
 
 ## Convention over Configuration ✨
 
-Black Flag [favors convention over configuration][18], meaning **everything
+Black Flag [favors convention over configuration][19], meaning **everything
 works out the box with sensible defaults and no sprawling configuration files**.
 
 However, when additional configuration _is_ required, there are five optional
@@ -513,7 +513,7 @@ commands. Specifically:
   available).
 
 How errors thrown during execution are reported to the user is determined by the
-optionally-provided [`configureErrorHandlingEpilogue`][19] configuration hook,
+optionally-provided [`configureErrorHandlingEpilogue`][20] configuration hook,
 as well as each command file's optionally-exported [`builder`][7] function.
 
 ```typescript
@@ -538,16 +538,16 @@ export function builder(blackFlag) {
 
 > [!TIP]
 >
-> [Framework errors][20] and errors thrown in `configureExecutionContext` or
+> [Framework errors][21] and errors thrown in `configureExecutionContext` or
 > `configureExecutionPrologue`, cannot be handled by
 > `configureErrorHandlingEpilogue`.
 >
-> If you're using [`makeRunner`][21]/[`runProgram`][14] and a misconfiguration
+> If you're using [`makeRunner`][22]/[`runProgram`][14] and a misconfiguration
 > triggers a framework error, your application will set its exit code
-> [accordingly][22] and send an error message to stderr. If this occurs in
-> production, use [debug mode][23] to gain insight into what went wrong. In a
-> development environment and/or during testing, [`makeRunner`][21] (below)
-> supports the [`errorHandlingBehavior`][24] option, which can be used to
+> [accordingly][23] and send an error message to stderr. If this occurs in
+> production, use [debug mode][24] to gain insight into what went wrong. In a
+> development environment and/or during testing, [`makeRunner`][22] (below)
+> supports the [`errorHandlingBehavior`][25] option, which can be used to
 > surface thrown errors via rejection.
 
 ## A Pleasant Testing Experience ✨
@@ -637,12 +637,12 @@ production: [`runProgram`][14].
 
 > [!TIP]
 >
-> Black Flag provides the [`makeRunner`][21] utility function so you don't have
+> Black Flag provides the [`makeRunner`][22] utility function so you don't have
 > to tediously copy and paste `runProgram(...)` and all its arguments between
 > tests.
 >
-> Additionally, unlike `runProgram`, [`makeRunner`][21] can be [configured to
-> throw any errors][24] after [`configureErrorHandlingEpilogue`][19] runs. This
+> Additionally, unlike `runProgram`, [`makeRunner`][22] can be [configured to
+> throw any errors][25] after [`configureErrorHandlingEpilogue`][20] runs. This
 > can be useful for more test-driven approaches.
 
 ```typescript
@@ -720,9 +720,9 @@ it('throws on bad init --lang arguments', async () => {
 
 ## Built-In `debug` Integration for Runtime Insights ✨
 
-Black Flag integrates `debug` (via [rejoinder][36]), allowing for deep insight
+Black Flag integrates `debug` (via [rejoinder][26]), allowing for deep insight
 into your tool's runtime without significant overhead or code changes. Simply
-set the `DEBUG` environment variable to an [appropriate value][26]:
+set the `DEBUG` environment variable to an [appropriate value][27]:
 
 ```shell
 # Shows all possible debug output
@@ -739,7 +739,7 @@ DEBUG='myctl*' myctl
 > framework-related issues.
 
 It is also possible to get meaningful debug output from your commands
-themselves. Just include the [debug][25] package (or [rejoinder][36] for
+themselves. Just include the [debug][28] package (or [rejoinder][26] for
 improved DX) in your `package.json` dependencies and import it in your command
 files:
 
@@ -800,8 +800,8 @@ However, your command files are not tightly coupled with Black Flag. An
 unfortunate side effect of this flexibility is that your command files do not
 automatically pick up Black Flag's types in your IDE/editor. Fortunately, Black
 Flag exports all its exposed types, including the generic
-[`RootConfiguration`][27], [`ParentConfiguration`][28], and
-[`ChildConfiguration`][29] types.
+[`RootConfiguration`][29], [`ParentConfiguration`][30], and
+[`ChildConfiguration`][31] types.
 
 Using these types, your command files themselves can be fully typed and you can
 enjoy the improved DX that comes with comprehensive intellisense. And for those
@@ -828,23 +828,23 @@ module.exports = {
 ```
 
 Child commands (commands not declared in index files) should use
-[`ChildConfiguration`][29]. Parent commands (commands declared in index files)
-should use [`ParentConfiguration`][28]. The root parent command (at the apex of
-the directory storing your command files) should use [`RootConfiguration`][27].
+[`ChildConfiguration`][31]. Parent commands (commands declared in index files)
+should use [`ParentConfiguration`][30]. The root parent command (at the apex of
+the directory storing your command files) should use [`RootConfiguration`][29].
 
 > [!TIP]
 >
-> There's also [`Configuration`][30], the supertype of the three
+> There's also [`Configuration`][32], the supertype of the three
 > `XConfiguration` subtypes.
 
 Similarly, if you're using configuration hooks in a separate file, you can enjoy
-intellisense with those as well using the [`ConfigureX` generic types][37].
+intellisense with those as well using the [`ConfigureX` generic types][33].
 
 All of these generic types accept type parameters for validating custom
 properties you might set during argument parsing or on the shared execution
 context object.
 
-See [`docs/api/`][31] for a complete list of Black Flag's exports and
+See [`docs/api/`][34] for a complete list of Black Flag's exports and
 implementation details about Black Flag's various generics.
 
 ---
@@ -855,13 +855,13 @@ Check out the fully-functional demo repository for that snazzy `myctl` tool
 [here][5]. Or play with the real thing on NPM:
 `npx -p @black-flag/demo myctl --help` (also supports `DEBUG` environment
 variable). Or build the real thing from scratch by following [the complete
-step-by-step getting started guide][32].
+step-by-step getting started guide][35].
 
-There's also the [`examples/`][33] directory, which houses a collection of
+There's also the [`examples/`][36] directory, which houses a collection of
 recipes solving common CLI tasks the Black Flag way.
 
 For an example of a production CLI tool that puts Black Flag through its paces,
-check out the source code for my "meta" project: [`@-xun/symbiote`][34].
+check out the source code for my "meta" project: [`@-xun/symbiote`][37].
 
 [1]: https://github.com/yargs/yargs/issues/793
 [2]: https://yargs.js.org/docs
@@ -879,26 +879,26 @@ check out the source code for my "meta" project: [`@-xun/symbiote`][34].
 [14]: ./api/src/exports/functions/runProgram.md
 [15]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[16]: ./api/src/exports/functions/configureProgram.md
-[17]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
-[18]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[19]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[20]: ./api/src/exports/util/classes/AssertionFailedError.md
-[21]: ./api/src/exports/util/functions/makeRunner.md
-[22]: ./api/src/exports/enumerations/FrameworkExitCode.md
-[23]: #built-in-debug-integration-for-runtime-insights-
-[24]:
+[16]: #a-pleasant-testing-experience-
+[17]: ./api/src/exports/functions/configureProgram.md
+[18]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
+[19]: https://en.wikipedia.org/wiki/Convention_over_configuration
+[20]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[21]: ./api/src/exports/util/classes/AssertionFailedError.md
+[22]: ./api/src/exports/util/functions/makeRunner.md
+[23]: ./api/src/exports/enumerations/FrameworkExitCode.md
+[24]: #built-in-debug-integration-for-runtime-insights-
+[25]:
   ./api/src/exports/util/type-aliases/MakeRunnerOptions.md#errorhandlingbehavior
-[25]: https://www.npmjs.com/package/debug
-[26]: https://www.npmjs.com/package/debug#usage
-[27]: ./api/src/exports/type-aliases/RootConfiguration.md
-[28]: ./api/src/exports/type-aliases/ParentConfiguration.md
-[29]: ./api/src/exports/type-aliases/ChildConfiguration.md
-[30]: ./api/src/exports/type-aliases/Configuration.md
-[31]: ./api
-[32]: ./getting-started.md#building-and-running-your-cli
-[33]: ../examples
-[34]: https://github.com/Xunnamius/symbiote/blob/main/src
-[35]: #a-pleasant-testing-experience-
-[36]: https://npm.im/rejoinder
-[37]: ./api/src/exports/type-aliases/ConfigurationHooks.md
+[26]: https://npm.im/rejoinder
+[27]: https://www.npmjs.com/package/debug#usage
+[28]: https://www.npmjs.com/package/debug
+[29]: ./api/src/exports/type-aliases/RootConfiguration.md
+[30]: ./api/src/exports/type-aliases/ParentConfiguration.md
+[31]: ./api/src/exports/type-aliases/ChildConfiguration.md
+[32]: ./api/src/exports/type-aliases/Configuration.md
+[33]: ./api/src/exports/type-aliases/ConfigurationHooks.md
+[34]: ./api
+[35]: ./getting-started.md#building-and-running-your-cli
+[36]: ../examples
+[37]: https://github.com/Xunnamius/symbiote/blob/main/src
