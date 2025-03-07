@@ -132,6 +132,10 @@ npm install @black-flag/core
 
 Create the file that will run your CLI, perhaps at `./cli.js`:
 
+> [!TIP]
+>
+> Both CJS and ESM source is acceptable!
+
 ```js
 #!/usr/bin/env node
 
