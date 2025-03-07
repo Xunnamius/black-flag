@@ -137,7 +137,7 @@ export default function command({ state }) {
 
 Note how, in the previous example, the option names passed to configuration
 keys, e.g. `{ demandThisOptionXor: ['my-argument'] }`, are represented by their
-exact _canonical_ names as defined (e.g. `'my‑argument'`) and not their aliases
+exact _canonical_ names as defined (e.g. `'my-⁠argument'`) and not their aliases
 (`'arg1'`) or camel-case expanded forms (`'myArgument'`). All BFE configuration
 keys expect canonical option names in this way; passing an alias or a camel-case
 expansion will result in erroneous behavior.
@@ -238,8 +238,8 @@ pairs, are given conditioned on the existence of another argument. For example:
 }
 ```
 
-This configuration will trigger a check to ensure that `‑y` is given whenever
-`‑x` is given.
+This configuration will trigger a check to ensure that `-⁠y` is given whenever
+`-⁠x` is given.
 
 `requires` also supports checks against the parsed _values_ of arguments in
 addition to the argument existence checks demonstrated above. For example:
@@ -253,9 +253,9 @@ addition to the argument existence checks demonstrated above. For example:
 }
 ```
 
-This configuration allows the following arguments: no arguments (`∅`), `‑y=...`,
-`‑y=... ‑z`, `‑xz ‑y=one`; and disallows: `‑x`, `‑z`, `‑x ‑y=...`, `‑xz ‑y=...`,
-`‑xz`.
+This configuration allows the following arguments: no arguments (`∅`),
+`-⁠y=...`, `-⁠y=... -⁠z`, `-⁠xz -⁠y=one`; and disallows: `-⁠x`, `-⁠z`,
+`-⁠x -⁠y=...`, `-⁠xz -⁠y=...`, `-⁠xz`.
 
 Note that, when performing a check using the parsed value of an argument and
 that argument is configured as an array (`{ array: true }`), that array will be
@@ -288,8 +288,8 @@ example:
 }
 ```
 
-This configuration will trigger a check to ensure that `‑y` is never given
-whenever `‑x` is given.
+This configuration will trigger a check to ensure that `-⁠y` is never given
+whenever `-⁠x` is given.
 
 `conflicts` also supports checks against the parsed _values_ of arguments in
 addition to the argument existence checks demonstrated above. For example:
@@ -303,9 +303,9 @@ addition to the argument existence checks demonstrated above. For example:
 }
 ```
 
-This configuration allows the following arguments: no arguments (`∅`), `‑y=...`,
-`‑x`, `‑z`, `‑x ‑y=...`; and disallows: `‑y=... ‑z`, `‑x ‑y=one`, `‑xz ‑y=one`,
-`‑xz`.
+This configuration allows the following arguments: no arguments (`∅`),
+`-⁠y=...`, `-⁠x`, `-⁠z`, `-⁠x -⁠y=...`; and disallows: `-⁠y=... -⁠z`,
+`-⁠x -⁠y=one`, `-⁠xz -⁠y=one`, `-⁠xz`.
 
 Note that, when performing a check using the parsed value of an argument and
 that argument is configured as an array (`{ array: true }`), that array will be
@@ -346,10 +346,10 @@ or more argument-value pairs and not raw strings. For example:
 }
 ```
 
-This configuration makes it so that `‑x` and `‑x ‑y=true` result in the exact
+This configuration makes it so that `-⁠x` and `-⁠x -⁠y=true` result in the exact
 same `argv`. Further, unlike `requires`, `implies` _makes no demands on argument
-existence_ and so allows the following arguments: no arguments (`∅`), `‑x`,
-`‑y=true`, `‑y=false`, `‑x ‑y=true`; and disallows: `‑x ‑y=false`.
+existence_ and so allows the following arguments: no arguments (`∅`), `-⁠x`,
+`-⁠y=true`, `-⁠y=false`, `-⁠x -⁠y=true`; and disallows: `-⁠x -⁠y=false`.
 
 Note that attempting to imply a value for a non-existent option will throw a
 framework error.
@@ -460,21 +460,21 @@ option is given in `argv` _with a non-`false` value_. For example:
 }
 ```
 
-If `‑x` (or `‑x=true`) is given, it is synonymous with `‑x ‑y` (or
-`‑x=true ‑y=true`) being given and vice-versa. However, if `‑x=false` (or
-`‑no-x`) is given, the `implies` key is effectively ignored. This means
-`‑x=false` _does not imply anything about `‑y`_; `‑x=false -y=true` and
-`‑x=false -y=false` are both accepted by BFE without incident.
+If `-⁠x` (or `-⁠x=true`) is given, it is synonymous with `-⁠x -⁠y` (or
+`-⁠x=true -⁠y=true`) being given and vice-versa. However, if `-⁠x=false` (or
+`-⁠no-x`) is given, the `implies` key is effectively ignored. This means
+`-⁠x=false` _does not imply anything about `-⁠y`_; `-⁠x=false -y=true` and
+`-⁠x=false -y=false` are both accepted by BFE without incident.
 
 In this way, the configured implications of [`boolean`][32]-type options are
 _never [vacuously satisfied][33]_; a strictly `false` condition does not "imply"
 anything about its [consequent][34].
 
 This feature reduces confusion for end users. For instance, suppose we had a CLI
-build tool that accepted the arguments `‑patch` and `‑only‑patch`. `‑patch`
+build tool that accepted the arguments `-⁠patch` and `-⁠only-⁠patch`. `-⁠patch`
 instructs the tool to patch any output before committing it to disk while
-`‑only‑patch` instructs the tool to _only_ patch pre-existing output already on
-disk. The command's options configuration could look something like the
+`-⁠only-⁠patch` instructs the tool to _only_ patch pre-existing output already
+on disk. The command's options configuration could look something like the
 following:
 
 ```jsonc
@@ -484,7 +484,7 @@ following:
     "description": "Patch output using the nearest patcher file",
     "default": true
   },
-  "only‑patch": {
+  "only-⁠patch": {
     "boolean": true,
     "description": "Instead of building new output, only patch existing output",
     "default": false,
@@ -498,40 +498,40 @@ The following are rightly allowed by BFE (synonymous commands are grouped):
 _Is building and patching:_
 
 - `build-tool`
-- `build-tool ‑patch`
-- `build-tool ‑patch=true`
-- `build-tool ‑only‑patch=false`
-- `build-tool ‑no‑only‑patch`
+- `build-tool -⁠patch`
+- `build-tool -⁠patch=true`
+- `build-tool -⁠only-⁠patch=false`
+- `build-tool -⁠no-⁠only-⁠patch`
 
 _Is building and not patching:_
 
 <!-- TODO: remove these "disable" toggles after fixing list-item-style bug -->
 <!-- lint disable list-item-style -->
 
-- `build-tool ‑patch=false`
-- `build-tool ‑no‑patch`
-- _`build-tool ‑no‑patch ‑no‑only‑patch`_ (this is the interesting one)
+- `build-tool -⁠patch=false`
+- `build-tool -⁠no-⁠patch`
+- _`build-tool -⁠no-⁠patch -⁠no-⁠only-⁠patch`_ (this is the interesting one)
 
 <!-- lint enable list-item-style -->
 
 _Is patching and not building:_
 
-- `build-tool ‑only‑patch`
-- `build-tool ‑only‑patch=true`
-- `build-tool ‑patch ‑only‑patch`
+- `build-tool -⁠only-⁠patch`
+- `build-tool -⁠only-⁠patch=true`
+- `build-tool -⁠patch -⁠only-⁠patch`
 
 On the other hand, the following rightly cause BFE to throw:
 
-- `build-tool ‑patch=false ‑only‑patch`
-- `build-tool ‑no‑patch ‑only‑patch`
+- `build-tool -⁠patch=false -⁠only-⁠patch`
+- `build-tool -⁠no-⁠patch -⁠only-⁠patch`
 
 If BFE didn't ignore vacuous implications by default, the command
-`build-tool ‑no‑patch ‑no‑only‑patch` would erroneously cause BFE to throw since
-`implies: { patch: true }` means "any time `‑only‑patch` is given, set
-`{ patch: true }` in `argv`", which conflicts with `‑no‑patch` which already
+`build-tool -⁠no-⁠patch -⁠no-⁠only-⁠patch` would erroneously cause BFE to throw
+since `implies: { patch: true }` means "any time `-⁠only-⁠patch` is given, set
+`{ patch: true }` in `argv`", which conflicts with `-⁠no-⁠patch` which already
 sets `{ patch: false }` in `argv`. This can be confusing for end users since the
 command, while redundant, technically makes sense; it is logically
-indistinguishable from `build-tool ‑no‑only-patch`, which does not throw an
+indistinguishable from `build-tool -⁠no-⁠only-patch`, which does not throw an
 error.
 
 To remedy this, BFE simply ignores the `implies` configurations of options when
@@ -562,8 +562,8 @@ given. For example:
 }
 ```
 
-This configuration allows the following arguments: no arguments (`∅`), `‑y`,
-`‑z`, `‑yz`, `‑xyz`; and disallows: `‑x`, `‑xy`, `‑xz`.
+This configuration allows the following arguments: no arguments (`∅`), `-⁠y`,
+`-⁠z`, `-⁠yz`, `-⁠xyz`; and disallows: `-⁠x`, `-⁠xy`, `-⁠xz`.
 
 `demandThisOptionIf` also supports checks against the parsed _values_ of
 arguments in addition to the argument existence checks demonstrated above. For
@@ -578,9 +578,9 @@ example:
 }
 ```
 
-This configuration allows the following arguments: no arguments (`∅`), `‑x`,
-`‑y=...`, `‑x ‑y=...`, `‑xz`, `‑xz y=...`; and disallows: `‑z`, `‑y=one`,
-`‑y=... ‑z`.
+This configuration allows the following arguments: no arguments (`∅`), `-⁠x`,
+`-⁠y=...`, `-⁠x -⁠y=...`, `-⁠xz`, `-⁠xz y=...`; and disallows: `-⁠z`, `-⁠y=one`,
+`-⁠y=... -⁠z`.
 
 Note that, when performing a check using the parsed value of an argument and
 that argument is configured as an array (`{ array: true }`), that array will be
@@ -610,7 +610,7 @@ equivalent to `demandOption` from vanilla yargs. For example:
 }
 ```
 
-This configuration will trigger a check to ensure that `‑x` is given.
+This configuration will trigger a check to ensure that `-⁠x` is given.
 
 > [!NOTE]
 >
@@ -642,8 +642,8 @@ within groups of required options. For example:
 
 This configuration will trigger a check to ensure _at least one_ of `x`, `y`, or
 `z` is given. In other words, this configuration allows the following arguments:
-`‑x`, `‑y`, `‑z`, `‑xy`, `‑xz`, `‑yz`, `‑xyz`; and disallows: no arguments
-(`∅`).
+`-⁠x`, `-⁠y`, `-⁠z`, `-⁠xy`, `-⁠xz`, `-⁠yz`, `-⁠xyz`; and disallows: no
+arguments (`∅`).
 
 In the interest of readability, consider mirroring the appropriate
 `demandThisOptionOr` configuration to the other relevant options, though this is
@@ -663,9 +663,9 @@ example:
 }
 ```
 
-This configuration allows the following arguments: `‑x`, `‑y=one`, `‑z`,
-`‑x ‑y=...`, `‑xz`, `‑y=... ‑z`, `‑xz ‑y=...`; and disallows: no arguments
-(`∅`), `‑y=...`.
+This configuration allows the following arguments: `-⁠x`, `-⁠y=one`, `-⁠z`,
+`-⁠x -⁠y=...`, `-⁠xz`, `-⁠y=... -⁠z`, `-⁠xz -⁠y=...`; and disallows: no
+arguments (`∅`), `-⁠y=...`.
 
 Note that, when performing a check using the parsed value of an argument and
 that argument is configured as an array (`{ array: true }`), that array will be
@@ -695,11 +695,11 @@ exclusivity within groups of required options. For example:
 }
 ```
 
-This configuration will trigger a check to ensure _exactly one_ of `‑x` or `‑y`
-is given, and _exactly one_ of `‑z` or `‑w` is given. In other words, this
-configuration allows the following arguments: `‑xz`, `‑xw`, `‑yz`, `‑yw`; and
-disallows: no arguments (`∅`), `‑x`, `‑y`, `‑z`, `‑w`, `‑xy`, `‑zw`, `‑xyz`,
-`‑xyw`, `‑xzw`, `‑yzw`, `‑xyzw`.
+This configuration will trigger a check to ensure _exactly one_ of `-⁠x` or
+`-⁠y` is given, and _exactly one_ of `-⁠z` or `-⁠w` is given. In other words,
+this configuration allows the following arguments: `-⁠xz`, `-⁠xw`, `-⁠yz`,
+`-⁠yw`; and disallows: no arguments (`∅`), `-⁠x`, `-⁠y`, `-⁠z`, `-⁠w`, `-⁠xy`,
+`-⁠zw`, `-⁠xyz`, `-⁠xyw`, `-⁠xzw`, `-⁠yzw`, `-⁠xyzw`.
 
 In the interest of readability, consider mirroring the appropriate
 `demandThisOptionXor` configuration to the other relevant options, though this
@@ -719,9 +719,9 @@ example:
 }
 ```
 
-This configuration allows the following arguments: `‑x`, `‑y=one`, `‑z`,
-`‑x ‑y=...`, `‑y=... ‑z`; and disallows: no arguments (`∅`), `‑y=...`,
-`‑x ‑y=one`, `‑xz`, `‑y=one ‑z`, `‑xz ‑y=...`.
+This configuration allows the following arguments: `-⁠x`, `-⁠y=one`, `-⁠z`,
+`-⁠x -⁠y=...`, `-⁠y=... -⁠z`; and disallows: no arguments (`∅`), `-⁠y=...`,
+`-⁠x -⁠y=one`, `-⁠xz`, `-⁠y=one -⁠z`, `-⁠xz -⁠y=...`.
 
 Note that, when performing a check using the parsed value of an argument and
 that argument is configured as an array (`{ array: true }`), that array will be
@@ -934,9 +934,9 @@ Options:
   --version                                                             [string]
 ```
 
-Ideally, Black Flag would allow us to describe the relationship between `‑‑lang`
-and its _suboption_ `‑‑version` declaratively, without having to drop down to
-imperative interactions with the yargs API like we did above.
+Ideally, Black Flag would allow us to describe the relationship between
+`-⁠-⁠lang` and its _suboption_ `-⁠-⁠version` declaratively, without having to
+drop down to imperative interactions with the yargs API like we did above.
 
 This is the goal of the `subOptionOf` configuration key. Using `subOptionOf`,
 developers can take advantage of dynamic options without sweating the
@@ -1107,9 +1107,9 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions(
 Easy peasy!
 
 For another example, consider a "build" command where we want to ensure
-`‑‑skip‑output‑checks` is `true` whenever
-`‑‑generate‑types=false`/`‑‑no‑generate‑types` is given since the output checks
-are only meaningful if type definition files are available:
+`-⁠-⁠skip-⁠output-⁠checks` is `true` whenever
+`-⁠-⁠generate-⁠types=false`/`-⁠-⁠no-⁠generate-⁠types` is given since the output
+checks are only meaningful if type definition files are available:
 
 ```javascript
 /**
@@ -1147,14 +1147,14 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions({
 ```
 
 This configuration allows the following arguments: no arguments (`∅`),
-`‑‑generate‑types=true`, `‑‑generate‑types=false`,
-`‑‑generate‑types=true ‑‑skip‑output‑checks=true`,
-`‑‑generate‑types=true ‑‑skip‑output‑checks=false`,
-`‑‑generate‑types=false ‑‑skip‑output‑checks=true`; and disallows:
-`‑‑generate‑types=false ‑‑skip‑output‑checks=false`.
+`-⁠-⁠generate-⁠types=true`, `-⁠-⁠generate-⁠types=false`,
+`-⁠-⁠generate-⁠types=true -⁠-⁠skip-⁠output-⁠checks=true`,
+`-⁠-⁠generate-⁠types=true -⁠-⁠skip-⁠output-⁠checks=false`,
+`-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=true`; and disallows:
+`-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=false`.
 
-The same could be accomplished by making `‑‑skip‑output‑checks` a suboption of
-`‑‑generate-types` (essentially the reverse of the above):
+The same could be accomplished by making `-⁠-⁠skip-⁠output-⁠checks` a suboption
+of `-⁠-⁠generate-types` (essentially the reverse of the above):
 
 ```javascript
 /**
@@ -1192,7 +1192,7 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions({
 ```
 
 Though, note that the second example, when the user supplies the disallowed
-arguments `‑‑generate‑types=false ‑‑skip‑output‑checks=false`, they are
+arguments `-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=false`, they are
 presented with an error message like:
 
 ```text
@@ -1201,7 +1201,7 @@ The following arguments as given conflict with the implications of "skip-output-
 ```
 
 Whereas the first example presents the following error message, which makes more
-sense (because it mentions `‑‑generate‑types`):
+sense (because it mentions `-⁠-⁠generate-⁠types`):
 
 ```text
 The following arguments as given conflict with the implications of "generate-types":
@@ -1540,20 +1540,22 @@ feature set:
   to a remote target via SSH.
 
 - When deploying to Vercel, allow the user to choose to deploy _only_ to preview
-  (`‑‑only-preview`) or _only_ to production (`‑‑only-production`), if desired.
+  (`-⁠-⁠only-preview`) or _only_ to production (`-⁠-⁠only-production`), if
+  desired.
 
   - Deploy to the preview target only by default.
 
-  - If both `‑‑only-preview=false` and `‑‑only-production=false`, deploy to
+  - If both `-⁠-⁠only-preview=false` and `-⁠-⁠only-production=false`, deploy to
     _both_ the preview and production environments.
 
-  - If both `‑‑only-preview=true` and `‑‑only-production=true`, throw an error.
+  - If both `-⁠-⁠only-preview=true` and `-⁠-⁠only-production=true`, throw an
+    error.
 
-- When deploying to a remote target via SSH, require both a `‑‑host` and
-  `‑‑to-path` be provided.
+- When deploying to a remote target via SSH, require both a `-⁠-⁠host` and
+  `-⁠-⁠to-path` be provided.
 
-  - If `‑‑host` or `‑‑to-path` are provided, they must be accompanied by
-    `‑‑target=ssh` since these options don't make sense if `‑‑target` is
+  - If `-⁠-⁠host` or `-⁠-⁠to-path` are provided, they must be accompanied by
+    `-⁠-⁠target=ssh` since these options don't make sense if `-⁠-⁠target` is
     something else.
 
 What follows is an example implementation:
@@ -1677,20 +1679,20 @@ feature set:
   to a remote target via SSH.
 
 - When deploying to Vercel, allow the user to choose to deploy to preview
-  (`‑‑preview`), or to production (`‑‑production`), or both.
+  (`-⁠-⁠preview`), or to production (`-⁠-⁠production`), or both.
 
   - Deploy to the preview target by default.
 
-  - If both `‑‑preview=false` and `‑‑production=false`, throw an error.
+  - If both `-⁠-⁠preview=false` and `-⁠-⁠production=false`, throw an error.
 
-  - If both `‑‑preview=true` and `‑‑production=true`, deploy to both the preview
-    and production environments.
+  - If both `-⁠-⁠preview=true` and `-⁠-⁠production=true`, deploy to both the
+    preview and production environments.
 
-- When deploying to a remote target via SSH, require a `‑‑host` and `‑‑to-path`
-  be provided.
+- When deploying to a remote target via SSH, require a `-⁠-⁠host` and
+  `-⁠-⁠to-path` be provided.
 
-  - If `‑‑host` or `‑‑to-path` are provided, they must be accompanied by
-    `‑‑target=ssh` since these options don't make sense if `‑‑target` is
+  - If `-⁠-⁠host` or `-⁠-⁠to-path` are provided, they must be accompanied by
+    `-⁠-⁠target=ssh` since these options don't make sense if `-⁠-⁠target` is
     something else.
 
 - Output more useful and extremely specific help text depending on the
