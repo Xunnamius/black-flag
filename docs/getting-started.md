@@ -1,17 +1,35 @@
 # Black Flag: Getting Started
 
 What follows is a simple step-by-step guide for building, running, and testing a
-brand new CLI tool from scratch. We'll call it: `myctl`.
+brand new CLI tool from scratch. We shall call our new invention `myctl`.
 
+> [!TIP]
+>
 > There's also a functional [`myctl` demo repository][1]. And you can interact
 > with the published version on NPM: `npx -p @black-flag/demo myctl --help`.
 
-### Building and Running Your CLI
+This guide is split into two main sections:
+
+<!-- remark-ignore-start -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Building and Running Your CLI](#building-and-running-your-cli)
+- [Testing Your CLI](#testing-your-cli)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- remark-ignore-end -->
+
+<br />
+
+## Building and Running Your CLI
 
 Let's make a new CLI project!
 
-> Note: what follows are linux shell commands. The equivalent Windows DOS/PS
-> commands will be different.
+> [!TIP]
+>
+> What follows are linux shell commands. The equivalent Windows DOS/PS commands
+> will be different.
 
 ```shell
 mkdir my-cli-project
@@ -44,6 +62,8 @@ import { runProgram } from '@black-flag/core';
 export default runProgram(import.meta.resolve('./commands'));
 ```
 
+> [!IMPORTANT]
+>
 > These examples use ESM syntax. CJS is also supported. For example:
 >
 > ```javascript
@@ -55,24 +75,26 @@ export default runProgram(import.meta.resolve('./commands'));
 > ```
 
 Let's create our first command, the _root command_. Every Black Flag project has
-one, and it's always named `index.js`. In vanilla Yargs parlance, this would be
-the highest-level "default command".
+one, it lives at the apex of our commands directory, and it's always named
+`index.js` (or `index.mjs`, `index.cjs`, `index.ts`, `index.mts`, `index.cts`).
+In vanilla Yargs parlance, this would be the highest-level "default command".
 
 ```text
 touch commands/index.js
 ```
 
 Depending on how you invoke Black Flag (e.g. with Node, Deno, Babel+Node, etc),
-command files support a subset of the following extensions in precedence order:
-`.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`. To keep things simple, we'll be
-using ES modules as `.js` files (note the [type][2] in `package.json`).
+all discoverable command files support a subset of the following extensions in
+precedence order: `.js`, `.mjs`, `.cjs`, `.ts` (but _not_ `.d.ts`), `.mts`,
+`.cts`. To keep things simple, we'll be using ES modules as `.js` files; note
+the [`"type"`][2] property in `package.json`.
 
-Also note that empty files, and files that do not export a `handler` function or
-custom `command` string, are picked up by Black Flag as unfinished or
-"unimplemented" commands. They will still appear in help text but, when invoked,
-will either (1) output an error message explaining that the command is not
-implemented if said command has no sub-commands or (2) output help text for the
-command if said command has one or more sub-commands.
+Also note that empty files, and files that do not export a [`handler`][3]
+function or custom [`command`][4] string, are picked up by Black Flag as
+unfinished or "unimplemented" commands. They will still appear in help text but,
+when invoked, will either (1) output an error message explaining that the
+command is not implemented if said command has no sub-commands or (2) output
+help text for the command if said command has one or more sub-commands.
 
 This means you can stub out a complex CLI in thirty seconds: just name your
 directories and empty files accordingly!
@@ -83,8 +105,6 @@ With that in mind, let's actually run our skeletal CLI now:
 ./cli.js
 ```
 
----
-
 ```text
 This command is currently unimplemented
 ```
@@ -94,8 +114,6 @@ Let's try with a bad positional parameter:
 ```shell
 ./cli.js bad
 ```
-
----
 
 ```text
 Usage: myctl
@@ -112,8 +130,6 @@ How about with a bad option:
 ```shell
 ./cli.js --bad
 ```
-
----
 
 ```text
 Usage: myctl
@@ -141,8 +157,8 @@ defaults:
 - `yargs::scriptName(fullName)`
 - `yargs::wrap(yargs::terminalWidth())`
   - If you want to tweak this across your entire command hierarchy, update
-    [`context.state.initialTerminalWidth`][3] directly in
-    [`configureExecutionContext`][4]
+    [`context.state.initialTerminalWidth`][5] directly in
+    [`configureExecutionContext`][6]
 - `yargs::exitProcess(false)`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
 - `yargs::help(false)::option('help', { description })`
@@ -152,9 +168,9 @@ defaults:
 - `yargs::showHelpOnFail(true)`
   - Black Flag uses a custom failure handler
 - `yargs::usage(defaultUsageText)`
-  - Defaults to [this][5].
+  - Defaults to [this][7].
   - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
-    (such as in [`configureExecutionPrologue`][6]) will concatenate each
+    (such as in [`configureExecutionPrologue`][8]) will concatenate each
     invocation's arguments into one long usage string instead of overwriting
     previous invocations with later ones
 - `yargs::version(false)`
@@ -165,9 +181,9 @@ defaults:
 <!-- lint enable list-item-style -->
 
 Most of these defaults can be tweaked or overridden via each command's
-[`builder`][7] function, which gives you direct access to the Yargs API. Let's
-add one to `commands/index.js` along with a `handler` function and `usage`
-string:
+[`builder`][9] function, which gives you direct access to the Yargs API. Let's
+add one to `commands/index.js` along with a [`handler`][3] function and
+[`usage`][10] string:
 
 ```javascript
 /**
@@ -201,13 +217,18 @@ export const handler = function (argv) {
 export const usage = 'Usage: $0 command [options]\n\nCustom description here.';
 ```
 
+> [!TIP]
+>
+> Looking for more in-depth examples? Check out [`examples/`][11] for a
+> collection of recipes solving all sorts of common CLI tasks using Black Flag,
+> including leveraging TypeScript and reviewing various different ways to define
+> command modules.
+
 Now let's run the CLI again:
 
 ```shell
 ./cli.js
 ```
-
----
 
 ```text
 ran root command handler
@@ -218,8 +239,6 @@ And with a "bad" argument (we're no longer in strict mode):
 ```shell
 ./cli.js --bad --bad2 --bad3
 ```
-
----
 
 ```text
 ran root command handler
@@ -236,13 +255,11 @@ touch commands/remote/remove.js
 touch commands/remote/show.js
 ```
 
-Wow, that was easy. Let's run our CLI now:
+Well, that was easy. Let's run our CLI now:
 
 ```shell
 ./cli.js --help
 ```
-
----
 
 ```text
 Usage: myctl command [options]
@@ -250,7 +267,6 @@ Usage: myctl command [options]
 Custom description here.
 
 Commands:
-  myctl                                                                [default]
   myctl init
   myctl remote
 
@@ -265,13 +281,10 @@ Let's try a child command:
 ./cli.js remote --help
 ```
 
----
-
 ```text
 Usage: myctl remote
 
 Commands:
-  myctl remote                                                         [default]
   myctl remote add
   myctl remote remove
   myctl remote show
@@ -281,10 +294,12 @@ Options:
 ```
 
 Since different OSes walk different filesystems in different orders,
-auto-discovered commands will appear _in [alpha-sort][8] order_ in help text
-rather than in insertion order; [command groupings][9] are still respected and
+auto-discovered commands will appear _in [natural sort][12] order_ in help text
+rather than in insertion order; [command groupings][13] are still respected and
 each command's options are still enumerated in insertion order.
 
+> [!TIP]
+>
 > Black Flag offers a stronger sorting guarantee than
 > `yargs::parserConfiguration({ 'sort-commands': true })`.
 
@@ -293,8 +308,6 @@ Now let's try a grandchild command:
 ```shell
 ./cli.js remote show --help
 ```
-
----
 
 ```text
 Usage: myctl remote show
@@ -309,13 +322,10 @@ Phew. Alright, but what about trying some commands we know _don't_ exist?
 ./cli.js remote bad horrible
 ```
 
----
-
 ```text
 Usage: myctl remote
 
 Commands:
-  myctl remote                                                         [default]
   myctl remote add
   myctl remote remove
   myctl remote show
@@ -328,7 +338,7 @@ Invalid command: you must call this command with a valid sub-command argument
 
 Neat! 📸
 
-### Testing Your CLI
+## Testing Your CLI
 
 Testing if your CLI tool works by running it manually on the command line is
 nice and all, but if we're serious about building a stable and usable tool,
@@ -337,7 +347,7 @@ we'll need some automated tests.
 Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
-First, let's install [jest][10]. We'll also create a file to hold our tests.
+First, let's install [jest][14]. We'll also create a file to hold our tests.
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -348,15 +358,17 @@ Since we set our root command to non-strict mode, let's test that it doesn't
 throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
-Note that we use [`makeRunner`][11] below, which is a factory function that
-returns a [curried][12] version of [`runProgram`][13] that is far less tedious
+Note that we use [`makeRunner`][15] below, which is a factory function that
+returns a [curried][16] version of [`runProgram`][17] that is far less tedious
 to invoke successively.
 
+> [!NOTE]
+>
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
-> entire CLI _from scratch_. Other than stuff like [the require cache][14],
+> entire CLI _from scratch_. Other than stuff like [the require cache][18],
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
-> [common Yargs footgun][15].
+> [common Yargs footgun][19].
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
@@ -420,20 +432,31 @@ describe('myctl (root)', () => {
 });
 ```
 
+> [!TIP]
+>
+> In our tests above, we took a [behavior-driven approach][20] and tested for
+> errors by looking at what `console.error` should be outputting. This is how
+> users of our CLI will experience errors too, making this the ideal testing
+> approach in many cases. [`runProgram`][17]/[`makeRunner`][15] are configured
+> for this approach out of the box in that they **never throw/reject, even when
+> an error occurs**. Instead, they trigger [the configured error handling
+> behavior][21] (which defaults to `console.error`), which is what our tests
+> check for.
+>
+> However, in many other cases, a purely [test-driven approach][22] is required,
+> where we're not so interested in what the user should experience but in the
+> nature of the failure itself. To support this, [`makeRunner`][15] supports the
+> [`errorHandlingBehavior`][23] option. Setting `errorHandlingBehavior` to
+> `"throw"` will cause your curried runner functions to throw/reject _in
+> addition to_ triggering the configured error handling behavior.
+>
+> It's up to you to choose which approach is best.
+
 Finally, let's run our tests:
 
 ```shell
-npx --node-options='--experimental-vm-modules' jest --testMatch '**/test.cjs' --restoreMocks
+NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --testMatch '**/test.cjs' --restoreMocks
 ```
-
-> As of January 2024, we need to use
-> `--node-options='--experimental-vm-modules'` until the Node team unflags
-> virtual machine module support in a future version.
-
-> We use `--restoreMocks` to ensure mock state doesn't leak between tests. We
-> use `--testMatch '**/test.cjs'` to make Jest see our CJS files.
-
----
 
 ```text
 PASS  ./test.cjs
@@ -449,24 +472,47 @@ Time:        0.405 s, estimated 1 s
 Ran all test suites.
 ```
 
+> [!IMPORTANT]
+>
+> As of March 2025, we need to use `NODE_OPTIONS='--experimental-vm-modules'`
+> until [the Node team unflags virtual machine module support][24] in a future
+> version.
+
+> [!TIP]
+>
+> We use [`--restoreMocks`][25] to ensure mock state doesn't leak between tests.
+> We use [`--testMatch '**/test.cjs'`][26] to make Jest see our CJS files.
+
 Neat! 📸
 
 <!-- symbiote-template-region-start 5 -->
 
 [1]: https://github.com/Xunnamius/black-flag-demo
 [2]: https://nodejs.org/api/packages.html#type
-[3]: ./api/src/exports/util/type-aliases/ExecutionContext.md
-[4]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
+[3]: ./api/src/exports/type-aliases/Configuration.md#handler
+[4]: ./api/src/exports/type-aliases/Configuration.md#command
 [5]:
+  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateinitialterminalwidth
+[6]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
+[7]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[6]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
-[7]: ./api/src/exports/type-aliases/Configuration.md#type-declaration
-[8]: https://www.npmjs.com/package/alpha-sort
-[9]:
-  https://github.com/yargs/yargs/blob/e517318cea0087b813f5de414b3cdec7b70efe33/docs/pi.md#user-content-groupkeys-groupname
-[10]: https://www.npmjs.com/package/jest
-[11]: ./api/src/exports/util/functions/makeRunner.md
-[12]: https://builtin.com/software-engineering-perspectives/currying-javascript
-[13]: ./api/src/exports/functions/runProgram.md
-[14]: https://jestjs.io/docs/jest-object#jestresetmodules
-[15]: https://github.com/yargs/yargs/issues/2191
+[8]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
+[9]: ./api/src/exports/type-aliases/Configuration.md#builder
+[10]: ./api/src/exports/type-aliases/Configuration.md#usage
+[11]: ../examples
+[12]: https://en.wikipedia.org/wiki/Natural_sort_order
+[13]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
+[14]: https://www.npmjs.com/package/jest
+[15]: ./api/src/exports/util/functions/makeRunner.md
+[16]: https://en.wikipedia.org/wiki/Currying
+[17]: ./api/src/exports/functions/runProgram.md
+[18]: https://jestjs.io/docs/jest-object#jestresetmodules
+[19]: https://github.com/yargs/yargs/issues/2191
+[20]: https://en.wikipedia.org/wiki/Behavior-driven_development
+[21]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[22]: https://en.wikipedia.org/wiki/Test-driven_development
+[23]:
+  ./api/src/exports/util/type-aliases/MakeRunnerOptions.md#errorhandlingbehavior
+[24]: https://github.com/nodejs/node/issues/37648
+[25]: https://jestjs.io/docs/configuration#restoremocks-boolean
+[26]: https://jestjs.io/docs/configuration#testmatch-arraystring
