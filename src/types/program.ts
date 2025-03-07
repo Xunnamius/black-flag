@@ -426,9 +426,12 @@ export type ExecutionContext = {
      * is exactly one character in length, the help option will take the form of
      * `-${name}`, otherwise `--${name}`.
      *
+     * Alternatively, set `globalHelpOption = undefined` to disable the
+     * built-in `--help` option on the root command.
+     *
      * Note: this property should not be relied upon or mutated by
-     * end-developers outside of the `configureExecutionContext` configuration
-     * hook. Doing so will result in undefined behavior.
+     * end-developers _outside of the `configureExecutionContext` configuration
+     * hook_. Doing so will result in undefined behavior.
      *
      * @default { name: "help", description: defaultHelpTextDescription }
      */
@@ -467,11 +470,15 @@ export type ExecutionContext = {
      * version text sent to stdout and defaults to the "version" property in the
      * nearest `package.json`.
      *
-     * Note: this property should not be relied upon or mutated by
-     * end-developers outside of the `configureExecutionContext` configuration
-     * hook. Doing so will result in undefined behavior.
+     * Alternatively, set `globalVersionOption = undefined` to disable the
+     * built-in `--version` option on the root command.
      *
-     * @default { name: "version", description: defaultVersionTextDescription, text: `${packageJson.version}` }
+     * Note: this property should not be relied upon or mutated by
+     * end-developers _outside of the `configureExecutionContext` configuration
+     * hook_. Doing so will result in undefined behavior.
+     *
+     * @default { name: "version", description: defaultVersionTextDescription,
+     * text: `${packageJson.version}` }
      */
     globalVersionOption: { name: string; description: string; text: string } | undefined;
     /**
