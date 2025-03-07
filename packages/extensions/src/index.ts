@@ -585,11 +585,12 @@ export type BfeBuilderFunction<
 ) => BfBuilderObject<CustomCliArguments, CustomExecutionContext>;
 
 /**
- * A stricter version of {@link Arguments} that explicitly omits the fallback
- * indexer for unrecognized arguments. Even though it is the runtime equivalent
- * of {@link Arguments}, using this type allows intellisense to report
- * bad/misspelled/missing arguments from `argv` in various places where it
- * otherwise couldn't.
+ * A stricter version of Black Flag's
+ * [Arguments](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/type-aliases/Arguments.md)
+ * type that explicitly omits the fallback indexers for unrecognized arguments.
+ * Even though it is the runtime equivalent of `Arguments`, using this type
+ * allows intellisense to report bad/misspelled/missing arguments from `argv` in
+ * various places where it otherwise couldn't.
  *
  * **This type is intended for intellisense purposes only.**
  */
@@ -604,11 +605,12 @@ export type BfeStrictArguments<
     FrameworkArguments<CustomExecutionContext> & { [$artificiallyInvoked]?: boolean };
 
 /**
- * Maps an {@link ExecutionContext} into an identical type that explicitly omits
- * its fallback indexers for unrecognized properties. Even though it is the
- * runtime equivalent of {@link ExecutionContext}, using this type allows
- * intellisense to report bad/misspelled/missing arguments from `context` in
- * various places where it otherwise couldn't.
+ * A stricter version of Black Flag's
+ * [ExecutionContext](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md)
+ * type that explicitly omits the fallback indexers for unrecognized properties.
+ * Even though it is the runtime equivalent of `ExecutionContext`, using this
+ * type allows intellisense to report bad/misspelled/missing arguments from
+ * `context` in various places where it otherwise couldn't.
  *
  * **This type is intended for intellisense purposes only.**
  */
