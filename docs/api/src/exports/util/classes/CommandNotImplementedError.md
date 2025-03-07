@@ -6,7 +6,7 @@
 
 # Class: CommandNotImplementedError
 
-Defined in: [src/error.ts:192](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L192)
+Defined in: [src/error.ts:192](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L192)
 
 Represents trying to execute a CLI command that has not yet been implemented.
 
@@ -20,7 +20,7 @@ Represents trying to execute a CLI command that has not yet been implemented.
 
 > **new CommandNotImplementedError**(`error`?, `options`?): [`CommandNotImplementedError`](CommandNotImplementedError.md)
 
-Defined in: [src/error.ts:199](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L199)
+Defined in: [src/error.ts:199](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L199)
 
 Represents trying to execute a CLI command that has not yet been
 implemented.
@@ -49,7 +49,7 @@ implemented.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:194](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L194)
+Defined in: [src/error.ts:194](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L194)
 
 #### Overrides
 
@@ -73,7 +73,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L135)
+Defined in: [src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L135)
 
 This option is similar in intent to yargs's `exitProcess()` function,
 except applied more granularly.
@@ -132,7 +132,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `boolean` = `false`
 
-Defined in: [src/error.ts:134](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L134)
+Defined in: [src/error.ts:134](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L134)
 
 If `true`, help text will be sent to stderr _before this exception finishes
 bubbling_. Where the exception is thrown will determine which instance is
@@ -166,7 +166,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/error.ts#L133)
+Defined in: [src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L133)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

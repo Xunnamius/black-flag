@@ -8,7 +8,7 @@
 
 > **ExecutionContext**: `object`
 
-Defined in: [src/types/program.ts:327](https://github.com/Xunnamius/black-flag/blob/29a6a8eee6470040d4cbaf8ff2f3ff851bd9e0bf/src/types/program.ts#L327)
+Defined in: [src/types/program.ts:327](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/program.ts#L327)
 
 Represents a globally-accessible shared context object singleton.
 
@@ -149,9 +149,12 @@ late).
 is exactly one character in length, the help option will take the form of
 `-${name}`, otherwise `--${name}`.
 
+Alternatively, set `globalVersionOption = undefined` to disable the
+built-in `--help` option on the root command.
+
 Note: this property should not be relied upon or mutated by
-end-developers outside of the `configureExecutionContext` configuration
-hook. Doing so will result in undefined behavior.
+end-developers _outside of the `configureExecutionContext` configuration
+hook_. Doing so will result in undefined behavior.
 
 ##### Default
 
@@ -174,14 +177,18 @@ exactly one character in length, the version option will take the form of
 version text sent to stdout and defaults to the "version" property in the
 nearest `package.json`.
 
+Alternatively, set `globalVersionOption = undefined` to disable the
+built-in `--version` option on the root command.
+
 Note: this property should not be relied upon or mutated by
-end-developers outside of the `configureExecutionContext` configuration
-hook. Doing so will result in undefined behavior.
+end-developers _outside of the `configureExecutionContext` configuration
+hook_. Doing so will result in undefined behavior.
 
 ##### Default
 
 ```ts
-{ name: "version", description: defaultVersionTextDescription, text: `${packageJson.version}` }
+{ name: "version", description: defaultVersionTextDescription,
+     * text: `${packageJson.version}` }
 ```
 
 #### state.initialTerminalWidth
