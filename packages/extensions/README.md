@@ -2266,14 +2266,12 @@ See the [table of contributors][x-repo-contributors].
 [2]: https://en.wikipedia.org/wiki/Completeness_(logic)
 [3]: https://en.wikipedia.org/wiki/Propositional_calculus
 [4]: #differences-between-black-flag-extensions-and-yargs
-[5]: ./docs/src/functions/withBuilderExtensions.md
+[5]: ./docs/index/functions/withBuilderExtensions.md
 [6]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
-[7]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/Configuration.md#builder
-[8]:
-  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#its-yargs-all-the-way-down-
+[7]: ../../docs/api/src/exports/type-aliases/Configuration.md#builder
+[8]: ../../docs/features.md#its-yargs-all-the-way-down-
 [9]:
-  https://github.com/Xunnamius/black-flag/tree/main?tab=readme-ov-file#motivation
+  ../../docs/advanced.md#justification-for-the-parent-child-and-tripartite-program-design
 [10]: https://yargs.js.org/docs#api-reference-defaultkey-value-description
 [11]: #check
 [12]: #requires
@@ -2290,36 +2288,29 @@ See the [table of contributors][x-repo-contributors].
 [23]: https://yargs.js.org/docs#api-reference-impliesx-y
 [24]: https://yargs.js.org/docs#api-reference-conflictsx-y
 [25]: #vacuousimplications
-[26]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/Configuration.md#handler
+[26]: ../../docs/api/src/exports/type-aliases/Configuration.md#handler
 [27]: #new-option-configuration-keys
 [28]: https://yargs.js.org/docs#api-reference-demandoptionkey-msg-boolean
 [29]: https://en.wikipedia.org/wiki/Vacuous_truth
 [30]: https://en.wikipedia.org/wiki/Consequent
 [31]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
-[32]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/ConfigureErrorHandlingEpilogue.md
-[33]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/classes/GracefulEarlyExitError.md
-[34]:
-  https://github.com/Xunnamius/black-flag/tree/main?tab=readme-ov-file#built-in-support-for-dynamic-options-
+[32]: ../../docs/api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[33]: ../../docs/api/src/exports/classes/GracefulEarlyExitError.md
+[34]: ../../docs/features.md#built-in-support-for-dynamic-options-
 [35]: https://github.com/Xunnamius/black-flag-demo/blob/main/commands/init.js
 [36]: #strange-and-impossible-configurations
 [37]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
 [38]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
-[39]: ./docs/src/functions/withUsageExtensions.md
-[40]: ./docs/src/functions/getInvocableExtendedHandler.md
-[41]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/functions/runProgram.md
+[39]: ./docs/index/functions/withUsageExtensions.md
+[40]: ./docs/index/functions/getInvocableExtendedHandler.md
+[41]: ../../docs/api/src/exports/functions/runProgram.md
 [42]: https://github.com/Xunnamius/symbiote/blob/main/src/commands/deploy.ts
 [43]: https://yargs.js.org/docs#api-reference-coercekey-fn
 [44]: https://yargs.js.org/docs#api-reference
-[45]:
-  https://github.com/Xunnamius/black-flag/blob/main/docs/index/type-aliases/ConfigureExecutionPrologue.md
+[45]: ../../docs/api/src/exports/type-aliases/ConfigureExecutionPrologue.md
 [46]: https://npm.im/@black-flag/core
 [47]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
-[48]:
-  https://github.com/Xunnamius/black-flag?tab=readme-ov-file#differences-between-black-flag-and-yargs
+[48]: ../../docs/bf-vs-yargs.md
 [49]: https://github.com/yargs/yargs/issues/1323
 [50]: https://github.com/yargs/yargs/issues/2340
 [51]: https://github.com/yargs/yargs/issues/1322
