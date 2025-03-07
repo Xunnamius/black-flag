@@ -143,14 +143,13 @@ Then create your root command, perhaps at `./commands/index.js`:
 
 ```js
 export const name = 'pirate-parser';
+export const usage = 'Usage: $0 <cmd> [args]';
 ```
 
 Finally, create your sub-command, perhaps at `./commands/hello.js`:
 
 ```js
 export const command = '$0 [name]';
-
-export const usage = '$0 <cmd> [args]';
 
 export const description =
   'Welcome ter black flag, a declarative wrapper around yargs!';
@@ -189,7 +188,7 @@ node cli.js --help
 ```
 
 ```text
-Usage: pirate-parser
+Usage: pirate-parser <cmd> [args]
 
 Commands:
   pirate-parser hello  Welcome ter black flag, a declarative wrapper around yargs!
@@ -206,7 +205,9 @@ node cli.js hello --help
 ```
 
 ```text
-pirate-parser hello <cmd> [args]
+Usage: pirate-parser hello [name]
+
+Welcome ter black flag, a declarative wrapper around yargs!
 
 Positionals:
   name  The name to say hello to                          [string] [default: "Cambi"]
@@ -243,7 +244,9 @@ node cli.js hello Parrot --attention
 ```
 
 ```text
-pirate-parser hello <cmd> [args]
+Usage: pirate-parser hello [name]
+
+Welcome ter black flag, a declarative wrapper around yargs!
 
 Positionals:
   name  The name to say hello to                          [string] [default: "Cambi"]

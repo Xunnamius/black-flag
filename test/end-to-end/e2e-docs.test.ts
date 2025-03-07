@@ -109,7 +109,7 @@ describe('./README', () => {
             stderr: '',
             exitCode: 0,
             stdout: expect.stringMatching(
-              /Usage: pirate-parser\n\nCommands:\n\s+ pirate-parser hello\s+ Welcome ter black flag, a declarative wrapper around yargs!\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]/
+              /Usage: pirate-parser <cmd> \[args\]\n\nCommands:\n\s+ pirate-parser hello\s+ Welcome ter black flag, a declarative wrapper around yargs!\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]/
             )
           });
         }
@@ -121,7 +121,7 @@ describe('./README', () => {
             stderr: '',
             exitCode: 0,
             stdout: expect.stringMatching(
-              /pirate-parser hello <cmd> \[args\]\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]/
+              /Usage: pirate-parser hello \[name\]\n\nWelcome ter black flag, a declarative wrapper around yargs!\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]/
             )
           });
         }
@@ -157,7 +157,7 @@ describe('./README', () => {
             stdout: '',
             exitCode: 1,
             stderr: expect.stringMatching(
-              /pirate-parser hello <cmd> \[args\]\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nUnknown argument: attention/
+              /Usage: pirate-parser hello \[name\]\n\nWelcome ter black flag, a declarative wrapper around yargs!\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nUnknown argument: attention/
             )
           });
         }
@@ -184,11 +184,11 @@ describe('./README', () => {
 import { runProgram } from '@black-flag/core';
 export default runProgram(import.meta.resolve('./commands'));
 `,
-          'commands/index.js': /* js */ `export const name = 'pirate-parser';`,
+          'commands/index.js': /* js */ `export const name = 'pirate-parser';
+export const usage = 'Usage: $0 <cmd> [args]';
+`,
           'commands/hello.js':
             /* js */ `export const command = '$0 [name]';
-
-export const usage = '$0 <cmd> [args]';
 
 export const description =
   'Welcome ter black flag, a declarative wrapper around yargs!';
