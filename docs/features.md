@@ -18,7 +18,7 @@ For instance, consider a "myctl" command with several sub-commands:
 
 ```shell
 myctl --version
-myctl init --lang 'node' --version=21.1
+myctl init --lang node --version=23.3
 myctl remote add origin me@mine.myself
 myctl remote add --help
 myctl remote remove upstream
@@ -58,16 +58,23 @@ resolved value of other options. Vanilla Yargs does not support these, but Black
 Flag does:
 
 ```shell
-# These two lines are identical
-myctl init --lang 'node'
-myctl init --lang 'node' --version=21.1
+# These two lines have identical meanings and outputs
+myctl init --lang node
+myctl init --lang node --version=23.3
+# Output:
+> initializing new node@23.3 project...
+> initializing new node@23.3 project...
 ```
 
 ```shell
-# And these three lines are identical
+# And these three lines have identical meanings and outputs
 myctl init
-myctl init --lang 'python'
-myctl init --lang 'python' --version=3.8
+myctl init --lang python
+myctl init --lang python --version=3.13
+# Output:
+> initializing new python@3.13 project...
+> initializing new python@3.13 project...
+> initializing new python@3.13 project...
 ```
 
 Note how the default value of `--version` changes depending on the value of
@@ -88,6 +95,9 @@ same Yargs API you already know and love:
 ```typescript
 // File: my-cli-project/commands/init.ts
 
+const PYTHON_DEFAULT_VERSION = '3.13';
+const NODE_DEFAULT_VERSION = '23.3';
+
 // "argv" is a new third argument for builders    vvv
 export function builder(yargs, helpOrVersionSet, argv) {
   //                                              ^^^
@@ -95,35 +105,47 @@ export function builder(yargs, helpOrVersionSet, argv) {
   // Tell Yargs to leave strings that look like numbers as strings
   yargs.parserConfiguration({ 'parse-numbers': false });
 
-  // This first conditional branch will be used to validate any dynamic
-  // arguments and trigger the command's handler if validation succeeds
+  // This conditional branch will be used to validate any ✨ dynamic ✨
+  // arguments and trigger the command's handler if validation succeeds.
+  //
+  // This is possible because Black Flag runs the builder function twice. First
+  // WITHOUT the "argv" parameter, and then again WITH the "argv" parameter set
+  // to the result from the first run. The recomputed "argv" result from the
+  // second run is the one that gets passed to the handler function.
   //
   //   vvv
   if (argv) {
-    // ^^^
+    // ^^^    "argv" is only defined on builder's SECOND run!
     if (argv.lang === 'node') {
+      // NOTE THAT "argv" IS RECOMPUTED, so the old "argv" (the one we see now)
+      // is discarded! Hence, we need to supply defaults for lang and version:
       return {
-        lang: { choices: ['node'] },
-        version: { choices: ['19.8', '20.9', '21.1'] }
+        lang: { choices: ['node'], default: 'node' },
+        version: {
+          choices: ['20.18', '22.12', '23.3'],
+          default: NODE_DEFAULT_VERSION
+        }
       };
     } else {
-      // Note how we can return a literal options object instead of calling
-      // yargs.options(...), but we still can if we want to:
+      // Also note above how we can return a literal options object instead of
+      // calling yargs.options(...), but we still can if we want to:
       return yargs.options({
-        lang: { choices: ['python'] },
+        lang: { choices: ['python'], default: 'python' },
         version: {
-          choices: ['3.10', '3.11', '3.12']
+          choices: ['3.11', '3.12', '3.13'],
+          default: PYTHON_DEFAULT_VERSION
         }
       });
     }
   }
-  // This else branch will be used for generic help text and first-pass parsing
+  // This conditional branch will be used on builder's first run. It's used for
+  // initial GENERIC validation and for generating GENERIC --help text.
   else {
-    // This next line is the best you'd be able to do when using vanilla Yargs.
-    // But with Black Flag, it's only the fallback :)
+    // These next lines are the best you'd be able to do when using vanilla
+    // Yargs. But with Black Flag, it's only the generic fallback 🙂
     return {
-      lang: { choices: ['node', 'python'] },
-      version: { string: true }
+      lang: { choices: ['node', 'python'], default: 'python' },
+      version: { string: true, default: PYTHON_DEFAULT_VERSION }
     };
   }
 }
@@ -137,21 +159,21 @@ export function handler(argv) {
 > See [the demo repo][5] for the complete implementation of this command.
 
 ```text
-myctl init --lang 'node' --version=21.1
-> initializing new node@21.1 project...
+myctl init --lang node --version=23.3
+> initializing new node@23.3 project...
 ```
 
 ```text
-myctl init --lang 'python' --version=21.1
+myctl init --lang python --version=23.3
 Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                                     [choices: "python"]
-  --version                                    [choices: "3.10", "3.11", "3.12"]
+  --lang                                 [choices: "python"] [default: "python"]
+  --version                  [choices: "3.11", "3.12", "3.13"] [default: "3.13"]
 
 Invalid values:
-  Argument: version, Given: "21.1", Choices: "3.10", "3.11", "3.12"
+  Argument: version, Given: "23.3", Choices: "3.11", "3.12", "3.13"
 ```
 
 ```text
@@ -160,8 +182,8 @@ Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                             [choices: "node", "python"]
-  --version                                                             [string]
+  --lang                         [choices: "node", "python"] [default: "python"]
+  --version                                           [string] [default: "3.13"]
 
 Invalid values:
   Argument: lang, Given: "fake", Choices: "node", "python"
@@ -173,8 +195,8 @@ Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                             [choices: "node", "python"]
-  --version                                                             [string]
+  --lang                         [choices: "node", "python"] [default: "python"]
+  --version                                           [string] [default: "3.13"]
 ```
 
 If `builder` and `handler` sound familiar, it's because the exports from your
@@ -183,7 +205,8 @@ function: [`aliases`][6], [`builder`][7], [`command`][8], [`deprecated`][9],
 [`description`][10], [`handler`][11], and two new ones: [`name`][12] and
 [`usage`][13].
 
-The complete `my-cli-project/commands/init.ts` file could look like this:
+A fully-typed version of `my-cli-project/commands/init.ts` could look something
+like this:
 
 ```typescript
 // File: my-cli-project/commands/init.ts
@@ -197,12 +220,39 @@ const configuration: Configuration = {
   // ALL OF THESE ARE OPTIONAL! Black Flag would still accept this file even if
   // if were completely blank
 
+  // Used as the command's name in help text, when parsing arguments, when
+  // replacing "$0" during string interpolation, and elsewhere. Usually defaults
+  // to a trimmed version of the file/directory name
+  name: 'init',
+
   // An array of Yargs aliases for this command. DO NOT include positional
   // arguments here, those go in `command` just like with vanilla Yargs
   aliases: [],
 
+  // Used to define positional args using Yargs's DSL. All command strings must
+  // begin with "$0". Defaults to "$0". This value is also used to replace
+  // "$000" during string interpolation for the usage option
+  command: '$0 [positional-arg-1] [positional-arg-2]',
+
+  // Used as the command's usage instructions in its own help text. "$000", if
+  // present, will be replaced by the value of the command option. Afterwards,
+  // "$1" and then "$0", if present, will be replaced by the description and
+  // name options. Defaults to "Usage: $000\n\n$1". Will be trimmed before being
+  // output
+  usage: 'Usage: $0 [put positional args here]\n\nThis is neat! Also:\n\n$1',
+
+  // Used as the command's description in its parent command's help text, and
+  // when replacing "$1" during string interpolation for the usage option. Set
+  // to false to disable the description and hide the command. Defaults to ""
+  description: 'initializes stuff',
+
+  // If true, this command will be considered deprecated. Defaults to false
+  deprecated: false,
+
   // Can be a Yargs options object or a builder function like below
   builder(yargs, helpOrVersionSet, argv) {
+    // ...
+
     // We are never forced to return anything...
     // return yargs;
     // ... but we can if we want:
@@ -217,37 +267,14 @@ const configuration: Configuration = {
     // Also note you can access ExecutionContext with argv?.[$executionContext]
   },
 
-  // Always a string. All commands must begin with "$0". Defaults to "$0". The
-  // given value is also used to replace "$000" during string interpolation for
-  // the usage option
-  command: '$0 [positional-arg-1] [positional-arg-2]',
-
-  // If true, this command will be considered deprecated. Defaults to false
-  deprecated: false,
-
-  // Used as the command's description in its parent command's help text, and
-  // when replacing "$1" during string interpolation for the usage option. Set
-  // to false to disable the description and hide the command. Defaults to ""
-  description: 'initializes stuff',
-
   // This function is called when the arguments match and pass Yargs
   // validation. Defaults to a function that throws CommandNotImplementedError
   handler(argv) {
-    console.log(`> initializing new ${argv.lang} project...`);
+    console.log(`> initializing new ${argv.lang}@${argv.version} project...`);
     // Note that you can access ExecutionContext with argv[$executionContext]
-  },
 
-  // Used as the command's name in help text, when parsing arguments, when
-  // replacing "$0" during string interpolation, and elsewhere. Usually defaults
-  // to a trimmed version of the file/directory name
-  name: 'init',
-
-  // Used as the command's usage instructions in its own help text. "$000", if
-  // present, will be replaced by the value of the command option. Afterwards,
-  // "$1" and then "$0", if present, will be replaced by the description and
-  // name options. Defaults to "Usage: $000\n\n$1". Will be trimmed before being
-  // output
-  usage: 'This is neat.'
+    // ...
+  }
 };
 
 export default configuration;
@@ -268,7 +295,7 @@ export default runProgram(import.meta.resolve('./commands'));
 ```
 
 ```shell
-# This would work thanks to that shebang (#!)
+# This would work thanks to that shebang (#!) and chmod +x
 ./cli.js remote show origin
 # This works after transpiling our .ts files to .js with babel...
 node ./cli.js -- remote show origin
@@ -283,32 +310,46 @@ when testing, in production, when importing your CLI as a dependency, etc.
 
 > [!IMPORTANT]
 >
-> **`runProgram` never throws**, and never calls `process.exit` [since that's
-> dangerous][15]. When testing your CLI, [prefer `makeRunner`][35].
+> <ins>**`runProgram` never throws**</ins>, and never calls `process.exit` since
+> that's [ dangerous][15]. When testing your CLI, [prefer `makeRunner`][35]
+> which can be made to throw.
 
 Under the hood, `runProgram` calls [`configureProgram`][16], which
 auto-discovers and collects all the configurations exported from your command
 files, followed by [`PreExecutionContext::execute`][17], which is a wrapper
 around `yargs::parseAsync` and `yargs::hideBin`.
 
-```typescript
+```javascript
+const { join } = require('node:path');
+const { runProgram } = require('@black-flag/core');
+
+module.exports = runProgram(join(__dirname, 'commands'));
+```
+
+👆🏿 These are essentially equivalent 👇🏿
+
+```javascript
+import { runProgram } from '@black-flag/core';
+
+export default runProgram(import.meta.resolve('./commands'));
+```
+
+👆🏿 These are essentially equivalent 👇🏿
+
+```javascript
 import { join } from 'node:path';
-import { runProgram, configureProgram } from '@black-flag/core';
-import { hideBin, isCliError } from '@black-flag/core/util';
-
-// Note that this example is using CJS-style path resolution. ESM is different.
-export default runProgram(join(__dirname, 'commands'));
-
-// ^^^ These are essentially equivalent vvv
+import { configureProgram, isCliError } from '@black-flag/core';
+import { hideBin } from '@black-flag/core/util';
 
 let parsedArgv = undefined;
 
 try {
-  const commandsDir = join(__dirname, 'commands');
+  const commandsDir = import.meta.resolve('./commands');
   const preExecutionContext = await configureProgram(commandsDir);
   parsedArgv = await preExecutionContext.execute(hideBin(process.argv));
   process.exitCode = 0;
 } catch (error) {
+  // This catch block is why runProgram never throws 🙂
   process.exitCode = isCliError(error) ? error.suggestedExitCode : 1;
 }
 
@@ -429,10 +470,9 @@ Then our CLI's entry point might look something like this:
 import { runProgram } from '@black-flag/core';
 
 export default runProgram(
-  // Note that this example is using ESM-style path resolution. CJS is different
   import.meta.resolve('./commands'),
   // Just pass an object of your configuration hooks. Promises are okay!
-  import('./configure.js') // <== Might be ".ts" over ".js" for deno projects
+  import('./configure.js')
 );
 ```
 
@@ -445,10 +485,10 @@ commands. Specifically:
 
   ```typescript
   try {
-    ...
-  } catch(error) {
+    //...
+  } catch (error) {
     // Black Flag sets process.exitCode for you regardless of what's thrown
-    throw new 'something bad happened';
+    throw 'something bad happened';
     // But you can suggest an exit code by throwing a CliError
     throw new CliError('something bad happened', { suggestedExitCode: 5 });
     // You can also tell Black Flag you'd like help text printed for this error
@@ -480,7 +520,7 @@ as well as each command file's optionally-exported [`builder`][7] function.
 // File: my-cli-project/cli.ts
 
 await runProgram(import.meta.resolve('./commands'), {
-  configureErrorHandlingEpilogue({ error }, argv, context) {
+  configureErrorHandlingEpilogue({ error }, argv) {
     // Instead of outputting to stderr by default, send all errors elsewhere
     sendJsErrorToLog4J(argv.aMoreDetailedErrorOrSomething ?? error);
   }
@@ -532,7 +572,9 @@ test('remote remove command works as expected', async () => {
 
   // Run the command's handler with a fake "parsed" arguments object
   await remoteRemove.handler(fakeArgv);
-  ...
+
+  // Check that the command handler did what it was supposed to do
+  expect(/* ... */).toStrictEqual(/* ... */);
 });
 ```
 
@@ -558,7 +600,7 @@ export const configureArguments: ConfigureArguments = (rawArgv) => {
 };
 
 export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
-  async ({ error, message }, _argv, context) => {
+  async ({ error, message }, argv, context) => {
     // ...
   };
 ```
@@ -572,18 +614,20 @@ import * as conf from './configure';
 
 test('configureArguments returns pre-processed arguments', async () => {
   expect.hasAssertions();
+
   await expect(conf.configureArguments([1, 2, 3])).resolves.toStrictEqual([3]);
 });
 
 test('configureErrorHandlingEpilogue outputs as expected', async () => {
   expect.hasAssertions();
 
-  const errorSpy =
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  const errorSpy = jest
+    .spyOn(console, 'error')
+    .mockImplementation(() => undefined);
 
-  await conf.configureErrorHandlingEpilogue(...);
+  await conf.configureErrorHandlingEpilogue(/*...*/);
 
-  expect(errorSpy).toHaveBeenCalledWith(...);
+  expect(errorSpy).toHaveBeenCalledWith(/*...*/);
 });
 ```
 
@@ -593,14 +637,13 @@ production: [`runProgram`][14].
 
 > [!TIP]
 >
-> Black Flag additionally provides the [`makeRunner`][21] utility function so
-> you don't have to tediously copy and paste `runProgram(...)` and all its
-> arguments between tests.
+> Black Flag provides the [`makeRunner`][21] utility function so you don't have
+> to tediously copy and paste `runProgram(...)` and all its arguments between
+> tests.
 >
-> Unlike `runProgram`, [`makeRunner`][21] can be [configured to throw any
-> errors][24] in addition to surfacing them via
-> `console.error`/[`configureErrorHandlingEpilogue`][19]. This can be useful for
-> more test-driven approaches.
+> Additionally, unlike `runProgram`, [`makeRunner`][21] can be [configured to
+> throw any errors][24] after [`configureErrorHandlingEpilogue`][19] runs. This
+> can be useful for more test-driven approaches.
 
 ```typescript
 // File: my-cli-project/test.ts (with Jest as test runner)
@@ -778,7 +821,9 @@ const name = basename(dirname(__filename));
 module.exports = {
   description: `description for program ${name}`,
   builder: (blackFlag) => blackFlag.option(name, { count: true }),
-  handler: (argv) => (argv.handled_by = __filename)
+  handler: (argv) => {
+    argv.handled_by = __filename;
+  }
 };
 ```
 
