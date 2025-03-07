@@ -91,15 +91,15 @@ npm install @black-flag/extensions
 >
 > See also: [differences between BFE and Yargs][4].
 
+> [!WARNING]
+>
+> Most of the examples in this section are using hyphen characters followed by a
+> [word joiner character][6] to prevent breaking example awkwardly across lines.
+> Be cautious copying and pasting examples.
+
 ### `withBuilderExtensions`
 
 > ⪢ API reference: [`withBuilderExtensions`][5]
-
-> [!WARNING]
->
-> Many of the examples in this documentation are using hyphen characters
-> followed by a [word joiner character][6] to prevent breaking example awkwardly
-> across lines. Be cautious copying and pasting examples.
 
 This function enables several additional options-related units of functionality
 via analysis of the returned options configuration object and the parsed command
@@ -1536,6 +1536,12 @@ export default function command(context: CustomExecutionContext) {
 ## Examples
 
 In this section are two example implementations of a "deploy" command.
+
+> [!WARNING]
+>
+> Some of the examples in this section are using hyphen characters followed by a
+> [word joiner character][6] to prevent breaking example awkwardly across lines.
+> Be cautious copying and pasting examples.
 
 ### Example 1
 
