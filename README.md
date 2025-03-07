@@ -521,10 +521,10 @@ specification. Contributions of any kind welcome!
 [22]: https://github.com/Xunnamius/black-flag-demo
 [23]: ./examples/README.md
 [24]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[25]: https://github.com/Xunnamius/black-flag/blob/main/packages/extensions
+[25]: ./packages/extensions/README.md
 [26]: https://yargs.js.org/docs#api-reference-optionskey-opt
 [27]: ./docs/bf-vs-yargs.md#irrelevant-differences
-[28]: https://github.com/Xunnamius/black-flag/blob/main/packages/checks
+[28]: ./packages/checks/README.md
 [29]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
 [30]: ./docs/advanced.md
 [31]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
