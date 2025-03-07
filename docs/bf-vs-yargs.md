@@ -177,7 +177,7 @@ Flag, but are noted below nonetheless.
 [16]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#command-aliases
 [17]: ./api/src/exports/type-aliases/Configuration.md#command
 [18]: ./api/src/exports/type-aliases/Configuration.md#description
-[19]: ../packages/extensions
+[19]: ../packages/extensions/README.md
 [20]: https://github.com/yargs/yargs-parser?tab=readme-ov-file#configuration
 [21]: https://github.com/yargs/yargs/issues/2191
 [22]: https://github.com/yargs/yargs/issues/1137

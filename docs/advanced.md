@@ -404,7 +404,7 @@ user.<sup>R2🡒R1</sup>
 [8]: ./api/src/exports/util/type-aliases/ProgramMetadata.md
 [9]: ./bf-vs-yargs.md#irrelevant-differences
 [10]: ./advanced.md#generating-help-text
-[11]: ./api
+[11]: ./api/README.md
 [12]: ./features.md#built-in-support-for-dynamic-options-
 [13]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [14]: ./images/example-1.png

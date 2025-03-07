@@ -499,7 +499,7 @@ Neat! 📸
 [8]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
 [9]: ./api/src/exports/type-aliases/Configuration.md#builder
 [10]: ./api/src/exports/type-aliases/Configuration.md#usage
-[11]: ../examples
+[11]: ../examples/README.md
 [12]: https://en.wikipedia.org/wiki/Natural_sort_order
 [13]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
 [14]: https://www.npmjs.com/package/jest

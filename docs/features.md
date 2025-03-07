@@ -898,7 +898,7 @@ check out the source code for my "meta" project: [`@-xun/symbiote`][37].
 [31]: ./api/src/exports/type-aliases/ChildConfiguration.md
 [32]: ./api/src/exports/type-aliases/Configuration.md
 [33]: ./api/src/exports/type-aliases/ConfigurationHooks.md
-[34]: ./api
+[34]: ./api/README.md
 [35]: ./getting-started.md#building-and-running-your-cli
-[36]: ../examples
+[36]: ../examples/README.md
 [37]: https://github.com/Xunnamius/symbiote/blob/main/src

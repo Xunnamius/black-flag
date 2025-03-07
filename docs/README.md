@@ -17,6 +17,6 @@ interfaces.
 [2]: ./features.md
 [3]: ../README.md#quick-start
 [4]: ./getting-started.md
-[5]: ../examples
+[5]: ../examples/README.md
 [6]: ./bf-vs-yargs.md
 [7]: ../ARCHITECTURE.md

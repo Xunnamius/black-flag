@@ -519,7 +519,7 @@ specification. Contributions of any kind welcome!
 [20]: ./docs/getting-started.md
 [21]: ./docs/bf-vs-yargs.md
 [22]: https://github.com/Xunnamius/black-flag-demo
-[23]: ./examples
+[23]: ./examples/README.md
 [24]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
 [25]: https://github.com/Xunnamius/black-flag/blob/main/packages/extensions
 [26]: https://yargs.js.org/docs#api-reference-optionskey-opt
@@ -529,7 +529,7 @@ specification. Contributions of any kind welcome!
 [30]: ./docs/advanced.md
 [31]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
 [32]: https://github.com/Xunnamius/symbiote/blob/main/src
-[33]: ./docs/api
+[33]: ./docs/api/README.md
 [34]: ./docs/api/src/exports/type-aliases/Configuration.md
 [35]:
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
