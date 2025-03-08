@@ -75,7 +75,7 @@ describe("import {...} from '@black-flag/core'", () => {
         // ! has broken between node versions more than once :(
         initialVirtualFiles: {
           'src/index.cjs': `require('@black-flag/core').configureProgram('${pathToFileURL(
-            toPath(__dirname, '..', 'fixtures', 'one-file-index')
+            toPath(__dirname, '..', 'fixtures', 'one-file-index-cjs')
           ).toString()}').then(({execute}) => execute(['--version']));`
         }
       }
@@ -97,7 +97,7 @@ describe("import {...} from '@black-flag/core'", () => {
         // ! has broken between node versions more than once :(
         initialVirtualFiles: {
           'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
-            toPath(__dirname, '..', 'fixtures', 'one-file-index')
+            toPath(__dirname, '..', 'fixtures', 'one-file-index-cjs')
           ).toString()}', '--version');`
         }
       }
@@ -305,7 +305,7 @@ console.log(require('@black-flag/core/util').isPreExecutionContext({}) === false
         initialVirtualFiles: {
           'src/index.cjs': `
 require('@black-flag/core/util').makeRunner({
-  commandModulesPath: '${pathToFileURL(toPath(__dirname, '..', 'fixtures', 'one-file-index')).toString()}'
+  commandModulesPath: '${pathToFileURL(toPath(__dirname, '..', 'fixtures', 'one-file-index-cjs')).toString()}'
 })('--help');`
         }
       }
