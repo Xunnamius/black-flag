@@ -8,8 +8,8 @@
 // * containers, and are built to run in GitHub Actions CI pipelines; some can
 // * also be run locally.
 
-import { createWriteStream } from 'node:fs';
 import { once } from 'node:events';
+import { createWriteStream } from 'node:fs';
 
 import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
 import { readJsonc, readXPackageJsonAtRoot } from '@-xun/project';
