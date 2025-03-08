@@ -256,9 +256,7 @@ export async function discoverCommands(
         /.*(?<!index)\.(?:js|mjs|cjs|ts|mts|cts)$/.test(entry.name) &&
         !entry.name.endsWith('.d.ts');
 
-      // TODO: remove this when node@18 dies
-      // eslint-disable-next-line @typescript-eslint/no-deprecated
-      const entryFullPath = toPath(toAbsolutePath(entry.path), entry.name);
+      const entryFullPath = toPath(toAbsolutePath(entry.parentPath), entry.name);
 
       discoverDebug('saw potential child configuration file: %O', entryFullPath);
 
