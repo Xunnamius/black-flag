@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 // * These tests run through the entire process of acquiring this software,
 // * using its features as described in the examples documentation, and dealing
 // * with its error conditions across a variety of runtimes (e.g. the currently
@@ -6,6 +7,9 @@
 // * Typically, these tests involve the use of deep mock fixtures and/or Docker
 // * containers, and are built to run in GitHub Actions CI pipelines; some can
 // * also be run locally.
+
+import { createWriteStream } from 'node:fs';
+import { once } from 'node:events';
 
 import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
 import { readJsonc, readXPackageJsonAtRoot } from '@-xun/project';
@@ -28,6 +32,8 @@ import {
   npmCopyPackageFixture,
   reconfigureJestGlobalsToSkipTestsInThisFileIfRequested
 } from 'testverse:util.ts';
+
+import { FrameworkExitCode } from '@black-flag/core';
 
 import type { AbsolutePath } from '@-xun/fs';
 import type { RunOptions } from '@-xun/run';
@@ -902,8 +908,398 @@ module.exports = {
   });
 });
 
-describe('./docs/getting-started.md', () => {
-  test('todo', async () => {
+describe('[FULLY E2E] ./docs/getting-started.md', () => {
+  test('run through entire guide (programmatically) start to finish', async () => {
     expect.hasAssertions();
+
+    const virtualTestCjsFile =
+      /* js */ `const { makeRunner } = require('@black-flag/core/util');
+
+// makeRunner is a factory function that returns runProgram functions with
+// curried arguments.
+const run = makeRunner({ commandModulesPath: ` +
+      '`${__dirname}/commands`' +
+      // TODO: DELETE THIS NEXT BIT (old version interop) WHEN YOU SEE THIS:
+      `,
+      commandModulePath: ` +
+      '`${__dirname}/commands`' +
+      ` });
+
+afterEach(() => {
+  // Since runProgram (i.e. what is returned by makeRunner) sets
+  // process.exitCode before returning, let's unset it after each test
+  process.exitCode = undefined;
+});
+
+describe('myctl (root)', () => {
+  it('emits expected output when called with no arguments', async () => {
+    expect.hasAssertions();
+
+    const logSpy = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => undefined);
+
+    const errorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    await run();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy.mock.calls).toStrictEqual([['ran root command handler']]);
+  });
+
+  it('emits expected output when called with unknown arguments', async () => {
+    expect.hasAssertions();
+
+    const logSpy = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => undefined);
+
+    const errorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    await run('--unknown');
+    await run('unknown');
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy.mock.calls).toStrictEqual([
+      ['ran root command handler'],
+      ['ran root command handler']
+    ]);
+  });
+
+  it('still terminates with 0 exit code when called with unknown arguments', async () => {
+    expect.hasAssertions();
+
+    await run('--unknown-argument');
+
+    expect(process.exitCode).toBe(0);
+  });
+});
+`;
+
+    const virtualFilePoolEsm = {
+      'cli.js': /* js */ `#!/usr/bin/env node
+
+import { runProgram } from '@black-flag/core';
+export default runProgram(import.meta.resolve('./commands'));
+`,
+      'commands/index.js': /* js */ `/**
+ * This little comment gives us intellisense support :)
+ *
+ * Also note how we're using the \`export const X = function(...) { ... }\` syntax
+ * instead of the streamlined \`export function X(...) { ... }\` syntax. Both of
+ * these syntaxes are correct, however JSDoc does not support using "@type" on
+ * the latter form for some reason.
+ *
+ * @type {import('@black-flag/core').Configuration['builder']}
+ */
+export const builder = function (blackFlag) {
+  return blackFlag.strict(false);
+};
+
+/**
+ * @type {import('@black-flag/core').RootConfiguration['handler']}
+ */
+export const handler = function (argv) {
+  console.log('ran root command handler');
+};
+
+/**
+ * Note that \`usage\` is just a freeform string used in help text. The \`command\`
+ * export, on the other hand, supports the Yargs DSL for defining positional
+ * parameters and the like.
+ *
+ * @type {import('@black-flag/core').RootConfiguration['usage']}
+ */
+export const usage = 'Usage: $0 command [options]\\n\\nCustom description here.';
+`
+    } as const;
+
+    const virtualFilePoolCjs = {
+      'cli.js': /* js */ `#!/usr/bin/env node
+
+const bf = require('@black-flag/core');
+const path = require('node:path');
+module.exports = bf.runProgram(path.join(__dirname, 'commands'));
+`,
+      'commands/index.js': /* js */ `module.exports = {
+  builder: function (blackFlag) {
+    return blackFlag.strict(false);
+  },
+
+  handler: function (argv) {
+    console.log('ran root command handler');
+  },
+
+  usage: 'Usage: $0 command [options]\\n\\nCustom description here.'
+};
+`
+    } as const;
+
+    for (const runType of ['esm', 'cjs'] as const) {
+      const virtualFilePool =
+        runType === 'cjs' ? virtualFilePoolCjs : virtualFilePoolEsm;
+
+      await withMockedFixture(async ({ root, fs }) => {
+        await fs.mkdir(runType);
+
+        let updatedRoot = toPath(root, runType);
+
+        await runYesRejectOnBadExit('mkdir', ['my-cli-project'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        // * --> cd my-cli-project <--
+
+        updatedRoot = toPath(updatedRoot, 'my-cli-project');
+
+        await runYesRejectOnBadExit('git', ['init'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        const readable = createWriteStream(toPath(updatedRoot, 'package.json'));
+        await once(readable, 'open');
+
+        await runYesRejectOnBadExit(
+          'echo',
+          [
+            `{"name":"myctl","version":"1.0.0","type":"module","bin":{"myctl":"./cli.js"}}`.replace(
+              '"module"',
+              runType === 'cjs' ? '"commonjs"' : '"module"'
+            )
+          ],
+          {
+            cwd: updatedRoot,
+            env: sharedRunEnv,
+            coerceOutputToString: false,
+            stdout: readable
+          }
+        );
+
+        // ! This pulls @black-flag/core from NPM (i.e. "fully end-to-end"). If
+        // ! we want to use the version from this repository, comment out this
+        // ! next command and copy node_modules from root instead.
+        await runYesRejectOnBadExit('npm', ['install', '@black-flag/core'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('mkdir', ['commands'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('touch', ['cli.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('chmod', ['+x', 'cli.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await fs.writeFile(toPath(updatedRoot, 'cli.js'), virtualFilePool['cli.js']);
+
+        await runYesRejectOnBadExit('touch', ['commands/index.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        const run = runnerFactory('./cli.js', [], {
+          cwd: updatedRoot,
+          reject: false,
+          env: sharedRunEnv
+        });
+
+        {
+          const { stdout, stderr, exitCode } = await run();
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: '',
+            exitCode: FrameworkExitCode.NotImplemented,
+            stderr: 'This command is currently unimplemented'
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['bad']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: '',
+            exitCode: FrameworkExitCode.DefaultError,
+            stderr: expect.stringMatching(
+              /Usage: myctl\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]\n\nUnknown argument: bad/
+            )
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['--bad']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: '',
+            exitCode: FrameworkExitCode.DefaultError,
+            stderr: expect.stringMatching(
+              /Usage: myctl\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]\n\nUnknown argument: bad/
+            )
+          });
+        }
+
+        await fs.writeFile(
+          toPath(updatedRoot, 'commands/index.js'),
+          virtualFilePool['commands/index.js']
+        );
+
+        {
+          const { stdout, stderr, exitCode } = await run();
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: 'ran root command handler',
+            exitCode: FrameworkExitCode.Ok,
+            stderr: ''
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['--bad', '--bad2', '--bad3']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: 'ran root command handler',
+            exitCode: FrameworkExitCode.Ok,
+            stderr: ''
+          });
+        }
+
+        await runYesRejectOnBadExit('touch', ['commands/init.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('mkdir', ['commands/remote'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('touch', ['commands/remote/index.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('touch', ['commands/remote/add.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('touch', ['commands/remote/remove.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await runYesRejectOnBadExit('touch', ['commands/remote/show.js'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        {
+          const { stdout, stderr, exitCode } = await run(['--help']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stderr: '',
+            exitCode: FrameworkExitCode.Ok,
+            stdout: expect.stringMatching(
+              /Usage: myctl command \[options\]\n\nCustom description here.\n\nCommands:\n\s+ myctl init\n\s+ myctl remote\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]/
+            )
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['remote', '--help']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stderr: '',
+            exitCode: FrameworkExitCode.Ok,
+            stdout: expect.stringMatching(
+              /Usage: myctl remote\n\nCommands:\n\s+ myctl remote add\n\s+ myctl remote remove\n\s+ myctl remote show\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]/
+            )
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['remote', 'show', '--help']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stderr: '',
+            exitCode: FrameworkExitCode.Ok,
+            stdout: expect.stringMatching(
+              /Usage: myctl remote show\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]/
+            )
+          });
+        }
+
+        {
+          const { stdout, stderr, exitCode } = await run(['remote', 'bad', 'horrible']);
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: '',
+            exitCode: FrameworkExitCode.DefaultError,
+            stderr: expect.stringMatching(
+              /Usage: myctl remote\n\nCommands:\n\s+ myctl remote add\n\s+ myctl remote remove\n\s+ myctl remote show\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nInvalid sub-command: you must call this with a valid sub-command argument/
+            )
+          });
+        }
+
+        await runYesRejectOnBadExit(
+          'npm',
+          ['install', '--save-dev', 'jest', '@babel/plugin-syntax-import-attributes'],
+          {
+            cwd: updatedRoot,
+            env: sharedRunEnv
+          }
+        );
+
+        await runYesRejectOnBadExit('touch', ['test.cjs'], {
+          cwd: updatedRoot,
+          env: sharedRunEnv
+        });
+
+        await fs.writeFile(toPath(updatedRoot, 'test.cjs'), virtualTestCjsFile);
+
+        {
+          const { stdout, stderr, exitCode } = await runNoRejectOnBadExit(
+            'npx',
+            ['jest', '--testMatch', '**/test.cjs', '--restoreMocks'],
+            {
+              cwd: updatedRoot,
+              env: {
+                ...sharedRunEnv,
+                NODE_OPTIONS: '--no-warnings --experimental-vm-modules'
+              }
+            }
+          );
+
+          expect({ runType, stderr, exitCode, stdout }).toStrictEqual({
+            runType,
+            stdout: expect.anything(),
+            exitCode: 0,
+            stderr: expect.stringContaining('PASS')
+          });
+        }
+      });
+    }
   });
 });
