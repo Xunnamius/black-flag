@@ -908,9 +908,15 @@ module.exports = {
   });
 });
 
-describe('[FULLY E2E] ./docs/getting-started.md', () => {
+describe('./docs/getting-started.md', () => {
   test('run through entire guide (programmatically) start to finish', async () => {
     expect.hasAssertions();
+
+    // * These tests will not work on Windows
+    if (process.platform === 'win32') {
+      expect(true).toBeTrue();
+      return;
+    }
 
     const virtualTestCjsFile =
       /* js */ `const { makeRunner } = require('@black-flag/core/util');
@@ -1080,14 +1086,6 @@ module.exports = bf.runProgram(path.join(__dirname, 'commands'));
             stdout: readable
           }
         );
-
-        // ! This pulls @black-flag/core from NPM (i.e. "fully end-to-end"). If
-        // ! we want to use the version from this repository, comment out this
-        // ! next command and copy node_modules from root instead.
-        await runYesRejectOnBadExit('npm', ['install', '@black-flag/core'], {
-          cwd: updatedRoot,
-          env: sharedRunEnv
-        });
 
         await runYesRejectOnBadExit('mkdir', ['commands'], {
           cwd: updatedRoot,
@@ -1271,6 +1269,22 @@ module.exports = bf.runProgram(path.join(__dirname, 'commands'));
             env: sharedRunEnv
           }
         );
+
+        // ! This might pull @black-flag/core from NPM (i.e. "real end-to-end")
+        // ! depending on process.env.DO_REAL_E2E
+        // eslint-disable-next-line unicorn/prefer-ternary
+        if (process.env.DO_REAL_E2E) {
+          await runYesRejectOnBadExit('npm', ['install', '@black-flag/core'], {
+            cwd: updatedRoot,
+            env: sharedRunEnv
+          });
+        } else {
+          // * Otherwise, we use the pre-built local version of Black Flag
+          await fs.rename(
+            'node_modules/@black-flag',
+            toPath(updatedRoot, 'node_modules/@black-flag')
+          );
+        }
 
         await runYesRejectOnBadExit('touch', ['test.cjs'], {
           cwd: updatedRoot,
