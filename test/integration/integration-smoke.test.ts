@@ -68,6 +68,7 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mod
       expect(context.testResult.stdout).toBe('first success');
     },
     {
+      // ! In this test, we give Black Flag a file:// URL instead of a path
       initialVirtualFiles: {
         'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
           toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
@@ -95,9 +96,12 @@ if(typeof module !== 'undefined' || typeof require !== 'undefined') {
   throw new Error('expected ESM runtime but detected CJS');
 }
 
-export default runProgram('${pathToFileURL(
-          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
-        ).toString()}', 'js mjs');`
+export default runProgram('${toPath(
+          __dirname,
+          '..',
+          'fixtures',
+          'several-files-cjs-esm'
+        ).replaceAll('\\', '\\\\')}', 'js mjs');`
       }
     }
   );
@@ -117,9 +121,12 @@ it('supports both CJS and ESM (js, mjs, cjs) configuration files in node CJS mod
         args: ['--no-warnings']
       },
       initialVirtualFiles: {
-        'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
-          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
-        ).toString()}', 'js cjs');`
+        'src/index.cjs': `require('@black-flag/core').runProgram('${toPath(
+          __dirname,
+          '..',
+          'fixtures',
+          'several-files-cjs-esm'
+        ).replaceAll('\\', '\\\\')}', 'js cjs');`
       }
     }
   );
@@ -146,9 +153,12 @@ if(typeof module !== 'undefined' || typeof require !== 'undefined') {
   throw new Error('expected ESM runtime but detected CJS');
 }
 
-export default runProgram('${pathToFileURL(
-          toPath(__dirname, '..', 'fixtures', 'several-files-cjs-esm')
-        ).toString()}', 'js mjs');`
+export default runProgram('${toPath(
+          __dirname,
+          '..',
+          'fixtures',
+          'several-files-cjs-esm'
+        ).replaceAll('\\', '\\\\')}', 'js mjs');`
       }
     }
   );

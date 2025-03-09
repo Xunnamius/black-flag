@@ -74,9 +74,12 @@ describe("import {...} from '@black-flag/core'", () => {
         // ! is working at every level. Do not change --version. This feature
         // ! has broken between node versions more than once :(
         initialVirtualFiles: {
-          'src/index.cjs': `require('@black-flag/core').configureProgram('${pathToFileURL(
-            toPath(__dirname, '..', 'fixtures', 'one-file-index-cjs')
-          ).toString()}').then(({execute}) => execute(['--version']));`
+          'src/index.cjs': `require('@black-flag/core').configureProgram('${toPath(
+            __dirname,
+            '..',
+            'fixtures',
+            'one-file-index-cjs'
+          ).replaceAll('\\', '\\\\')}').then(({execute}) => execute(['--version']));`
         }
       }
     );
@@ -96,9 +99,12 @@ describe("import {...} from '@black-flag/core'", () => {
         // ! is working at every level. Do not change --version. This feature
         // ! has broken between node versions more than once :(
         initialVirtualFiles: {
-          'src/index.cjs': `require('@black-flag/core').runProgram('${pathToFileURL(
-            toPath(__dirname, '..', 'fixtures', 'one-file-index-cjs')
-          ).toString()}', '--version');`
+          'src/index.cjs': `require('@black-flag/core').runProgram('${toPath(
+            __dirname,
+            '..',
+            'fixtures',
+            'one-file-index-cjs'
+          ).replaceAll('\\', '\\\\')}', '--version');`
         }
       }
     );
@@ -302,6 +308,7 @@ console.log(require('@black-flag/core/util').isPreExecutionContext({}) === false
         expect(context.testResult.stdout).toInclude('--help');
       },
       {
+        // ! In this test, we give Black Flag a file:// URL instead of a path
         initialVirtualFiles: {
           'src/index.cjs': `
 require('@black-flag/core/util').makeRunner({

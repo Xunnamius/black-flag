@@ -16,9 +16,9 @@ document.
 <br />
 
 <!-- symbiote-template-region-end -->
+<!-- TODO -->
 
-There are as of yet no notable deviations or additions. See the linked document
-(above) for information on the architecture of this project.
+TODO: talk about DO_REAL_E2E and its effect on e2e tests
 
 [1]: https://github.com/Xunnamius/symbiote/wiki/Generic-Project-Architecture
 [2]: https://github.com/Xunnamius/symbiote

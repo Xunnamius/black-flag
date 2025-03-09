@@ -374,11 +374,12 @@ export async function discoverCommands(
             return (await import(maybeConfigFileURL)) as ImportedConfigurationModule;
           } catch (error) {
             if (
-              isUnknownFileExtensionError(error) ||
+              isUnknownFileExtensionSystemError(error) ||
               (isModuleNotFoundSystemError(error) &&
                 (error.moduleName?.endsWith(maybeConfigPath) ||
                   /* istanbul ignore next */
-                  error.url?.endsWith(maybeConfigPath)))
+                  // ? Just match url against url and avoid escape issues (#174)
+                  error.url === maybeConfigFileURL.toString()))
             ) {
               loadDebug.warn(
                 'a recoverable failure occurred while attempting to load configuration: %O',
@@ -1402,7 +1403,7 @@ function isModuleNotFoundSystemError(error: unknown): error is Error & {
 /**
  * Type-guard for Node's "ERR_UNKNOWN_FILE_EXTENSION" so-called `SystemError`s.
  */
-function isUnknownFileExtensionError(error: unknown): error is Error & {
+function isUnknownFileExtensionSystemError(error: unknown): error is Error & {
   code: 'ERR_UNKNOWN_FILE_EXTENSION';
 } {
   return (

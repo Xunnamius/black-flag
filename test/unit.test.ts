@@ -168,7 +168,9 @@ describe('::configureProgram', () => {
       });
 
       await expect(bf.configureProgram('/does-not-exist')).rejects.toMatchObject({
-        message: BfErrorMessage.BadConfigurationPath('/does-not-exist')
+        // ? Windows path will look different than unix, so only expect the
+        // ? dir bit (#174)
+        message: expect.stringContaining('does-not-exist')
       });
 
       // @ts-expect-error: testing bad call
