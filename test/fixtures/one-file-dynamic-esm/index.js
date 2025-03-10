@@ -4,7 +4,7 @@ import { dirname, basename } from 'node:path';
 const filepath = fileURLToPath(import.meta.url);
 
 export default {
-  builder: (blackFlag, __, argv) => {
+  builder: (blackFlag, _helpOrVersionSet, argv) => {
     blackFlag.parserConfiguration({ 'parse-numbers': false });
 
     if (argv) {
@@ -13,7 +13,7 @@ export default {
           lang: { choices: ['node'] },
           version: { choices: ['19.8', '20.9', '21.1'] }
         };
-      } else {
+      } else if (argv.lang === 'python') {
         return {
           lang: { choices: ['python'] },
           version: {
@@ -21,12 +21,12 @@ export default {
           }
         };
       }
-    } else {
-      return {
-        lang: { choices: ['node', 'python'] },
-        version: { string: true }
-      };
     }
+
+    return {
+      lang: { choices: ['node', 'python'] },
+      version: { string: true }
+    };
   },
   handler: (argv) => {
     argv.handled_by = filepath;

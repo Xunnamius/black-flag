@@ -9,7 +9,7 @@ const commandModule = {
   builder: { option: { description: 'Some description', boolean: true } },
   deprecated: true,
   name: 'nsf',
-  command: '$0 test-positional',
+  command: '$0 [test-positional]',
   usage: 'USAGE: root program usage text',
   description: 'root program description text',
   handler: async (argv) => {

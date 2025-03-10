@@ -5,7 +5,7 @@
  * @type {Type.ParentConfig}
  */
 module.exports = {
-  command: '$0 dummy-positional2',
+  command: '$0 [dummy-positional2]',
   builder: (blackFlag) => {
     blackFlag.positional('dummy-positional2', { desc: 'Dummy description2' });
   },

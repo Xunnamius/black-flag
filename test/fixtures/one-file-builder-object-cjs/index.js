@@ -8,7 +8,7 @@ const name = basename(dirname(__filename));
  * @type {Type.RootConfig}
  */
 module.exports = {
-  usage: `usage text for root program ${name}`,
+  usage: `usage text for root program ${name}\n\nSecond line.\n\nThird Line.\n\n`,
   builder: () => {
     return { option: { number: true } };
   },

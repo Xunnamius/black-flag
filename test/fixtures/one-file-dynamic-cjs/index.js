@@ -5,7 +5,7 @@
  * @type {Type.ParentConfig}
  */
 module.exports = {
-  builder: (blackFlag, __, argv) => {
+  builder: (blackFlag, _helpOrVersionSet, argv) => {
     blackFlag.parserConfiguration({ 'parse-numbers': false });
 
     if (argv) {
@@ -14,7 +14,7 @@ module.exports = {
           lang: { choices: ['node'] },
           version: { choices: ['19.8', '20.9', '21.1'] }
         };
-      } else {
+      } else if (argv.lang === 'python') {
         return {
           lang: { choices: ['python'] },
           version: {
@@ -22,12 +22,12 @@ module.exports = {
           }
         };
       }
-    } else {
-      return {
-        lang: { choices: ['node', 'python'] },
-        version: { string: true }
-      };
     }
+
+    return {
+      lang: { choices: ['node', 'python'] },
+      version: { string: true }
+    };
   },
   handler: (argv) => {
     argv.handled_by = __filename;

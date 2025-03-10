@@ -11,7 +11,7 @@ export const deprecated = true;
 
 export const name = 'nsf';
 
-export const command = '$0 test-positional';
+export const command = '$0 [test-positional]';
 
 export const usage = 'USAGE: root program usage text';
 

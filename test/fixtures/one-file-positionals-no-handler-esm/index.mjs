@@ -1,1 +1,1 @@
-export default { command: '$0 positional-1 positional-2' };
+export default { command: '$0 <positional-1> <positional-2>' };

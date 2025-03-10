@@ -9,7 +9,7 @@ const commandModule = {
   builder: () => ({ 'child-option1': { boolean: true } }),
   deprecated: true,
   name: 'f',
-  command: '$0 test-positional',
+  command: '$0 [test-positional]',
   usage: 'USAGE: child program usage text',
   description: 'child program description text',
   handler: (argv) => {

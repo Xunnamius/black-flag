@@ -4,6 +4,6 @@
 /**
  * @type {Type.RootConfig}
  */
-const config = { command: '$0 <positional-1> <positional-2>' };
+const config = { command: '$0 <positional-1> positional-2 [three]' };
 
 module.exports = config;

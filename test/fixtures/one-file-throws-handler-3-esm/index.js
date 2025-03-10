@@ -1,15 +1,13 @@
-import { fileURLToPath } from 'node:url';
 import { dirname, basename } from 'node:path';
 
-const filepath = fileURLToPath(import.meta.url);
-const name = basename(dirname(filepath));
+const name = basename(dirname(__filename));
 
 export default {
   usage: `usage text for root program ${name}\n\nSecond line.\n\nThird Line.\n\n`,
   builder: (blackFlag) => {
     return blackFlag.option(name, { boolean: true });
   },
-  handler: (_argv) => {
-    throw new Error('error thrown in handler');
+  handler: async (_argv) => {
+    throw new (await import('universe:error.ts')).CliError('dead');
   }
 };

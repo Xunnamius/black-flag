@@ -1,5 +1,5 @@
 export default {
-  command: '$0 dummy-positional3',
+  command: '$0 [dummy-positional3]',
   builder: (blackFlag) => {
     blackFlag.positional('dummy-positional3', { desc: 'Dummy description3' });
   },

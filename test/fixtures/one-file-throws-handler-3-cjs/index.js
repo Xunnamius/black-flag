@@ -12,7 +12,7 @@ module.exports = {
   builder: (blackFlag) => {
     return blackFlag.option(name, { boolean: true });
   },
-  handler: (_argv) => {
-    throw new Error('error thrown in handler');
+  handler: async (_argv) => {
+    throw new (await import('universe:error.ts')).CliError('dead');
   }
 };
