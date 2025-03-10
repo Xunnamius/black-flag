@@ -8,7 +8,7 @@
 
 > `const` **BfErrorMessage**: `object`
 
-Defined in: [src/error.ts:274](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L274)
+Defined in: [src/error.ts:283](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L283)
 
 A collection of possible error and warning messages emitted by Black Flag.
 
@@ -334,7 +334,19 @@ A collection of possible error and warning messages emitted by Black Flag.
 
 `string`
 
-### InvalidCommandExport()
+### InvalidCommandExportBadPositionals()
+
+#### Parameters
+
+##### name
+
+`string`
+
+#### Returns
+
+`string`
+
+### InvalidCommandExportBadStart()
 
 #### Parameters
 

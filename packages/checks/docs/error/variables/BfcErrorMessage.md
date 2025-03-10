@@ -1,32 +1,32 @@
-[**@black-flag/checks**](../../README.md)
+[**@black-flag/checks**][1]
 
-***
+---
 
-[@black-flag/checks](../../README.md) / [error](../README.md) / BfcErrorMessage
+[@black-flag/checks][1] / [error][2] / BfcErrorMessage
 
 # Variable: BfcErrorMessage
 
 > `const` **BfcErrorMessage**: `object`
 
-Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/checks/src/error.ts#L5)
+Defined in: [error.ts:5][3]
 
 A collection of possible error and warning messages.
 
-## Type declaration
+## Type Declaration
 
-### BadType()
+### Badtype()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
-##### expected
+##### Expected
 
 `string`
 
-##### actual
+##### Actual
 
 `string`
 
@@ -34,11 +34,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### OptionMustBeNonNegative()
+### Optionmustbenonnegative()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
@@ -46,11 +46,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### OptionMustNotBeFalsy()
+### Optionmustnotbefalsy()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
@@ -58,15 +58,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### OptionRequiresMinArgs()
+### Optionrequiresminargs()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
-##### adjective?
+##### Adjective?
 
 `string`
 
@@ -74,15 +74,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### OptionValueMustBeAlone()
+### Optionvaluemustbealone()
 
 #### Parameters
 
-##### option
+##### Option
 
 `string`
 
-##### noun
+##### Noun
 
 `string`
 
@@ -90,18 +90,22 @@ A collection of possible error and warning messages.
 
 `string`
 
-### OptionValueMustBeAloneWhenBaseline()
+### Optionvaluemustbealonewhenbaseline()
 
 #### Parameters
 
-##### option
+##### Option
 
 `string`
 
-##### noun
+##### Noun
 
 `string`
 
 #### Returns
 
 `string`
+
+[1]: ../../README.md
+[2]: ../README.md
+[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/checks/src/error.ts#L5

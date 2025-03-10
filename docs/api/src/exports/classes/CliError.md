@@ -6,7 +6,7 @@
 
 # Class: CliError
 
-Defined in: [src/error.ts:132](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L132)
+Defined in: [src/error.ts:141](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L141)
 
 Represents a CLI-specific error with suggested exit code and other
 properties. As `CliError` has built-in support for cause chaining, this class
@@ -32,7 +32,7 @@ can be used as a simple wrapper around other errors.
 
 > **new CliError**(`reason`?, `options`?): [`CliError`](CliError.md)
 
-Defined in: [src/error.ts:142](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L142)
+Defined in: [src/error.ts:151](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L151)
 
 Represents a CLI-specific error, optionally with suggested exit code and
 other context.
@@ -59,7 +59,7 @@ other context.
 
 > **new CliError**(`reason`, `options`, `message`, `superOptions`): [`CliError`](CliError.md)
 
-Defined in: [src/error.ts:147](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L147)
+Defined in: [src/error.ts:156](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L156)
 
 This constructor syntax is used by subclasses when calling this constructor
 via `super`.
@@ -96,7 +96,7 @@ via `super`.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L137)
+Defined in: [src/error.ts:146](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L146)
 
 ***
 
@@ -120,7 +120,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:135](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L135)
+Defined in: [src/error.ts:144](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L144)
 
 This option is similar in intent to yargs's `exitProcess()` function,
 except applied more granularly.
@@ -177,13 +177,20 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ### showHelp
 
-> **showHelp**: `boolean` = `false`
+> **showHelp**: `undefined` \| `boolean` \| `"full"` \| `"short"` \| `"default"`
 
-Defined in: [src/error.ts:134](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L134)
+Defined in: [src/error.ts:143](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L143)
 
-If `true`, help text will be sent to stderr _before this exception finishes
-bubbling_. Where the exception is thrown will determine which instance is
-responsible for error text generation.
+If truthy, help text will be sent to stderr _before this exception finishes
+bubbling_.
+
+Specifically, if `showHelp` is set to `"full"`, the full help text will be
+sent to stderr, including the entire `usage` string. If set to `"short"`
+(or `true`), the same help text will be sent to stderr except only the
+first line of usage will be included. If set to `"default"`, the value of
+`ExecutionContext::state.showHelpOnFail` will be used. If set to
+`false` (the default), no help text will be sent to stderr related to this
+error.
 
 #### Default
 
@@ -213,7 +220,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:133](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L133)
+Defined in: [src/error.ts:142](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L142)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

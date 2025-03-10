@@ -8,7 +8,7 @@
 
 > **Configuration**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
 
-Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/module.ts#L15)
+Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/module.ts#L15)
 
 A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a
@@ -76,7 +76,9 @@ first invoked** and so aren't available until a little later.
 
 > **command**: `"$0"` \| `` `$0 ${string}` ``
 
-The command as interpreted by yargs. May contain positional arguments.
+The command as interpreted by yargs. May contain positional arguments
+declared using the [`yargs::command`
+DSL](https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments).
 
 It is usually unnecessary to change or use this property if you're not
 using positional arguments. If you want to change your command's name, use
@@ -123,7 +125,8 @@ be considered "hidden" by yargs.
 A function called when this command is invoked. It will receive an object
 of parsed arguments.
 
-If `undefined`, a `CommandNotImplementedError` will be thrown.
+If `undefined`, the command will be considered "unimplemented" and a
+`CommandNotImplementedError` will be thrown.
 
 #### Parameters
 
@@ -158,6 +161,11 @@ filename without extension is "index".
 > **usage**: `string`
 
 Set a usage message shown at the top of the command's help text.
+
+Depending on the value of `ExecutionContext::state.showHelpOnFail`, either
+the "short" first line of usage text will be output during errors or the
+"full" usage string. Either way, whenever help text is explicitly requested
+(e.g. `--help` is given), the full usage string will be output.
 
 Several replacements are made to the `usage` string before it is output. In
 order:

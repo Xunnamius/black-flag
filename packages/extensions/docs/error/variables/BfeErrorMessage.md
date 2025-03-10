@@ -1,20 +1,20 @@
-[**@black-flag/extensions**](../../README.md)
+[**@black-flag/extensions**][1]
 
-***
+---
 
-[@black-flag/extensions](../../README.md) / [error](../README.md) / BfeErrorMessage
+[@black-flag/extensions][1] / [error][2] / BfeErrorMessage
 
 # Variable: BfeErrorMessage
 
 > `const` **BfeErrorMessage**: `object`
 
-Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/error.ts#L14)
+Defined in: [packages/extensions/src/error.ts:14][3]
 
 A collection of possible error and warning messages.
 
-## Type declaration
+## Type Declaration
 
-### AppValidationFailure()
+### Appvalidationfailure()
 
 > **AppValidationFailure**: () => `string`
 
@@ -22,7 +22,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### AuthFailure()
+### Authfailure()
 
 > **AuthFailure**: () => `string`
 
@@ -30,7 +30,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### ClientValidationFailure()
+### Clientvalidationfailure()
 
 > **ClientValidationFailure**: () => `string`
 
@@ -38,7 +38,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### GuruMeditation()
+### Gurumeditation()
 
 > **GuruMeditation**: () => `string`
 
@@ -46,13 +46,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### HttpFailure()
+### Httpfailure()
 
 > **HttpFailure**: (`error`?) => `string`
 
 #### Parameters
 
-##### error?
+##### Error?
 
 `string`
 
@@ -60,17 +60,17 @@ A collection of possible error and warning messages.
 
 `string`
 
-### HttpSubFailure()
+### Httpsubfailure()
 
 > **HttpSubFailure**: (`error`, `statusCode`) => `string`
 
 #### Parameters
 
-##### error
+##### Error
 
 `null` | `string`
 
-##### statusCode
+##### Statuscode
 
 `number`
 
@@ -78,13 +78,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidAppConfiguration()
+### Invalidappconfiguration()
 
 > **InvalidAppConfiguration**: (`details`?) => `string`
 
 #### Parameters
 
-##### details?
+##### Details?
 
 `string`
 
@@ -92,13 +92,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidAppEnvironment()
+### Invalidappenvironment()
 
 > **InvalidAppEnvironment**: (`details`?) => `string`
 
 #### Parameters
 
-##### details?
+##### Details?
 
 `string`
 
@@ -106,13 +106,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidClientConfiguration()
+### Invalidclientconfiguration()
 
 > **InvalidClientConfiguration**: (`details`?) => `string`
 
 #### Parameters
 
-##### details?
+##### Details?
 
 `string`
 
@@ -120,17 +120,17 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidItem()
+### Invaliditem()
 
 > **InvalidItem**: (`item`, `itemName`) => `string`
 
 #### Parameters
 
-##### item
+##### Item
 
 `unknown`
 
-##### itemName
+##### Itemname
 
 `string`
 
@@ -138,13 +138,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidSecret()
+### Invalidsecret()
 
 > **InvalidSecret**: (`secretType`) => `string`
 
 #### Parameters
 
-##### secretType
+##### Secrettype
 
 `string`
 
@@ -152,17 +152,17 @@ A collection of possible error and warning messages.
 
 `string`
 
-### ItemNotFound()
+### Itemnotfound()
 
 > **ItemNotFound**: (`item`, `itemName`) => `string`
 
 #### Parameters
 
-##### item
+##### Item
 
 `unknown`
 
-##### itemName
+##### Itemname
 
 `string`
 
@@ -170,13 +170,13 @@ A collection of possible error and warning messages.
 
 `string`
 
-### ItemOrItemsNotFound()
+### Itemoritemsnotfound()
 
 > **ItemOrItemsNotFound**: (`itemsName`) => `string`
 
 #### Parameters
 
-##### itemsName
+##### Itemsname
 
 `string`
 
@@ -184,7 +184,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### NotAuthenticated()
+### Notauthenticated()
 
 > **NotAuthenticated**: () => `string`
 
@@ -192,7 +192,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### NotAuthorized()
+### Notauthorized()
 
 > **NotAuthorized**: () => `string`
 
@@ -200,7 +200,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### NotFound()
+### Notfound()
 
 > **NotFound**: () => `string`
 
@@ -208,7 +208,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### NotImplemented()
+### Notimplemented()
 
 > **NotImplemented**: () => `string`
 
@@ -216,7 +216,7 @@ A collection of possible error and warning messages.
 
 `string`
 
-### ValidationFailure()
+### Validationfailure()
 
 > **ValidationFailure**: () => `string`
 
@@ -224,11 +224,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### BadConfigurationPath()
+### Badconfigurationpath()
 
 #### Parameters
 
-##### path
+##### Path
 
 `unknown`
 
@@ -236,23 +236,23 @@ A collection of possible error and warning messages.
 
 `string`
 
-### BadParameterCombination()
+### Badparametercombination()
 
 #### Returns
 
 `string`
 
-### CannotExecuteMultipleTimes()
+### Cannotexecutemultipletimes()
 
 #### Returns
 
 `string`
 
-### CheckFailed()
+### Checkfailed()
 
 #### Parameters
 
-##### currentArgument
+##### Currentargument
 
 `string`
 
@@ -260,23 +260,23 @@ A collection of possible error and warning messages.
 
 `string`
 
-### CommandHandlerNotAFunction()
+### Commandhandlernotafunction()
 
 #### Returns
 
 `string`
 
-### CommandNotImplemented()
+### Commandnotimplemented()
 
 #### Returns
 
 `string`
 
-### ConfigLoadFailure()
+### Configloadfailure()
 
 #### Parameters
 
-##### path
+##### Path
 
 `string`
 
@@ -284,15 +284,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### ConflictsViolation()
+### Conflictsviolation()
 
 #### Parameters
 
-##### conflicter
+##### Conflicter
 
 `string`
 
-##### seenConflictingKeyValues
+##### Seenconflictingkeyvalues
 
 `ObjectEntries`
 
@@ -300,11 +300,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DemandGenericXorViolation()
+### Demandgenericxorviolation()
 
 #### Parameters
 
-##### demanded
+##### Demanded
 
 `ObjectEntries`
 
@@ -312,15 +312,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DemandIfViolation()
+### Demandifviolation()
 
 #### Parameters
 
-##### demanded
+##### Demanded
 
 `string`
 
-##### demander
+##### Demander
 
 `ObjectEntry`
 
@@ -328,11 +328,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DemandOrViolation()
+### Demandorviolation()
 
 #### Parameters
 
-##### demanded
+##### Demanded
 
 `ObjectEntries`
 
@@ -340,15 +340,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DemandSpecificXorViolation()
+### Demandspecificxorviolation()
 
 #### Parameters
 
-##### firstArgument
+##### Firstargument
 
 `ObjectEntry`
 
-##### secondArgument
+##### Secondargument
 
 `ObjectEntry`
 
@@ -356,27 +356,27 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DuplicateCommandName()
+### Duplicatecommandname()
 
 #### Parameters
 
-##### parentFullName
+##### Parentfullname
 
 `undefined` | `string`
 
-##### name1
+##### Name1
 
 `string`
 
-##### type1
+##### Type1
 
 `"name"` | `"alias"`
 
-##### name2
+##### Name2
 
 `string`
 
-##### type2
+##### Type2
 
 `"name"` | `"alias"`
 
@@ -384,11 +384,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### DuplicateOptionName()
+### Duplicateoptionname()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
@@ -396,17 +396,17 @@ A collection of possible error and warning messages.
 
 `string`
 
-### FalsyCommandExport()
+### Falsycommandexport()
 
 #### Returns
 
 `string`
 
-### FrameworkError()
+### Frameworkerror()
 
 #### Parameters
 
-##### error
+##### Error
 
 `unknown`
 
@@ -420,33 +420,33 @@ A collection of possible error and warning messages.
 
 `string`
 
-### GracefulEarlyExit()
+### Gracefulearlyexit()
 
 #### Returns
 
 `string`
 
-### IllegalExplicitlyUndefinedDefault()
+### Illegalexplicitlyundefineddefault()
 
 #### Returns
 
 `string`
 
-### IllegalHandlerInvocation()
+### Illegalhandlerinvocation()
 
 #### Returns
 
 `string`
 
-### ImpliesViolation()
+### Impliesviolation()
 
 #### Parameters
 
-##### implier
+##### Implier
 
 `string`
 
-##### seenConflictingKeyValues
+##### Seenconflictingkeyvalues
 
 `ObjectEntries`
 
@@ -454,15 +454,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidCharacters()
+### Invalidcharacters()
 
 #### Parameters
 
-##### str
+##### Str
 
 `string`
 
-##### violation
+##### Violation
 
 `string`
 
@@ -470,11 +470,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidCommandExport()
+### Invalidcommandexport()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
@@ -482,29 +482,29 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidConfigureArgumentsReturnType()
+### Invalidconfigureargumentsreturntype()
 
 #### Returns
 
 `string`
 
-### InvalidConfigureExecutionContextReturnType()
+### Invalidconfigureexecutioncontextreturntype()
 
 #### Returns
 
 `string`
 
-### InvalidConfigureExecutionEpilogueReturnType()
+### Invalidconfigureexecutionepiloguereturntype()
 
 #### Returns
 
 `string`
 
-### InvalidExecutionContextBadField()
+### Invalidexecutioncontextbadfield()
 
 #### Parameters
 
-##### fieldName
+##### Fieldname
 
 `string`
 
@@ -512,17 +512,17 @@ A collection of possible error and warning messages.
 
 `string`
 
-### InvalidSubCommandInvocation()
+### Invalidsubcommandinvocation()
 
 #### Returns
 
 `string`
 
-### InvocationNotAllowed()
+### Invocationnotallowed()
 
 #### Parameters
 
-##### name
+##### Name
 
 `string`
 
@@ -530,11 +530,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### MetadataInvariantViolated()
+### Metadatainvariantviolated()
 
 #### Parameters
 
-##### afflictedKey
+##### Afflictedkey
 
 `string`
 
@@ -542,11 +542,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### NoConfigurationLoaded()
+### Noconfigurationloaded()
 
 #### Parameters
 
-##### path
+##### Path
 
 `string`
 
@@ -554,21 +554,21 @@ A collection of possible error and warning messages.
 
 `string`
 
-### PathIsNotDirectory()
+### Pathisnotdirectory()
 
 #### Returns
 
 `string`
 
-### ReferencedNonExistentOption()
+### Referencednonexistentoption()
 
 #### Parameters
 
-##### referrerName
+##### Referrername
 
 `string`
 
-##### doesNotExistName
+##### Doesnotexistname
 
 `string`
 
@@ -576,15 +576,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### RequiresViolation()
+### Requiresviolation()
 
 #### Parameters
 
-##### requirer
+##### Requirer
 
 `string`
 
-##### missingRequiredKeyValues
+##### Missingrequiredkeyvalues
 
 `ObjectEntries`
 
@@ -592,20 +592,24 @@ A collection of possible error and warning messages.
 
 `string`
 
-### UnexpectedlyFalsyDetailedArguments()
+### Unexpectedlyfalsydetailedarguments()
 
 #### Returns
 
 `string`
 
-### UnexpectedValueFromInternalYargsMethod()
+### Unexpectedvaluefrominternalyargsmethod()
 
 #### Returns
 
 `string`
 
-### UseParseAsyncInstead()
+### Useparseasyncinstead()
 
 #### Returns
 
 `string`
+
+[1]: ../../README.md
+[2]: ../README.md
+[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/error.ts#L14

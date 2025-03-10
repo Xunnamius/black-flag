@@ -8,12 +8,12 @@
 
 > **Executor**: (`rawArgv`?) => `Promise`\<[`Arguments`](../../type-aliases/Arguments.md)\>
 
-Defined in: [src/types/program.ts:279](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/program.ts#L279)
+Defined in: [src/types/program.ts:284](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L284)
 
 This function accepts an optional `rawArgv` array that defaults to
 `yargs::hideBin(process.argv)` and returns an `Arguments` object representing
 the arguments parsed and validated by yargs (i.e.
-`context.state.deepestParseResult`).
+`ExecutionContext::state.deepestParseResult`).
 
 **This function throws whenever\* an exception occurs**, making it not ideal
 as an entry point for a CLI. See [runProgram](../../functions/runProgram.md) for a wrapper function
@@ -21,10 +21,10 @@ that handles exceptions and sets the exit code for you.
 
 Note: when the special `GracefulEarlyExitError` exception is thrown _from
 within a command's handler or builder_, `Executor` will set
-`context.state.deepestParseResult` to `NullArguments` and
-`context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
-not** re-throw the exception in this special case, returning `NullArguments`
-instead.
+`ExecutionContext::state.deepestParseResult` to `NullArguments` and
+`ExecutionContext::state.isGracefullyExiting` to `true`. Further, `Executor`
+**will not** re-throw the exception in this special case, returning
+`NullArguments` instead.
 
 ## Parameters
 

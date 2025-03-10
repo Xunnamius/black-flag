@@ -38,10 +38,15 @@ An object describing "virtual files" represented by mappings between
 non-existent RelativePaths and their theoretical (immutable)
 contents. These paths are relative to the dummy root directory.
 
-Some fixtures use the `initialVirtualFiles` option to lookup certain
-values, such as picking out keys from a virtual `package.json` file.
+Non-string contents will be stringified via `JSON.stringify(entry,
+undefined, 2)`.
 
-**These virtual files are not created on the filesystem automatically!**
+Note that some fixtures use the `initialVirtualFiles` option to lookup
+certain values, such as picking out keys from a virtual `package.json`
+file.
+
+Also note that **these virtual files are not created on the filesystem
+automatically!**
 
 To have the virtual files described in `initialVirtualFiles` actually
 written out to the filesystem (relative to the dummy root directory), you
@@ -52,7 +57,7 @@ filesystem using the `initialDirectories` option.
 
 #### Index Signature
 
-\[`filePath`: `string` \| `RelativePath`\]: `string`
+\[`filePath`: `string` \| `RelativePath`\]: `unknown`
 
 ### performCleanup
 

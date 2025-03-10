@@ -8,7 +8,7 @@
 
 > **isGracefulEarlyExitError**(`parameter`): `parameter is GracefulEarlyExitError`
 
-Defined in: [src/error.ts:44](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L44)
+Defined in: [src/error.ts:46](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L46)
 
 Type guard for [GracefulEarlyExitError](../classes/GracefulEarlyExitError.md).
 

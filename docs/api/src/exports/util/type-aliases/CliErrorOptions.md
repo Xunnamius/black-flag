@@ -8,7 +8,7 @@
 
 > **CliErrorOptions**: `object`
 
-Defined in: [src/error.ts:73](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/error.ts#L73)
+Defined in: [src/error.ts:75](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L75)
 
 Options available when constructing a new `CliError` object.
 
@@ -54,11 +54,18 @@ command handlers. Tread carefully.
 
 ### showHelp?
 
-> `optional` **showHelp**: `boolean`
+> `optional` **showHelp**: [`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\] \| `"default"`
 
-If `true`, help text will be sent to stderr _before this exception finishes
-bubbling_. Where the exception is thrown will determine which instance is
-responsible for error text generation.
+If truthy, help text will be sent to stderr _before this exception finishes
+bubbling_.
+
+Specifically, if `showHelp` is set to `"full"`, the full help text will be
+sent to stderr, including the entire `usage` string. If set to `"short"`
+(or `true`), the same help text will be sent to stderr except only the
+first line of usage will be included. If set to `"default"`, the value of
+`ExecutionContext::state.showHelpOnFail` will be used. If set to
+`false` (the default), no help text will be sent to stderr related to this
+error.
 
 #### Default
 

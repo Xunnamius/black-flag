@@ -8,7 +8,7 @@
 
 > **ExecutionContext**: `object`
 
-Defined in: [src/types/program.ts:327](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/program.ts#L327)
+Defined in: [src/types/program.ts:332](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L332)
 
 Represents a globally-accessible shared context object singleton.
 
@@ -145,22 +145,18 @@ yargs `yargs::help` method. Set this to the value you want using the
 `configureExecutionContext` configuration hook (any other hook is run too
 late).
 
-`name`, if provided, must be >= 1 character in length. If `name`
-is exactly one character in length, the help option will take the form of
-`-${name}`, otherwise `--${name}`.
-
-Alternatively, set `globalVersionOption = undefined` to disable the
-built-in `--help` option on the root command.
+Alternatively, set `globalHelpOption = undefined` to disable the built-in
+`--help` flag (or the equivalent) on the root command.
 
 Note: this property should not be relied upon or mutated by
 end-developers _outside of the `configureExecutionContext` configuration
 hook_. Doing so will result in undefined behavior.
 
-##### Default
+##### Type declaration
 
-```ts
-{ name: "help", description: defaultHelpTextDescription }
-```
+\{ `description`: `string`; `name`: `string`; \}
+
+`undefined`
 
 #### state.globalVersionOption
 
@@ -171,25 +167,18 @@ yargs `yargs::version` method. Set this to the value you want using the
 `configureExecutionContext` configuration hook (any other hook is run too
 late).
 
-`name`, if provided, must be >= 1 character in length. If `name` is
-exactly one character in length, the version option will take the form of
-`-${name}`, otherwise `--${name}`. `text`, if provided, will be the
-version text sent to stdout and defaults to the "version" property in the
-nearest `package.json`.
-
 Alternatively, set `globalVersionOption = undefined` to disable the
-built-in `--version` option on the root command.
+built-in `--version` flag on the root command.
 
 Note: this property should not be relied upon or mutated by
 end-developers _outside of the `configureExecutionContext` configuration
 hook_. Doing so will result in undefined behavior.
 
-##### Default
+##### Type declaration
 
-```ts
-{ name: "version", description: defaultVersionTextDescription,
-     * text: `${packageJson.version}` }
-```
+\{ `description`: `string`; `name`: `string`; `text`: `string`; \}
+
+`undefined`
 
 #### state.initialTerminalWidth
 
@@ -224,9 +213,9 @@ If `isHandlingHelpOption` is `true`, Black Flag is currently in the
 process of getting yargs to generate help text for some command.
 
 Checking the value of this property is useful when you want to know if
-`--help` (or whatever your equivalent option is) was passed to the root
-command. The value of `isHandlingHelpOption` is also used to determine
-the value of `helpOrVersionSet` in commands' `builder` functions.
+the `--help` flag (or the equivalent) was passed to the root command. The
+value of `isHandlingHelpOption` is also used to determine the value of
+`helpOrVersionSet` in commands' `builder` functions.
 
 We have to track this separately from yargs since we're stacking multiple
 yargs instances and they all want to be the one that handles generating
@@ -234,8 +223,8 @@ help text.
 
 Note: setting `isHandlingHelpOption` to `true` manually via
 `configureExecutionContext` will cause Black Flag to output help text as
-if the user had specified `--help` (or the equivalent) as one of their
-arguments.
+if the user had specified the `--help` flag (or the equivalent) as one of
+their arguments.
 
 ##### Default
 
@@ -251,10 +240,9 @@ If `isHandlingVersionOption` is `true`, Black Flag is currently in the
 process of getting yargs to generate version text for some command.
 
 Checking the value of this property is useful when you want to know if
-`--version` (or whatever your equivalent option is) was passed to the
-root command. The value of `isHandlingVersionOption` is also used to
-determine the value of `helpOrVersionSet` in commands' `builder`
-functions.
+the `--version` flag (or the equivalent) was passed to the root command.
+The value of `isHandlingVersionOption` is also used to determine the
+value of `helpOrVersionSet` in commands' `builder` functions.
 
 We have to track this separately from yargs since we're stacking multiple
 yargs instances and they all want to be the one that handles generating
@@ -294,13 +282,26 @@ invariant satisfaction.**
 
 #### state.showHelpOnFail
 
-> **showHelpOnFail**: `boolean`
+> **showHelpOnFail**: `boolean` \| `"full"` \| `"short"`
 
-If `true`, Black Flag will dump help text to stderr when an error occurs.
-This is also set when `Program::showHelpOnFail` is called.
+If truthy, Black Flag will dump help text to stderr when an error occurs.
+This is also set when `Program::showHelpOnFail` is called. If `false`,
+error text will not be sent to stderr (by default) when an error occurs.
+
+Further, this property determines how a command's `usage` string will be
+included in said help text. All but the first line of `usage` is excluded
+when `outputStyle` is `true` (the default) or `"short"`; if `outputStyle`
+is `"full"`, the entire `usage` string is always included when outputting
+help text during errors.
+
+Note that the full usage string is always output when the `--help` flag
+(or the equivalent) is explicitly given.
+
+Also note that this property is a getter/setter and should not be
+redefined (e.g. by `Object.defineProperty`).
 
 ##### Default
 
 ```ts
-true
+"short"
 ```

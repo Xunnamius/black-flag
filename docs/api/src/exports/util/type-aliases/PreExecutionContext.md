@@ -8,7 +8,7 @@
 
 > **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & `object`
 
-Defined in: [src/types/program.ts:290](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/program.ts#L290)
+Defined in: [src/types/program.ts:295](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L295)
 
 Represents the pre-execution context that is the result of calling
 `configureProgram`.
@@ -29,10 +29,10 @@ function that handles exceptions and sets the exit code for you.
 
 Note: when the special `GracefulEarlyExitError` exception is thrown _from
 within a command's handler or builder (or certain hooks)_, `Executor` will
-set `context.state.deepestParseResult` to `NullArguments` and
-`context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
-not** re-throw the exception in this special case, returning
-`NullArguments` instead.
+set `ExecutionContext::state.deepestParseResult` to `NullArguments` and
+`ExecutionContext::state.isGracefullyExiting` to `true`. Further,
+`Executor` **will not** re-throw the exception in this special case,
+returning `NullArguments` instead.
 
 ### executionContext
 

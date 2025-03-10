@@ -8,7 +8,7 @@
 
 > **ConfigureExecutionEpilogue**\<`CustomContext`\>: (`argv`, `context`) => `Promisable`\<[`Arguments`](Arguments.md)\>
 
-Defined in: [src/types/configure.ts:65](https://github.com/Xunnamius/black-flag/blob/41bcd587ae1e5e4c88c48238363c70e315cd242a/src/types/configure.ts#L65)
+Defined in: [src/types/configure.ts:65](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/configure.ts#L65)
 
 This function is called once after CLI argument parsing completes and either
 (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown.

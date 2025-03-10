@@ -1,29 +1,29 @@
-[**@black-flag/extensions**](../../README.md)
+[**@black-flag/extensions**][1]
 
-***
+---
 
-[@black-flag/extensions](../../README.md) / [index](../README.md) / BfeSubOptionOfExtensionValue
+[@black-flag/extensions][1] / [index][2] / BfeSubOptionOfExtensionValue
 
-# Type Alias: BfeSubOptionOfExtensionValue\<CustomCliArguments, CustomExecutionContext\>
+# Type Alias: BfeSubOptionOfExtensionValue\<CustomCliArguments, CustomExecutionContext>
 
-> **BfeSubOptionOfExtensionValue**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
+> **BfeSubOptionOfExtensionValue**<`CustomCliArguments`, `CustomExecutionContext`>: `object`
 
-Defined in: [packages/extensions/src/index.ts:502](https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L502)
+Defined in: [packages/extensions/src/index.ts:502][3]
 
 The array element type of
-[BfeBuilderObjectValueExtensions.subOptionOf](BfeBuilderObjectValueExtensions.md#suboptionof).
+[BfeBuilderObjectValueExtensions.subOptionOf][4].
 
 ## Type Parameters
 
-• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
+• **CustomCliArguments** _extends_ `Record`<`string`, `unknown`>
 
-• **CustomExecutionContext** *extends* `ExecutionContext`
+• **CustomExecutionContext** _extends_ `ExecutionContext`
 
-## Type declaration
+## Type Declaration
 
-### update
+### Update
 
-> **update**: (`oldOptionConfig`, `argv`) => [`BfeBuilderObjectValueWithoutSubOptionOfExtension`](BfeBuilderObjectValueWithoutSubOptionOfExtension.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`BfeBuilderObjectValueWithoutSubOptionOfExtension`](BfeBuilderObjectValueWithoutSubOptionOfExtension.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+> **update**: (`oldOptionConfig`, `argv`) => [`BfeBuilderObjectValueWithoutSubOptionOfExtension`][5]<`CustomCliArguments`, `CustomExecutionContext`> | [`BfeBuilderObjectValueWithoutSubOptionOfExtension`][5]<`CustomCliArguments`, `CustomExecutionContext`>
 
 This function receives the current configuration for this option
 (`oldOptionConfig`) and the fully parsed `argv` (not including any default
@@ -39,7 +39,7 @@ return {
 }
 ```
 
-### when()
+### When()
 
 > **when**: (`superOptionValue`, `argv`) => `boolean`
 
@@ -57,14 +57,20 @@ given, regardless of its value, it is acceptable to use `{ when: () => true
 
 #### Parameters
 
-##### superOptionValue
+##### Superoptionvalue
 
 `any`
 
-##### argv
+##### Argv
 
-`Arguments`\<`CustomCliArguments`, `CustomExecutionContext`\>
+`Arguments`<`CustomCliArguments`, `CustomExecutionContext`>
 
 #### Returns
 
 `boolean`
+
+[1]: ../../README.md
+[2]: ../README.md
+[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L502
+[4]: BfeBuilderObjectValueExtensions.md#suboptionof
+[5]: BfeBuilderObjectValueWithoutSubOptionOfExtension.md
