@@ -40,7 +40,7 @@ Flag, but are noted below nonetheless.
   `yargs::help`/`yargs::version` will throw. If you require the functionality of
   `yargs::help`/`yargs::version` to disable or modify the `--help`/`--version`
   option, update
-  [`context.state.globalHelpOption`][9]/[`context.state.globalVersionOption`][10]
+  [`ExecutionContext::state.globalHelpOption`][9]/[`ExecutionContext::state.globalVersionOption`][10]
   directly in [`configureExecutionContext`][11].
 
   > [!NOTE]
@@ -53,8 +53,8 @@ Flag, but are noted below nonetheless.
   > Only the root command support the built-in `--version` option. Calling
   > `--version` on a child command will have no effect unless you make it so.
   > This dodges [another Yargs footgun][12], and setting
-  > [`context.state.globalVersionOption = undefined`][10] will prevent Yargs
-  > from clobbering any custom version arguments on the root command too.
+  > [`ExecutionContext::state.globalVersionOption = undefined`][10] will prevent
+  > Yargs from clobbering any custom version arguments on the root command too.
 
 ## Irrelevant Differences
 
@@ -116,12 +116,15 @@ Flag, but are noted below nonetheless.
   will throw if invoked more than once.
 
 - One of Black Flag's features is simple comprehensive error reporting via the
-  [`configureErrorHandlingEpilogue`][24] configuration hook. Therefore, the
-  `yargs::showHelpOnFail` method will ignore the redundant "message" parameter.
-  If you want that functionality, use said hook to output an epilogue after
-  Yargs outputs an error message, or use `yargs::epilogue`/`yargs::example`.
-  Also, any invocation of `yargs::showHelpOnFail` applies globally to all
-  commands in your hierarchy.
+  [`configureErrorHandlingEpilogue`][24] configuration hook. Therefore, Black
+  Flag's overridden version of the `yargs::showHelpOnFail` method will ignore
+  the redundant "message" parameter. If you want that functionality, use said
+  hook to output an epilogue after Yargs outputs an error message, or use
+  `yargs::epilogue`/`yargs::example`.
+
+  Also, any invocation of Black Flag's `yargs::showHelpOnFail` method applies
+  globally to all commands in your hierarchy; internally, the method is just
+  updating [`ExecutionContext::state.showHelpOnFail`][25].
 
 - Since every auto-discovered command translates [into its own Yargs
   instances][6], the [`command`][17] property, if exported by your command
@@ -153,7 +156,7 @@ Flag, but are noted below nonetheless.
   `yargs::parseX` functions directly anyway.
 
 - Black Flag sets several defaults compared to vanilla Yargs. These defaults are
-  detailed [here][25].
+  detailed [here][26].
 
 [1]:
   https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
@@ -183,4 +186,6 @@ Flag, but are noted below nonetheless.
 [22]: https://github.com/yargs/yargs/issues/1137
 [23]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
 [24]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[25]: ./getting-started.md#building-and-running-your-cli
+[25]:
+  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateshowhelponfail
+[26]: ./getting-started.md#building-and-running-your-cli

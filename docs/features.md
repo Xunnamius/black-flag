@@ -280,6 +280,11 @@ const configuration: Configuration = {
 export default configuration;
 ```
 
+> [!TIP]
+>
+> The Yargs DSL for declaring and defining positional parameters is described
+> in-depth [here][14].
+
 ## Run Your Tool Safely and Consistently ✨
 
 Black Flag not only helps you declaratively build your CLI tool, but _run it_
@@ -305,18 +310,18 @@ myctl remote show origin
 deno ./cli.ts -- remote show origin
 ```
 
-The [`runProgram`][14] function bootstraps your CLI whenever you need it, e.g.
+The [`runProgram`][15] function bootstraps your CLI whenever you need it, e.g.
 when testing, in production, when importing your CLI as a dependency, etc.
 
 > [!IMPORTANT]
 >
 > <ins>**`runProgram` never throws**</ins>, and never calls `process.exit` since
-> that's [ dangerous][15]. When testing your CLI, [prefer `makeRunner`][16]
+> that's [ dangerous][16]. When testing your CLI, [prefer `makeRunner`][17]
 > which can be made to throw.
 
-Under the hood, `runProgram` calls [`configureProgram`][17], which
+Under the hood, `runProgram` calls [`configureProgram`][18], which
 auto-discovers and collects all the configurations exported from your command
-files, followed by [`PreExecutionContext::execute`][18], which is a wrapper
+files, followed by [`PreExecutionContext::execute`][19], which is a wrapper
 around `yargs::parseAsync` and `yargs::hideBin`.
 
 ```javascript
@@ -358,7 +363,7 @@ export default parsedArgv;
 
 ## Convention over Configuration ✨
 
-Black Flag [favors convention over configuration][19], meaning **everything
+Black Flag [favors convention over configuration][20], meaning **everything
 works out the box with sensible defaults and no sprawling configuration files**.
 
 However, when additional configuration _is_ required, there are five optional
@@ -513,7 +518,7 @@ commands. Specifically:
   available).
 
 How errors thrown during execution are reported to the user is determined by the
-optionally-provided [`configureErrorHandlingEpilogue`][20] configuration hook,
+optionally-provided [`configureErrorHandlingEpilogue`][21] configuration hook,
 as well as each command file's optionally-exported [`builder`][7] function.
 
 ```typescript
@@ -538,16 +543,16 @@ export function builder(blackFlag) {
 
 > [!TIP]
 >
-> [Framework errors][21] and errors thrown in `configureExecutionContext` or
+> [Framework errors][22] and errors thrown in `configureExecutionContext` or
 > `configureExecutionPrologue`, cannot be handled by
 > `configureErrorHandlingEpilogue`.
 >
-> If you're using [`makeRunner`][22]/[`runProgram`][14] and a misconfiguration
+> If you're using [`makeRunner`][23]/[`runProgram`][15] and a misconfiguration
 > triggers a framework error, your application will set its exit code
-> [accordingly][23] and send an error message to stderr. If this occurs in
-> production, use [debug mode][24] to gain insight into what went wrong. In a
-> development environment and/or during testing, [`makeRunner`][22] (below)
-> supports the [`errorHandlingBehavior`][25] option, which can be used to
+> [accordingly][24] and send an error message to stderr. If this occurs in
+> production, use [debug mode][25] to gain insight into what went wrong. In a
+> development environment and/or during testing, [`makeRunner`][23] (below)
+> supports the [`errorHandlingBehavior`][26] option, which can be used to
 > surface thrown errors via rejection.
 
 ## A Pleasant Testing Experience ✨
@@ -633,16 +638,16 @@ test('configureErrorHandlingEpilogue outputs as expected', async () => {
 
 And for those who prefer a more holistic behavior-driven testing approach, you
 can use the same function for testing your CLI that you use as an entry point in
-production: [`runProgram`][14].
+production: [`runProgram`][15].
 
 > [!TIP]
 >
-> Black Flag provides the [`makeRunner`][22] utility function so you don't have
+> Black Flag provides the [`makeRunner`][23] utility function so you don't have
 > to tediously copy and paste `runProgram(...)` and all its arguments between
 > tests.
 >
-> Additionally, unlike `runProgram`, [`makeRunner`][22] can be [configured to
-> throw any errors][25] after [`configureErrorHandlingEpilogue`][20] runs. This
+> Additionally, unlike `runProgram`, [`makeRunner`][23] can be [configured to
+> throw any errors][26] after [`configureErrorHandlingEpilogue`][21] runs. This
 > can be useful for more test-driven approaches.
 
 ```typescript
@@ -720,9 +725,9 @@ it('throws on bad init --lang arguments', async () => {
 
 ## Built-In `debug` Integration for Runtime Insights ✨
 
-Black Flag integrates `debug` (via [rejoinder][26]), allowing for deep insight
+Black Flag integrates `debug` (via [rejoinder][27]), allowing for deep insight
 into your tool's runtime without significant overhead or code changes. Simply
-set the `DEBUG` environment variable to an [appropriate value][27]:
+set the `DEBUG` environment variable to an [appropriate value][28]:
 
 ```shell
 # Shows all possible debug output
@@ -739,7 +744,7 @@ DEBUG='myctl*' myctl
 > framework-related issues.
 
 It is also possible to get meaningful debug output from your commands
-themselves. Just include the [debug][28] package (or [rejoinder][26] for
+themselves. Just include the [debug][29] package (or [rejoinder][27] for
 improved DX) in your `package.json` dependencies and import it in your command
 files:
 
@@ -800,8 +805,8 @@ However, your command files are not tightly coupled with Black Flag. An
 unfortunate side effect of this flexibility is that your command files do not
 automatically pick up Black Flag's types in your IDE/editor. Fortunately, Black
 Flag exports all its exposed types, including the generic
-[`RootConfiguration`][29], [`ParentConfiguration`][30], and
-[`ChildConfiguration`][31] types.
+[`RootConfiguration`][30], [`ParentConfiguration`][31], and
+[`ChildConfiguration`][32] types.
 
 Using these types, your command files themselves can be fully typed and you can
 enjoy the improved DX that comes with comprehensive intellisense. And for those
@@ -828,23 +833,23 @@ module.exports = {
 ```
 
 Child commands (commands not declared in index files) should use
-[`ChildConfiguration`][31]. Parent commands (commands declared in index files)
-should use [`ParentConfiguration`][30]. The root parent command (at the apex of
-the directory storing your command files) should use [`RootConfiguration`][29].
+[`ChildConfiguration`][32]. Parent commands (commands declared in index files)
+should use [`ParentConfiguration`][31]. The root parent command (at the apex of
+the directory storing your command files) should use [`RootConfiguration`][30].
 
 > [!TIP]
 >
-> There's also [`Configuration`][32], the supertype of the three
+> There's also [`Configuration`][33], the supertype of the three
 > `XConfiguration` subtypes.
 
 Similarly, if you're using configuration hooks in a separate file, you can enjoy
-intellisense with those as well using the [`ConfigureX` generic types][33].
+intellisense with those as well using the [`ConfigureX` generic types][34].
 
 All of these generic types accept type parameters for validating custom
 properties you might set during argument parsing or on the shared execution
 context object.
 
-See [`docs/api/`][34] for a complete list of Black Flag's exports and
+See [`docs/api/`][35] for a complete list of Black Flag's exports and
 implementation details about Black Flag's various generics.
 
 ---
@@ -855,13 +860,13 @@ Check out the fully-functional demo repository for that snazzy `myctl` tool
 [here][5]. Or play with the real thing on NPM:
 `npx -p @black-flag/demo myctl --help` (also supports `DEBUG` environment
 variable). Or build the real thing from scratch by following [the complete
-step-by-step getting started guide][35].
+step-by-step getting started guide][36].
 
-There's also the [`examples/`][36] directory, which houses a collection of
+There's also the [`examples/`][37] directory, which houses a collection of
 recipes solving common CLI tasks the Black Flag way.
 
 For an example of a production CLI tool that puts Black Flag through its paces,
-check out the source code for my "meta" project: [`@-xun/symbiote`][37].
+check out the source code for my "meta" project: [`@-xun/symbiote`][38].
 
 [1]: https://github.com/yargs/yargs/issues/793
 [2]: https://yargs.js.org/docs
@@ -876,29 +881,31 @@ check out the source code for my "meta" project: [`@-xun/symbiote`][37].
 [11]: ./api/src/exports/type-aliases/Configuration.md#handler
 [12]: ./api/src/exports/type-aliases/Configuration.md#name
 [13]: ./api/src/exports/type-aliases/Configuration.md#usage
-[14]: ./api/src/exports/functions/runProgram.md
-[15]:
+[14]:
+  https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments
+[15]: ./api/src/exports/functions/runProgram.md
+[16]:
   https://kostasbariotis.com/why-you-should-not-use-process-exit#what-should-we-do
-[16]: #a-pleasant-testing-experience-
-[17]: ./api/src/exports/functions/configureProgram.md
-[18]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
-[19]: https://en.wikipedia.org/wiki/Convention_over_configuration
-[20]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[21]: ./api/src/exports/util/classes/AssertionFailedError.md
-[22]: ./api/src/exports/util/functions/makeRunner.md
-[23]: ./api/src/exports/enumerations/FrameworkExitCode.md
-[24]: #built-in-debug-integration-for-runtime-insights-
-[25]:
+[17]: #a-pleasant-testing-experience-
+[18]: ./api/src/exports/functions/configureProgram.md
+[19]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
+[20]: https://en.wikipedia.org/wiki/Convention_over_configuration
+[21]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[22]: ./api/src/exports/util/classes/AssertionFailedError.md
+[23]: ./api/src/exports/util/functions/makeRunner.md
+[24]: ./api/src/exports/enumerations/FrameworkExitCode.md
+[25]: #built-in-debug-integration-for-runtime-insights-
+[26]:
   ./api/src/exports/util/type-aliases/MakeRunnerOptions.md#errorhandlingbehavior
-[26]: https://npm.im/rejoinder
-[27]: https://www.npmjs.com/package/debug#usage
-[28]: https://www.npmjs.com/package/debug
-[29]: ./api/src/exports/type-aliases/RootConfiguration.md
-[30]: ./api/src/exports/type-aliases/ParentConfiguration.md
-[31]: ./api/src/exports/type-aliases/ChildConfiguration.md
-[32]: ./api/src/exports/type-aliases/Configuration.md
-[33]: ./api/src/exports/type-aliases/ConfigurationHooks.md
-[34]: ./api/README.md
-[35]: ./getting-started.md#building-and-running-your-cli
-[36]: ../examples/README.md
-[37]: https://github.com/Xunnamius/symbiote/blob/main/src
+[27]: https://npm.im/rejoinder
+[28]: https://www.npmjs.com/package/debug#usage
+[29]: https://www.npmjs.com/package/debug
+[30]: ./api/src/exports/type-aliases/RootConfiguration.md
+[31]: ./api/src/exports/type-aliases/ParentConfiguration.md
+[32]: ./api/src/exports/type-aliases/ChildConfiguration.md
+[33]: ./api/src/exports/type-aliases/Configuration.md
+[34]: ./api/src/exports/type-aliases/ConfigurationHooks.md
+[35]: ./api/README.md
+[36]: ./getting-started.md#building-and-running-your-cli
+[37]: ../examples/README.md
+[38]: https://github.com/Xunnamius/symbiote/blob/main/src

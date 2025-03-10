@@ -157,7 +157,7 @@ defaults:
 - `yargs::scriptName(fullName)`
 - `yargs::wrap(yargs::terminalWidth())`
   - If you want to tweak this across your entire command hierarchy, update
-    [`context.state.initialTerminalWidth`][5] directly in
+    [`ExecutionContext::state.initialTerminalWidth`][5] directly in
     [`configureExecutionContext`][6]
 - `yargs::exitProcess(false)`
   - Black Flag only sets `process.exitCode` and never calls `process.exit(...)`
@@ -165,14 +165,19 @@ defaults:
   - Black Flag supervises all help text generation, so this is just cosmetic
 - `yargs::fail(...)`
   - Black Flag uses a custom failure handler
-- `yargs::showHelpOnFail(true)`
-  - Black Flag uses a custom failure handler
+- `yargs::showHelpOnFail('short')`
+  - All errors will be reported to the user alongside help text by default. This
+    can be tweaked by updating [`ExecutionContext::state.showHelpOnFail`][7]
+    directly in [`configureExecutionContext`][6], or by calling Black Flag's
+    custom [`showHelpOnFail`][7] implementation (it overrides
+    `yargs::showHelpOnFail`) in a builder or elsewhere
 - `yargs::usage(defaultUsageText)`
-  - Defaults to [this][7].
-  - Note that, as of yargs\@17.7.2, calling `yargs::usage(...)` multiple times
-    (such as in [`configureExecutionPrologue`][8]) will concatenate each
-    invocation's arguments into one long usage string instead of overwriting
-    previous invocations with later ones
+  - Defaults to [this][8].
+  - Note that, as of yargs\@17.7.2, calling `yargs::usage("...")` multiple times
+    (such as in [`configureExecutionPrologue`][9]) will concatenate each
+    invocation's arguments into one long usage string (delimited by newlines).
+    To work around this for "short" versus "full" help text output, we use
+    `yargs::usage(null)` to reset the current usage text.
 - `yargs::version(false)`
   - For the root command,
     `yargs::version(false)::option('version', { description })` is called
@@ -181,9 +186,9 @@ defaults:
 <!-- lint enable list-item-style -->
 
 Most of these defaults can be tweaked or overridden via each command's
-[`builder`][9] function, which gives you direct access to the Yargs API. Let's
+[`builder`][10] function, which gives you direct access to the Yargs API. Let's
 add one to `commands/index.js` along with a [`handler`][3] function and
-[`usage`][10] string:
+[`usage`][11] string:
 
 ```javascript
 /**
@@ -219,7 +224,12 @@ export const usage = 'Usage: $0 command [options]\n\nCustom description here.';
 
 > [!TIP]
 >
-> Looking for more in-depth examples? Check out [`examples/`][11] for a
+> The Yargs DSL for declaring and defining positional parameters is described
+> in-depth [here][12].
+
+> [!TIP]
+>
+> Looking for more in-depth examples? Check out [`examples/`][13] for a
 > collection of recipes solving all sorts of common CLI tasks using Black Flag,
 > including leveraging TypeScript and reviewing various different ways to define
 > command modules.
@@ -294,8 +304,8 @@ Options:
 ```
 
 Since different OSes walk different filesystems in different orders,
-auto-discovered commands will appear _in [natural sort][12] order_ in help text
-rather than in insertion order; [command groupings][13] are still respected and
+auto-discovered commands will appear _in [natural sort][14] order_ in help text
+rather than in insertion order; [command groupings][15] are still respected and
 each command's options are still enumerated in insertion order.
 
 > [!TIP]
@@ -347,7 +357,7 @@ we'll need some automated tests.
 Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
-First, let's install [jest][14]. We'll also create a file to hold our tests.
+First, let's install [jest][16]. We'll also create a file to hold our tests.
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -358,17 +368,17 @@ Since we set our root command to non-strict mode, let's test that it doesn't
 throw in the presence of unknown arguments. Let's also test that it exits with
 the exit code we expect and sends an expected response to stdout.
 
-Note that we use [`makeRunner`][15] below, which is a factory function that
-returns a [curried][16] version of [`runProgram`][17] that is far less tedious
+Note that we use [`makeRunner`][17] below, which is a factory function that
+returns a [curried][18] version of [`runProgram`][19] that is far less tedious
 to invoke successively.
 
 > [!NOTE]
 >
 > Each invocation of `runProgram()`/`makeRunner()()` configures and runs your
-> entire CLI _from scratch_. Other than stuff like [the require cache][18],
+> entire CLI _from scratch_. Other than stuff like [the require cache][20],
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
-> [common Yargs footgun][19].
+> [common Yargs footgun][21].
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
@@ -434,19 +444,19 @@ describe('myctl (root)', () => {
 
 > [!TIP]
 >
-> In our tests above, we took a [behavior-driven approach][20] and tested for
+> In our tests above, we took a [behavior-driven approach][22] and tested for
 > errors by looking at what `console.error` should be outputting. This is how
 > users of our CLI will experience errors too, making this the ideal testing
-> approach in many cases. [`runProgram`][17]/[`makeRunner`][15] are configured
+> approach in many cases. [`runProgram`][19]/[`makeRunner`][17] are configured
 > for this approach out of the box in that they **never throw/reject, even when
 > an error occurs**. Instead, they trigger [the configured error handling
-> behavior][21] (which defaults to `console.error`), which is what our tests
+> behavior][23] (which defaults to `console.error`), which is what our tests
 > check for.
 >
-> However, in many other cases, a purely [test-driven approach][22] is required,
+> However, in many other cases, a purely [test-driven approach][24] is required,
 > where we're not so interested in what the user should experience but in the
-> nature of the failure itself. To support this, [`makeRunner`][15] supports the
-> [`errorHandlingBehavior`][23] option. Setting `errorHandlingBehavior` to
+> nature of the failure itself. To support this, [`makeRunner`][17] supports the
+> [`errorHandlingBehavior`][25] option. Setting `errorHandlingBehavior` to
 > `"throw"` will cause your curried runner functions to throw/reject _in
 > addition to_ triggering the configured error handling behavior.
 >
@@ -475,13 +485,13 @@ Ran all test suites.
 > [!IMPORTANT]
 >
 > As of March 2025, we need to use `NODE_OPTIONS='--experimental-vm-modules'`
-> until [the Node team unflags virtual machine module support][24] in a future
+> until [the Node team unflags virtual machine module support][26] in a future
 > version.
 
 > [!TIP]
 >
-> We use [`--restoreMocks`][25] to ensure mock state doesn't leak between tests.
-> We use [`--testMatch '**/test.cjs'`][26] to make Jest see our CJS files.
+> We use [`--restoreMocks`][27] to ensure mock state doesn't leak between tests.
+> We use [`--testMatch '**/test.cjs'`][28] to make Jest see our CJS files.
 
 Neat! 📸
 
@@ -494,25 +504,28 @@ Neat! 📸
 [5]:
   ./api/src/exports/util/type-aliases/ExecutionContext.md#stateinitialterminalwidth
 [6]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
-[7]:
+[7]: ./api/src/exports/util/type-aliases/ExecutionContext.md#stateshowhelponfail
+[8]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
-[8]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
-[9]: ./api/src/exports/type-aliases/Configuration.md#builder
-[10]: ./api/src/exports/type-aliases/Configuration.md#usage
-[11]: ../examples/README.md
-[12]: https://en.wikipedia.org/wiki/Natural_sort_order
-[13]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
-[14]: https://www.npmjs.com/package/jest
-[15]: ./api/src/exports/util/functions/makeRunner.md
-[16]: https://en.wikipedia.org/wiki/Currying
-[17]: ./api/src/exports/functions/runProgram.md
-[18]: https://jestjs.io/docs/jest-object#jestresetmodules
-[19]: https://github.com/yargs/yargs/issues/2191
-[20]: https://en.wikipedia.org/wiki/Behavior-driven_development
-[21]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[22]: https://en.wikipedia.org/wiki/Test-driven_development
-[23]:
+[9]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
+[10]: ./api/src/exports/type-aliases/Configuration.md#builder
+[11]: ./api/src/exports/type-aliases/Configuration.md#usage
+[12]:
+  https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments
+[13]: ../examples/README.md
+[14]: https://en.wikipedia.org/wiki/Natural_sort_order
+[15]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
+[16]: https://www.npmjs.com/package/jest
+[17]: ./api/src/exports/util/functions/makeRunner.md
+[18]: https://en.wikipedia.org/wiki/Currying
+[19]: ./api/src/exports/functions/runProgram.md
+[20]: https://jestjs.io/docs/jest-object#jestresetmodules
+[21]: https://github.com/yargs/yargs/issues/2191
+[22]: https://en.wikipedia.org/wiki/Behavior-driven_development
+[23]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[24]: https://en.wikipedia.org/wiki/Test-driven_development
+[25]:
   ./api/src/exports/util/type-aliases/MakeRunnerOptions.md#errorhandlingbehavior
-[24]: https://github.com/nodejs/node/issues/37648
-[25]: https://jestjs.io/docs/configuration#restoremocks-boolean
-[26]: https://jestjs.io/docs/configuration#testmatch-arraystring
+[26]: https://github.com/nodejs/node/issues/37648
+[27]: https://jestjs.io/docs/configuration#restoremocks-boolean
+[28]: https://jestjs.io/docs/configuration#testmatch-arraystring
