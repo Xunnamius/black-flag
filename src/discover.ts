@@ -394,12 +394,72 @@ export async function discoverCommands(
         loadDebug('maybeImportedConfig: %O', maybeImportedConfig);
 
         if (maybeImportedConfig) {
-          const meta = {
-            hasChildren: false,
+          const meta: ProgramMetadata = {
             filename: basename(maybeConfigPath),
             filepath: maybeConfigFileURL,
-            parentDirName: basename(toDirname(maybeConfigPath))
-          } as ProgramMetadata;
+            hasChildren: false,
+            parentDirName: basename(toDirname(maybeConfigPath)),
+
+            // ? The following properties are protected from being accessed too
+            // ? early since some of their values are determined elsewhere
+
+            /* istanbul ignore next */
+            get filenameWithoutExtension() {
+              return assert.fail(BfErrorMessage.GuruMeditation());
+            },
+
+            set filenameWithoutExtension(
+              v: ProgramMetadata['filenameWithoutExtension']
+            ) {
+              // @ts-expect-error: deletions will continue until moral improves
+              delete meta.filenameWithoutExtension;
+              meta.filenameWithoutExtension = v;
+            },
+
+            /* istanbul ignore next */
+            get fullUsageText() {
+              return assert.fail(BfErrorMessage.GuruMeditation());
+            },
+
+            set fullUsageText(v: ProgramMetadata['fullUsageText']) {
+              // @ts-expect-error: deletions will continue until moral improves
+              delete meta.fullUsageText;
+              meta.fullUsageText = v;
+            },
+
+            /* istanbul ignore next */
+            get isImplemented() {
+              return assert.fail(BfErrorMessage.GuruMeditation());
+            },
+
+            set isImplemented(v: ProgramMetadata['isImplemented']) {
+              // @ts-expect-error: deletions will continue until moral improves
+              delete meta.isImplemented;
+              meta.isImplemented = v;
+            },
+
+            /* istanbul ignore next */
+            get reservedCommandNames() {
+              return assert.fail(BfErrorMessage.GuruMeditation());
+            },
+
+            set reservedCommandNames(v: ProgramMetadata['reservedCommandNames']) {
+              // @ts-expect-error: deletions will continue until moral improves
+              delete meta.reservedCommandNames;
+              meta.reservedCommandNames = v;
+            },
+
+            /* istanbul ignore next */
+            get type() {
+              return assert.fail(BfErrorMessage.GuruMeditation());
+            },
+
+            set type(v: ProgramMetadata['type']) {
+              // @ts-expect-error: deletions will continue until moral improves
+              delete meta.type;
+              meta.type = v;
+            }
+          };
 
           meta.filenameWithoutExtension = meta.filename
             .split('.')
