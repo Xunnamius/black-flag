@@ -120,6 +120,7 @@ test('exports/util', async () => {
     hasChildren: false,
     isImplemented: true,
     parentDirName: '',
+    fullUsageText: '',
     reservedCommandNames: [],
     type: 'parent-child'
   } satisfies ProgramMetadata).type.toBeAssignableTo<ProgramMetadata>();
