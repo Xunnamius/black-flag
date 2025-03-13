@@ -263,7 +263,7 @@ export type FrameworkArguments<
  * This function accepts an optional `rawArgv` array that defaults to
  * `yargs::hideBin(process.argv)` and returns an `Arguments` object representing
  * the arguments parsed and validated by yargs (i.e.
- * `context.state.deepestParseResult`).
+ * `ExecutionContext::state.deepestParseResult`).
  *
  * **This function throws whenever\* an exception occurs**, making it not ideal
  * as an entry point for a CLI. See {@link runProgram} for a wrapper function
@@ -271,10 +271,10 @@ export type FrameworkArguments<
  *
  * Note: when the special `GracefulEarlyExitError` exception is thrown _from
  * within a command's handler or builder_, `Executor` will set
- * `context.state.deepestParseResult` to `NullArguments` and
- * `context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
- * not** re-throw the exception in this special case, returning `NullArguments`
- * instead.
+ * `ExecutionContext::state.deepestParseResult` to `NullArguments` and
+ * `ExecutionContext::state.isGracefullyExiting` to `true`. Further, `Executor`
+ * **will not** re-throw the exception in this special case, returning
+ * `NullArguments` instead.
  */
 export type Executor = (
   /**
@@ -306,10 +306,10 @@ export type PreExecutionContext<
    *
    * Note: when the special `GracefulEarlyExitError` exception is thrown _from
    * within a command's handler or builder (or certain hooks)_, `Executor` will
-   * set `context.state.deepestParseResult` to `NullArguments` and
-   * `context.state.isGracefullyExiting` to `true`. Further, `Executor` **will
-   * not** re-throw the exception in this special case, returning
-   * `NullArguments` instead.
+   * set `ExecutionContext::state.deepestParseResult` to `NullArguments` and
+   * `ExecutionContext::state.isGracefullyExiting` to `true`. Further,
+   * `Executor` **will not** re-throw the exception in this special case,
+   * returning `NullArguments` instead.
    */
   execute: Executor;
   /**
@@ -356,9 +356,9 @@ export type ExecutionContext = {
      * A subset of the original argv returned by {@link ConfigureArguments}. It
      * is used internally to give the final command in the arguments list the
      * chance to parse argv. Further, it is used to enforce the ordering
-     * invariant on chained child program invocations. That is: all
-     * non-positional arguments must appear _after_ the last command name in any
-     * arguments list parsed by this program.
+     * invariant on chained child program invocations. That is: all arguments
+     * that are not a valid command name must appear _after_ the last command
+     * name in any arguments list parsed by this program.
      *
      * Since it will be actively manipulated by each command in the arguments
      * list, **do not rely on `rawArgv` for anything other than checking
@@ -400,9 +400,9 @@ export type ExecutionContext = {
      * process of getting yargs to generate help text for some command.
      *
      * Checking the value of this property is useful when you want to know if
-     * `--help` (or whatever your equivalent option is) was passed to the root
-     * command. The value of `isHandlingHelpOption` is also used to determine
-     * the value of `helpOrVersionSet` in commands' `builder` functions.
+     * the `--help` flag (or the equivalent) was passed to the root command. The
+     * value of `isHandlingHelpOption` is also used to determine the value of
+     * `helpOrVersionSet` in commands' `builder` functions.
      *
      * We have to track this separately from yargs since we're stacking multiple
      * yargs instances and they all want to be the one that handles generating
@@ -410,8 +410,8 @@ export type ExecutionContext = {
      *
      * Note: setting `isHandlingHelpOption` to `true` manually via
      * `configureExecutionContext` will cause Black Flag to output help text as
-     * if the user had specified `--help` (or the equivalent) as one of their
-     * arguments.
+     * if the user had specified the `--help` flag (or the equivalent) as one of
+     * their arguments.
      *
      * @default false
      */
@@ -422,29 +422,40 @@ export type ExecutionContext = {
      * `configureExecutionContext` configuration hook (any other hook is run too
      * late).
      *
-     * `name`, if provided, must be >= 1 character in length. If `name`
-     * is exactly one character in length, the help option will take the form of
-     * `-${name}`, otherwise `--${name}`.
-     *
-     * Alternatively, set `globalHelpOption = undefined` to disable the
-     * built-in `--help` option on the root command.
+     * Alternatively, set `globalHelpOption = undefined` to disable the built-in
+     * `--help` flag (or the equivalent) on the root command.
      *
      * Note: this property should not be relied upon or mutated by
      * end-developers _outside of the `configureExecutionContext` configuration
      * hook_. Doing so will result in undefined behavior.
-     *
-     * @default { name: "help", description: defaultHelpTextDescription }
      */
-    globalHelpOption: { name: string; description: string } | undefined;
+    globalHelpOption:
+      | {
+          /**
+           * The name of the help option. Must be >= 1 character in length. If
+           * `name` is exactly one character in length, the help option will
+           * take the form of `-${name}`, otherwise `--${name}`.
+           *
+           * @default "help"
+           */
+          name: string;
+          /**
+           * The description of the `--help` flag  (or the equivalent) displayed
+           * in help text.
+           *
+           * @default defaultHelpTextDescription
+           */
+          description: string;
+        }
+      | undefined;
     /**
      * If `isHandlingVersionOption` is `true`, Black Flag is currently in the
      * process of getting yargs to generate version text for some command.
      *
      * Checking the value of this property is useful when you want to know if
-     * `--version` (or whatever your equivalent option is) was passed to the
-     * root command. The value of `isHandlingVersionOption` is also used to
-     * determine the value of `helpOrVersionSet` in commands' `builder`
-     * functions.
+     * the `--version` flag (or the equivalent) was passed to the root command.
+     * The value of `isHandlingVersionOption` is also used to determine the
+     * value of `helpOrVersionSet` in commands' `builder` functions.
      *
      * We have to track this separately from yargs since we're stacking multiple
      * yargs instances and they all want to be the one that handles generating
@@ -464,23 +475,39 @@ export type ExecutionContext = {
      * `configureExecutionContext` configuration hook (any other hook is run too
      * late).
      *
-     * `name`, if provided, must be >= 1 character in length. If `name` is
-     * exactly one character in length, the version option will take the form of
-     * `-${name}`, otherwise `--${name}`. `text`, if provided, will be the
-     * version text sent to stdout and defaults to the "version" property in the
-     * nearest `package.json`.
-     *
      * Alternatively, set `globalVersionOption = undefined` to disable the
-     * built-in `--version` option on the root command.
+     * built-in `--version` flag on the root command.
      *
      * Note: this property should not be relied upon or mutated by
      * end-developers _outside of the `configureExecutionContext` configuration
      * hook_. Doing so will result in undefined behavior.
-     *
-     * @default { name: "version", description: defaultVersionTextDescription,
-     * text: `${packageJson.version}` }
      */
-    globalVersionOption: { name: string; description: string; text: string } | undefined;
+    globalVersionOption:
+      | {
+          /**
+           * The name of the version option. Must be >= 1 character in length.
+           * If `name` is exactly one character in length, the version option
+           * will take the form of `-${name}`, otherwise `--${name}`.
+           *
+           * @default "version"
+           */
+          name: string;
+          /**
+           * The description of the `--version` flag (or the equivalent)
+           * displayed in help text.
+           *
+           * @default defaultVersionTextDescription
+           */
+          description: string;
+          /**
+           * The version text sent to stdout. Defaults to the value of the
+           * "version" property in the nearest `package.json` file.
+           *
+           * @default nearestPackageJson.version
+           */
+          text: string;
+        }
+      | undefined;
     /**
      * If `true`, Black Flag will dump help text to stderr when an error occurs.
      * This is also set when `Program::showHelpOnFail` is called.
@@ -489,7 +516,7 @@ export type ExecutionContext = {
      */
     showHelpOnFail: boolean;
     /**
-     * Allows helper and effector programs to keep track of pre-pared arguments.
+     * Allows helper and effector programs to keep track of prepared arguments.
      *
      * Note: this property should not be relied upon or mutated by
      * end-developers.

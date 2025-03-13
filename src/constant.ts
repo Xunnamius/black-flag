@@ -18,8 +18,8 @@ export const $executionContext = Symbol.for('@black-flag/core:execution-context'
 /**
  * Hard-coded default command `usage` text provided to programs via
  * `.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced
- * with a command's usage DSL (`command` export), name (`name` export), and
- * description (`description` export) respectively.
+ * with a command's usage DSL (i.e. `command` export), name (i.e. `name`
+ * export), and description (i.e. `description` export) respectively.
  */
 export const defaultUsageText = 'Usage: $000\n\n$1';
 

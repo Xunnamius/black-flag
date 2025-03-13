@@ -72,7 +72,9 @@ export type Configuration<
         | { [key: string]: _Options }
         | _Program);
   /**
-   * The command as interpreted by yargs. May contain positional arguments.
+   * The command as interpreted by yargs. Must always begin with `$0`. May
+   * contain positional arguments declared using the [`yargs::command`
+   * DSL](https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments).
    *
    * It is usually unnecessary to change or use this property if you're not
    * using positional arguments. If you want to change your command's name, use
@@ -101,7 +103,8 @@ export type Configuration<
    * A function called when this command is invoked. It will receive an object
    * of parsed arguments.
    *
-   * If `undefined`, a `CommandNotImplementedError` will be thrown.
+   * If `undefined`, the command will be considered "unimplemented" and a
+   * `CommandNotImplementedError` will be thrown.
    *
    * @default undefined
    */
@@ -120,6 +123,11 @@ export type Configuration<
   name: string;
   /**
    * Set a usage message shown at the top of the command's help text.
+   *
+   * Depending on the value of `ExecutionContext::state.showHelpOnFail`, either
+   * the "short" first line of usage text will be output during errors or the
+   * "full" usage string. Either way, whenever help text is explicitly requested
+   * (e.g. `--help` is given), the full usage string will be output.
    *
    * Several replacements are made to the `usage` string before it is output. In
    * order:

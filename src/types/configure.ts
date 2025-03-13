@@ -7,12 +7,17 @@ import type { Arguments, ExecutionContext, Programs } from 'universe:types/progr
 
 /**
  * This function is called once towards the beginning of the execution of
- * `configureProgram` and should return what will become the global
+ * `configureProgram` and should return the value that will become the global
  * {@link ExecutionContext} singleton.
  *
- * Note that any errors thrown this early in the initialization process will
- * trigger a framework error and will NOT be handled by
- * {@link ConfigureErrorHandlingEpilogue}.
+ * Note that the value returned by this function is discarded after being
+ * shallowly cloned by `Object.assign`. That is: the global
+ * {@link ExecutionContext} singleton will not strictly equal `context`.
+ *
+ * Also note that any errors thrown this early in the initialization process
+ * will trigger a framework error and will NOT be handled by
+ * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
+ * regardless of error type.
  */
 export type ConfigureExecutionContext<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -33,7 +38,8 @@ export type ConfigureExecutionContext<
  *
  * Note that any errors thrown this early in the initialization process will
  * trigger a framework error and will NOT be handled by
- * {@link ConfigureErrorHandlingEpilogue}.
+ * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
+ * regardless of error type.
  */
 export type ConfigureExecutionPrologue<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -45,6 +51,10 @@ export type ConfigureExecutionPrologue<
  *
  * This is where yargs middleware and other argument pre-processing can be
  * implemented.
+ *
+ * Note that errors thrown at this point in the initialization process will be
+ * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
+ * text to stderr regardless of error type.
  */
 export type ConfigureArguments<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -61,6 +71,10 @@ export type ConfigureArguments<
  * when yargs argument validation fails.
  *
  * This function is the complement of {@link ConfigureExecutionPrologue}.
+ *
+ * Note that errors thrown at this point in the cleanup process will be
+ * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
+ * text to stderr regardless of error type.
  */
 export type ConfigureExecutionEpilogue<
   CustomContext extends ExecutionContext = ExecutionContext
@@ -97,12 +111,17 @@ export type ConfigureErrorHandlingEpilogue<
 export type ConfigurationHooks = {
   /**
    * This function is called once towards the beginning of the execution of
-   * `configureProgram` and should return what will become the global
+   * `configureProgram` and should return the value that will become the global
    * {@link ExecutionContext} singleton.
    *
-   * Note that any errors thrown this early in the initialization process will
-   * trigger a framework error and will NOT be handled by
-   * {@link ConfigureErrorHandlingEpilogue}.
+   * Note that the value returned by this function is discarded after being
+   * shallowly cloned by `Object.assign`. That is: the global
+   * {@link ExecutionContext} singleton will not strictly equal `context`.
+   *
+   * Also note that any errors thrown this early in the initialization process
+   * will trigger a framework error and will NOT be handled by
+   * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
+   * regardless of error type.
    */
   configureExecutionContext?: ConfigureExecutionContext;
   /**
@@ -120,25 +139,35 @@ export type ConfigurationHooks = {
    *
    * Note that any errors thrown this early in the initialization process will
    * trigger a framework error and will NOT be handled by
-   * {@link ConfigureErrorHandlingEpilogue}.
+   * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
+   * regardless of error type.
    */
   configureExecutionPrologue?: ConfigureExecutionPrologue;
   /**
    * This function is called once towards the beginning of the execution of
-   * `PreExecutionContext::execute` and should return a `process.argv`-like array.
+   * `PreExecutionContext::execute` and should return a `process.argv`-like
+   * array.
    *
    * This is where yargs middleware and other argument pre-processing can be
    * implemented, if desired.
+   *
+   * Note that errors thrown at this point in the initialization process will be
+   * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
+   * text to stderr regardless of error type.
    */
   configureArguments?: ConfigureArguments;
   /**
-   * This function is called once after CLI argument parsing completes and either
-   * (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is thrown.
-   * The value returned by this function is used as the return value of the
-   * `PreExecutionContext::execute` method. This function will _not_ be called
-   * when yargs argument validation fails.
+   * This function is called once after CLI argument parsing completes and
+   * either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is
+   * thrown. The value returned by this function is used as the return value of
+   * the `PreExecutionContext::execute` method. This function will _not_ be
+   * called when yargs argument validation fails.
    *
    * This function is the complement of {@link ConfigureExecutionPrologue}.
+   *
+   * Note that errors thrown at this point in the cleanup process will be
+   * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
+   * text to stderr regardless of error type.
    */
   configureExecutionEpilogue?: ConfigureExecutionEpilogue;
   /**
@@ -151,8 +180,8 @@ export type ConfigurationHooks = {
    * `configureErrorHandlingEpilogue` itself or (2) the error is an instance of
    * `GracefulEarlyExitError`.
    *
-   * This function is also called even after yargs internally handles and reports
-   * an argument parsing/validation error.
+   * This function is also called even after yargs internally handles and
+   * reports an argument parsing/validation error.
    */
   configureErrorHandlingEpilogue?: ConfigureErrorHandlingEpilogue;
 };

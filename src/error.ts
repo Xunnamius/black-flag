@@ -87,7 +87,7 @@ export type CliErrorOptions = {
    */
   showHelp?: boolean;
   /**
-   * This option is similar in intent to yargs's `exitProcess()` function,
+   * This option is similar in intent to Yargs's `exitProcess()` function,
    * except applied more granularly.
    *
    * Normally, {@link runProgram} never throws and never calls `process.exit`,
@@ -109,6 +109,8 @@ export type CliErrorOptions = {
    * heisenbugs.** You will also have to specially handle `process.exit` when
    * running unit/integration tests and executing command handlers within other
    * command handlers. Tread carefully.
+   *
+   * @default false
    */
   dangerouslyFatal?: boolean;
   /**
