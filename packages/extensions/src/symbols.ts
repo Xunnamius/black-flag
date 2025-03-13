@@ -25,4 +25,6 @@ export const $canonical = Symbol('canonical');
  * Will appear in the `argv` of commands that were invoked via
  * {@link getInvocableExtendedHandler} instead of naturally via Black Flag.
  */
-export const $artificiallyInvoked = Symbol('was-artificially-invoked');
+export const $artificiallyInvoked = Symbol.for(
+  '@black-flag/extensions:was-artificially-invoked'
+);

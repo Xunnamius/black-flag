@@ -13,7 +13,7 @@ export const nullArguments$0 =
  * A symbol allowing access to the `ExecutionContext` object "hidden" within
  * each `Arguments` instance.
  */
-export const $executionContext = Symbol('execution-context');
+export const $executionContext = Symbol.for('@black-flag/core:execution-context');
 
 /**
  * Hard-coded default command `usage` text provided to programs via
