@@ -287,6 +287,12 @@ export async function configureProgram(
         fullName
       );
       command.programs.helper.command_finalize_deferred();
+
+      confDebug(
+        'calling EffectorProgram::command_finalize_deferred for command %O',
+        fullName
+      );
+      command.programs.effector.command_finalize_deferred();
     });
 
     confDebug('configureProgram invocation succeeded');
