@@ -274,7 +274,13 @@ makeNamedError(AssertionFailedError, 'AssertionFailedError');
  */
 /* istanbul ignore next */
 export const BfErrorMessage = {
-  ...NamedErrorMessage,
+  GuruMeditation: NamedErrorMessage.GuruMeditation,
+  BuilderCalledOnInvalidPass(pass: 'first-pass' | 'second-pass') {
+    return `a builder function was invoked during Black Flag's ${pass.replace('-', ' ')} when it expected to be invoked during its ${pass === 'first-pass' ? 'second pass' : 'first pass'} instead`;
+  },
+  BuilderCannotBeAsync(commandName: string) {
+    return `command "${commandName}" exported an asynchronous builder function, which triggers buggy behavior in Yargs. Black Flag supports exporting an asynchronous default function in CJS files and top-level await in ESM files, so hoist any async logic out of this command's builder. See the documentation for details`;
+  },
   Generic() {
     return 'an error occurred that caused this software to crash';
   },
@@ -327,8 +333,11 @@ export const BfErrorMessage = {
       ` attempting to register conflicting command names and/or aliases: "${name1}" (${type1}) conflicts with "${name2}" (${type2})`
     );
   },
-  InvalidCommandExport(name: string) {
+  InvalidCommandExportBadStart(name: string) {
     return `the ${name}'s command export must start with either "$0" or "$0 "`;
+  },
+  InvalidCommandExportBadPositionals(name: string) {
+    return `the ${name}'s command export must be a valid Yargs command DSL string. See: https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments for examples`;
   },
   NoConfigurationLoaded(path: string) {
     return `auto-discovery failed to find any valid configuration files or directories at path: ${path}`;
@@ -340,7 +349,7 @@ export const BfErrorMessage = {
     return `invocation of method "${name}" is not allowed here. See documentation for details`;
   },
   CannotExecuteMultipleTimes() {
-    return 'yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
+    return 'Yargs does not support safely calling "parse"/"parseAsync" more than once on the same instance. See documentation for details';
   },
   BadParameterCombination() {
     return 'must provide exactly one of the following options: configurationHooks, preExecutionContext';
