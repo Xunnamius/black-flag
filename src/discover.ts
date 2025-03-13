@@ -788,9 +788,10 @@ export async function discoverCommands(
     // * Link helper program to effector program
 
     programs.helper.command_deferred(
-      // ! This next line excludes aliases and positionals in an attempt to
-      // ! address yargs bugs around help text output. See the docs for details.
-      ['$0'],
+      // ? This makes positionals available to second pass builders while also
+      // ? nullifying their strictness (helpers can never have strictness)
+      [makeRequiredPositionalsOptional(config.command), ...config.aliases],
+      // ? (see below why this is set to false)
       false,
       makeVanillaYargsBuilder(programs.helper, config, 'first-pass'),
       async (parsedArgv) => {
