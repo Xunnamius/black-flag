@@ -1388,7 +1388,7 @@ export async function discoverCommands(
         pass === 'first-pass'
           ? context.state.firstPassArgv === undefined
           : context.state.firstPassArgv !== undefined,
-        BfErrorMessage.GuruMeditation()
+        BfErrorMessage.BuilderCalledOnInvalidPass(pass)
       );
 
       try {
