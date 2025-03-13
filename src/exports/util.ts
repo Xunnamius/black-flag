@@ -5,6 +5,7 @@ import { hideBin as hideBin_ } from 'yargs/helpers';
 export { makeRunner } from 'universe';
 
 export {
+  expectedHelpTextRegExp,
   getDeepestErrorCause,
   isArguments,
   isAssertionSystemError,
