@@ -14,6 +14,8 @@ import type {
   runProgram
 } from 'universe';
 
+import type { ExecutionContext } from 'universe:types/program.ts';
+
 // TODO: replace a lot of all that follows with the official package(s),
 // TODO: including the symbol use below
 
@@ -79,13 +81,33 @@ export type CliErrorOptions = {
    */
   suggestedExitCode?: number;
   /**
-   * If `true`, help text will be sent to stderr _before this exception finishes
-   * bubbling_. Where the exception is thrown will determine which instance is
-   * responsible for error text generation.
+   * If `showHelp` is set to a string that isn't `"default"`, help text will be
+   * sent to stderr. Note that help text is always sent _before this exception
+   * finishes bubbling up to `ConfigureErrorHandlingEpilogue`_.
    *
-   * @default false
+   * Specifically, if `showHelp` is set to `"full"`, the full help text will be
+   * sent to stderr, including the entire `usage` string. If set to `"short"`
+   * (or `true`), the same help text will be sent to stderr except only the
+   * first line of usage will be included. In either case, help text will be
+   * sent to stderr regardless of the value of
+   * `ExecutionContext::state.showHelpOnFail`.
+   *
+   * Alternatively, if set to `"default"`, the value of
+   * `ExecutionContext::state.showHelpOnFail` will be used. And if set to
+   * `false`, no help text will be sent to stderr due to this error regardless
+   * of the value of `ExecutionContext::state.showHelpOnFail`.
+   *
+   * Note that, regardless of this `showHelp`, help text is always output when a
+   * parent command is invoked that (1) has one or more child commands and (2)
+   * lacks its own handler implementation or implements a handler that throws
+   * {@link CommandNotImplementedError}.
+   *
+   * @default "default"
    */
-  showHelp?: boolean;
+  showHelp?:
+    | Extract<ExecutionContext['state']['showHelpOnFail'], object>['outputStyle']
+    | 'default'
+    | boolean;
   /**
    * This option is similar in intent to Yargs's `exitProcess()` function,
    * except applied more granularly.
@@ -131,9 +153,12 @@ export type CliErrorOptions = {
  */
 // TODO: this should use the new type of more-generic error from the new version
 // TODO: of the X-app-errors pages
-export class CliError extends AppError implements NonNullable<CliErrorOptions> {
+export class CliError
+  extends AppError
+  implements Required<Omit<CliErrorOptions, 'cause'>>, Pick<CliErrorOptions, 'cause'>
+{
   suggestedExitCode = FrameworkExitCode.DefaultError;
-  showHelp = false;
+  showHelp = 'default' as NonNullable<Exclude<CliErrorOptions['showHelp'], true>>;
   dangerouslyFatal = false;
   // TODO: this prop should be added by makeNamedError or whatever other fn
   [$type] = ['CliError'];
@@ -177,7 +202,7 @@ export class CliError extends AppError implements NonNullable<CliErrorOptions> {
     }
 
     if (showHelp !== undefined) {
-      this.showHelp = showHelp;
+      this.showHelp = showHelp === true ? 'short' : showHelp;
     }
 
     if (dangerouslyFatal !== undefined) {
@@ -201,6 +226,7 @@ export class CommandNotImplementedError extends CliError {
   constructor(error?: Error, options?: CliErrorOptions) {
     super(error ? error.message : BfErrorMessage.CommandNotImplemented(), {
       ...(error ? { cause: error } : {}),
+      showHelp: false,
       ...options,
       suggestedExitCode: FrameworkExitCode.NotImplemented
     });
@@ -231,6 +257,7 @@ export class GracefulEarlyExitError extends CliError {
   constructor(error?: Error, options?: CliErrorOptions) {
     super(error ? error.message : BfErrorMessage.GracefulEarlyExit(), {
       ...(error ? { cause: error } : {}),
+      showHelp: false,
       ...options,
       suggestedExitCode: FrameworkExitCode.Ok,
       // * Is ignored by runProgram anyway
@@ -260,6 +287,7 @@ export class AssertionFailedError extends CliError {
     super(
       typeof errorOrMessage === 'string' ? errorOrMessage : errorOrMessage?.message,
       {
+        showHelp: false,
         ...options,
         suggestedExitCode: FrameworkExitCode.AssertionFailed,
         cause: errorOrMessage

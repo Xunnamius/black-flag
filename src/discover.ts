@@ -234,11 +234,7 @@ export async function discoverCommands(
       grandparentPrograms?.router
     );
 
-    addChildCommandToParentHelper(
-      parentConfig,
-      parentConfigFullName,
-      grandparentPrograms?.helper
-    );
+    addChildCommandToParent(parentConfig, parentConfigFullName, grandparentPrograms);
 
     if (grandparentMeta) {
       grandparentMeta.hasChildren = true;
@@ -313,11 +309,7 @@ export async function discoverCommands(
           parentPrograms.router
         );
 
-        addChildCommandToParentHelper(
-          childConfig,
-          childConfigFullName,
-          parentPrograms.helper
-        );
+        addChildCommandToParent(childConfig, childConfigFullName, parentPrograms);
 
         parentMeta.hasChildren = true;
 
@@ -511,7 +503,7 @@ export async function discoverCommands(
             typeof rawConfig.command
           >;
 
-          meta.isImplemented = rawConfig.handler !== undefined || command !== '$0';
+          meta.isImplemented = rawConfig.handler !== undefined;
           const handlerDebug = loadDebug.extend('handler');
 
           const finalConfig: Configuration = {
@@ -534,11 +526,8 @@ export async function discoverCommands(
                     ? meta.parentDirName
                     : meta.filenameWithoutExtension)
             ).trim(),
-            // ? This property is trimmed below
-            usage: rawConfig.usage || defaultUsageText
+            usage: capitalize(rawConfig.usage || defaultUsageText).trim()
           };
-
-          finalConfig.usage = capitalize(finalConfig.usage).trim();
 
           finalConfig.description =
             typeof finalConfig.description === 'string'
@@ -754,15 +743,12 @@ export async function discoverCommands(
     //programs.helper.strict(true);
     programs.effector.strict(true);
 
-    // * Configure usage text.
+    // * Compute usage text (it will be configured on the yargs instances JIT).
 
-    const usageText = config.usage
+    meta.fullUsageText = config.usage
       .replaceAll('$000', config.command)
       .replaceAll('$1', config.description || '')
       .trim();
-
-    programs.helper.usage(usageText);
-    programs.effector.usage(usageText);
 
     // * Configure the script's name.
 
@@ -777,8 +763,8 @@ export async function discoverCommands(
     // * Finish configuring custom error handling, which is responsible for
     // * outputting help text to stderr before rethrowing a wrapped error.
 
-    programs.helper.fail(customFailHandler(programs.helper, 'helper'));
-    programs.effector.fail(customFailHandler(programs.effector, 'effector'));
+    programs.helper.fail(customFailHandler('helper'));
+    programs.effector.fail(customFailHandler('effector'));
 
     // * Link router program to helper program
 
@@ -811,10 +797,13 @@ export async function discoverCommands(
         const helperDebug = discoverDebug.extend('helper');
 
         helperDebug('entered wrapper handler function for %O', config.name);
+
         assert(
           context.state.firstPassArgv === undefined,
           BfErrorMessage.GuruMeditation()
         );
+
+        context.state.firstPassArgv = parsedArgv;
 
         if (context.state.isHandlingHelpOption) {
           helperDebug(
@@ -823,8 +812,11 @@ export async function discoverCommands(
             context.state.globalHelpOption?.name || '???'
           );
 
-          // ! Notice the helper program is ALWAYS the one outputting help text.
-          programs.helper.showHelp('log');
+          setContextualUsageTextFor(meta.fullUsageText, 'full');
+
+          // ! Notice the effector is ALWAYS the one outputting help text. This
+          // ! allows us to satisfy --help with respect to any dynamic options.
+          programs.effector.showHelp('log');
           context.state.didOutputHelpOrVersionText = true;
 
           helperDebug('gracefully exited wrapper handler function for %O', config.name);
@@ -849,8 +841,6 @@ export async function discoverCommands(
             );
             throw new CommandNotImplementedError();
           }
-
-          context.state.firstPassArgv = parsedArgv;
 
           const localArgv = await programs.effector.parseAsync(
             context.state.rawArgv,
@@ -880,9 +870,11 @@ export async function discoverCommands(
     // * Configure effector to execute the real command handler via a "default
     // * command" (yargs parlance) wrapper.
 
-    programs.effector.command(
+    programs.effector.command_deferred(
       [config.command, ...config.aliases],
-      config.description,
+      // ? Setting description to false ensures the root command is excluded
+      // ? from help text (including positions, aliases, etc)
+      false,
       makeVanillaYargsBuilder(programs.effector, config, 'second-pass'),
       config.handler,
       [],
@@ -899,33 +891,38 @@ export async function discoverCommands(
 
     return programs;
 
-    function customFailHandler(
-      program: HelperProgram | EffectorProgram,
-      descriptor: ProgramDescriptor
-    ) {
+    function customFailHandler(descriptor: ProgramDescriptor) {
       return function (message?: string | null, error?: Error) {
         const descriptorDebug = discoverDebug.extend(`${descriptor}@`);
         descriptorDebug.message('entered failure handler for command %O', fullName);
+
+        const { showHelpOnFail } = context.state;
+
+        descriptorDebug('message: %O', message);
+        descriptorDebug('error.message: %O', error?.message);
+        descriptorDebug('error is native error: %O', isNativeError(error));
+
+        const isErrorCliError = isCliError(error);
+        descriptorDebug('error is CliError: %O', isErrorCliError);
 
         // ? If a failure happened but error is not defined, it was *probably*
         // ? a yargs-specific error (e.g. argument validation failure).
         // ! Is there a better way to differentiate between Yargs-specific
         // ! errors and third-party errors? Or is `!error` the best we can do?
-        const isProbablyVanillaYargsError = !error;
+        const isErrorVanillaYargsError = !error;
+        descriptorDebug('error is vanilla yargs error: %O', isErrorVanillaYargsError);
 
-        descriptorDebug('message: %O', message);
-        descriptorDebug('error.message: %O', error?.message);
-        descriptorDebug('error is native error: %O', isNativeError(error));
+        const isErrorOtherError = !isErrorCliError && !isErrorVanillaYargsError;
+        descriptorDebug('error is other error: %O', isErrorOtherError);
+
         descriptorDebug(
-          'is allowed to show help on fail: %O',
-          context.state.showHelpOnFail
+          'is allowed to show help on fail: %O (%O)',
+          !!showHelpOnFail,
+          showHelpOnFail
         );
+
         descriptorDebug(
-          'is probably vanilla yargs error: %O',
-          isProbablyVanillaYargsError
-        );
-        descriptorDebug(
-          'did output help or version text: %O',
+          'already output help or version text: %O',
           context.state.didOutputHelpOrVersionText
         );
 
@@ -934,7 +931,8 @@ export async function discoverCommands(
           BfErrorMessage.GuruMeditation()
         );
 
-        // ? Only helpers of "parous" parents should send help text to stderr
+        // ? Special case of a "parous" parent with no implementation. List its
+        // ? child commands and then throw an InvalidSubCommandInvocation error.
         const isParousParentHelperHandlingCommandNotImplementedError =
           meta.hasChildren &&
           descriptor === 'helper' &&
@@ -945,23 +943,90 @@ export async function discoverCommands(
           isParousParentHelperHandlingCommandNotImplementedError
         );
 
-        const forceShowHelp = isCliError(error) && error.showHelp;
-        descriptorDebug('will attempt to force output of help text: %O', forceShowHelp);
+        const showForYargsErrors =
+          showHelpOnFail !== false &&
+          (typeof showHelpOnFail !== 'object' ||
+            (showHelpOnFail.showFor?.yargs ?? true));
 
-        if (
-          context.state.showHelpOnFail &&
-          !context.state.didOutputHelpOrVersionText &&
-          (isProbablyVanillaYargsError ||
-            isParousParentHelperHandlingCommandNotImplementedError ||
-            forceShowHelp)
-        ) {
+        const showForCliErrors =
+          showHelpOnFail !== false &&
+          (typeof showHelpOnFail !== 'object' || (showHelpOnFail.showFor?.cli ?? false));
+
+        const showForOtherErrors =
+          showHelpOnFail !== false &&
+          (typeof showHelpOnFail !== 'object' ||
+            (showHelpOnFail.showFor?.other ?? false));
+
+        descriptorDebug('show help text for yargs errors: %O', showForYargsErrors);
+        descriptorDebug('show help text for CliError errors: %O', showForCliErrors);
+        descriptorDebug('show help text for other errors: %O', showForOtherErrors);
+
+        const shouldShowHelp =
+          isParousParentHelperHandlingCommandNotImplementedError ||
+          (isErrorVanillaYargsError && showForYargsErrors) ||
+          // ? Individual CliErrors can override showHelpOnFail
+          (isErrorCliError &&
+            ((error.showHelp === 'default' && showForCliErrors) ||
+              (error.showHelp !== 'default' && error.showHelp))) ||
+          (isErrorOtherError && showForOtherErrors);
+
+        descriptorDebug('will show help text: %O', shouldShowHelp);
+
+        if (shouldShowHelp && !context.state.didOutputHelpOrVersionText) {
+          const outputStyle =
+            isErrorCliError && error.showHelp !== 'default'
+              ? error.showHelp !== 'full'
+                ? 'short'
+                : 'full'
+              : typeof showHelpOnFail === 'string'
+                ? showHelpOnFail
+                : (typeof showHelpOnFail === 'object'
+                    ? showHelpOnFail.outputStyle
+                    : undefined) || 'short';
+
           descriptorDebug(
-            `sending help text to stderr (triggered by ${error ? 'black flag' : 'yargs'})`
+            `sending %O help text to stderr (triggered by %O)`,
+            outputStyle,
+            error ? 'black flag' : 'yargs'
           );
-          // ! Note how only the most specific program gets to generate help
-          // ! text.
-          program.showHelp('error');
-          context.state.didOutputHelpOrVersionText = true;
+
+          setContextualUsageTextFor(meta.fullUsageText, outputStyle);
+
+          // ? If there's something wrong with the builder or the configured
+          // ? options that caused yargs to throw, then it's very likely that
+          // ? yargs::showHelp will throw too. That happening here would be an
+          // ? "impossible scenario," so we'll discard any such errors instead.
+          try {
+            // ! Notice the effector is ALWAYS the one outputting help text. This
+            // ! allows us to satisfy --help with respect to any dynamic options.
+            programs.effector.showHelp('error');
+            context.state.didOutputHelpOrVersionText = true;
+          } catch (error) {
+            descriptorDebug.warn(
+              'effector.showHelp threw the following error (which was ignored) while attempting to generate help text for a different error: %O',
+              error
+            );
+
+            descriptorDebug.message(
+              'will attempt to generate help text using the helper instead'
+            );
+
+            try {
+              programs.helper.showHelp('error');
+              context.state.didOutputHelpOrVersionText = true;
+            } catch (error) /* istanbul ignore next */ {
+              // * This block should never trigger (notwithstanding some
+              // * egregious Yargs bug) since the builder invocation already
+              // * succeeded once before.
+
+              descriptorDebug.warn(
+                'helper.showHelp somehow threw the following error (which was ignored) while attempting to generate help text for a different error: %O',
+                error
+              );
+
+              descriptorDebug.message('giving up attempt to generate help text');
+            }
+          }
 
           if (isParousParentHelperHandlingCommandNotImplementedError) {
             descriptorDebug(
@@ -975,7 +1040,7 @@ export async function discoverCommands(
         }
 
         if (context.state.finalError === undefined) {
-          if (isCliError(error)) {
+          if (isErrorCliError) {
             descriptorDebug('exited failure handler: set finalError to error as-is');
             context.state.finalError = error;
           } else {
@@ -993,6 +1058,30 @@ export async function discoverCommands(
 
         throw context.state.finalError;
       };
+    }
+
+    /**
+     * Accepts an effector or helper `program` and a fully compiled `usage` text
+     * string (i.e. contains no replacer variables like "$0") and resets the
+     * registered usage text on `program` using `usage` with respect to
+     * `fullOrShort`.
+     */
+    function setContextualUsageTextFor(
+      fullUsageText: string,
+      fullOrShort: NonNullable<
+        Extract<typeof context.state.showHelpOnFail, object>['outputStyle']
+      >
+    ) {
+      const updatedUsage =
+        fullOrShort === 'short' ? fullUsageText.split('\n')[0]! : fullUsageText;
+
+      // @ts-expect-error: undocumented yargs functionality to reset "usage" state
+      programs.helper.usage(null);
+      // @ts-expect-error: undocumented yargs functionality to reset "usage" state
+      programs.effector.usage(null);
+
+      programs.helper.usage(updatedUsage);
+      programs.effector.usage(updatedUsage);
     }
   }
 
@@ -1076,6 +1165,8 @@ export async function discoverCommands(
 
     // * Begin configuring custom error handling.
 
+    // ? We set this to false since we have our own version of ::showHelpOnFail
+    // ? and our own custom error handling routines.
     vanillaYargs.showHelpOnFail(false);
 
     // * We defer the rest of the setup until we enter a scope with more
@@ -1244,7 +1335,7 @@ export async function discoverCommands(
           }
 
           if (property === 'showHelpOnFail') {
-            return function (enabled: boolean) {
+            return function (enabled: typeof context.state.showHelpOnFail) {
               context.state.showHelpOnFail = enabled;
               return proxy;
             };
@@ -1334,37 +1425,40 @@ export async function discoverCommands(
   }
 
   /**
-   * Adds an entry to a parent command's helper program (via `command_deferred`)
-   * for purely cosmetic (help text output) purposes. Attempting to actually
-   * execute the handler for this entry, which should never happen with valid
-   * use of Black Flag, will throw.
+   * Adds an entry to a parent command's `parents.helper` and `parents.effector`
+   * programs (via `command_deferred`) for purely cosmetic (help text output)
+   * purposes. Attempting to actually execute the handler for this entry, which
+   * should never happen with valid use of Black Flag, will throw.
    *
-   * If `parentHelper` is undefined, this function is a no-op.
+   * If `parents` is undefined, this function is a no-op.
    */
-  function addChildCommandToParentHelper(
+  function addChildCommandToParent(
     childConfig: Configuration,
     childFullName: string,
-    parentHelper?: HelperProgram
+    parents?: Programs
   ) {
-    parentHelper?.command_deferred(
-      // ! We use config.name instead of config.command on purpose here to
-      // ! address yargs bugs around help text output. See the docs for details.
-      [childConfig.name, ...childConfig.aliases],
-      childConfig.description,
-      makeVanillaYargsBuilder(parentHelper, childConfig, 'first-pass'),
-      /* istanbul ignore next */
-      async (_parsedArgv) => {
-        throw new AssertionFailedError(BfErrorMessage.GuruMeditation());
-      },
-      [],
-      childConfig.deprecated
-    );
+    if (parents) {
+      [parents.helper, parents.effector].forEach((parent, index) => {
+        parent.command_deferred(
+          // ! We use config.name instead of config.command on purpose here to
+          // ! address yargs bugs around help text output. See docs for details.
+          [childConfig.name, ...childConfig.aliases],
+          childConfig.description,
+          // ? Doesn't need to be the real builder cause command is never executed
+          makeVanillaYargsBuilder(parent, childConfig, 'second-pass'),
+          /* istanbul ignore next */
+          async (_parsedArgv) => {
+            throw new AssertionFailedError(BfErrorMessage.GuruMeditation());
+          },
+          [],
+          childConfig.deprecated
+        );
 
-    if (parentHelper) {
-      discoverDebug(
-        "added an entry for child command %O to its parent command's helper program",
-        childFullName
-      );
+        discoverDebug(
+          `added an entry for child command %O to its parent command's ${index === 0 ? 'helper' : 'effector'} program`,
+          childFullName
+        );
+      });
     }
   }
 
@@ -1481,4 +1575,15 @@ function isUnknownFileExtensionSystemError(error: unknown): error is Error & {
     'code' in error &&
     error.code === 'ERR_UNKNOWN_FILE_EXTENSION'
   );
+}
+
+/**
+ * Turns any required positionals into optional positions in the Yargs command
+ * DSL.
+ *
+ * @see
+ * https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments
+ */
+function makeRequiredPositionalsOptional(dsl: string) {
+  return dsl.replaceAll(/<([^>]*)>/g, '[$1]');
 }

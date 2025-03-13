@@ -225,7 +225,7 @@ export async function configureProgram(
         state: {
           rawArgv: [],
           initialTerminalWidth: yargs().terminalWidth(),
-          showHelpOnFail: true,
+          showHelpOnFail: {},
           firstPassArgv: undefined,
           deepestParseResult: undefined,
           isGracefullyExiting: false,

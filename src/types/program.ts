@@ -8,6 +8,16 @@ import type {
 } from 'universe';
 
 import type { $executionContext, nullArguments$0 } from 'universe:constant.ts';
+
+import type {
+  // ? Used by intellisense and in auto-generated documentation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  CliError,
+  // ? Used by intellisense and in auto-generated documentation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  CommandNotImplementedError
+} from 'universe:error.ts';
+
 import type { ConfigureArguments } from 'universe:types/configure.ts';
 import type { Configuration } from 'universe:types/module.ts';
 
@@ -82,10 +92,13 @@ export type Program<
   ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**
-   * Like `yargs::showHelpOnFail` except (1) it also determines if help text is
-   * shown when executing an unimplemented parent command and (2) it has no
-   * second `message` parameter. If you want to output some specific error
-   * message, use a configuration hook or `yargs::epilogue`.
+   * Like `yargs::showHelpOnFail` except (1) it determines if the "full" or
+   * "short" help text is shown by default, (2) it determines if help text is
+   * shown when executing an unimplemented parent command, and (3) it has no
+   * second `message` parameter.
+   *
+   * If you want to output some specific error message instead, use a
+   * configuration hook or `yargs::epilogue`.
    *
    * Invoking this method will affect all programs in your command hierarchy,
    * not just the program on which it was invoked.
@@ -93,7 +106,7 @@ export type Program<
    * @see https://yargs.js.org/docs/#api-reference-showhelponfailenable-message
    */
   showHelpOnFail: (
-    enabled: boolean
+    enabled: ExecutionContext['state']['showHelpOnFail']
   ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**
@@ -118,10 +131,7 @@ export type Program<
 export type EffectorProgram<
   CustomCliArguments extends Record<string, unknown> = Record<string, unknown>,
   CustomExecutionContext extends ExecutionContext = ExecutionContext
-> = Omit<
-  Program<CustomCliArguments, CustomExecutionContext>,
-  'command_deferred' | 'command_finalize_deferred'
->;
+> = Omit<Program<CustomCliArguments, CustomExecutionContext>, 'command'>;
 
 /**
  * Represents an "helper" {@link Program} instance.
@@ -230,8 +240,8 @@ export type ProgramMetadata = {
    */
   reservedCommandNames: string[];
   /**
-   * If `true`, this command exported neither a `command` string nor a `handler`
-   * function. Black Flag therefore considers this command "unimplemented".
+   * If `true`, this command exported a `handler` function. Black Flag therefore
+   * considers this command as "not unimplemented".
    *
    * When executed, unimplemented commands will show help text before throwing a
    * context-specific error.
@@ -242,6 +252,11 @@ export type ProgramMetadata = {
    * least one child command.
    */
   hasChildren: boolean;
+  /**
+   * The full usage text computed from the command's `usage` value with all
+   * special tokens (e.g. "$0") replaced.
+   */
+  fullUsageText: string;
 };
 
 /**
@@ -509,12 +524,68 @@ export type ExecutionContext = {
         }
       | undefined;
     /**
-     * If `true`, Black Flag will dump help text to stderr when an error occurs.
-     * This is also set when `Program::showHelpOnFail` is called.
+     * If `true` or a string, Black Flag will send help text to stderr when any
+     * error occurs. If `false`, no help text will be sent to stderr when an
+     * error occurs.
      *
-     * @default true
+     * This property can be updated by invoking {@link Program.showHelpOnFail}
+     * on a Black Flag instance, or through the `configureExecutionContext`
+     * configuration hook. Either way, the update will be applied globally
+     * across all instances.
+     *
+     * `showHelpOnFail` determines two things:
+     *
+     * 1. How a command's `usage` string will be included in help text displayed
+     *    during errors. All but the first line of `usage` is excluded when
+     *    `showHelpOnFail` is `true`/`"short"` or when
+     *    `showHelpOnFail.outputStyle` is `"short"`; this is the default. If
+     *    `showHelpOnFail`/`showHelpOnFail.outputStyle` is `"full"`, the entire
+     *    `usage` string is included instead.
+     *
+     * <br />
+     *
+     * 2. On which errors help text will be displayed. By default, help text is
+     *    only displayed when yargs itself throws (e.g. an "unknown argument"
+     *    error), but not when a {@link CliError} or other kind of error is
+     *    thrown. This can be overridden globally by configuring
+     *    `showHelpOnFail.showFor`, or locally by individual {@link CliError}
+     *    instances (via {@link CliError.showHelp}).
+     *
+     * Note that, regardless of this property, the full usage string is always
+     * output when the `--help` flag (or the equivalent) is explicitly given.
+     *
+     * Similarly, help text is always output when a parent command is invoked
+     * that (1) has one or more child commands and (2) lacks its own handler
+     * implementation or implements a handler that throws
+     * {@link CommandNotImplementedError}.
+     *
+     * @default {}
      */
-    showHelpOnFail: boolean;
+    showHelpOnFail:
+      | boolean
+      | 'full'
+      | 'short'
+      | {
+          /**
+           * Determines how a command's `usage` string will be included in help
+           * text displayed during errors. All but the first line of `usage` is
+           * excluded when `outputStyle` is `"short"`; this is the default. If
+           * `outputStyle` is `"full"`, the entire `usage` string is included
+           * instead.
+           *
+           * @default "short"
+           */
+          outputStyle?: 'full' | 'short';
+          /**
+           * Determines on which errors help text will be displayed. By default,
+           * help text is only displayed when yargs itself throws (e.g. an
+           * "unknown argument" error), but not when a {@link CliError} or other
+           * kind of error is thrown.
+           *
+           * @default { yargs: true, cli: false, other: false }
+           */
+          showFor?: Record<'yargs' | 'cli' | 'other', boolean>;
+        };
     /**
      * Allows helper and effector programs to keep track of prepared arguments.
      *
