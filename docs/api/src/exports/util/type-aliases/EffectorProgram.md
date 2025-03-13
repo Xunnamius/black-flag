@@ -8,7 +8,7 @@
 
 > **EffectorProgram**\<`CustomCliArguments`, `CustomExecutionContext`\>: `Omit`\<[`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>, `"command"`\>
 
-Defined in: [src/types/program.ts:121](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L121)
+Defined in: [src/types/program.ts:131](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/program.ts#L131)
 
 Represents an "effector" [Program](Program.md) instance.
 

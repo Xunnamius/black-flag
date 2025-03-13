@@ -8,7 +8,7 @@
 
 > **getDeepestErrorCause**(`error`): `unknown`
 
-Defined in: [src/util.ts:98](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/util.ts#L98)
+Defined in: [src/util.ts:107](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/util.ts#L107)
 
 Accepts an `error` and returns the value of its `.cause` property if (1)
 `error` extends `Error` and (2) the `.cause` property exists and is not

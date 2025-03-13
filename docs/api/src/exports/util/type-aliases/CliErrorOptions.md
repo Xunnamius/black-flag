@@ -8,7 +8,7 @@
 
 > **CliErrorOptions**: `object`
 
-Defined in: [src/error.ts:75](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L75)
+Defined in: [src/error.ts:75](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L75)
 
 Options available when constructing a new `CliError` object.
 
@@ -29,7 +29,7 @@ Use this option to override this default behavior and instead set
 
 > `optional` **dangerouslyFatal**: `boolean`
 
-This option is similar in intent to yargs's `exitProcess()` function,
+This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
 
 Normally, [runProgram](../../functions/runProgram.md) never throws and never calls `process.exit`,
@@ -52,25 +52,41 @@ heisenbugs.** You will also have to specially handle `process.exit` when
 running unit/integration tests and executing command handlers within other
 command handlers. Tread carefully.
 
-### showHelp?
-
-> `optional` **showHelp**: [`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\] \| `"default"`
-
-If truthy, help text will be sent to stderr _before this exception finishes
-bubbling_.
-
-Specifically, if `showHelp` is set to `"full"`, the full help text will be
-sent to stderr, including the entire `usage` string. If set to `"short"`
-(or `true`), the same help text will be sent to stderr except only the
-first line of usage will be included. If set to `"default"`, the value of
-`ExecutionContext::state.showHelpOnFail` will be used. If set to
-`false` (the default), no help text will be sent to stderr related to this
-error.
-
 #### Default
 
 ```ts
 false
+```
+
+### showHelp?
+
+> `optional` **showHelp**: `Extract`\<[`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\], `object`\>\[`"outputStyle"`\] \| `"default"` \| `boolean`
+
+If `showHelp` is set to a string that isn't `"default"`, help text will be
+sent to stderr. Note that help text is always sent _before this exception
+finishes bubbling up to `ConfigureErrorHandlingEpilogue`_.
+
+Specifically, if `showHelp` is set to `"full"`, the full help text will be
+sent to stderr, including the entire `usage` string. If set to `"short"`
+(or `true`), the same help text will be sent to stderr except only the
+first line of usage will be included. In either case, help text will be
+sent to stderr regardless of the value of
+`ExecutionContext::state.showHelpOnFail`.
+
+Alternatively, if set to `"default"`, the value of
+`ExecutionContext::state.showHelpOnFail` will be used. And if set to
+`false`, no help text will be sent to stderr due to this error regardless
+of the value of `ExecutionContext::state.showHelpOnFail`.
+
+Note that, regardless of this `showHelp`, help text is always output when a
+parent command is invoked that (1) has one or more child commands and (2)
+lacks its own handler implementation or implements a handler that throws
+[CommandNotImplementedError](../classes/CommandNotImplementedError.md).
+
+#### Default
+
+```ts
+"default"
 ```
 
 ### suggestedExitCode?

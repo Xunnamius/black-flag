@@ -8,7 +8,7 @@
 
 > **Executor**: (`rawArgv`?) => `Promise`\<[`Arguments`](../../type-aliases/Arguments.md)\>
 
-Defined in: [src/types/program.ts:284](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L284)
+Defined in: [src/types/program.ts:294](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/program.ts#L294)
 
 This function accepts an optional `rawArgv` array that defaults to
 `yargs::hideBin(process.argv)` and returns an `Arguments` object representing

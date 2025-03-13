@@ -82,7 +82,6 @@
 - [dummyFilesFixture](functions/dummyFilesFixture.md)
 - [dummyNpmPackageFixture](functions/dummyNpmPackageFixture.md)
 - [ensurePackageHasBeenBuilt](functions/ensurePackageHasBeenBuilt.md)
-- [expectedCommandsRegex](functions/expectedCommandsRegex.md)
 - [getFixturePath](functions/getFixturePath.md)
 - [gitRepositoryFixture](functions/gitRepositoryFixture.md)
 - [isMockedExitError](functions/isMockedExitError.md)

@@ -8,7 +8,7 @@
 
 > **Configuration**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
 
-Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/module.ts#L15)
+Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/module.ts#L15)
 
 A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a
@@ -76,8 +76,8 @@ first invoked** and so aren't available until a little later.
 
 > **command**: `"$0"` \| `` `$0 ${string}` ``
 
-The command as interpreted by yargs. May contain positional arguments
-declared using the [`yargs::command`
+The command as interpreted by yargs. Must always begin with `$0`. May
+contain positional arguments declared using the [`yargs::command`
 DSL](https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments).
 
 It is usually unnecessary to change or use this property if you're not

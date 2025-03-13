@@ -8,7 +8,7 @@
 
 > **ExecutionContext**: `object`
 
-Defined in: [src/types/program.ts:332](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L332)
+Defined in: [src/types/program.ts:342](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/program.ts#L342)
 
 Represents a globally-accessible shared context object singleton.
 
@@ -125,7 +125,7 @@ undefined
 
 > **firstPassArgv**: [`Arguments`](../../type-aliases/Arguments.md) \| `undefined`
 
-Allows helper and effector programs to keep track of pre-pared arguments.
+Allows helper and effector programs to keep track of prepared arguments.
 
 Note: this property should not be relied upon or mutated by
 end-developers.
@@ -266,9 +266,9 @@ false
 A subset of the original argv returned by [ConfigureArguments](../../type-aliases/ConfigureArguments.md). It
 is used internally to give the final command in the arguments list the
 chance to parse argv. Further, it is used to enforce the ordering
-invariant on chained child program invocations. That is: all
-non-positional arguments must appear _after_ the last command name in any
-arguments list parsed by this program.
+invariant on chained child program invocations. That is: all arguments
+that are not a valid command name must appear _after_ the last command
+name in any arguments list parsed by this program.
 
 Since it will be actively manipulated by each command in the arguments
 list, **do not rely on `rawArgv` for anything other than checking
@@ -282,26 +282,55 @@ invariant satisfaction.**
 
 #### state.showHelpOnFail
 
-> **showHelpOnFail**: `boolean` \| `"full"` \| `"short"`
+> **showHelpOnFail**: `boolean` \| `"full"` \| `"short"` \| \{ `outputStyle`: `"full"` \| `"short"`; `showFor`: `Record`\<`"yargs"` \| `"cli"` \| `"other"`, `boolean`\>; \}
 
-If truthy, Black Flag will dump help text to stderr when an error occurs.
-This is also set when `Program::showHelpOnFail` is called. If `false`,
-error text will not be sent to stderr (by default) when an error occurs.
+If `true` or a string, Black Flag will send help text to stderr when any
+error occurs. If `false`, no help text will be sent to stderr when an
+error occurs.
 
-Further, this property determines how a command's `usage` string will be
-included in said help text. All but the first line of `usage` is excluded
-when `outputStyle` is `true` (the default) or `"short"`; if `outputStyle`
-is `"full"`, the entire `usage` string is always included when outputting
-help text during errors.
+This property can be updated by invoking Program.showHelpOnFail
+on a Black Flag instance, or through the `configureExecutionContext`
+configuration hook. Either way, the update will be applied globally
+across all instances.
 
-Note that the full usage string is always output when the `--help` flag
-(or the equivalent) is explicitly given.
+`showHelpOnFail` determines two things:
 
-Also note that this property is a getter/setter and should not be
-redefined (e.g. by `Object.defineProperty`).
+1. How a command's `usage` string will be included in help text displayed
+   during errors. All but the first line of `usage` is excluded when
+   `showHelpOnFail` is `true`/`"short"` or when
+   `showHelpOnFail.outputStyle` is `"short"`; this is the default. If
+   `showHelpOnFail`/`showHelpOnFail.outputStyle` is `"full"`, the entire
+   `usage` string is included instead.
+
+<br />
+
+2. On which errors help text will be displayed. By default, help text is
+   only displayed when yargs itself throws (e.g. an "unknown argument"
+   error), but not when a [CliError](../../classes/CliError.md) or other kind of error is
+   thrown. This can be overridden globally by configuring
+   `showHelpOnFail.showFor`, or locally by individual [CliError](../../classes/CliError.md)
+   instances (via [CliError.showHelp](../../classes/CliError.md#showhelp)).
+
+Note that, regardless of this property, the full usage string is always
+output when the `--help` flag (or the equivalent) is explicitly given.
+
+Similarly, help text is always output when a parent command is invoked
+that (1) has one or more child commands and (2) lacks its own handler
+implementation or implements a handler that throws
+[CommandNotImplementedError](../classes/CommandNotImplementedError.md).
+
+##### Type declaration
+
+`boolean`
+
+`"full"`
+
+`"short"`
+
+\{ `outputStyle`: `"full"` \| `"short"`; `showFor`: `Record`\<`"yargs"` \| `"cli"` \| `"other"`, `boolean`\>; \}
 
 ##### Default
 
 ```ts
-"short"
+{}
 ```

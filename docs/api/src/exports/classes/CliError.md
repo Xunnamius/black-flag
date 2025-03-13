@@ -6,7 +6,7 @@
 
 # Class: CliError
 
-Defined in: [src/error.ts:141](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L141)
+Defined in: [src/error.ts:156](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L156)
 
 Represents a CLI-specific error with suggested exit code and other
 properties. As `CliError` has built-in support for cause chaining, this class
@@ -24,7 +24,8 @@ can be used as a simple wrapper around other errors.
 
 ## Implements
 
-- `NonNullable`\<[`CliErrorOptions`](../util/type-aliases/CliErrorOptions.md)\>
+- `Required`\<`Omit`\<[`CliErrorOptions`](../util/type-aliases/CliErrorOptions.md), `"cause"`\>\>
+- `Pick`\<[`CliErrorOptions`](../util/type-aliases/CliErrorOptions.md), `"cause"`\>
 
 ## Constructors
 
@@ -32,7 +33,7 @@ can be used as a simple wrapper around other errors.
 
 > **new CliError**(`reason`?, `options`?): [`CliError`](CliError.md)
 
-Defined in: [src/error.ts:151](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L151)
+Defined in: [src/error.ts:169](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L169)
 
 Represents a CLI-specific error, optionally with suggested exit code and
 other context.
@@ -59,7 +60,7 @@ other context.
 
 > **new CliError**(`reason`, `options`, `message`, `superOptions`): [`CliError`](CliError.md)
 
-Defined in: [src/error.ts:156](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L156)
+Defined in: [src/error.ts:174](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L174)
 
 This constructor syntax is used by subclasses when calling this constructor
 via `super`.
@@ -96,7 +97,7 @@ via `super`.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:146](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L146)
+Defined in: [src/error.ts:164](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L164)
 
 ***
 
@@ -108,7 +109,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 #### Implementation of
 
-`NonNullable.cause`
+`Pick.cause`
 
 #### Inherited from
 
@@ -120,9 +121,9 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:144](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L144)
+Defined in: [src/error.ts:162](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L162)
 
-This option is similar in intent to yargs's `exitProcess()` function,
+This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
 
 Normally, [runProgram](../functions/runProgram.md) never throws and never calls `process.exit`,
@@ -145,9 +146,15 @@ heisenbugs.** You will also have to specially handle `process.exit` when
 running unit/integration tests and executing command handlers within other
 command handlers. Tread carefully.
 
+#### Default
+
+```ts
+false
+```
+
 #### Implementation of
 
-`NonNullable.dangerouslyFatal`
+`Required.dangerouslyFatal`
 
 ***
 
@@ -177,30 +184,40 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ### showHelp
 
-> **showHelp**: `undefined` \| `boolean` \| `"full"` \| `"short"` \| `"default"`
+> **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"full"` \| `"short"` \| `"default"`\>
 
-Defined in: [src/error.ts:143](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L143)
+Defined in: [src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L161)
 
-If truthy, help text will be sent to stderr _before this exception finishes
-bubbling_.
+If `showHelp` is set to a string that isn't `"default"`, help text will be
+sent to stderr. Note that help text is always sent _before this exception
+finishes bubbling up to `ConfigureErrorHandlingEpilogue`_.
 
 Specifically, if `showHelp` is set to `"full"`, the full help text will be
 sent to stderr, including the entire `usage` string. If set to `"short"`
 (or `true`), the same help text will be sent to stderr except only the
-first line of usage will be included. If set to `"default"`, the value of
-`ExecutionContext::state.showHelpOnFail` will be used. If set to
-`false` (the default), no help text will be sent to stderr related to this
-error.
+first line of usage will be included. In either case, help text will be
+sent to stderr regardless of the value of
+`ExecutionContext::state.showHelpOnFail`.
+
+Alternatively, if set to `"default"`, the value of
+`ExecutionContext::state.showHelpOnFail` will be used. And if set to
+`false`, no help text will be sent to stderr due to this error regardless
+of the value of `ExecutionContext::state.showHelpOnFail`.
+
+Note that, regardless of this `showHelp`, help text is always output when a
+parent command is invoked that (1) has one or more child commands and (2)
+lacks its own handler implementation or implements a handler that throws
+[CommandNotImplementedError](../util/classes/CommandNotImplementedError.md).
 
 #### Default
 
 ```ts
-false
+"default"
 ```
 
 #### Implementation of
 
-`NonNullable.showHelp`
+`Required.showHelp`
 
 ***
 
@@ -220,7 +237,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:142](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L142)
+Defined in: [src/error.ts:160](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L160)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.
@@ -233,7 +250,7 @@ FrameworkExitCode.DefaultError
 
 #### Implementation of
 
-`NonNullable.suggestedExitCode`
+`Required.suggestedExitCode`
 
 ***
 

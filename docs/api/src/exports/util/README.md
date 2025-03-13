@@ -42,6 +42,7 @@
 
 ## Functions
 
+- [expectedHelpTextRegExp](functions/expectedHelpTextRegExp.md)
 - [getDeepestErrorCause](functions/getDeepestErrorCause.md)
 - [hideBin](functions/hideBin.md)
 - [isArguments](functions/isArguments.md)

@@ -8,7 +8,7 @@
 
 > **ProgramMetadata**: `object`
 
-Defined in: [src/types/program.ts:187](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/program.ts#L187)
+Defined in: [src/types/program.ts:197](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/program.ts#L197)
 
 Represents the meta information about a discovered command and its
 corresponding [Configuration](../../type-aliases/Configuration.md) object/file.

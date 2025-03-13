@@ -8,7 +8,7 @@
 
 > **ConfigureExecutionPrologue**\<`CustomContext`\>: (`rootPrograms`, `context`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/configure.ts:38](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/configure.ts#L38)
+Defined in: [src/types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/configure.ts#L44)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any
@@ -24,7 +24,8 @@ This function is the complement of [ConfigureExecutionEpilogue](ConfigureExecuti
 
 Note that any errors thrown this early in the initialization process will
 trigger a framework error and will NOT be handled by
-[ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md).
+[ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md) nor send help text to stderr
+regardless of error type.
 
 ## Type Parameters
 

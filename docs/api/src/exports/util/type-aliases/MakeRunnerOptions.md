@@ -8,7 +8,7 @@
 
 > **MakeRunnerOptions**: `object` & \{ `configurationHooks`: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>; `preExecutionContext`: `undefined`; \} \| \{ `configurationHooks`: `undefined`; `preExecutionContext`: `Promisable`\<[`PreExecutionContext`](PreExecutionContext.md)\>; \}
 
-Defined in: [src/index.ts:112](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/index.ts#L112)
+Defined in: [src/index.ts:112](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/index.ts#L112)
 
 The options accepted by the [makeRunner](../functions/makeRunner.md) function.
 

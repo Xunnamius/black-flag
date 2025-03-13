@@ -8,13 +8,17 @@
 
 > **ConfigureArguments**\<`CustomContext`\>: (`rawArgv`, `context`) => `Promisable`\<*typeof* `process.argv`\>
 
-Defined in: [src/types/configure.ts:49](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/types/configure.ts#L49)
+Defined in: [src/types/configure.ts:59](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/configure.ts#L59)
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like array.
 
 This is where yargs middleware and other argument pre-processing can be
 implemented.
+
+Note that errors thrown at this point in the initialization process will be
+handled by [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md) but will never send help
+text to stderr regardless of error type.
 
 ## Type Parameters
 

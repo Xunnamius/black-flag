@@ -8,217 +8,15 @@
 
 > `const` **BfErrorMessage**: `object`
 
-Defined in: [src/error.ts:283](https://github.com/Xunnamius/black-flag/blob/5e1e5b553c79657a97e5923bcba77a292781de9e/src/error.ts#L283)
+Defined in: [src/error.ts:304](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/error.ts#L304)
 
 A collection of possible error and warning messages emitted by Black Flag.
 
 ## Type declaration
 
-### AppValidationFailure()
-
-> **AppValidationFailure**: () => `string`
-
-#### Returns
-
-`string`
-
-### AuthFailure()
-
-> **AuthFailure**: () => `string`
-
-#### Returns
-
-`string`
-
-### ClientValidationFailure()
-
-> **ClientValidationFailure**: () => `string`
-
-#### Returns
-
-`string`
-
 ### GuruMeditation()
 
-> **GuruMeditation**: () => `string`
-
-#### Returns
-
-`string`
-
-### HttpFailure()
-
-> **HttpFailure**: (`error`?) => `string`
-
-#### Parameters
-
-##### error?
-
-`string`
-
-#### Returns
-
-`string`
-
-### HttpSubFailure()
-
-> **HttpSubFailure**: (`error`, `statusCode`) => `string`
-
-#### Parameters
-
-##### error
-
-`null` | `string`
-
-##### statusCode
-
-`number`
-
-#### Returns
-
-`string`
-
-### InvalidAppConfiguration()
-
-> **InvalidAppConfiguration**: (`details`?) => `string`
-
-#### Parameters
-
-##### details?
-
-`string`
-
-#### Returns
-
-`string`
-
-### InvalidAppEnvironment()
-
-> **InvalidAppEnvironment**: (`details`?) => `string`
-
-#### Parameters
-
-##### details?
-
-`string`
-
-#### Returns
-
-`string`
-
-### InvalidClientConfiguration()
-
-> **InvalidClientConfiguration**: (`details`?) => `string`
-
-#### Parameters
-
-##### details?
-
-`string`
-
-#### Returns
-
-`string`
-
-### InvalidItem()
-
-> **InvalidItem**: (`item`, `itemName`) => `string`
-
-#### Parameters
-
-##### item
-
-`unknown`
-
-##### itemName
-
-`string`
-
-#### Returns
-
-`string`
-
-### InvalidSecret()
-
-> **InvalidSecret**: (`secretType`) => `string`
-
-#### Parameters
-
-##### secretType
-
-`string`
-
-#### Returns
-
-`string`
-
-### ItemNotFound()
-
-> **ItemNotFound**: (`item`, `itemName`) => `string`
-
-#### Parameters
-
-##### item
-
-`unknown`
-
-##### itemName
-
-`string`
-
-#### Returns
-
-`string`
-
-### ItemOrItemsNotFound()
-
-> **ItemOrItemsNotFound**: (`itemsName`) => `string`
-
-#### Parameters
-
-##### itemsName
-
-`string`
-
-#### Returns
-
-`string`
-
-### NotAuthenticated()
-
-> **NotAuthenticated**: () => `string`
-
-#### Returns
-
-`string`
-
-### NotAuthorized()
-
-> **NotAuthorized**: () => `string`
-
-#### Returns
-
-`string`
-
-### NotFound()
-
-> **NotFound**: () => `string`
-
-#### Returns
-
-`string`
-
-### NotImplemented()
-
-> **NotImplemented**: () => `string`
-
-#### Returns
-
-`string`
-
-### ValidationFailure()
-
-> **ValidationFailure**: () => `string`
+> **GuruMeditation**: () => `string` = `NamedErrorMessage.GuruMeditation`
 
 #### Returns
 
@@ -237,6 +35,30 @@ A collection of possible error and warning messages emitted by Black Flag.
 `string`
 
 ### BadParameterCombination()
+
+#### Returns
+
+`string`
+
+### BuilderCalledOnInvalidPass()
+
+#### Parameters
+
+##### pass
+
+`"first-pass"` | `"second-pass"`
+
+#### Returns
+
+`string`
+
+### BuilderCannotBeAsync()
+
+#### Parameters
+
+##### commandName
+
+`string`
 
 #### Returns
 
