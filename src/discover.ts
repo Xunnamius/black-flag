@@ -190,8 +190,7 @@ export async function discoverCommands(
       await loadConfiguration(
         ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].map((extension) =>
           toPath(configPath, `index.${extension}`)
-        ),
-        context
+        )
       );
 
     if (!parentConfig) {
@@ -267,7 +266,7 @@ export async function discoverCommands(
         discoverDebug('attempting to load file');
 
         const { configuration: childConfig, metadata: childMeta } =
-          await loadConfiguration(entryFullPath, context);
+          await loadConfiguration(entryFullPath);
 
         /* istanbul ignore next */
         if (!childConfig) {
@@ -338,10 +337,7 @@ export async function discoverCommands(
    * associated metadata of the first file that is both readable and exports a
    * {@link Configuration} object.
    */
-  async function loadConfiguration(
-    configPath: Arrayable<AbsolutePath>,
-    context: ExecutionContext
-  ) {
+  async function loadConfiguration(configPath: Arrayable<AbsolutePath>) {
     const isRootProgram = !alreadyLoadedRootCommand;
     const loadDebug = discoverDebug.extend('load-configuration');
 
