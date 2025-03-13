@@ -43,6 +43,8 @@ import type {
 } from 'universe:types/program.ts';
 
 const hasSpacesRegExp = /\s+/;
+// ! MUST NEVER BE GLOBAL (RegExp g flag)
+const isValidYargsCommandDslRegExp = /^\$0( ((<[^>]*>)|(\[[^\]]*\])))*$/;
 const alphaSort = new Intl.Collator(undefined, { numeric: true });
 
 /**
@@ -587,7 +589,14 @@ export async function discoverCommands(
               !finalConfig.command.startsWith('$0 '))
           ) {
             throw new AssertionFailedError(
-              BfErrorMessage.InvalidCommandExport(finalConfig.name)
+              BfErrorMessage.InvalidCommandExportBadStart(finalConfig.name)
+            );
+          }
+
+          // ! This check should occur AFTER the bad start check (above)
+          if (!isValidYargsCommandDslRegExp.test(finalConfig.command)) {
+            throw new AssertionFailedError(
+              BfErrorMessage.InvalidCommandExportBadPositionals(finalConfig.name)
             );
           }
 
