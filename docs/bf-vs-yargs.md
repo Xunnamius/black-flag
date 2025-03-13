@@ -63,11 +63,11 @@ Flag, but are noted below nonetheless.
   function) for a [Yargs default command][14].
 
   Black Flag addresses this with its types, in that attempting to pass an async
-  builder will be flagged as problematic by intellisense. Moreover, Black Flag
-  supports an asynchronous function as the value of `module.exports` in CJS
-  code, and top-level await in ESM code, so if you really do need an async
-  [`builder`][4] function, hoist the async logic to work around this bug for
-  now.
+  builder will be flagged as problematic by intellisense and trigger an
+  assertion error. Moreover, Black Flag supports an asynchronous function as the
+  value of `module.exports` in CJS code, and top-level await in ESM code, so if
+  you really do need an async [`builder`][4] function, hoist the async logic to
+  work around this bug for now.
 
 - A [bug?][15] in yargs\@17.7.2 causes `yargs::showHelp` to erroneously print
   the _second_ element in the [`yargs::aliases`][16] array of the [Yargs default

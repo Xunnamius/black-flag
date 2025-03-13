@@ -1338,6 +1338,11 @@ export async function discoverCommands(
               )
             : config.builder;
 
+        assert(
+          !isPromise(blackFlagBuilderResult),
+          BfErrorMessage.BuilderCannotBeAsync(config.name)
+        );
+
         if (blackFlagBuilderResult && blackFlagBuilderResult !== program) {
           // ? Use program here instead of vanillaYargs since we want our
           // ? version of the ::options method.
