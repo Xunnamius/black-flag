@@ -21,12 +21,12 @@ export const BfcErrorMessage = {
     );
   },
   OptionRequiresMinArgs(name: string, adjective?: string) {
-    return `the ${name} array option requires at least one ${adjective ? `${adjective} ` : ''} value`;
+    return `array option "${name}" requires at least one ${adjective ? `${adjective} ` : ''} value`;
   },
   OptionRequiresNoConflicts(name: string, tuple: unknown[]) {
-    return `the ${name} array option allows only one of the following values: ${tuple.join(', ')}`;
+    return `array option "${name}" allows only one of the following values: ${tuple.join(', ')}`;
   },
   OptionRequiresUniqueArgs(name: string) {
-    return `the ${name} array option must contain only unique values`;
+    return `array option "${name}" must contain only unique values`;
   }
 };
