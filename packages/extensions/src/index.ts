@@ -391,7 +391,7 @@ export type BfeBuilderObjectValueExtensions<
    * functions will result in them being awaited concurrently.
    *
    * See [the
-   * documentation](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#check)
+   * documentation](https://github.com/Xunnamius/black-flag/tree/main/packages/extensions/README.md#check)
    * for details.
    */
   check?:
@@ -403,7 +403,7 @@ export type BfeBuilderObjectValueExtensions<
    * and the suboptions whose configurations they determine.
    *
    * See [the
-   * documentation](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#suboptionof)
+   * documentation](https://github.com/Xunnamius/black-flag/tree/main/packages/extensions/README.md#suboptionof)
    * for details.
    *
    * For describing simpler implicative relations, see `implies`.
@@ -420,7 +420,7 @@ export type BfeBuilderObjectValueExtensions<
    * However, unlike vanilla yargs and Black Flag, this default value is applied
    * towards the end of BFE's execution, enabling its use alongside keys like
    * `conflicts`. See [the
-   * documentation](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#support-for-default-with-conflictsrequiresetc)
+   * documentation](https://github.com/Xunnamius/black-flag/tree/main/packages/extensions/README.md#support-for-default-with-conflictsrequiresetc)
    * for details.
    *
    * Note also that a defaulted argument will not be coerced by the `coerce`
@@ -692,7 +692,7 @@ export type WithBuilderExtensionsConfig<
    * options.
    *
    * See [the
-   * documentation](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#automatic-grouping-of-related-options)
+   * documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
    * for details.
    *
    * @default false
@@ -702,7 +702,7 @@ export type WithBuilderExtensionsConfig<
    * An array of zero or more string keys of `CustomCliArguments`, with the
    * optional addition of `'help'` and `'version'`, that should be grouped under
    * _"Common Options"_ when [automatic grouping of related
-   * options](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#automatic-grouping-of-related-options)
+   * options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
    * is enabled.
    *
    * This setting is ignored if `disableAutomaticGrouping === true`.
@@ -1393,8 +1393,8 @@ export function withUsageExtensions(
  * Use `CustomCliArguments` (and `CustomExecutionContext`) to assert the
  * expected shape of the "reified argv".
  *
- * See [the BFE
- * documentation](https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#getinvocableextendedhandler)
+ * See [the
+ * documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#getinvocableextendedhandler)
  * for more details.
  */
 export async function getInvocableExtendedHandler<
