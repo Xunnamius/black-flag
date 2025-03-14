@@ -8,7 +8,7 @@
 
 > `const` **$artificiallyInvoked**: *typeof* [`$artificiallyInvoked`]($artificiallyInvoked.md)
 
-Defined in: [packages/extensions/src/symbols.ts:28](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/symbols.ts#L28)
+Defined in: [packages/extensions/src/symbols.ts:28](https://github.com/Xunnamius/black-flag/blob/3c3f6e1e60095912b550318378e24dc68e62b7d6/packages/extensions/src/symbols.ts#L28)
 
 Will appear in the `argv` of commands that were invoked via
 [getInvocableExtendedHandler](../../index/functions/getInvocableExtendedHandler.md) instead of naturally via Black Flag.
