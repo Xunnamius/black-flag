@@ -13,13 +13,13 @@
     "black-flag",
     "optparser"
   ],
-  "homepage": "https://github.com/Xunnamius/black-flag-extensions/tree/main/packages/extensions#readme",
+  "homepage": "https://github.com/Xunnamius/black-flag/tree/main/packages/extensions#readme",
   "bugs": {
-    "url": "https://github.com/Xunnamius/black-flag-extensions/issues"
+    "url": "https://github.com/Xunnamius/black-flag/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Xunnamius/black-flag-extensions.git"
+    "url": "git+https://github.com/Xunnamius/black-flag.git"
   },
   "license": "MIT",
   "author": "Xunnamius",
