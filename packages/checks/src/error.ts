@@ -22,5 +22,11 @@ export const BfcErrorMessage = {
   },
   OptionRequiresMinArgs(name: string, adjective?: string) {
     return `the ${name} array option requires at least one ${adjective ? `${adjective} ` : ''} value`;
+  },
+  OptionRequiresNoConflicts(name: string, tuple: unknown[]) {
+    return `the ${name} array option allows only one of the following values: ${tuple.join(', ')}`;
+  },
+  OptionRequiresUniqueArgs(name: string) {
+    return `the ${name} array option must contain only unique values`;
   }
 };

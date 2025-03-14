@@ -46,3 +46,51 @@ export function checkArrayNotEmpty(argName: string, adjective = 'non-empty') {
     );
   };
 }
+
+/**
+ * A Black Flag check that passes when at most only one element from each
+ * `conflict` tuple is present in the array.
+ */
+export function checkArrayNoConflicts(argName: string, conflicts: unknown[][]) {
+  return function (currentArg: unknown) {
+    if (!Array.isArray(currentArg)) {
+      return BfcErrorMessage.BadType(argName, 'array', typeof currentArg);
+    }
+
+    let conflictingTuple: unknown[] = [];
+
+    return (
+      conflicts.every((tuple) => {
+        let includesOne = false;
+
+        return tuple.every((element) => {
+          if (currentArg.includes(element)) {
+            if (includesOne) {
+              conflictingTuple = tuple;
+              return false;
+            }
+
+            includesOne = true;
+          }
+
+          return true;
+        });
+      }) || BfcErrorMessage.OptionRequiresNoConflicts(argName, conflictingTuple)
+    );
+  };
+}
+
+/**
+ * A Black Flag check that passes when each element in the array is unique.
+ */
+export function checkArrayUnique(argName: string) {
+  return function (currentArg: unknown) {
+    if (!Array.isArray(currentArg)) {
+      return BfcErrorMessage.BadType(argName, 'array', typeof currentArg);
+    }
+
+    const satisfies_ = Array.from(new Set(currentArg)).length === currentArg.length;
+
+    return satisfies_ || BfcErrorMessage.OptionRequiresUniqueArgs(argName);
+  };
+}
