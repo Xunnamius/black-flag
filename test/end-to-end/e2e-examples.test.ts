@@ -68,5 +68,7 @@ const withMockedFixture = mockFixturesFactory(
 describe('./examples', () => {
   test('example-todo', async () => {
     expect.hasAssertions();
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    void runnerFactory, withMockedFixture;
   });
 });
