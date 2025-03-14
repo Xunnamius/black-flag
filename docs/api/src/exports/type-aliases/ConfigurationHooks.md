@@ -8,7 +8,7 @@
 
 > **ConfigurationHooks**: `object`
 
-Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/types/configure.ts#L111)
+Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/types/configure.ts#L111)
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.

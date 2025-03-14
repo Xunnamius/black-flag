@@ -1,14 +1,14 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / getInvocableExtendedHandler
+[@black-flag/extensions](../../README.md) / [index](../README.md) / getInvocableExtendedHandler
 
 # Function: getInvocableExtendedHandler()
 
-> **getInvocableExtendedHandler**<`CustomCliArguments`, `CustomExecutionContext`>(`maybeCommand`, `context`): `Promise`<(`argv_`) => `Promise`<`void`>>
+> **getInvocableExtendedHandler**\<`CustomCliArguments`, `CustomExecutionContext`\>(`maybeCommand`, `context`): `Promise`\<(`argv_`) => `Promise`\<`void`\>\>
 
-Defined in: [packages/extensions/src/index.ts:1400][3]
+Defined in: [packages/extensions/src/index.ts:1400](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L1400)
 
 This function returns a version of `maybeCommand`'s handler function that is
 ready to invoke immediately. It can be used with both BFE and normal Black
@@ -27,32 +27,26 @@ correctness checks.**
 Use `CustomCliArguments` (and `CustomExecutionContext`) to assert the
 expected shape of the "reified argv".
 
-See [the BFE
-documentation][4]
+See [the
+documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#getinvocableextendedhandler)
 for more details.
 
 ## Type Parameters
 
-• **CustomCliArguments** _extends_ `Record`<`string`, `unknown`>
+• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
 
-• **CustomExecutionContext** _extends_ `ExecutionContext`
+• **CustomExecutionContext** *extends* `ExecutionContext`
 
 ## Parameters
 
-### Maybecommand
+### maybeCommand
 
-`Promisable`<`ImportedConfigurationModule`<`CustomCliArguments`, `CustomExecutionContext`> | `ImportedConfigurationModule`<`CustomCliArguments`, [`AsStrictExecutionContext`][5]<`CustomExecutionContext`>>>
+`Promisable`\<`ImportedConfigurationModule`\<`CustomCliArguments`, `CustomExecutionContext`\> \| `ImportedConfigurationModule`\<`CustomCliArguments`, [`AsStrictExecutionContext`](../type-aliases/AsStrictExecutionContext.md)\<`CustomExecutionContext`\>\>\>
 
-### Context
+### context
 
 `CustomExecutionContext`
 
 ## Returns
 
-`Promise`<(`argv_`) => `Promise`<`void`>>
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L1400
-[4]: https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#getinvocableextendedhandler
-[5]: ../type-aliases/AsStrictExecutionContext.md
+`Promise`\<(`argv_`) => `Promise`\<`void`\>\>

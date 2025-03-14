@@ -6,7 +6,7 @@
 
 # Enumeration: FrameworkExitCode
 
-Defined in: [src/constant.ts:51](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/constant.ts#L51)
+Defined in: [src/constant.ts:51](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/constant.ts#L51)
 
 Well-known exit codes shared across CLI implementations.
 
@@ -16,7 +16,7 @@ Well-known exit codes shared across CLI implementations.
 
 > **AssertionFailed**: `3`
 
-Defined in: [src/constant.ts:75](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/constant.ts#L75)
+Defined in: [src/constant.ts:75](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/constant.ts#L75)
 
 The exit code used when a sanity check fails. This includes (but is not
 limited to) all _framework errors_.
@@ -34,7 +34,7 @@ of Black Flag by the developer.
 
 > **DefaultError**: `1`
 
-Defined in: [src/constant.ts:59](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/constant.ts#L59)
+Defined in: [src/constant.ts:59](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/constant.ts#L59)
 
 Hard-coded default fallback exit code when fatal errors occur.
 
@@ -44,7 +44,7 @@ Hard-coded default fallback exit code when fatal errors occur.
 
 > **NotImplemented**: `2`
 
-Defined in: [src/constant.ts:63](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/constant.ts#L63)
+Defined in: [src/constant.ts:63](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/constant.ts#L63)
 
 The exit code used when executing an unimplemented child command.
 
@@ -54,6 +54,6 @@ The exit code used when executing an unimplemented child command.
 
 > **Ok**: `0`
 
-Defined in: [src/constant.ts:55](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/constant.ts#L55)
+Defined in: [src/constant.ts:55](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/constant.ts#L55)
 
 The exit code used when execution succeeds and exits gracefully.

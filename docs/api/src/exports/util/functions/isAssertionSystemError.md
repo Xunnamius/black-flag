@@ -8,7 +8,7 @@
 
 > **isAssertionSystemError**(`error`): `error is ErrnoException & { actual?: unknown; code: "ERR_ASSERTION"; expected?: unknown; generatedMessage: boolean; operator: string }`
 
-Defined in: [src/util.ts:62](https://github.com/Xunnamius/black-flag/blob/40d21584fb01de3f46f2fedf60011594304c55d4/src/util.ts#L62)
+Defined in: [src/util.ts:62](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/util.ts#L62)
 
 Type-guard for Node's "ERR_ASSERTION" so-called `SystemError`.
 

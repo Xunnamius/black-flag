@@ -1,32 +1,32 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / WithBuilderExtensionsConfig
+[@black-flag/extensions](../../README.md) / [index](../README.md) / WithBuilderExtensionsConfig
 
-# Type Alias: WithBuilderExtensionsConfig\<CustomCliArguments>
+# Type Alias: WithBuilderExtensionsConfig\<CustomCliArguments\>
 
-> **WithBuilderExtensionsConfig**<`CustomCliArguments`>: `object`
+> **WithBuilderExtensionsConfig**\<`CustomCliArguments`\>: `object`
 
-Defined in: [packages/extensions/src/index.ts:687][3]
+Defined in: [packages/extensions/src/index.ts:687](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L687)
 
 A configuration object that further configures the behavior of
-[withBuilderExtensions][4].
+[withBuilderExtensions](../functions/withBuilderExtensions.md).
 
 ## Type Parameters
 
-• **CustomCliArguments** _extends_ `Record`<`string`, `unknown`>
+• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
 
-## Type Declaration
+## Type declaration
 
-### Commonoptions?
+### commonOptions?
 
-> `optional` **commonOptions**: readonly `LiteralUnion`\<keyof `CustomCliArguments` | `"help"` | `"version"`, `string`>\[]
+> `optional` **commonOptions**: readonly `LiteralUnion`\<keyof `CustomCliArguments` \| `"help"` \| `"version"`, `string`\>[]
 
 An array of zero or more string keys of `CustomCliArguments`, with the
 optional addition of `'help'` and `'version'`, that should be grouped under
 _"Common Options"_ when [automatic grouping of related
-options][5]
+options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
 is enabled.
 
 This setting is ignored if `disableAutomaticGrouping === true`.
@@ -37,7 +37,7 @@ This setting is ignored if `disableAutomaticGrouping === true`.
 ['help']
 ```
 
-### Disableautomaticgrouping?
+### disableAutomaticGrouping?
 
 > `optional` **disableAutomaticGrouping**: `boolean`
 
@@ -45,7 +45,7 @@ Set to `true` to disable BFE's support for automatic grouping of related
 options.
 
 See [the
-documentation][5]
+documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
 for details.
 
 #### Default
@@ -53,9 +53,3 @@ for details.
 ```ts
 false
 ```
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L687
-[4]: ../functions/withBuilderExtensions.md
-[5]: https://github.com/Xunnamius/black-flag-extensions?tab=readme-ov-file#automatic-grouping-of-related-options

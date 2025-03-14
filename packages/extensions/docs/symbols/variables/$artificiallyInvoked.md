@@ -1,20 +1,14 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [symbols][2] / $artificiallyInvoked
+[@black-flag/extensions](../../README.md) / [symbols](../README.md) / $artificiallyInvoked
 
 # Variable: $artificiallyInvoked
 
-> `const` **$artificiallyInvoked**: _typeof_ [`$artificiallyInvoked`][3]
+> `const` **$artificiallyInvoked**: *typeof* [`$artificiallyInvoked`]($artificiallyInvoked.md)
 
-Defined in: [packages/extensions/src/symbols.ts:28][4]
+Defined in: [packages/extensions/src/symbols.ts:28](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/symbols.ts#L28)
 
 Will appear in the `argv` of commands that were invoked via
-[getInvocableExtendedHandler][5] instead of naturally via Black Flag.
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: $artificiallyInvoked.md
-[4]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/symbols.ts#L28
-[5]: ../../index/functions/getInvocableExtendedHandler.md
+[getInvocableExtendedHandler](../../index/functions/getInvocableExtendedHandler.md) instead of naturally via Black Flag.

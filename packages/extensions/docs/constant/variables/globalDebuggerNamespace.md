@@ -1,17 +1,13 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [constant][2] / globalDebuggerNamespace
+[@black-flag/extensions](../../README.md) / [constant](../README.md) / globalDebuggerNamespace
 
 # Variable: globalDebuggerNamespace
 
 > `const` **globalDebuggerNamespace**: `"bfe"` = `'bfe'`
 
-Defined in: [packages/extensions/src/constant.ts:4][3]
+Defined in: [packages/extensions/src/constant.ts:4](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/constant.ts#L4)
 
 The project-wide namespace that appears in debugger output.
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/constant.ts#L4

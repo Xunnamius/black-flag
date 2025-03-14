@@ -1,14 +1,14 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / withUsageExtensions
+[@black-flag/extensions](../../README.md) / [index](../README.md) / withUsageExtensions
 
 # Function: withUsageExtensions()
 
 > **withUsageExtensions**(`altDescription`, `__namedParameters`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1336][3]
+Defined in: [packages/extensions/src/index.ts:1336](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L1336)
 
 Generate command usage text consistently yet flexibly.
 
@@ -17,13 +17,13 @@ Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
 
 ## Parameters
 
-### Altdescription
+### altDescription
 
 `string` = `'$1.'`
 
-### \_\_namedparameters
+### \_\_namedParameters
 
-#### Appendperiod?
+#### appendPeriod?
 
 `boolean` = `true`
 
@@ -36,7 +36,7 @@ period is only appended if one is not already appended.
 true
 ```
 
-#### Includeoptions?
+#### includeOptions?
 
 `boolean` = `prependNewlines`
 
@@ -48,7 +48,7 @@ Whether the string `' [...options]'` will be appended to the first line of usage
 options.prependNewlines
 ```
 
-#### Prependnewlines?
+#### prependNewlines?
 
 `boolean` = `true`
 
@@ -60,7 +60,7 @@ Whether newlines will be prepended to `altDescription` or not.
 true
 ```
 
-#### Trim?
+#### trim?
 
 `boolean` = `true`
 
@@ -75,7 +75,3 @@ true
 ## Returns
 
 `string`
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L1336

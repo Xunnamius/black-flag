@@ -1,21 +1,16 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / error
+[@black-flag/extensions](../README.md) / error
 
 # error
 
 ## Type Aliases
 
-- [KeyValueEntries][2]
-- [KeyValueEntry][3]
+- [KeyValueEntries](type-aliases/KeyValueEntries.md)
+- [KeyValueEntry](type-aliases/KeyValueEntry.md)
 
 ## Variables
 
-- [BfeErrorMessage][4]
-
-[1]: ../README.md
-[2]: type-aliases/KeyValueEntries.md
-[3]: type-aliases/KeyValueEntry.md
-[4]: variables/BfeErrorMessage.md
+- [BfeErrorMessage](variables/BfeErrorMessage.md)

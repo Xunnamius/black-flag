@@ -1,14 +1,11 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / constant
+[@black-flag/extensions](../README.md) / constant
 
 # constant
 
 ## Variables
 
-- [globalDebuggerNamespace][2]
-
-[1]: ../README.md
-[2]: variables/globalDebuggerNamespace.md
+- [globalDebuggerNamespace](variables/globalDebuggerNamespace.md)

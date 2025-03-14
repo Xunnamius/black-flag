@@ -1,23 +1,19 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / BfBuilderFunction
+[@black-flag/extensions](../../README.md) / [index](../README.md) / BfBuilderFunction
 
-# Type Alias: BfBuilderFunction\<CustomCliArguments, CustomExecutionContext>
+# Type Alias: BfBuilderFunction\<CustomCliArguments, CustomExecutionContext\>
 
-> **BfBuilderFunction**<`CustomCliArguments`, `CustomExecutionContext`>: `Extract`<`Configuration`<`CustomCliArguments`, `CustomExecutionContext`>\[`"builder"`], `Function`>
+> **BfBuilderFunction**\<`CustomCliArguments`, `CustomExecutionContext`\>: `Extract`\<`Configuration`\<`CustomCliArguments`, `CustomExecutionContext`\>\[`"builder"`\], `Function`\>
 
-Defined in: [packages/extensions/src/index.ts:160][3]
+Defined in: [packages/extensions/src/index.ts:160](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L160)
 
 The function type of the `builder` export accepted by Black Flag.
 
 ## Type Parameters
 
-• **CustomCliArguments** _extends_ `Record`<`string`, `unknown`>
+• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
 
-• **CustomExecutionContext** _extends_ `ExecutionContext`
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L160
+• **CustomExecutionContext** *extends* `ExecutionContext`

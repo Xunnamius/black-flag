@@ -1,45 +1,38 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / BfeBuilderFunction
+[@black-flag/extensions](../../README.md) / [index](../README.md) / BfeBuilderFunction
 
-# Type Alias: BfeBuilderFunction()\<CustomCliArguments, CustomExecutionContext>
+# Type Alias: BfeBuilderFunction()\<CustomCliArguments, CustomExecutionContext\>
 
-> **BfeBuilderFunction**<`CustomCliArguments`, `CustomExecutionContext`>: (...`args`) => [`BfBuilderObject`][3]<`CustomCliArguments`, `CustomExecutionContext`>
+> **BfeBuilderFunction**\<`CustomCliArguments`, `CustomExecutionContext`\>: (...`args`) => [`BfBuilderObject`](BfBuilderObject.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [packages/extensions/src/index.ts:580][4]
+Defined in: [packages/extensions/src/index.ts:580](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L580)
 
 This function implements several additional optionals-related units of
 functionality. This function is meant to take the place of a command's
 `builder` export.
 
 This type cannot be instantiated by direct means. Instead, it is created and
-returned by [withBuilderExtensions][5].
+returned by [withBuilderExtensions](../functions/withBuilderExtensions.md).
 
 ## Type Parameters
 
-• **CustomCliArguments** _extends_ `Record`<`string`, `unknown`>
+• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
 
-• **CustomExecutionContext** _extends_ `ExecutionContext`
+• **CustomExecutionContext** *extends* `ExecutionContext`
 
 ## Parameters
 
-### Args
+### args
 
-...`Parameters`<[`BfBuilderFunction`][6]<`CustomCliArguments`, `CustomExecutionContext`>>
+...`Parameters`\<[`BfBuilderFunction`](BfBuilderFunction.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\>
 
 ## Returns
 
-[`BfBuilderObject`][3]<`CustomCliArguments`, `CustomExecutionContext`>
+[`BfBuilderObject`](BfBuilderObject.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
 ## See
 
-[withBuilderExtensions][5]
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: BfBuilderObject.md
-[4]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L580
-[5]: ../functions/withBuilderExtensions.md
-[6]: BfBuilderFunction.md
+[withBuilderExtensions](../functions/withBuilderExtensions.md)

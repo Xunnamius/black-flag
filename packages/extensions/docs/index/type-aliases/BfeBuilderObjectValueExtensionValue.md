@@ -1,21 +1,15 @@
-[**@black-flag/extensions**][1]
+[**@black-flag/extensions**](../../README.md)
 
----
+***
 
-[@black-flag/extensions][1] / [index][2] / BfeBuilderObjectValueExtensionValue
+[@black-flag/extensions](../../README.md) / [index](../README.md) / BfeBuilderObjectValueExtensionValue
 
 # Type Alias: BfeBuilderObjectValueExtensionValue
 
-> **BfeBuilderObjectValueExtensionValue**: `string` | [`BfeBuilderObjectValueExtensionObject`][3] | (`string` | [`BfeBuilderObjectValueExtensionObject`][3])\[]
+> **BfeBuilderObjectValueExtensionValue**: `string` \| [`BfeBuilderObjectValueExtensionObject`](BfeBuilderObjectValueExtensionObject.md) \| (`string` \| [`BfeBuilderObjectValueExtensionObject`](BfeBuilderObjectValueExtensionObject.md))[]
 
-Defined in: [packages/extensions/src/index.ts:451][4]
+Defined in: [packages/extensions/src/index.ts:451](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/extensions/src/index.ts#L451)
 
-The string/object/array type of a [BfeBuilderObjectValueExtensions][5].
+The string/object/array type of a [BfeBuilderObjectValueExtensions](BfeBuilderObjectValueExtensions.md).
 
-This type is a superset of [BfeBuilderObjectValueExtensionObject][3].
-
-[1]: ../../README.md
-[2]: ../README.md
-[3]: BfeBuilderObjectValueExtensionObject.md
-[4]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/extensions/src/index.ts#L451
-[5]: BfeBuilderObjectValueExtensions.md
+This type is a superset of [BfeBuilderObjectValueExtensionObject](BfeBuilderObjectValueExtensionObject.md).

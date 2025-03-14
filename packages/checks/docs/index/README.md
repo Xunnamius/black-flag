@@ -1,25 +1,21 @@
-[**@black-flag/checks**][1]
+[**@black-flag/checks**](../README.md)
 
----
+***
 
-[@black-flag/checks][1] / index
+[@black-flag/checks](../README.md) / index
 
 # index
 
 ## Functions
 
-- [checkArrayNotEmpty][2]
-- [checkIsNotNegative][3]
-- [checkIsNotNil][4]
+- [checkArrayNoConflicts](functions/checkArrayNoConflicts.md)
+- [checkArrayNotEmpty](functions/checkArrayNotEmpty.md)
+- [checkArrayUnique](functions/checkArrayUnique.md)
+- [checkIsNotNegative](functions/checkIsNotNegative.md)
+- [checkIsNotNil](functions/checkIsNotNil.md)
 
 ## References
 
-### Bfcerrormessage
+### BfcErrorMessage
 
-Re-exports [BfcErrorMessage][5]
-
-[1]: ../README.md
-[2]: functions/checkArrayNotEmpty.md
-[3]: functions/checkIsNotNegative.md
-[4]: functions/checkIsNotNil.md
-[5]: ../error/variables/BfcErrorMessage.md
+Re-exports [BfcErrorMessage](../error/variables/BfcErrorMessage.md)

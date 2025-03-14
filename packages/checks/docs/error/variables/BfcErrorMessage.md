@@ -1,32 +1,32 @@
-[**@black-flag/checks**][1]
+[**@black-flag/checks**](../../README.md)
 
----
+***
 
-[@black-flag/checks][1] / [error][2] / BfcErrorMessage
+[@black-flag/checks](../../README.md) / [error](../README.md) / BfcErrorMessage
 
 # Variable: BfcErrorMessage
 
 > `const` **BfcErrorMessage**: `object`
 
-Defined in: [error.ts:5][3]
+Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/checks/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 
-## Type Declaration
+## Type declaration
 
-### Badtype()
+### BadType()
 
 #### Parameters
 
-##### Name
+##### name
 
 `string`
 
-##### Expected
+##### expected
 
 `string`
 
-##### Actual
+##### actual
 
 `string`
 
@@ -34,11 +34,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### Optionmustbenonnegative()
+### OptionMustBeNonNegative()
 
 #### Parameters
 
-##### Name
+##### name
 
 `string`
 
@@ -46,11 +46,11 @@ A collection of possible error and warning messages.
 
 `string`
 
-### Optionmustnotbefalsy()
+### OptionMustNotBeFalsy()
 
 #### Parameters
 
-##### Name
+##### name
 
 `string`
 
@@ -58,15 +58,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### Optionrequiresminargs()
+### OptionRequiresMinArgs()
 
 #### Parameters
 
-##### Name
+##### name
 
 `string`
 
-##### Adjective?
+##### adjective?
 
 `string`
 
@@ -74,15 +74,27 @@ A collection of possible error and warning messages.
 
 `string`
 
-### Optionvaluemustbealone()
+### OptionRequiresNoConflicts()
 
 #### Parameters
 
-##### Option
+##### name
 
 `string`
 
-##### Noun
+##### tuple
+
+`unknown`[]
+
+#### Returns
+
+`string`
+
+### OptionRequiresUniqueArgs()
+
+#### Parameters
+
+##### name
 
 `string`
 
@@ -90,15 +102,15 @@ A collection of possible error and warning messages.
 
 `string`
 
-### Optionvaluemustbealonewhenbaseline()
+### OptionValueMustBeAlone()
 
 #### Parameters
 
-##### Option
+##### option
 
 `string`
 
-##### Noun
+##### noun
 
 `string`
 
@@ -106,6 +118,18 @@ A collection of possible error and warning messages.
 
 `string`
 
-[1]: ../../README.md
-[2]: ../README.md
-[3]: https://github.com/Xunnamius/black-flag/blob/1b1b5b597cf8302c1cc5affdd2e1dd9189034907/packages/checks/src/error.ts#L5
+### OptionValueMustBeAloneWhenBaseline()
+
+#### Parameters
+
+##### option
+
+`string`
+
+##### noun
+
+`string`
+
+#### Returns
+
+`string`

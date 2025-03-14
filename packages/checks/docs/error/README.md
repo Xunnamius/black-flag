@@ -1,14 +1,11 @@
-[**@black-flag/checks**][1]
+[**@black-flag/checks**](../README.md)
 
----
+***
 
-[@black-flag/checks][1] / error
+[@black-flag/checks](../README.md) / error
 
 # error
 
 ## Variables
 
-- [BfcErrorMessage][2]
-
-[1]: ../README.md
-[2]: variables/BfcErrorMessage.md
+- [BfcErrorMessage](variables/BfcErrorMessage.md)
