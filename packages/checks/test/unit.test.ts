@@ -28,7 +28,7 @@ describe('::checkIsNotNegative', () => {
 });
 
 describe('::checkIsNotNil', () => {
-  it('returns true iff argument is not nill', async () => {
+  it('returns true iff argument is not nil', async () => {
     expect.hasAssertions();
 
     const check = checkIsNotNil(argName);
@@ -36,7 +36,11 @@ describe('::checkIsNotNil', () => {
     expect(check(1)).toBeTrue();
     expect(check(-1)).toBeTrue();
     expect(check(true)).toBeTrue();
-    expect(check('5')).toBeTrue();
+    expect(check('0')).toBeTrue();
+    expect(check('false')).toBeTrue();
+    expect(check('null')).toBeTrue();
+    expect(check('undefined')).toBeTrue();
+    expect(check([])).toBeTrue();
 
     expect(check(0)).toBe(BfcErrorMessage.OptionMustNotBeFalsy(argName));
     expect(check(false)).toBe(BfcErrorMessage.OptionMustNotBeFalsy(argName));
