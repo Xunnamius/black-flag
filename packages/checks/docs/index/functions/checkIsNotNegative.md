@@ -8,7 +8,7 @@
 
 > **checkIsNotNegative**(`argName`): (`currentArg`) => `string` \| `true`
 
-Defined in: [index.ts:9](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/packages/checks/src/index.ts#L9)
+Defined in: [index.ts:9](https://github.com/Xunnamius/black-flag/blob/359cb940c512f8ac3f63e33c0f88a34c8e1d62ec/packages/checks/src/index.ts#L9)
 
 A Black Flag check that passes when an argument value is a non-negative
 number.
