@@ -8,7 +8,7 @@
 
 > **Configuration**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
 
-Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/types/module.ts#L15)
+Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/module.ts#L15)
 
 A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a

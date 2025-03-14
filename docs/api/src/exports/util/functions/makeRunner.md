@@ -8,7 +8,7 @@
 
 > **makeRunner**\<`CustomCliArguments`\>(`options`): (...`args`) => [`RunProgramReturnType`](../../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:544](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/index.ts#L544)
+Defined in: [src/index.ts:544](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/index.ts#L544)
 
 A "high-order" factory function that returns a "low-order" curried
 [runProgram](../../functions/runProgram.md) function that can be called multiple times while only

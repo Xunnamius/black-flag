@@ -8,7 +8,7 @@
 
 > **NullArguments**\<`CustomExecutionContext`\>: `object` & [`FrameworkArguments`](../util/type-aliases/FrameworkArguments.md)\<`CustomExecutionContext`\>
 
-Defined in: [src/types/program.ts:41](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/types/program.ts#L41)
+Defined in: [src/types/program.ts:41](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/program.ts#L41)
 
 Represents an empty or "null" `Arguments` object devoid of useful data.
 

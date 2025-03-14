@@ -8,7 +8,7 @@
 
 > **configureProgram**(`commandModulesPath`, `configurationHooks`?): `Promise`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
 
-Defined in: [src/index.ts:188](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/index.ts#L188)
+Defined in: [src/index.ts:188](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/index.ts#L188)
 
 Create and return a [PreExecutionContext](../util/type-aliases/PreExecutionContext.md) containing fully-configured
 [Program](../util/type-aliases/Program.md) instances and an [Executor](../util/type-aliases/Executor.md) entry point function.

@@ -8,7 +8,7 @@
 
 > **expectedHelpTextRegExp**(`__namedParameters`): `RegExp`
 
-Defined in: [src/util.ts:132](https://github.com/Xunnamius/black-flag/blob/10cd0ebc0304d033218ec4dffba0c41cb2e85ff6/src/util.ts#L132)
+Defined in: [src/util.ts:132](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/util.ts#L132)
 
 `expectedHelpTextRegExp` is a testing helper function that returns a regular
 expression capable of matching standard Black Flag help text output with high
