@@ -31,7 +31,7 @@ A collection of general purpose check functions for yargs and Black Flag
 
 <!-- symbiote-template-region-end -->
 
-A collection of general purpose check functions for yargs and Black Flag.
+A collection of general purpose [check functions][1] for yargs and Black Flag.
 
 <!-- symbiote-template-region-start 3 -->
 
@@ -44,6 +44,11 @@ A collection of general purpose check functions for yargs and Black Flag.
 
 - [Install](#install)
 - [Usage](#usage)
+  - [`checkArrayNoConflicts`](#checkarraynoconflicts)
+  - [`checkArrayNotEmpty`](#checkarraynotempty)
+  - [`checkArrayUnique`](#checkarrayunique)
+  - [`checkIsNotNegative`](#checkisnotnegative)
+  - [`checkIsNotNil`](#checkisnotnil)
 - [Appendix](#appendix)
   - [Published Package Details](#published-package-details)
   - [License](#license)
@@ -68,9 +73,244 @@ npm install @black-flag/checks
 
 ## Usage
 
-<!-- TODO -->
+BFC provides the below functions, each of which can be plugged into Black Flag's
+(or Yargs's) [`check` builder property][1].
 
-TODO
+### `checkArrayNoConflicts`
+
+> ⪢ API reference: [`checkArrayNoConflicts`][2]
+
+> [!WARNING]
+>
+> A non-[array type option][3] will always fail this check regardless of the
+> argument value.
+
+This check passes when at most only one element from each `conflict` tuple is
+present in the array.
+
+```typescript
+import { withBuilderExtensions } from '@black-flag/extensions';
+import { checkArrayNoConflicts } from '@black-flag/checks';
+
+export const name = 'my-command';
+
+export const [builder, withHandlerExtensions] = withBuilderExtensions({
+  x: {
+    string: true,
+    array: true,
+    check: checkArrayNoConflicts('x', [
+      ['1', '2'], // <-- one "conflict tuple"
+      ['3', '4', '5'] // <-- another "conflict tuple"
+    ])
+  }
+});
+
+export const handler = withHandlerExtensions(async (argv) => {
+  // ...
+});
+```
+
+```shell
+$ my-command            ✅
+$ my-command -x         ✅
+$ my-command -x 1       ✅
+$ my-command -x 2       ✅
+$ my-command -x 1 3 6   ✅
+
+$ my-command -x 2 1     ❌
+Array option "x" allows only one of the following values: 1, 2
+$ my-command -x 2 4 0 5 ❌
+Array option "x" allows only one of the following values: 3, 4, 5
+```
+
+### `checkArrayNotEmpty`
+
+> ⪢ API reference: [`checkArrayNotEmpty`][4]
+
+> [!WARNING]
+>
+> A non-[array type option][3] will always fail this check regardless of the
+> argument value.
+
+This check passes when each member of an array-type argument is a non-empty
+non-nullish value and the array itself is non-empty.
+
+```typescript
+import { withBuilderExtensions } from '@black-flag/extensions';
+import { checkArrayNoConflicts } from '@black-flag/checks';
+
+export const name = 'my-command';
+
+export const [builder, withHandlerExtensions] = withBuilderExtensions({
+  x: {
+    string: true,
+    array: true,
+    check: checkArrayNotEmpty('x')
+  }
+});
+
+export const handler = withHandlerExtensions(async (argv) => {
+  // ...
+});
+```
+
+```shell
+$ my-command            ✅
+$ my-command -x 1       ✅
+$ my-command -x 2       ✅
+$ my-command -x 1 3 6   ✅
+
+$ my-command -x         ❌
+Array option "x" requires at least one non-empty value
+$ my-command -x ''      ❌
+Array option "x" requires at least one non-empty value
+```
+
+### `checkArrayUnique`
+
+> ⪢ API reference: [`checkArrayUnique`][5]
+
+> [!WARNING]
+>
+> A non-[array type option][3] will always fail this check regardless of the
+> argument value.
+
+This check passes when each element in the array is unique.
+
+```typescript
+import { withBuilderExtensions } from '@black-flag/extensions';
+import { checkArrayNoConflicts } from '@black-flag/checks';
+
+export const name = 'my-command';
+
+export const [builder, withHandlerExtensions] = withBuilderExtensions({
+  x: {
+    string: true,
+    array: true,
+    check: checkArrayUnique('x')
+  }
+});
+
+export const handler = withHandlerExtensions(async (argv) => {
+  // ...
+});
+```
+
+```shell
+$ my-command              ✅
+$ my-command -x           ✅
+$ my-command -x 1         ✅
+$ my-command -x 2         ✅
+$ my-command -x 1 3 6     ✅
+
+$ my-command -x 1 1       ❌
+Array option "x" must contain only unique values
+$ my-command -x true true ❌
+Array option "x" must contain only unique values
+```
+
+### `checkIsNotNegative`
+
+> ⪢ API reference: [`checkIsNotNegative`][6]
+
+This check passes when an argument value is a non-negative number.
+
+```typescript
+import { withBuilderExtensions } from '@black-flag/extensions';
+import { checkArrayNoConflicts } from '@black-flag/checks';
+
+export const name = 'my-command';
+
+export const [builder, withHandlerExtensions] = withBuilderExtensions({
+  x: {
+    number: true,
+    check: checkIsNotNegative('x')
+  }
+});
+
+export const handler = withHandlerExtensions(async (argv) => {
+  // ...
+});
+```
+
+```shell
+$ my-command              ✅
+$ my-command -x           ✅
+$ my-command -x 1         ✅
+$ my-command -x 2         ✅
+$ my-command -x 0         ✅
+
+$ my-command -x -1        ❌
+Array option "x" must have a non-negative value
+$ my-command -x -5        ❌
+Array option "x" must have a non-negative value
+```
+
+### `checkIsNotNil`
+
+> ⪢ API reference: [`checkIsNotNil`][7]
+
+This check passes when an argument value is not falsy.
+
+```typescript
+import { withBuilderExtensions } from '@black-flag/extensions';
+import { checkArrayNoConflicts } from '@black-flag/checks';
+
+export const name = 'my-command';
+
+export const [builder, withHandlerExtensions] = withBuilderExtensions({
+  x: {
+    string: true,
+    check: checkIsNotNil('x'),
+    coerce(arg: string) {
+      switch (arg) {
+        case '0': {
+          return 0;
+        }
+
+        case 'false': {
+          return false;
+        }
+
+        case 'null': {
+          return null;
+        }
+
+        case 'undefined': {
+          return undefined;
+        }
+      }
+
+      return arg;
+    }
+  }
+});
+
+export const handler = withHandlerExtensions(async (argv) => {
+  // ...
+});
+```
+
+```shell
+$ my-command              ✅
+$ my-command -x 1         ✅
+$ my-command -x -1        ✅
+$ my-command -x zero      ✅
+$ my-command -x '!true'   ✅
+
+$ my-command -x           ❌
+Array option "x" must have a non-empty (non-falsy) value
+$ my-command -x ''        ❌
+Array option "x" must have a non-empty (non-falsy) value
+$ my-command -x 0         ❌
+Array option "x" must have a non-empty (non-falsy) value
+$ my-command -x false     ❌
+Array option "x" must have a non-empty (non-falsy) value
+$ my-command -x null      ❌
+Array option "x" must have a non-empty (non-falsy) value
+$ my-command -x undefined ❌
+Array option "x" must have a non-empty (non-falsy) value
+```
 
 <!-- symbiote-template-region-start 5 -->
 
@@ -213,3 +453,11 @@ See the [table of contributors][x-repo-contributors].
 [x-repo-pr-compare]: https://github.com/Xunnamius/black-flag/compare
 [x-repo-sponsor]: https://github.com/sponsors/Xunnamius
 [x-repo-support]: /.github/SUPPORT.md
+[1]:
+  ../extensions/docs/index/type-aliases/BfeBuilderObjectValueExtensions.md#check
+[2]: ./docs/index/functions/checkArrayNoConflicts.md
+[3]: https://yargs.js.org/docs#api-reference-arraykey
+[4]: ./docs/index/functions/checkArrayNotEmpty.md
+[5]: ./docs/index/functions/checkArrayUnique.md
+[6]: ./docs/index/functions/checkIsNotNegative.md
+[7]: ./docs/index/functions/checkIsNotNil.md
