@@ -20,6 +20,7 @@ import {
   runNoRejectOnBadExit
 } from '@-xun/run';
 
+import { EndToEndMode } from '@-xun/symbiote/commands/test';
 import { createDebugLogger } from 'rejoinder';
 
 import { exports as packageExports, name as packageName } from 'rootverse:package.json';
@@ -1271,9 +1272,9 @@ module.exports = bf.runProgram(path.join(__dirname, 'commands'));
         );
 
         // ! This might pull @black-flag/core from NPM (i.e. "real end-to-end")
-        // ! depending on process.env.DO_REAL_E2E
+        // ! depending on process.env.SYMBIOTE_TEST_E2E_MODE
         // eslint-disable-next-line unicorn/prefer-ternary
-        if (process.env.DO_REAL_E2E) {
+        if (process.env.SYMBIOTE_TEST_E2E_MODE === EndToEndMode.Real) {
           await runYesRejectOnBadExit('npm', ['install', '@black-flag/core'], {
             cwd: updatedRoot,
             env: sharedRunEnv
