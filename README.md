@@ -250,8 +250,6 @@ node cli.js hello Parrot --attention
 ```text
 Usage: pirate-parser hello [name]
 
-Welcome ter black flag, a declarative wrapper around yargs!
-
 Positionals:
   name  The name to say hello to                          [string] [default: "Cambi"]
 
