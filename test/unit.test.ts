@@ -2328,6 +2328,26 @@ describe('::configureProgram', () => {
         expect(errorSpy).toHaveBeenCalledTimes(1);
       });
     });
+
+    it('does not succumb to yargs-parser bug that incorrectly parses unknown options as args', async () => {
+      expect.hasAssertions();
+
+      // * As described in issue #171
+
+      await withMocks(async () => {
+        await expect(
+          (
+            await bf.configureProgram(
+              getFixturePath('one-file-yargs-parser-workaround-esm')
+            )
+          ).execute(['--options', '--skip-task', '7'])
+        ).resolves.toStrictEqual(
+          expect.objectContaining({
+            options: ['--skip-task', 7]
+          })
+        );
+      });
+    });
   });
 });
 

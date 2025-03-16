@@ -100,7 +100,8 @@
     "package-up": "^5.0.0",
     "rejoinder": "^1.2.5",
     "type-fest": "^4.37.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "yargs-parser": "npm:@-xun/yargs-parser-experimental"
   },
   "devDependencies": {
     "@-xun/project": "^1.0.4",
