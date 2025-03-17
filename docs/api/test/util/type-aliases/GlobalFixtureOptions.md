@@ -6,17 +6,19 @@
 
 # Type Alias: GlobalFixtureOptions
 
-> **GlobalFixtureOptions**: `object`
+> **GlobalFixtureOptions** = `object`
 
 Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/test-mock-fixture/dist/packages/test-mock-fixture/src/types/options.d.ts:18
 
 The options available to every fixture.
 
-## Type declaration
+## Properties
 
 ### identifier?
 
 > `optional` **identifier**: `string`
+
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/test-mock-fixture/dist/packages/test-mock-fixture/src/types/options.d.ts:28
 
 The identifier used in various places, including when creating the dummy
 root directory and when describing the test environment in output text.
@@ -30,9 +32,13 @@ other character will be replaced with a hyphen.
 "fixtures-test"
 ```
 
+***
+
 ### initialVirtualFiles?
 
 > `optional` **initialVirtualFiles**: `object`
+
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/test-mock-fixture/dist/packages/test-mock-fixture/src/types/options.d.ts:57
 
 An object describing "virtual files" represented by mappings between
 non-existent RelativePaths and their theoretical (immutable)
@@ -59,9 +65,13 @@ filesystem using the `initialDirectories` option.
 
 \[`filePath`: `string` \| `RelativePath`\]: `unknown`
 
+***
+
 ### performCleanup
 
 > **performCleanup**: `boolean`
+
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/test-mock-fixture/dist/packages/test-mock-fixture/src/types/options.d.ts:34
 
 When `true`, the dummy root directory will be deleted after the test
 complete (regardless of the outcome). Set `performCleanup` to `false` to

@@ -6,8 +6,8 @@
 
 # Variable: $exists
 
-> `const` **$exists**: *typeof* [`$exists`]($exists.md)
+> `const` **$exists**: *typeof* `$exists`
 
-Defined in: [packages/extensions/src/symbols.ts:10](https://github.com/Xunnamius/black-flag/blob/3c3f6e1e60095912b550318378e24dc68e62b7d6/packages/extensions/src/symbols.ts#L10)
+Defined in: [packages/extensions/src/symbols.ts:10](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/symbols.ts#L10)
 
 Represents any value for the given argument.

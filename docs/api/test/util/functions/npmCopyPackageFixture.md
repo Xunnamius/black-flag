@@ -17,7 +17,7 @@ field, into the dummy `node_modules` directory created by a fixture like
 
 Also unlike `npmLinkPackage`, this fixture will install all of the package
 under test's dependencies (with respect to
-NpmCopyPackageFixtureOptions.ignorePackageDependencies) into the
+[NpmCopyPackageFixtureOptions.ignorePackageDependencies](../type-aliases/NpmCopyPackageFixtureOptions.md)) into the
 dummy `node_modules` as well.
 
 This fixture should be preferred over `npmLinkPackage` **only if the package

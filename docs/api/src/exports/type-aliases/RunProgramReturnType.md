@@ -6,12 +6,14 @@
 
 # Type Alias: RunProgramReturnType\<CustomCliArguments\>
 
-> **RunProgramReturnType**\<`CustomCliArguments`\>: `Promise`\<[`NullArguments`](NullArguments.md) \| [`Arguments`](Arguments.md)\<`CustomCliArguments`\> \| `undefined`\>
+> **RunProgramReturnType**\<`CustomCliArguments`\> = `Promise`\<[`NullArguments`](NullArguments.md) \| [`Arguments`](Arguments.md)\<`CustomCliArguments`\> \| `undefined`\>
 
-Defined in: [src/index.ts:92](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/index.ts#L92)
+Defined in: [src/index.ts:92](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/index.ts#L92)
 
 The return type of the [runProgram](../functions/runProgram.md) function.
 
 ## Type Parameters
 
-• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
+### CustomCliArguments
+
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\>

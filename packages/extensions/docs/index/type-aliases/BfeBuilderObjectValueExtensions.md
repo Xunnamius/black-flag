@@ -6,9 +6,9 @@
 
 # Type Alias: BfeBuilderObjectValueExtensions\<CustomCliArguments, CustomExecutionContext\>
 
-> **BfeBuilderObjectValueExtensions**\<`CustomCliArguments`, `CustomExecutionContext`\>: `object`
+> **BfeBuilderObjectValueExtensions**\<`CustomCliArguments`, `CustomExecutionContext`\> = `object`
 
-Defined in: [packages/extensions/src/index.ts:226](https://github.com/Xunnamius/black-flag/blob/3c3f6e1e60095912b550318378e24dc68e62b7d6/packages/extensions/src/index.ts#L226)
+Defined in: [packages/extensions/src/index.ts:235](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L235)
 
 An object containing only those properties recognized by
 BFE.
@@ -18,15 +18,21 @@ This type + [BfeBuilderObjectValueWithoutExtensions](BfeBuilderObjectValueWithou
 
 ## Type Parameters
 
-• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
+### CustomCliArguments
 
-• **CustomExecutionContext** *extends* `ExecutionContext`
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\>
 
-## Type declaration
+### CustomExecutionContext
+
+`CustomExecutionContext` *extends* `ExecutionContext`
+
+## Properties
 
 ### check?
 
 > `optional` **check**: [`BfeCheckFunction`](BfeCheckFunction.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`BfeCheckFunction`](BfeCheckFunction.md)\<`CustomCliArguments`, `CustomExecutionContext`\>[]
+
+Defined in: [packages/extensions/src/index.ts:406](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L406)
 
 `check` is the declarative option-specific version of vanilla yargs's
 `yargs::check()`. Also supports async and promise-returning functions.
@@ -45,9 +51,13 @@ See [the
 documentation](https://github.com/Xunnamius/black-flag/tree/main/packages/extensions/README.md#check)
 for details.
 
+***
+
 ### coerce?
 
 > `optional` **coerce**: [`BfGenericBuilderObjectValue`](BfGenericBuilderObjectValue.md)\[`"coerce"`\]
+
+Defined in: [packages/extensions/src/index.ts:452](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L452)
 
 `coerce` transforms an original `argv` value into another one. This is
 equivalent to `coerce` from vanilla yargs.
@@ -60,9 +70,13 @@ Note that **a defaulted argument will not result in this function being
 called.** Only arguments given via `argv` trigger `coerce`. This is vanilla
 yargs behavior.
 
+***
+
 ### conflicts?
 
 > `optional` **conflicts**: [`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md)
+
+Defined in: [packages/extensions/src/index.ts:272](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L272)
 
 `conflicts` enables checks to ensure the specified arguments, or
 argument-value pairs, are _never_ given conditioned on the existence of
@@ -79,9 +93,13 @@ Note: if an argument-value pair is specified and said argument is
 configured as an array (`{ array: true }`), it will be searched for the
 specified value. Otherwise, a strict deep equality check is performed.
 
+***
+
 ### default?
 
 > `optional` **default**: `unknown`
+
+Defined in: [packages/extensions/src/index.ts:439](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L439)
 
 `default` will set a default value for an argument. This is equivalent to
 `default` from vanilla yargs.
@@ -96,9 +114,13 @@ Note also that a defaulted argument will not be coerced by the `coerce`
 setting. Only arguments given via `argv` trigger `coerce`. This is vanilla
 yargs behavior.
 
+***
+
 ### demandThisOption?
 
 > `optional` **demandThisOption**: [`BfGenericBuilderObjectValue`](BfGenericBuilderObjectValue.md)\[`"demandOption"`\]
+
+Defined in: [packages/extensions/src/index.ts:302](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L302)
 
 `demandThisOption` enables checks to ensure an argument is always given.
 This is equivalent to `demandOption` from vanilla yargs. For example:
@@ -110,9 +132,13 @@ This is equivalent to `demandOption` from vanilla yargs. For example:
 }
 ```
 
+***
+
 ### demandThisOptionIf?
 
 > `optional` **demandThisOptionIf**: [`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md)
+
+Defined in: [packages/extensions/src/index.ts:290](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L290)
 
 `demandThisOptionIf` enables checks to ensure an argument is given when at
 least one of the specified groups of arguments, or argument-value pairs, is
@@ -130,9 +156,13 @@ Note: if an argument-value pair is specified and said argument is
 configured as an array (`{ array: true }`), it will be searched for the
 specified value. Otherwise, a strict deep equality check is performed.
 
+***
+
 ### demandThisOptionOr?
 
 > `optional` **demandThisOptionOr**: [`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md)
+
+Defined in: [packages/extensions/src/index.ts:320](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L320)
 
 `demandThisOptionOr` enables non-optional inclusive disjunction checks per
 group. Put another way, `demandThisOptionOr` enforces a "logical or"
@@ -150,9 +180,13 @@ Note: if an argument-value pair is specified and said argument is
 configured as an array (`{ array: true }`), it will be searched for the
 specified value. Otherwise, a strict deep equality check is performed.
 
+***
+
 ### demandThisOptionXor?
 
 > `optional` **demandThisOptionXor**: [`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md)
+
+Defined in: [packages/extensions/src/index.ts:341](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L341)
 
 `demandThisOptionXor` enables non-optional exclusive disjunction checks per
 exclusivity group. Put another way, `demandThisOptionXor` enforces mutual
@@ -173,9 +207,13 @@ Note: if an argument-value pair is specified and said argument is
 configured as an array (`{ array: true }`), it will be searched for the
 specified value. Otherwise, a strict deep equality check is performed.
 
+***
+
 ### implies?
 
 > `optional` **implies**: `Exclude`\<[`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md), `string` \| `unknown`[]\> \| `Exclude`\<[`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md), `string` \| `unknown`[]\>[]
+
+Defined in: [packages/extensions/src/index.ts:365](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L365)
 
 `implies` will set default values for the specified arguments conditioned
 on the existence of another argument. These implied defaults will override
@@ -198,12 +236,16 @@ strings. For example:
 
 #### See
 
- - [BfeBuilderObjectValueExtensions.looseImplications](BfeBuilderObjectValueExtensions.md#looseimplications)
- - [BfeBuilderObjectValueExtensions.vacuousImplications](BfeBuilderObjectValueExtensions.md#vacuousimplications)
+ - [BfeBuilderObjectValueExtensions.looseImplications](#looseimplications)
+ - [BfeBuilderObjectValueExtensions.vacuousImplications](#vacuousimplications)
+
+***
 
 ### looseImplications?
 
 > `optional` **looseImplications**: `boolean`
+
+Defined in: [packages/extensions/src/index.ts:376](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L376)
 
 When `looseImplications` is set to `true`, any implied arguments, when
 explicitly given on the command line, will _override_ their configured
@@ -217,11 +259,15 @@ false
 
 #### See
 
-[BfeBuilderObjectValueExtensions.implies](BfeBuilderObjectValueExtensions.md#implies)
+[BfeBuilderObjectValueExtensions.implies](#implies)
+
+***
 
 ### requires?
 
 > `optional` **requires**: [`BfeBuilderObjectValueExtensionValue`](BfeBuilderObjectValueExtensionValue.md)
+
+Defined in: [packages/extensions/src/index.ts:255](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L255)
 
 `requires` enables checks to ensure the specified arguments, or
 argument-value pairs, are given conditioned on the existence of another
@@ -238,9 +284,13 @@ Note: if an argument-value pair is specified and said argument is
 configured as an array (`{ array: true }`), it will be searched for the
 specified value. Otherwise, a strict deep equality check is performed.
 
+***
+
 ### subOptionOf?
 
 > `optional` **subOptionOf**: `Record`\<`string`, [`BfeSubOptionOfExtensionValue`](BfeSubOptionOfExtensionValue.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`BfeSubOptionOfExtensionValue`](BfeSubOptionOfExtensionValue.md)\<`CustomCliArguments`, `CustomExecutionContext`\>[]\>
+
+Defined in: [packages/extensions/src/index.ts:420](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L420)
 
 `subOptionOf` is declarative sugar around Black Flag's support for double
 argument parsing, allowing you to describe the relationship between options
@@ -252,9 +302,13 @@ for details.
 
 For describing simpler implicative relations, see `implies`.
 
+***
+
 ### vacuousImplications?
 
 > `optional` **vacuousImplications**: `boolean`
+
+Defined in: [packages/extensions/src/index.ts:387](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L387)
 
 When `vacuousImplications` is set to `true` and the option is also
 configured as a "boolean" type, the implications configured via `implies`
@@ -270,4 +324,4 @@ false
 
 #### See
 
-[BfeBuilderObjectValueExtensions.implies](BfeBuilderObjectValueExtensions.md#implies)
+[BfeBuilderObjectValueExtensions.implies](#implies)

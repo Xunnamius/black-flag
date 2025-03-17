@@ -6,18 +6,20 @@
 
 # Type Alias: ConfigurationHooks
 
-> **ConfigurationHooks**: `object`
+> **ConfigurationHooks** = `object`
 
-Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/configure.ts#L111)
+Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L111)
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.
 
-## Type declaration
+## Properties
 
 ### configureArguments?
 
 > `optional` **configureArguments**: [`ConfigureArguments`](ConfigureArguments.md)
+
+Defined in: [src/types/configure.ts:158](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L158)
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like
@@ -30,9 +32,13 @@ Note that errors thrown at this point in the initialization process will be
 handled by [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md) but will never send help
 text to stderr regardless of error type.
 
+***
+
 ### configureErrorHandlingEpilogue?
 
 > `optional` **configureErrorHandlingEpilogue**: [`ConfigureErrorHandlingEpilogue`](ConfigureErrorHandlingEpilogue.md)
+
+Defined in: [src/types/configure.ts:186](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L186)
 
 This function is called once at the very end of the error handling process
 after an error has occurred.
@@ -46,9 +52,13 @@ exceptions to this are if (1) the error occurs within
 This function is also called even after yargs internally handles and
 reports an argument parsing/validation error.
 
+***
+
 ### configureExecutionContext?
 
 > `optional` **configureExecutionContext**: [`ConfigureExecutionContext`](ConfigureExecutionContext.md)
+
+Defined in: [src/types/configure.ts:126](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L126)
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return the value that will become the global
@@ -63,9 +73,13 @@ will trigger a framework error and will NOT be handled by
 [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md) nor send help text to stderr
 regardless of error type.
 
+***
+
 ### configureExecutionEpilogue?
 
 > `optional` **configureExecutionEpilogue**: [`ConfigureExecutionEpilogue`](ConfigureExecutionEpilogue.md)
+
+Defined in: [src/types/configure.ts:172](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L172)
 
 This function is called once after CLI argument parsing completes and
 either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is
@@ -79,9 +93,13 @@ Note that errors thrown at this point in the cleanup process will be
 handled by [ConfigureErrorHandlingEpilogue](ConfigureErrorHandlingEpilogue.md) but will never send help
 text to stderr regardless of error type.
 
+***
+
 ### configureExecutionPrologue?
 
 > `optional` **configureExecutionPrologue**: [`ConfigureExecutionPrologue`](ConfigureExecutionPrologue.md)
+
+Defined in: [src/types/configure.ts:145](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L145)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any

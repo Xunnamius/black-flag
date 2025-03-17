@@ -6,9 +6,9 @@
 
 # Type Alias: ConfigureErrorHandlingEpilogue()\<CustomContext\>
 
-> **ConfigureErrorHandlingEpilogue**\<`CustomContext`\>: (`meta`, `argv`, `context`) => `Promisable`\<`void`\>
+> **ConfigureErrorHandlingEpilogue**\<`CustomContext`\> = (`meta`, `argv`, `context`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/configure.ts#L96)
+Defined in: [src/types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L96)
 
 This function is called once at the very end of the error handling process
 after an error has occurred.
@@ -24,7 +24,9 @@ an argument parsing/validation error.
 
 ## Type Parameters
 
-• **CustomContext** *extends* [`ExecutionContext`](../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../util/type-aliases/ExecutionContext.md)
+### CustomContext
+
+`CustomContext` *extends* [`ExecutionContext`](../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../util/type-aliases/ExecutionContext.md)
 
 ## Parameters
 

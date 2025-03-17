@@ -6,9 +6,9 @@
 
 # Type Alias: FrameworkArguments\<CustomExecutionContext\>
 
-> **FrameworkArguments**\<`CustomExecutionContext`\>: `object`
+> **FrameworkArguments**\<`CustomExecutionContext`\> = `object`
 
-Defined in: [src/types/program.ts:271](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/program.ts#L271)
+Defined in: [src/types/program.ts:271](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L271)
 
 Represents the CLI arguments/properties added by Black Flag rather than the
 end developer.
@@ -20,10 +20,14 @@ you.
 
 ## Type Parameters
 
-• **CustomExecutionContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
+### CustomExecutionContext
 
-## Type declaration
+`CustomExecutionContext` *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
+
+## Properties
 
 ### \[$executionContext\]
 
 > **\[$executionContext\]**: `CustomExecutionContext`
+
+Defined in: [src/types/program.ts:274](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L274)

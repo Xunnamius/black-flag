@@ -168,10 +168,9 @@ Flag, but are noted below nonetheless.
 [6]: ./advanced.md
 [7]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md
 [8]: https://github.com/yargs/yargs/issues/733
-[9]:
-  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateglobalhelpoption
+[9]: ./api/src/exports/util/type-aliases/ExecutionContext.md#globalhelpoption
 [10]:
-  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateglobalversionoption
+  ./api/src/exports/util/type-aliases/ExecutionContext.md#globalversionoption
 [11]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
 [12]: https://github.com/yargs/yargs/issues/1323
 [13]: https://github.com/yargs/yargs/issues/793#issuecomment-704749472
@@ -186,6 +185,5 @@ Flag, but are noted below nonetheless.
 [22]: https://github.com/yargs/yargs/issues/1137
 [23]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
 [24]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[25]:
-  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateshowhelponfail
+[25]: ./api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail
 [26]: ./getting-started.md#building-and-running-your-cli

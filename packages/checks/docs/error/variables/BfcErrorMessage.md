@@ -8,7 +8,7 @@
 
 > `const` **BfcErrorMessage**: `object`
 
-Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/359cb940c512f8ac3f63e33c0f88a34c8e1d62ec/packages/checks/src/error.ts#L5)
+Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/checks/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 

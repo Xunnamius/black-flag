@@ -6,27 +6,31 @@
 
 # Type Alias: WithBuilderExtensionsConfig\<CustomCliArguments\>
 
-> **WithBuilderExtensionsConfig**\<`CustomCliArguments`\>: `object`
+> **WithBuilderExtensionsConfig**\<`CustomCliArguments`\> = `object`
 
-Defined in: [packages/extensions/src/index.ts:687](https://github.com/Xunnamius/black-flag/blob/3c3f6e1e60095912b550318378e24dc68e62b7d6/packages/extensions/src/index.ts#L687)
+Defined in: [packages/extensions/src/index.ts:696](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L696)
 
 A configuration object that further configures the behavior of
 [withBuilderExtensions](../functions/withBuilderExtensions.md).
 
 ## Type Parameters
 
-• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\>
+### CustomCliArguments
 
-## Type declaration
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\>
+
+## Properties
 
 ### commonOptions?
 
 > `optional` **commonOptions**: readonly `LiteralUnion`\<keyof `CustomCliArguments` \| `"help"` \| `"version"`, `string`\>[]
 
+Defined in: [packages/extensions/src/index.ts:731](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L731)
+
 An array of zero or more string keys of `CustomCliArguments`, with the
 optional addition of `'help'` and `'version'`, that should be grouped under
 _"Common Options"_ when [automatic grouping of related
-options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
+options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-sorting-of-options)
 is enabled.
 
 This setting is ignored if `disableAutomaticGrouping === true`.
@@ -37,15 +41,39 @@ This setting is ignored if `disableAutomaticGrouping === true`.
 ['help']
 ```
 
+***
+
 ### disableAutomaticGrouping?
 
 > `optional` **disableAutomaticGrouping**: `boolean`
+
+Defined in: [packages/extensions/src/index.ts:709](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L709)
 
 Set to `true` to disable BFE's support for automatic grouping of related
 options.
 
 See [the
 documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
+for details.
+
+#### Default
+
+```ts
+false
+```
+
+***
+
+### enableAutomaticSorting?
+
+> `optional` **enableAutomaticSorting**: `boolean`
+
+Defined in: [packages/extensions/src/index.ts:719](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L719)
+
+Set to `true` to enable BFE's support for automatic sorting of options.
+
+See [the
+documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-sorting-of-options)
 for details.
 
 #### Default

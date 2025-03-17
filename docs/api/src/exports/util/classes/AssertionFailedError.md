@@ -6,7 +6,7 @@
 
 # Class: AssertionFailedError
 
-Defined in: [src/error.ts:274](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L274)
+Defined in: [src/error.ts:274](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L274)
 
 Represents a failed sanity check.
 
@@ -18,9 +18,9 @@ Represents a failed sanity check.
 
 ### new AssertionFailedError()
 
-> **new AssertionFailedError**(`error`, `options`?): [`AssertionFailedError`](AssertionFailedError.md)
+> **new AssertionFailedError**(`error`, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:280](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L280)
+Defined in: [src/error.ts:280](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L280)
 
 Represents a failed sanity check.
 
@@ -36,17 +36,17 @@ Represents a failed sanity check.
 
 #### Returns
 
-[`AssertionFailedError`](AssertionFailedError.md)
+`AssertionFailedError`
 
 #### Overrides
 
-[`CliError`](../../classes/CliError.md).[`constructor`](../../classes/CliError.md#constructors)
+[`CliError`](../../classes/CliError.md).[`constructor`](../../classes/CliError.md#constructor)
 
 ### new AssertionFailedError()
 
-> **new AssertionFailedError**(`message`, `options`?): [`AssertionFailedError`](AssertionFailedError.md)
+> **new AssertionFailedError**(`message`, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:281](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L281)
+Defined in: [src/error.ts:281](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L281)
 
 Represents a failed sanity check.
 
@@ -62,17 +62,17 @@ Represents a failed sanity check.
 
 #### Returns
 
-[`AssertionFailedError`](AssertionFailedError.md)
+`AssertionFailedError`
 
 #### Overrides
 
-[`CliError`](../../classes/CliError.md).[`constructor`](../../classes/CliError.md#constructors)
+[`CliError`](../../classes/CliError.md).[`constructor`](../../classes/CliError.md#constructor)
 
 ### new AssertionFailedError()
 
-> **new AssertionFailedError**(`errorOrMessage`?, `options`?): [`AssertionFailedError`](AssertionFailedError.md)
+> **new AssertionFailedError**(`errorOrMessage`?, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:282](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L282)
+Defined in: [src/error.ts:282](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L282)
 
 Represents a failed sanity check.
 
@@ -88,7 +88,7 @@ Represents a failed sanity check.
 
 #### Returns
 
-[`AssertionFailedError`](AssertionFailedError.md)
+`AssertionFailedError`
 
 #### Overrides
 
@@ -100,11 +100,11 @@ Represents a failed sanity check.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:276](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L276)
+Defined in: [src/error.ts:276](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L276)
 
 #### Overrides
 
-[`CliError`](../../classes/CliError.md).[`[$type]`](../../classes/CliError.md#$type)
+[`CliError`](../../classes/CliError.md).[`[$type]`](../../classes/CliError.md#type)
 
 ***
 
@@ -124,7 +124,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:162](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L162)
+Defined in: [src/error.ts:162](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L162)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -169,7 +169,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 #### Inherited from
 
-[`CliError`](../../classes/CliError.md).[`message`](../../classes/CliError.md#message-1)
+[`CliError`](../../classes/CliError.md).[`message`](../../classes/CliError.md#message)
 
 ***
 
@@ -187,9 +187,9 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ### showHelp
 
-> **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"full"` \| `"short"` \| `"default"`\>
+> **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"short"` \| `"full"` \| `"default"`\>
 
-Defined in: [src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L161)
+Defined in: [src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L161)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -240,7 +240,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:160](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L160)
+Defined in: [src/error.ts:160](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L160)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

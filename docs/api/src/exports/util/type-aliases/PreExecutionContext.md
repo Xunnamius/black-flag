@@ -6,9 +6,9 @@
 
 # Type Alias: PreExecutionContext\<CustomContext\>
 
-> **PreExecutionContext**\<`CustomContext`\>: `CustomContext` & `object`
+> **PreExecutionContext**\<`CustomContext`\> = `CustomContext` & `object`
 
-Defined in: [src/types/program.ts:305](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/program.ts#L305)
+Defined in: [src/types/program.ts:305](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L305)
 
 Represents the pre-execution context that is the result of calling
 `configureProgram`.
@@ -52,4 +52,6 @@ instances belonging to the root command.
 
 ## Type Parameters
 
-• **CustomContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
+### CustomContext
+
+`CustomContext` *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)

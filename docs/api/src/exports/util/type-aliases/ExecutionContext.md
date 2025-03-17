@@ -6,21 +6,23 @@
 
 # Type Alias: ExecutionContext
 
-> **ExecutionContext**: `object`
+> **ExecutionContext** = `object`
 
-Defined in: [src/types/program.ts:342](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/program.ts#L342)
+Defined in: [src/types/program.ts:342](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L342)
 
 Represents a globally-accessible shared context object singleton.
 
-## Type declaration
-
-## Index Signature
+## Indexable
 
 \[`key`: `string`\]: `unknown`
+
+## Properties
 
 ### commands
 
 > **commands**: `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](ProgramMetadata.md); `programs`: [`Programs`](Programs.md); \}\>
+
+Defined in: [src/types/program.ts:357](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L357)
 
 A Map consisting of auto-discovered [Program](Program.md) instances and their
 associated [ProgramMetadata](ProgramMetadata.md) as singular object values with their
@@ -35,17 +37,25 @@ filesystems, or even Node.js versions.**
 
 This property is used internally by Black Flag.
 
+***
+
 ### debug
 
 > **debug**: `ExtendedDebugger`
+
+Defined in: [src/types/program.ts:363](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L363)
 
 The `ExtendedDebugger` for the current runtime level.
 
 This property is used internally by Black Flag.
 
+***
+
 ### state
 
 > **state**: `object`
+
+Defined in: [src/types/program.ts:369](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L369)
 
 The current state of the execution environment.
 
@@ -55,7 +65,7 @@ This property is used internally by Black Flag.
 
 \[`key`: `string`\]: `unknown`
 
-#### state.deepestParseResult
+#### deepestParseResult
 
 > **deepestParseResult**: [`Arguments`](../../type-aliases/Arguments.md) \| `undefined`
 
@@ -75,7 +85,7 @@ end-developers.
 undefined
 ```
 
-#### state.didAlreadyHandleError
+#### didAlreadyHandleError
 
 > **didAlreadyHandleError**: `boolean`
 
@@ -88,7 +98,7 @@ checked, a framework error will occur.
 
 This property is ignored when no error has occurred.
 
-#### state.didOutputHelpOrVersionText
+#### didOutputHelpOrVersionText
 
 > **didOutputHelpOrVersionText**: `boolean`
 
@@ -101,7 +111,7 @@ stderr.
 false
 ```
 
-#### state.finalError
+#### finalError
 
 > **finalError**: `unknown`
 
@@ -121,7 +131,7 @@ option.
 undefined
 ```
 
-#### state.firstPassArgv
+#### firstPassArgv
 
 > **firstPassArgv**: [`Arguments`](../../type-aliases/Arguments.md) \| `undefined`
 
@@ -136,7 +146,7 @@ end-developers.
 undefined
 ```
 
-#### state.globalHelpOption
+#### globalHelpOption
 
 > **globalHelpOption**: \{ `description`: `string`; `name`: `string`; \} \| `undefined`
 
@@ -158,7 +168,7 @@ hook_. Doing so will result in undefined behavior.
 
 `undefined`
 
-#### state.globalVersionOption
+#### globalVersionOption
 
 > **globalVersionOption**: \{ `description`: `string`; `name`: `string`; `text`: `string`; \} \| `undefined`
 
@@ -180,14 +190,14 @@ hook_. Doing so will result in undefined behavior.
 
 `undefined`
 
-#### state.initialTerminalWidth
+#### initialTerminalWidth
 
 > **initialTerminalWidth**: `number`
 
 The detected width of the terminal. This value is determined by yargs
 when `configureProgram` is called.
 
-#### state.isGracefullyExiting
+#### isGracefullyExiting
 
 > **isGracefullyExiting**: `boolean`
 
@@ -205,7 +215,7 @@ will _always_ be `false`.
 false
 ```
 
-#### state.isHandlingHelpOption
+#### isHandlingHelpOption
 
 > **isHandlingHelpOption**: `boolean`
 
@@ -232,7 +242,7 @@ their arguments.
 false
 ```
 
-#### state.isHandlingVersionOption
+#### isHandlingVersionOption
 
 > **isHandlingVersionOption**: `boolean`
 
@@ -259,7 +269,7 @@ their arguments.
 false
 ```
 
-#### state.rawArgv
+#### rawArgv
 
 > **rawArgv**: *typeof* `process.argv`
 
@@ -280,7 +290,7 @@ invariant satisfaction.**
 []
 ```
 
-#### state.showHelpOnFail
+#### showHelpOnFail
 
 > **showHelpOnFail**: `boolean` \| `"full"` \| `"short"` \| \{ `outputStyle`: `"full"` \| `"short"`; `showFor`: `Record`\<`"yargs"` \| `"cli"` \| `"other"`, `boolean`\>; \}
 
@@ -288,7 +298,7 @@ If `true` or a string, Black Flag will send help text to stderr when any
 error occurs. If `false`, no help text will be sent to stderr when an
 error occurs.
 
-This property can be updated by invoking Program.showHelpOnFail
+This property can be updated by invoking [Program.showHelpOnFail](Program.md)
 on a Black Flag instance, or through the `configureExecutionContext`
 configuration hook. Either way, the update will be applied globally
 across all instances.

@@ -6,7 +6,7 @@
 
 # Class: GracefulEarlyExitError
 
-Defined in: [src/error.ts:246](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L246)
+Defined in: [src/error.ts:246](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L246)
 
 Represents an exceptional event that should result in the immediate
 termination of the application but with an exit code indicating success
@@ -23,9 +23,9 @@ ignored.
 
 ### new GracefulEarlyExitError()
 
-> **new GracefulEarlyExitError**(`error`?, `options`?): [`GracefulEarlyExitError`](GracefulEarlyExitError.md)
+> **new GracefulEarlyExitError**(`error`?, `options`?): `GracefulEarlyExitError`
 
-Defined in: [src/error.ts:257](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L257)
+Defined in: [src/error.ts:257](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L257)
 
 Represents an exceptional event that should result in the immediate
 termination of the application but with an exit code indicating success
@@ -46,11 +46,11 @@ ignored.
 
 #### Returns
 
-[`GracefulEarlyExitError`](GracefulEarlyExitError.md)
+`GracefulEarlyExitError`
 
 #### Overrides
 
-[`CliError`](CliError.md).[`constructor`](CliError.md#constructors)
+[`CliError`](CliError.md).[`constructor`](CliError.md#constructor)
 
 ## Properties
 
@@ -58,11 +58,11 @@ ignored.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:248](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L248)
+Defined in: [src/error.ts:248](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L248)
 
 #### Overrides
 
-[`CliError`](CliError.md).[`[$type]`](CliError.md#$type)
+[`CliError`](CliError.md).[`[$type]`](CliError.md#type)
 
 ***
 
@@ -82,7 +82,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:162](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L162)
+Defined in: [src/error.ts:162](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L162)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -127,7 +127,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1077
 
 #### Inherited from
 
-[`CliError`](CliError.md).[`message`](CliError.md#message-1)
+[`CliError`](CliError.md).[`message`](CliError.md#message)
 
 ***
 
@@ -145,9 +145,9 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 ### showHelp
 
-> **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"full"` \| `"short"` \| `"default"`\>
+> **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"short"` \| `"full"` \| `"default"`\>
 
-Defined in: [src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L161)
+Defined in: [src/error.ts:161](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L161)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -198,7 +198,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:160](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/error.ts#L160)
+Defined in: [src/error.ts:160](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/error.ts#L160)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

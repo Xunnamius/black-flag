@@ -8,7 +8,7 @@
 
 > `const` **defaultUsageText**: "Usage: $000\n\n$1" = `'Usage: $000\n\n$1'`
 
-Defined in: [src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/constant.ts#L24)
+Defined in: [src/constant.ts:24](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/constant.ts#L24)
 
 Hard-coded default command `usage` text provided to programs via
 `.usage(...)` after string interpolation. "$000", "$0", and "$1" are replaced

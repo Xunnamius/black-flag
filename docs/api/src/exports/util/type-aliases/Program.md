@@ -6,9 +6,9 @@
 
 # Type Alias: Program\<CustomCliArguments, CustomExecutionContext\>
 
-> **Program**\<`CustomCliArguments`, `CustomExecutionContext`\>: `Omit`\<`_Program`\<[`FrameworkArguments`](FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>, `"command"` \| `"onFinishCommand"` \| `"showHelpOnFail"` \| `"version"` \| `"help"` \| `"exitProcess"` \| `"commandDir"` \| `"parse"` \| `"parsed"` \| `"parseSync"` \| `"argv"`\> & `object`
+> **Program**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Omit`\<`_Program`\<[`FrameworkArguments`](FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>, `"command"` \| `"onFinishCommand"` \| `"showHelpOnFail"` \| `"version"` \| `"help"` \| `"exitProcess"` \| `"commandDir"` \| `"parse"` \| `"parsed"` \| `"parseSync"` \| `"argv"`\> & `object`
 
-Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/types/program.ts#L55)
+Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/program.ts#L55)
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -20,7 +20,7 @@ by yargs but with several differences and should be preferred.
 
 ### showHelpOnFail()
 
-> **showHelpOnFail**: (`enabled`) => [`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+> **showHelpOnFail**: (`enabled`) => `Program`\<`CustomCliArguments`, `CustomExecutionContext`\>
 
 Like `yargs::showHelpOnFail` except (1) it determines if the "full" or
 "short" help text is shown by default, (2) it determines if help text is
@@ -41,7 +41,7 @@ not just the program on which it was invoked.
 
 #### Returns
 
-[`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
+`Program`\<`CustomCliArguments`, `CustomExecutionContext`\>
 
 #### See
 
@@ -49,6 +49,10 @@ https://yargs.js.org/docs/#api-reference-showhelponfailenable-message
 
 ## Type Parameters
 
-• **CustomCliArguments** *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
+### CustomCliArguments
 
-• **CustomExecutionContext** *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
+
+### CustomExecutionContext
+
+`CustomExecutionContext` *extends* [`ExecutionContext`](ExecutionContext.md) = [`ExecutionContext`](ExecutionContext.md)

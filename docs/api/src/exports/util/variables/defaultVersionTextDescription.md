@@ -8,6 +8,6 @@
 
 > `const` **defaultVersionTextDescription**: `"Show version number"` = `'Show version number'`
 
-Defined in: [src/constant.ts:46](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/constant.ts#L46)
+Defined in: [src/constant.ts:46](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/constant.ts#L46)
 
 Hard-coded default version option description text.

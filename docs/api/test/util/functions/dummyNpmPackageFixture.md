@@ -15,7 +15,7 @@ This fixture initializes the dummy root directory as a NPM package with a
 node_modules subdirectory. If said `package.json` file contains any
 dependencies, they will be installed courtesy of `npm install`. Additional
 packages can also be installed via
-DummyNpmPackageFixtureOptions.additionalPackagesToInstall.
+[DummyNpmPackageFixtureOptions.additionalPackagesToInstall](../type-aliases/DummyNpmPackageFixtureOptions.md).
 
 All packages are always installed with `--force`.
 

@@ -502,9 +502,9 @@ Neat! 📸
 [3]: ./api/src/exports/type-aliases/Configuration.md#handler
 [4]: ./api/src/exports/type-aliases/Configuration.md#command
 [5]:
-  ./api/src/exports/util/type-aliases/ExecutionContext.md#stateinitialterminalwidth
+  ./api/src/exports/util/type-aliases/ExecutionContext.md#initialterminalwidth
 [6]: ./api/src/exports/type-aliases/ConfigureExecutionContext.md
-[7]: ./api/src/exports/util/type-aliases/ExecutionContext.md#stateshowhelponfail
+[7]: ./api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail
 [8]:
   https://github.com/Xunnamius/black-flag/blob/fc0b42b7afe725aa3834fb3c5f83dd02223bbde7/src/constant.ts#L13
 [9]: ./api/src/exports/type-aliases/ConfigureExecutionPrologue.md

@@ -4,11 +4,11 @@
 
 [@black-flag/core](../../../../README.md) / [src/exports/util](../README.md) / hideBin
 
-# Function: hideBin()
+# Variable: hideBin()
 
-> **hideBin**(`argv`): `string`[]
+> `const` **hideBin**: (`argv`) => `string`[] = `hideBin_`
 
-Defined in: [src/exports/util.ts:54](https://github.com/Xunnamius/black-flag/blob/aaa1a74457790f285cb2c85d4d6a7ee05978fc42/src/exports/util.ts#L54)
+Defined in: [src/exports/util.ts:54](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/exports/util.ts#L54)
 
 ## Parameters
 
