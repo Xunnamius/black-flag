@@ -5415,6 +5415,64 @@ describe('::withBuilderExtensions', () => {
       expect(mockGroupMethod.mock.calls).toStrictEqual([]);
     });
   });
+
+  describe('automatic sorting of options', () => {
+    it('can enable sorting options', async () => {
+      expect.hasAssertions();
+
+      const runner = makeMockBuilderRunner({
+        customBuilder: {
+          za: { requires: 'be' },
+          be: { conflicts: 'bE' },
+          bE: { implies: { d: -1 } },
+          d: { demandThisOptionIf: 'be' },
+          easy: { demandThisOption: true },
+          vef: { demandThisOptionOr: 'd' },
+          gas: { demandThisOptionXor: 'eh' },
+          eh: { check: (_h, _argv) => true },
+          win: {},
+          jack: {},
+          jak: {},
+          lack: {},
+          bam: {},
+          bag: {},
+          onto: {},
+          rap: {},
+          dequeue: {}
+        },
+        builderExtensionsConfig: {
+          enableAutomaticSorting: true
+        }
+      });
+
+      const { handlerResult, firstPassResult, secondPassResult } = await runner({
+        help: true
+      });
+
+      expect(handlerResult).toSatisfy(isCliError);
+      expect(firstPassResult).toStrictEqual(secondPassResult);
+
+      expect(Object.keys(firstPassResult)).toStrictEqual([
+        'bag',
+        'bam',
+        'be',
+        'bE',
+        'd',
+        'dequeue',
+        'easy',
+        'eh',
+        'gas',
+        'jack',
+        'jak',
+        'lack',
+        'onto',
+        'rap',
+        'vef',
+        'win',
+        'za'
+      ]);
+    });
+  });
 });
 
 describe('::withUsageExtensions', () => {

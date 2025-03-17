@@ -152,6 +152,8 @@ type FlattenedExtensionValue = Record<
   BfeBuilderObjectValueExtensionObject[string] | typeof $exists
 > & { [$genesis]?: string };
 
+const alphaSort = new Intl.Collator(undefined, { numeric: true });
+
 export { $artificiallyInvoked, BfeErrorMessage };
 
 /**
@@ -699,10 +701,20 @@ export type WithBuilderExtensionsConfig<
    */
   disableAutomaticGrouping?: boolean;
   /**
+   * Set to `true` to enable BFE's support for automatic sorting of options.
+   *
+   * See [the
+   * documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-sorting-of-options)
+   * for details.
+   *
+   * @default false
+   */
+  enableAutomaticSorting?: boolean;
+  /**
    * An array of zero or more string keys of `CustomCliArguments`, with the
    * optional addition of `'help'` and `'version'`, that should be grouped under
    * _"Common Options"_ when [automatic grouping of related
-   * options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-grouping-of-related-options)
+   * options](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#automatic-sorting-of-options)
    * is enabled.
    *
    * This setting is ignored if `disableAutomaticGrouping === true`.
@@ -738,7 +750,8 @@ export function withBuilderExtensions<
       ) => BfeBuilderObject<CustomCliArguments, CustomExecutionContext> | void),
   {
     commonOptions = ['help'],
-    disableAutomaticGrouping = false
+    disableAutomaticGrouping = false,
+    enableAutomaticSorting = false
   }: WithBuilderExtensionsConfig<CustomCliArguments> = {}
 ): WithBuilderExtensionsReturnType<CustomCliArguments, CustomExecutionContext> {
   const xbuilderDebug = createDebugLogger({
@@ -807,7 +820,7 @@ export function withBuilderExtensions<
       builderDebug('calling customBuilder (if a function) and returning builder object');
       // ? We make a deep clone of whatever options object we're passed
       // ? since there's a good chance we may be committing some light mutating
-      const builderObject = safeDeepClone(
+      let builderObject = safeDeepClone(
         (typeof customBuilder === 'function'
           ? customBuilder(
               blackFlag as BfeCustomBuilderFunctionParameters<
@@ -822,6 +835,18 @@ export function withBuilderExtensions<
             )
           : customBuilder) || {}
       );
+
+      if (enableAutomaticSorting) {
+        builderDebug(
+          `commencing automatic options sorting (${isFirstPass ? 'first' : 'second'} pass)`
+        );
+
+        const keys = Object.keys(builderObject).sort((k1, k2) =>
+          alphaSort.compare(k1, k2)
+        );
+
+        builderObject = Object.fromEntries(keys.map((k) => [k, builderObject[k]!]));
+      }
 
       builderDebug('builderObject: %O', builderObject);
 
