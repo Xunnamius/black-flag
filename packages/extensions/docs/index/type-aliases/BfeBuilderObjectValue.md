@@ -8,7 +8,7 @@
 
 > **BfeBuilderObjectValue**\<`CustomCliArguments`, `CustomExecutionContext`\> = [`BfeBuilderObjectValueWithoutExtensions`](BfeBuilderObjectValueWithoutExtensions.md) & [`BfeBuilderObjectValueExtensions`](BfeBuilderObjectValueExtensions.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [packages/extensions/src/index.ts:222](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/index.ts#L222)
+Defined in: [packages/extensions/src/index.ts:222](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/index.ts#L222)
 
 The object value type of a [BfeBuilderObject](BfeBuilderObject.md).
 

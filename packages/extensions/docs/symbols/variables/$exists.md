@@ -8,6 +8,6 @@
 
 > `const` **$exists**: *typeof* `$exists`
 
-Defined in: [packages/extensions/src/symbols.ts:10](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/packages/extensions/src/symbols.ts#L10)
+Defined in: [packages/extensions/src/symbols.ts:10](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/symbols.ts#L10)
 
 Represents any value for the given argument.
