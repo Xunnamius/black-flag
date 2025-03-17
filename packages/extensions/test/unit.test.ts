@@ -5625,7 +5625,7 @@ describe('::getInvocableExtendedHandler', () => {
     expect.hasAssertions();
 
     const mockCustomHandler = jest.fn();
-    const mockArgv = {} as Arguments;
+    const mockArgv = { $0: 'custom name' } as Arguments;
 
     const literalFunction = (_: ExecutionContext) => {
       const [builder, withHandlerExtensions] = withBuilderExtensions();
@@ -5732,31 +5732,53 @@ describe('::getInvocableExtendedHandler', () => {
     }
 
     expect(mockCustomHandler.mock.calls).toStrictEqual([
-      [mockArgv],
-      [mockArgv],
-      [mockArgv],
-      [mockArgv],
-      [mockArgv],
-      [mockArgv],
-      [mockArgv],
-      [mockArgv]
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })],
+      [expect.objectContaining({ $0: 'custom name' })]
     ]);
   });
 
   it('works when resolved command builder is not a function', async () => {
     expect.hasAssertions();
 
-    const mockCustomHandler = jest.fn();
-    const mockArgv = {} as Arguments;
+    {
+      const mockCustomHandler = jest.fn();
+      const mockArgv = {} as Arguments;
 
-    const handler = await getInvocableExtendedHandler(
-      { handler: mockCustomHandler },
-      generateFakeExecutionContext()
-    );
+      const handler = await getInvocableExtendedHandler(
+        { handler: mockCustomHandler },
+        generateFakeExecutionContext()
+      );
 
-    await handler(mockArgv);
+      await handler(mockArgv);
 
-    expect(mockCustomHandler.mock.calls).toStrictEqual([[mockArgv]]);
+      expect(mockCustomHandler.mock.calls).toStrictEqual([
+        [expect.objectContaining({ $0: '<unknown name>' })]
+      ]);
+    }
+
+    {
+      const mockCustomHandler = jest.fn();
+
+      const handler = await getInvocableExtendedHandler<
+        { test: boolean },
+        ExecutionContext
+      >(
+        { builder: { test: { boolean: true } }, handler: mockCustomHandler },
+        generateFakeExecutionContext()
+      );
+
+      await handler({ test: true });
+
+      expect(mockCustomHandler.mock.calls).toStrictEqual([
+        [expect.objectContaining({ $0: '<unknown name>', test: true })]
+      ]);
+    }
   });
 
   it('adds $artificiallyInvoked to argv', async () => {
@@ -5879,6 +5901,127 @@ describe('::getInvocableExtendedHandler', () => {
 
     await handler({ $0: 'fake', _: [], [$executionContext]: mockContext });
     expect(mockCustomHandler).toHaveBeenCalled();
+  });
+
+  it('does not bleed context or "cross-talk" between invocations', async () => {
+    expect.hasAssertions();
+
+    const mockCustomHandler = jest.fn((argv) => {
+      argv[$executionContext].state.changed =
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+        (argv[$executionContext].state.changed || 0) + 5;
+    });
+
+    const mockContext = generateFakeExecutionContext();
+
+    type MockCommandArgs = {
+      'clickity-clackity'?: boolean;
+      'rickity-rackity'?: boolean;
+    };
+
+    const mockCommand = function command(
+      _: AsStrictExecutionContext<typeof mockContext>
+    ) {
+      const [builder, withHandlerExtensions] = withBuilderExtensions({
+        'clickity-clackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'rickity-rackity'
+        },
+        'rickity-rackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'clickity-clackity'
+        }
+      });
+
+      return {
+        builder,
+        handler: withHandlerExtensions(mockCustomHandler)
+      };
+    };
+
+    {
+      const handler = await getInvocableExtendedHandler<
+        MockCommandArgs,
+        typeof mockContext
+      >(mockCommand, mockContext);
+
+      await handler({ 'clickity-clackity': true });
+    }
+
+    {
+      const handler = await getInvocableExtendedHandler<
+        MockCommandArgs,
+        typeof mockContext
+      >(mockCommand, mockContext);
+
+      await handler({});
+    }
+
+    expect(mockCustomHandler.mock.calls).toStrictEqual([
+      [
+        expect.objectContaining({
+          [$executionContext]: expect.objectContaining({
+            state: expect.objectContaining({ changed: 5 })
+          })
+        })
+      ],
+      [
+        expect.objectContaining({
+          [$executionContext]: expect.objectContaining({
+            state: expect.objectContaining({ changed: 5 })
+          })
+        })
+      ]
+    ]);
+  });
+
+  it('works when optional argv properties are not provided', async () => {
+    expect.hasAssertions();
+
+    const mockCustomHandler = jest.fn();
+    const mockContext = generateFakeExecutionContext();
+
+    const handler = await getInvocableExtendedHandler<
+      { 'clickity-clackity'?: boolean; 'rickity-rackity'?: boolean },
+      typeof mockContext
+    >(function command(_: AsStrictExecutionContext<typeof mockContext>) {
+      const [builder, withHandlerExtensions] = withBuilderExtensions({
+        'clickity-clackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'rickity-rackity'
+        },
+        'rickity-rackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'clickity-clackity'
+        }
+      });
+
+      return {
+        builder,
+        handler: withHandlerExtensions(mockCustomHandler)
+      };
+    }, mockContext);
+
+    await handler({});
+
+    expect(mockCustomHandler.mock.calls).toStrictEqual([
+      [
+        {
+          $0: '<unknown name>',
+          _: [],
+          [$artificiallyInvoked]: true,
+          [$executionContext]: {
+            commands: expect.anything(),
+            debug: expect.anything(),
+            state: expect.anything()
+          }
+        }
+      ]
+    ]);
   });
 
   it('throws a framework error if resolved command is falsy', async () => {

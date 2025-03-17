@@ -1462,25 +1462,32 @@ makes bugs more likely and harder to spot.
 
 `getInvocableExtendedHandler` solves this by returning a version of the extended
 command's [`handler`][9] function that is ready to invoke immediately. Said
-[`handler`][9] expects a single `argv` parameter which is passed-through to your
-command's handler as-is.
+[`handler`][9] expects a single `argv` parameter which is "safely" cloned,
+merged on top of any defaults (see [API reference][50]), and then passed-through
+to your command's handler as-is.
+
+> [!NOTE]
+>
+> A "safe" clone is a [StructuredClone][51]-like operation that passes through
+> as-is any values that cannot be cloned rather than throwing an error.
 
 > [!TIP]
 >
 > Command [`handler`][9] exports invoked via `getInvocableExtendedHandler` will
-> receive an `argv` containing the [`$artificiallyInvoked`][51] symbol. This
+> receive an `argv` containing the [`$artificiallyInvoked`][52] symbol. This
 > allows handlers to determine programmatically when the command isn't actually
 > being invoked by Black Flag, which can be useful.
 >
 > However, to get intellisense/TypeScript support for the existence of
-> [`$artificiallyInvoked`][51] in `argv`, you must use
-> [`BfeStrictArguments`][52].
+> [`$artificiallyInvoked`][52] in `argv`, you must use
+> [`BfeStrictArguments`][53].
 
 > [!CAUTION]
 >
 > Command [`handler`][9] exports invoked via `getInvocableExtendedHandler` will
 > _never_ check the given `argv` for correctness or update any of its
-> keys/values (except for setting [`$artificiallyInvoked`][51]).
+> keys/values (aside from setting [`$artificiallyInvoked`][52],
+> [`$executionContext`][71], and defaults for `$0` and `_` if they are omitted).
 >
 > By invoking a command's handler function outside of Black Flag, you're
 > essentially treating it like a normal function. And all handler functions
@@ -1488,7 +1495,7 @@ command's handler as-is.
 > after all BF/BFE checks have passed and all updates to argv have been applied.
 >
 > If you want to invoke a full Black Flag command programmatically, use
-> [`runProgram`][53]. If instead you want to call an individual command's
+> [`runProgram`][54]. If instead you want to call an individual command's
 > (relatively) lightweight handler function directly, use
 > `getInvocableExtendedHandler`.
 
@@ -1709,7 +1716,7 @@ export default function command({ state }: CustomExecutionContext) {
 
 ### Example 2
 
-Suppose we wanted a "deploy" command with the following [more realistic][54]
+Suppose we wanted a "deploy" command with the following [more realistic][55]
 feature set:
 
 - Ability to deploy to a Vercel production target, a Vercel preview target, or
@@ -2059,7 +2066,7 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 ### Differences between Black Flag Extensions and Yargs
 
 When using BFE, several options function differently, such as [`implies`][18].
-Other options have their effect deferred, like [`default`][12]. [`coerce`][55]
+Other options have their effect deferred, like [`default`][12]. [`coerce`][56]
 will always receive an array when the same option also has [`array: true`][17].
 See the [configuration keys section][31] for a list of changes and their
 justifications.
@@ -2122,7 +2129,7 @@ export function builder(blackFlag) {
 > The yargs API can and should still be invoked for purposes other than defining
 > options on a command, e.g. `blackFlag.strict(false)`.
 
-To this end, the following [yargs API functions][56] are soft-disabled via
+To this end, the following [yargs API functions][57] are soft-disabled via
 intellisense:
 
 - `option`
@@ -2131,15 +2138,15 @@ intellisense:
 However, no attempt is made by BFE to restrict your use of the yargs API at
 runtime. Therefore, using yargs's API to work around these artificial
 limitations, e.g. in your command's [`builder`][8] function or via the
-[`configureExecutionPrologue`][57] hook, will result in **undefined behavior**.
+[`configureExecutionPrologue`][58] hook, will result in **undefined behavior**.
 
 ### Black Flag versus Black Flag Extensions
 
-The goal of [Black Flag (@black-flag/core)][58] is to be as close to a drop-in
+The goal of [Black Flag (@black-flag/core)][59] is to be as close to a drop-in
 replacement as possible for vanilla yargs, specifically for users of
-[`yargs::commandDir()`][59]. This means Black Flag must go out of its way to
+[`yargs::commandDir()`][60]. This means Black Flag must go out of its way to
 maintain 1:1 parity with the vanilla yargs API ([with a few minor
-exceptions][60]).
+exceptions][61]).
 
 As a consequence, yargs's imperative nature tends to leak through Black Flag's
 abstraction at certain points, such as with [the `blackFlag` parameter of the
@@ -2147,10 +2154,10 @@ abstraction at certain points, such as with [the `blackFlag` parameter of the
 yargs's killer features without Black Flag getting in the way.
 
 However, this comes with costs. For one, the yargs's API has suffered from a bit
-of feature creep over the years. A result of this is a rigid API [with][61]
-[an][16] [abundance][62] [of][63] [footguns][64] and an [inability][65] to
-[address][66] them without introducing [massively][67] [breaking][68]
-[changes][69].
+of feature creep over the years. A result of this is a rigid API [with][62]
+[an][16] [abundance][63] [of][64] [footguns][65] and an [inability][66] to
+[address][67] them without introducing [massively][68] [breaking][69]
+[changes][70].
 
 BFE takes the "YOLO" approach by exporting several functions that build on top
 of Black Flag's feature set without worrying too much about maintaining 1:1
@@ -2346,22 +2353,24 @@ See the [table of contributors][x-repo-contributors].
 [48]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
 [49]: ./docs/index/functions/withUsageExtensions.md
 [50]: ./docs/index/functions/getInvocableExtendedHandler.md
-[51]: ./docs/symbols/variables/$artificiallyInvoked.md
-[52]: ./docs/index/type-aliases/BfeStrictArguments.md
-[53]: ../../docs/api/src/exports/functions/runProgram.md
-[54]: https://github.com/Xunnamius/symbiote/blob/main/src/commands/deploy.ts
-[55]: https://yargs.js.org/docs#api-reference-coercekey-fn
-[56]: https://yargs.js.org/docs#api-reference
-[57]: ../../docs/api/src/exports/type-aliases/ConfigureExecutionPrologue.md
-[58]: https://npm.im/@black-flag/core
-[59]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
-[60]: ../../docs/bf-vs-yargs.md
-[61]: https://github.com/yargs/yargs/issues/1323
-[62]: https://github.com/yargs/yargs/issues/2340
-[63]: https://github.com/yargs/yargs/issues/1322
-[64]: https://github.com/yargs/yargs/issues/2089
-[65]: https://github.com/yargs/yargs/issues/1975
-[66]: https://github.com/yargs/yargs-parser/issues/412
-[67]: https://github.com/yargs/yargs/issues/1680
-[68]: https://github.com/yargs/yargs/issues/1599
-[69]: https://github.com/yargs/yargs/issues/1611
+[51]: https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone
+[52]: ./docs/symbols/variables/$artificiallyInvoked.md
+[53]: ./docs/index/type-aliases/BfeStrictArguments.md
+[54]: ../../docs/api/src/exports/functions/runProgram.md
+[55]: https://github.com/Xunnamius/symbiote/blob/main/src/commands/deploy.ts
+[56]: https://yargs.js.org/docs#api-reference-coercekey-fn
+[57]: https://yargs.js.org/docs#api-reference
+[58]: ../../docs/api/src/exports/type-aliases/ConfigureExecutionPrologue.md
+[59]: https://npm.im/@black-flag/core
+[60]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
+[61]: ../../docs/bf-vs-yargs.md
+[62]: https://github.com/yargs/yargs/issues/1323
+[63]: https://github.com/yargs/yargs/issues/2340
+[64]: https://github.com/yargs/yargs/issues/1322
+[65]: https://github.com/yargs/yargs/issues/2089
+[66]: https://github.com/yargs/yargs/issues/1975
+[67]: https://github.com/yargs/yargs-parser/issues/412
+[68]: https://github.com/yargs/yargs/issues/1680
+[69]: https://github.com/yargs/yargs/issues/1599
+[70]: https://github.com/yargs/yargs/issues/1611
+[71]: ../../docs/api/src/exports/variables/$executionContext.md

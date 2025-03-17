@@ -1,7 +1,13 @@
 import { isDeepStrictEqual } from 'node:util';
 import { isNativeError } from 'node:util/types';
 
-import { CliError, FrameworkExitCode, isCliError } from '@black-flag/core';
+import {
+  $executionContext,
+  CliError,
+  FrameworkExitCode,
+  isCliError
+} from '@black-flag/core';
+
 import { CommandNotImplementedError } from '@black-flag/core/util';
 import toCamelCase from 'lodash.camelcase';
 import clone from 'lodash.clone';
@@ -36,6 +42,7 @@ import type {
 import type {
   Entries,
   LiteralUnion,
+  Merge,
   OmitIndexSignature,
   Promisable,
   StringKeyOf
@@ -1406,17 +1413,25 @@ export function withUsageExtensions(
  * Flag command exports.
  *
  * It returns a handler that expects to be passed a "reified argv," i.e. the
- * object given to the command handler after all checks have passed and all
- * updates to argv have been applied (including `subOptionOf` and BFE's
+ * object normally given to the command handler after all checks have passed and
+ * all updates to argv have been applied (including `subOptionOf` and BFE's
  * `implies`).
  *
  * For this reason, invoking the returned handler will not run any BF or BFE
  * builder configurations on the given argv object. **Whatever you pass the
- * returned handler will be re-gifted to the command's handler as-is and without
- * correctness checks.**
+ * returned handler function will be (safely) deep cloned and then re-gifted to
+ * the command's handler _without_ any correctness checks.**
  *
  * Use `CustomCliArguments` (and `CustomExecutionContext`) to assert the
  * expected shape of the "reified argv".
+ *
+ * Note that, like the `argv` passed to the returned handler function, the
+ * `context` argument passed to this function will be (safely) deep cloned,
+ * meaning any context changes effected by the handler will not persist outside
+ * of that handler's scope.
+ *
+ * Also note that the `$executionContext` key, if included in `argv`, will be
+ * ignored.
  *
  * See [the
  * documentation](https://github.com/Xunnamius/black-flag/blob/main/packages/extensions/README.md#getinvocableextendedhandler)
@@ -1438,6 +1453,9 @@ export async function getInvocableExtendedHandler<
   const debug = createDebugLogger({
     namespace: `${globalDebuggerNamespace}:getInvocableExtendedHandler`
   });
+
+  debug('safely deep cloning context argument');
+  context = safeDeepClone(context);
 
   debug('resolving maybePromisedCommand');
 
@@ -1494,14 +1512,65 @@ export async function getInvocableExtendedHandler<
 
   debug('returned immediately invocable handler function');
 
+  /**
+   * An immediately invocable handler function that expects to be passed a
+   * "reified argv," i.e. the object normally given to the command handler after
+   * all checks have passed and all updates to `argv` have been applied
+   * (including `subOptionOf` and BFE's `implies`).
+   *
+   * For this reason, invoking this function will not run any BF or BFE builder
+   * configurations on the given `argv` object. **Whatever you pass this
+   * function will be (safely) deep cloned and then re-gifted to the command's
+   * handler _without_ any correctness checks.**
+   *
+   * Note that the `$executionContext` key, if included in `argv`, will be
+   * ignored.
+   */
   return async function (
-    argv_: BfeStrictArguments<CustomCliArguments, CustomExecutionContext>
+    /**
+     * This is the `argv` passed to the invocable command handler.
+     *
+     * Note that `argv` will be (safely) deep cloned, and that the
+     * `$executionContext` key, if included, will be ignored.
+     */
+    argv: Merge<
+      BfeStrictArguments<CustomCliArguments, CustomExecutionContext>,
+      {
+        /**
+         * Do not manually provide this key. It will be included in `argv`
+         * automatically.
+         */
+        [$executionContext]?: unknown;
+        /**
+         * The script name or node command that, when omitted from the `argv`
+         * passed to a handler returned by `getInvocableExtendedHandler`,
+         * defaults to the `name` value exported from the command's module file
+         * (or `"<unknown name>"` if no name was exported).
+         *
+         * **Note that this default value IS LIKELY DIFFERENT THAN the _full
+         * name_ to which Black Flag sets `$0`!** If this is an issue, manually
+         * provide a value for `$0` in `argv`.
+         */
+        $0?: string;
+        /**
+         * Non-option arguments that, when omitted from the `argv` passed to a
+         * handler returned by `getInvocableExtendedHandler`, defaults to an
+         * empty array (`[]`).
+         */
+        _?: BfeStrictArguments<CustomCliArguments, CustomExecutionContext>['_'];
+      }
+    >
   ) {
     const fakeYargsWarning =
       '<this is a pseudo-yargs instance passed around by getInvocableExtendedHandler>';
 
-    const argv = argv_ as Arguments<CustomCliArguments, CustomExecutionContext>;
-    argv_[$artificiallyInvoked] = true;
+    const argv_ = safeDeepClone({
+      [$artificiallyInvoked]: true,
+      $0: config.name || '<unknown name>',
+      _: [],
+      ...argv,
+      [$executionContext]: context
+    } as unknown as Arguments<CustomCliArguments, CustomExecutionContext>);
 
     if (typeof builder === 'function') {
       const dummyYargs = makeVanillaYargs();
@@ -1509,7 +1578,7 @@ export async function getInvocableExtendedHandler<
 
       dummyYargs.parsed = {
         '//': fakeYargsWarning,
-        argv,
+        argv: argv_,
         defaulted: {},
         aliases: {},
         configuration: new Proxy(
@@ -1530,13 +1599,13 @@ export async function getInvocableExtendedHandler<
       builder(fakeBlackFlag, false, undefined);
 
       debug('invoking builder (for the second time)');
-      builder(fakeBlackFlag, false, { '//': fakeYargsWarning, ...argv });
+      builder(fakeBlackFlag, false, { '//': fakeYargsWarning, ...argv_ });
     } else {
       debug('warning: no callable builder function was returned!');
     }
 
     debug('invoking handler');
-    return handler(argv);
+    return handler(argv_);
   };
 }
 
@@ -2009,14 +2078,22 @@ function defaultHandler() {
 
 /**
  * A smarter more useful cloning algorithm based on "structured clone" that
- * passes through as-is items that cannot be cloned.
+ * passes through that cannot be cloned.
  */
-// TODO: export this as part of js-utils (@-xun/js) shared with release config
+// TODO: export this from js-utils (@-xun/js) (also in symbiote release config)
 function safeDeepClone<T>(o: T): T {
   return cloneDeepWith(o, (value) => {
     const attempt = clone(value);
 
-    if (attempt && typeof attempt === 'object' && Object.keys(attempt).length === 0) {
+    if (
+      attempt &&
+      typeof attempt === 'object' &&
+      Object.keys(attempt).length === 0 &&
+      // ? Essentially an "instanceof" that doesn't crawl the prototype chain
+      Object.getPrototypeOf(attempt) === Object.prototype &&
+      // ? Do NOT return the original value if it is itself an empty object
+      Object.getPrototypeOf(value) !== Object.prototype
+    ) {
       return value;
     }
 
