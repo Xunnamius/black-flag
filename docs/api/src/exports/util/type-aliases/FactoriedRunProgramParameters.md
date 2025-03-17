@@ -8,7 +8,7 @@
 
 > **FactoriedRunProgramParameters** = [`RunProgramParameters`](../../type-aliases/RunProgramParameters.md) *extends* \[infer \_, `...(infer Tail)`\] ? `Tail` : \[\]
 
-Defined in: [src/index.ts:102](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/index.ts#L102)
+Defined in: [src/index.ts:102](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/index.ts#L102)
 
 The available call signature parameters of the low-order function returned by
 [makeRunner](../functions/makeRunner.md).

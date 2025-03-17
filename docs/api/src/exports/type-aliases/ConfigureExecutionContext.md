@@ -8,7 +8,7 @@
 
 > **ConfigureExecutionContext**\<`CustomContext`\> = (`context`) => `Promisable`\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:22](https://github.com/Xunnamius/black-flag/blob/dca16a7cbf43b7d8428fc9b34cc49fc69b7b6672/src/types/configure.ts#L22)
+Defined in: [src/types/configure.ts:22](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/configure.ts#L22)
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return the value that will become the global
