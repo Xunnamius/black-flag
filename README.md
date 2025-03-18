@@ -166,7 +166,7 @@ export function builder(blackFlag, helpOrVersionSet, argv) {
   });
 
   // A special --attention flag only available when greeting the captain!
-  if (helpOrVersionSet || argv?._.at(0) === 'CAPTAIN') {
+  if (helpOrVersionSet || argv?.name === 'CAPTAIN') {
     return {
       attention: {
         boolean: true,
