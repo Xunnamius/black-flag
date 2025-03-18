@@ -14,7 +14,7 @@ positional parameters. Less tap-dancing around footguns. And no more dealing
 with help text that unexpectedly changes depending on the OS or the presence of
 aliases.
 
-For instance, consider a "myctl" command with several sub-commands:
+For instance, consider a "myctl" command with several subcommands:
 
 ```shell
 myctl --version

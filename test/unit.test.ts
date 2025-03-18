@@ -9273,7 +9273,7 @@ describe('<command module auto-discovery>', () => {
     });
   });
 
-  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent sub-command of an unimplemented parent and/or root', async () => {
+  it('exits with bf.FrameworkExitCode.DefaultError when attempting to execute a non-existent subcommand of an unimplemented parent and/or root', async () => {
     expect.hasAssertions();
 
     {

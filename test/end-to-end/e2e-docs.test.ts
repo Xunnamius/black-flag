@@ -1257,7 +1257,7 @@ module.exports = bf.runProgram(path.join(__dirname, 'commands'));
             stdout: '',
             exitCode: FrameworkExitCode.DefaultError,
             stderr: expect.stringMatching(
-              /Usage: myctl remote\n\nCommands:\n\s+ myctl remote add\n\s+ myctl remote remove\n\s+ myctl remote show\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nInvalid sub-command: you must call this with a valid sub-command argument/
+              /Usage: myctl remote\n\nCommands:\n\s+ myctl remote add\n\s+ myctl remote remove\n\s+ myctl remote show\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nInvalid subcommand: you must call this with a valid subcommand argument/
             )
           });
         }

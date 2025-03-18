@@ -93,8 +93,8 @@ Also note that empty files, and files that do not export a [`handler`][3]
 function or custom [`command`][4] string, are picked up by Black Flag as
 unfinished or "unimplemented" commands. They will still appear in help text but,
 when invoked, will either (1) output an error message explaining that the
-command is not implemented if said command has no sub-commands or (2) output
-help text for the command if said command has one or more sub-commands.
+command is not implemented if said command has no subcommands or (2) output help
+text for the command if said command has one or more subcommands.
 
 This means you can stub out a complex CLI in thirty seconds: just name your
 directories and empty files accordingly!
@@ -343,7 +343,7 @@ Commands:
 Options:
   --help  Show help text                                               [boolean]
 
-Invalid command: you must call this command with a valid sub-command argument
+Invalid command: you must call this command with a valid subcommand argument
 ```
 
 Neat! 📸

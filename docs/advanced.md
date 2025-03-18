@@ -228,7 +228,7 @@ following:
 >
 > In the above image, the first line under "Commands:" is the root command. In
 > more recent versions of Black Flag, the root command is omitted from the list
-> of sub-commands entirely.
+> of subcommands entirely.
 
 ## Execution Flow Diagram
 

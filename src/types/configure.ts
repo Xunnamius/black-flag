@@ -29,7 +29,7 @@ export type ConfigureExecutionContext<
  * have been executed, and should apply any final configurations to the programs
  * that constitute the command line interface.
  *
- * All commands and sub-commands known to Black Flag are available in the
+ * All commands and subcommands known to Black Flag are available in the
  * {@link ExecutionContext.commands} map, which can be accessed from the
  * `context` parameter or from the {@link Arguments} object returned by
  * `Program::parseAsync` etc.
@@ -130,7 +130,7 @@ export type ConfigurationHooks = {
    * have been executed, and should apply any final configurations to the
    * programs that constitute the command line interface.
    *
-   * All commands and sub-commands known to Black Flag are available in the
+   * All commands and subcommands known to Black Flag are available in the
    * {@link ExecutionContext.commands} map, which can be accessed from the
    * `context` parameter or from the {@link Arguments} object returned by
    * `Program::parseAsync` etc.

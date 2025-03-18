@@ -150,7 +150,7 @@ export const name = 'pirate-parser';
 export const usage = 'Usage: $0 <cmd> [args]';
 ```
 
-Finally, create a sub-command, perhaps at `./commands/hello.js`:
+Finally, create a subcommand, perhaps at `./commands/hello.js`:
 
 ```js
 export const command = '$0 [name]';

@@ -316,7 +316,7 @@ export const BfErrorMessage = {
     return 'this command is currently unimplemented';
   },
   InvalidSubCommandInvocation() {
-    return 'invalid sub-command: you must call this with a valid sub-command argument';
+    return 'invalid subcommand: you must call this with a valid subcommand argument';
   },
   FrameworkError(error: unknown) {
     return `UNHANDLED FRAMEWORK EXCEPTION: an error occurred due to a misconfiguration. This is typically due to developer error and as such cannot be fixed by end-users. Please report this incident to the developer of this application. For more information about this error, rerun the command with the DEBUG='bf:*' or DEBUG='*' environment variable set.\n\nException details: ${
