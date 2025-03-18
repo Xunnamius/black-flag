@@ -2019,10 +2019,9 @@ function separateExtensionsFromBuilderObjectValue<
     subOptionOf
   };
 
-  hardAssert(
-    !('default' in builderObjectValue) || default_ !== undefined,
-    BfeErrorMessage.IllegalExplicitlyUndefinedDefault()
-  );
+  if (default_ === undefined) {
+    delete builderObjectValue.default;
+  }
 
   return [
     {

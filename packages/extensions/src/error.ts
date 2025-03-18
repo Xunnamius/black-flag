@@ -28,9 +28,6 @@ export const BfeErrorMessage = {
   IllegalHandlerInvocation() {
     return 'withHandlerExtensions::handler was invoked too soon: options analysis unavailable';
   },
-  IllegalExplicitlyUndefinedDefault() {
-    return 'an option cannot have an explicitly undefined default';
-  },
   MetadataInvariantViolated(afflictedKey: string) {
     return `an impossible state was detected while analyzing configuration for key: ${afflictedKey}`;
   },

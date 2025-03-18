@@ -4953,20 +4953,17 @@ describe('::withBuilderExtensions', () => {
     expect(secondPassResult?.c?.coerce?.(['c'])).toStrictEqual(['c']);
   });
 
-  it('throws a framework error when providing an explicitly undefined default', async () => {
+  it('deletes explicitly undefined default from option configuration object', async () => {
     expect.hasAssertions();
 
     const runner = makeMockBuilderRunner({
       customBuilder: { a: { default: undefined } }
     });
 
-    const { firstPassResult } = await runner({});
+    const { firstPassResult, secondPassResult } = await runner({});
 
-    expect(firstPassResult).toMatchObject({
-      message: expect.stringContaining(
-        ': ' + BfeErrorMessage.IllegalExplicitlyUndefinedDefault()
-      )
-    });
+    expect(firstPassResult).toStrictEqual(secondPassResult);
+    expect(firstPassResult).toStrictEqual({ a: {} });
   });
 
   it('throws framework error if withHandlerExtensions is invoked before metadata is available', async () => {
