@@ -61,7 +61,7 @@ versions. Also comes with first-class support for both CJS and ESM source.
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag versus vanilla Yargs][22]\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][23] (or `npx -p @black-flag/demo myctl --help`)\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][24]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Yargs's intro documentation][25]
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag's intro examples][33] (which are just [Yargs's intro examples][25] rewritten with Black Flag)
 
 <!-- prettier-ignore-end -->
 
@@ -143,14 +143,14 @@ import { runProgram } from '@black-flag/core';
 export default runProgram(import.meta.resolve('./commands'));
 ```
 
-Then create your root command, perhaps at `./commands/index.js`:
+Then create the root command, perhaps at `./commands/index.js`:
 
 ```js
 export const name = 'pirate-parser';
 export const usage = 'Usage: $0 <cmd> [args]';
 ```
 
-Finally, create your sub-command, perhaps at `./commands/hello.js`:
+Finally, create a sub-command, perhaps at `./commands/hello.js`:
 
 ```js
 export const command = '$0 [name]';
@@ -184,6 +184,16 @@ export async function handler(argv) {
   console.log(`Hello ${argv.name}, welcome to Black Flag!`);
 }
 ```
+
+> [!TIP]
+>
+> This example demonstrates a multi-level or "nested" command, i.e. a _root
+> command_ with _subcommands_. If instead we wanted to make our CLI single-level
+> with no subcommands at all, we could merge `./commands/hello.js`'s exports
+> (`handler`, `builder`, etc) into `./commands/index.js` and keep it all to the
+> root command file.
+>
+> How you design your CLI is up to you!
 
 Then run it:
 
@@ -284,11 +294,8 @@ Next steps:
   `npx -p @black-flag/demo myctl --help`)
 - [Review Black Flag recipes for solving common CLI design problems][24]
 - [Deep dive into Black Flag's internals][31]
-- [Pull up Yargs's intro documentation][25]
+- [Pull up Black Flag's introductory examples][33] (or [Yargs's][25])
 - [Pore over Yargs's parser tricks][32] (which also apply to Black Flag)
-
-For an example of a production CLI tool that puts Black Flag through its paces,
-check out the source code for [`@-xun/symbiote`][33].
 
 ## Appendix 🏴
 
@@ -534,7 +541,7 @@ specification. Contributions of any kind welcome!
 [30]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
 [31]: ./docs/advanced.md
 [32]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
-[33]: https://github.com/Xunnamius/symbiote/blob/main/src
+[33]: ./examples/yargs-examples/README.md
 [34]: ./docs/api/README.md
 [35]: ./docs/api/src/exports/type-aliases/Configuration.md
 [36]:
