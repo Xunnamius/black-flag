@@ -387,7 +387,7 @@ export type BfeBuilderObjectValueExtensions<
   vacuousImplications?: boolean;
   /**
    * `check` is the declarative option-specific version of vanilla yargs's
-   * `yargs::check()`. Also supports async and promise-returning functions.
+   * `yargs::check()`. It also supports async and promise-returning functions.
    *
    * This function receives the `currentArgumentValue`, which you are free to
    * type as you please, and the fully parsed `argv`. If this function throws,
@@ -398,6 +398,11 @@ export type BfeBuilderObjectValueExtensions<
    * You may also pass an array of check functions, each being executed after
    * the other. Note that providing an array of one or more async check
    * functions will result in them being awaited concurrently.
+   *
+   * Note that `check` runs _at the very end of Black Flag's second parsing
+   * pass_, meaning it runs _after_ things like `coerce` and `subOptionOf`, and
+   * therefore receives the _final_ version of `argv` (the one passed to a
+   * command's `handler`).
    *
    * See [the
    * documentation](https://github.com/Xunnamius/black-flag/tree/main/packages/extensions/README.md#check)
