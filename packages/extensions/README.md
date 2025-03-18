@@ -6,7 +6,7 @@
 
 <p align="center" width="100%">
 <!-- symbiote-template-region-end -->
-A collection of set-theoretic declarative-first APIs for yargs and <a href="https://github.com/Xunnamius/black-flag">Black Flag</a>
+A collection of set-theoretic declarative-first APIs for Yargs and <a href="https://github.com/Xunnamius/black-flag">Black Flag</a>
 <!-- symbiote-template-region-start 2 -->
 </p>
 
@@ -33,15 +33,15 @@ A collection of set-theoretic declarative-first APIs for yargs and <a href="http
 
 Black Flag Extensions (BFE) is a collection of surprisingly simple set-theoretic
 APIs that wrap Black Flag commands' exports to provide a bevy of new declarative
-features, some of which are heavily inspired by [yargs's GitHub Issues
-reports][1]. It's like type-fest or jest-extended, but for Black Flag and yargs!
+features, some of which are heavily inspired by [Yargs's GitHub Issues
+reports][1]. It's like type-fest or jest-extended, but for Black Flag and Yargs!
 
-In exchange for straying a bit from the vanilla yargs API, BFE greatly increases
+In exchange for straying a bit from the vanilla Yargs API, BFE greatly increases
 Black Flag's declarative powers.
 
 Note that BFE does not represent a [complete][2] [propositional logic][3] and so
 cannot describe every possible relation between arguments. Nor should it; BFE
-makes it easy to fall back to using the yargs API imperatively in those rare
+makes it easy to fall back to using the Yargs API imperatively in those rare
 instances it's necessary.
 
 <!-- symbiote-template-region-start 3 -->
@@ -175,18 +175,18 @@ handlers][10].
 
 This section details the new configuration keys made available by BFE, each
 implementing an options-related unit of functionality beyond that offered by
-vanilla yargs and Black Flag.
+vanilla Yargs and Black Flag.
 
 Note that the checks enabled by these configuration keys:
 
 - Are run on Black Flag's [second parsing pass][11] except where noted. This
   allows BFE to perform checks against argument _values_ in addition to the
-  argument existence checks enabled by vanilla yargs.
+  argument existence checks enabled by vanilla Yargs.
 
 - Will ignore the existence of the [`default`][12] key ([unless it's a custom
   check][13]). This means you can use keys like [`requires`][14] and
   [`conflicts`][15] alongside [`default`][12] without causing unresolvable CLI
-  errors. This avoids a rather unintuitive [yargs footgun][16].
+  errors. This avoids a rather unintuitive [Yargs footgun][16].
 
 - Will take into account the following [yargs-parser settings][7] configuration
   settings: `camel-case-expansion`, `strip-aliased`, `strip-dashed`. Note that
@@ -232,7 +232,7 @@ Note that the checks enabled by these configuration keys:
 
 > [!IMPORTANT]
 >
-> `requires` is a superset of and replacement for vanilla yargs's
+> `requires` is a superset of and replacement for vanilla Yargs's
 > [`implies`][27]. BFE also has [its own implication implementation][18].
 
 `requires` enables checks to ensure the specified arguments, or argument-value
@@ -282,7 +282,7 @@ given in `argv` (e.g. via the command line).
 
 > [!IMPORTANT]
 >
-> `conflicts` is a superset of vanilla yargs's [`conflicts`][29].
+> `conflicts` is a superset of vanilla Yargs's [`conflicts`][29].
 
 `conflicts` enables checks to ensure the specified arguments, or argument-value
 pairs, are _never_ given conditioned on the existence of another argument. For
@@ -332,8 +332,8 @@ preventing the two arguments from being given simultaneously.
 
 > [!IMPORTANT]
 >
-> BFE's `implies` replaces vanilla yargs's `implies` in a breaking way. The two
-> implementations are nothing alike. If you're looking for vanilla yargs's
+> BFE's `implies` replaces vanilla Yargs's `implies` in a breaking way. The two
+> implementations are nothing alike. If you're looking for vanilla Yargs's
 > functionality, see [`requires`][14].
 
 `implies` will set a default value for the specified arguments conditioned on
@@ -555,7 +555,7 @@ behavior for a specific option, set `vacuousImplications` to `true` (it is
 
 > [!IMPORTANT]
 >
-> `demandThisOptionIf` is a superset of vanilla yargs's [`demandOption`][32].
+> `demandThisOptionIf` is a superset of vanilla Yargs's [`demandOption`][32].
 
 `demandThisOptionIf` enables checks to ensure an argument is given when at least
 one of the specified groups of arguments, or argument-value pairs, is also
@@ -604,11 +604,11 @@ achieved via [`subOptionOf`][23].
 
 > [!IMPORTANT]
 >
-> `demandThisOption` is an alias of vanilla yargs's [`demandOption`][32].
+> `demandThisOption` is an alias of vanilla Yargs's [`demandOption`][32].
 > `demandOption` is disallowed by intellisense.
 
 `demandThisOption` enables checks to ensure an argument is always given. This is
-equivalent to `demandOption` from vanilla yargs. For example:
+equivalent to `demandOption` from vanilla Yargs. For example:
 
 ```jsonc
 {
@@ -621,9 +621,9 @@ This configuration will trigger a check to ensure that `-⁠x` is given.
 
 > [!NOTE]
 >
-> As an alias of vanilla yargs's [`demandOption`][32], this check is outsourced
-> to yargs, which means it runs on Black Flag's _first and second parsing
-> passes_ like any other configurations key coming from vanilla yargs.
+> As an alias of vanilla Yargs's [`demandOption`][32], this check is outsourced
+> to Yargs, which means it runs on Black Flag's _first and second parsing
+> passes_ like any other configurations key coming from vanilla Yargs.
 
 ---
 
@@ -633,7 +633,7 @@ This configuration will trigger a check to ensure that `-⁠x` is given.
 
 > [!IMPORTANT]
 >
-> `demandThisOptionOr` is a superset of vanilla yargs's [`demandOption`][32].
+> `demandThisOptionOr` is a superset of vanilla Yargs's [`demandOption`][32].
 
 `demandThisOptionOr` enables non-optional inclusive disjunction checks per
 group. Put another way, `demandThisOptionOr` enforces a "logical or" relation
@@ -686,7 +686,7 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 
 > [!IMPORTANT]
 >
-> `demandThisOptionXor` is a superset of vanilla yargs's [`demandOption`][32] +
+> `demandThisOptionXor` is a superset of vanilla Yargs's [`demandOption`][32] +
 > [`conflicts`][29].
 
 `demandThisOptionXor` enables non-optional exclusive disjunction checks per
@@ -740,7 +740,7 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 
 > ⪢ API reference: [`check`][39]
 
-`check` is the declarative option-specific version of vanilla yargs's
+`check` is the declarative option-specific version of vanilla Yargs's
 [`yargs::check()`][40].
 
 This function receives the `currentArgumentValue`, which you are free to type as
@@ -837,7 +837,7 @@ function checkArgGreaterThan5(argName) {
 }
 ```
 
-See the yargs documentation on [`yargs::check()`][40] for more information.
+See the Yargs documentation on [`yargs::check()`][40] for more information.
 
 ---
 
@@ -898,7 +898,7 @@ export const handler = function ({ lang, version }) {
 
 Among other freebies, taking advantage of dynamic options support gifts your CLI
 with help text more gorgeous and meaningful than anything you could accomplish
-with vanilla yargs:
+with vanilla Yargs:
 
 ```text
 myctl init --lang 'node' --version=21.1
@@ -943,7 +943,7 @@ Options:
 
 Ideally, Black Flag would allow us to describe the relationship between
 `-⁠-⁠lang` and its _suboption_ `-⁠-⁠version` declaratively, without having to
-drop down to imperative interactions with the yargs API like we did above.
+drop down to imperative interactions with the Yargs API like we did above.
 
 This is the goal of the `subOptionOf` configuration key. Using `subOptionOf`,
 developers can take advantage of dynamic options without sweating the
@@ -1217,7 +1217,7 @@ The following arguments as given conflict with the implications of "generate-typ
 
 #### Support for `default` with `conflicts`/`requires`/etc
 
-BFE (and, consequently, BF/yargs when not generating help text) will ignore the
+BFE (and, consequently, BF/Yargs when not generating help text) will ignore the
 existence of the [`default`][12] key until near the end of BFE's execution.
 
 > [!IMPORTANT]
@@ -1229,8 +1229,8 @@ existence of the [`default`][12] key until near the end of BFE's execution.
 > [!WARNING]
 >
 > An explicitly `undefined` default, i.e. `{ default: undefined }`, will be
-> deleted from the configuration object and completely ignored by BFE, Black
-> Flag, and yargs. This differs from yargs's default behavior, which is to
+> deleted from the configuration object by BFE and completely ignored by Black
+> Flag and Yargs. This differs from BF/Yargs's default behavior, which is to
 > recognize `undefined` defaults.
 
 Defaults are set _before_ any [`check`][13] functions are run, _before_ any
@@ -1240,8 +1240,8 @@ of keys like [`requires`][14] and [`conflicts`][15] alongside [`default`][12]
 without causing [impossible configurations][46] that throw unresolvable CLI
 errors.
 
-This workaround avoids a (in my opinion) rather unintuitive [yargs footgun][16],
-though there are decent arguments in support of vanilla yargs's behavior.
+This workaround avoids a (in my opinion) rather unintuitive [Yargs footgun][16],
+though there are decent arguments in support of vanilla Yargs's behavior.
 
 #### Strange and Impossible Configurations
 
@@ -2073,13 +2073,13 @@ justifications.
 
 Additionally, command options must be configured by [returning an `opt`
 object][17] from your command's [`builder`][8] rather than imperatively invoking
-the yargs API.
+the Yargs API.
 
 For example:
 
 ```diff
 export function builder(blackFlag) {
-- // DO NOT use yargs's imperative API to define options! This *BREAKS* BFE!
+- // DO NOT use Yargs's imperative API to define options! This *BREAKS* BFE!
 - blackFlag.option('f', {
 -   alias: 'file',
 -   demandOption: true,
@@ -2089,7 +2089,7 @@ export function builder(blackFlag) {
 -   group: 'custom'
 - });
 -
-- // DO NOT use yargs's imperative API to define options! This *BREAKS* BFE!
+- // DO NOT use Yargs's imperative API to define options! This *BREAKS* BFE!
 - blackFlag
 -   .alias('f', 'file')
 -   .demandOption('f')
@@ -2098,7 +2098,7 @@ export function builder(blackFlag) {
 -   .string('f')
 -   .group('custom');
 -
-- // DO NOT use yargs's imperative API to define options! This *BREAKS* BFE!
+- // DO NOT use Yargs's imperative API to define options! This *BREAKS* BFE!
 - blackFlag.options({
 -   f: {
 -     alias: 'file',
@@ -2110,7 +2110,7 @@ export function builder(blackFlag) {
 -   }
 - });
 -
-+ // INSTEAD, use yargs / Black Flag's declarative API to define options 🙂
++ // INSTEAD, use Yargs / Black Flag's declarative API to define options 🙂
 + return {
 +   f: {
 +     alias: 'file',
@@ -2126,34 +2126,34 @@ export function builder(blackFlag) {
 
 > [!TIP]
 >
-> The yargs API can and should still be invoked for purposes other than defining
+> The Yargs API can and should still be invoked for purposes other than defining
 > options on a command, e.g. `blackFlag.strict(false)`.
 
-To this end, the following [yargs API functions][57] are soft-disabled via
+To this end, the following [Yargs API functions][57] are soft-disabled via
 intellisense:
 
 - `option`
 - `options`
 
-However, no attempt is made by BFE to restrict your use of the yargs API at
-runtime. Therefore, using yargs's API to work around these artificial
+However, no attempt is made by BFE to restrict your use of the Yargs API at
+runtime. Therefore, using Yargs's API to work around these artificial
 limitations, e.g. in your command's [`builder`][8] function or via the
 [`configureExecutionPrologue`][58] hook, will result in **undefined behavior**.
 
 ### Black Flag versus Black Flag Extensions
 
 The goal of [Black Flag (@black-flag/core)][59] is to be as close to a drop-in
-replacement as possible for vanilla yargs, specifically for users of
+replacement as possible for vanilla Yargs, specifically for users of
 [`yargs::commandDir()`][60]. This means Black Flag must go out of its way to
-maintain 1:1 parity with the vanilla yargs API ([with a few minor
+maintain 1:1 parity with the vanilla Yargs API ([with a few minor
 exceptions][61]).
 
-As a consequence, yargs's imperative nature tends to leak through Black Flag's
+As a consequence, Yargs's imperative nature tends to leak through Black Flag's
 abstraction at certain points, such as with [the `blackFlag` parameter of the
 `builder` export][8]. **This is a good thing!** Since we want access to all of
-yargs's killer features without Black Flag getting in the way.
+Yargs's killer features without Black Flag getting in the way.
 
-However, this comes with costs. For one, the yargs's API has suffered from a bit
+However, this comes with costs. For one, the Yargs's API has suffered from a bit
 of feature creep over the years. A result of this is a rigid API [with][62]
 [an][16] [abundance][63] [of][64] [footguns][65] and an [inability][66] to
 [address][67] them without introducing [massively][68] [breaking][69]
@@ -2161,7 +2161,7 @@ of feature creep over the years. A result of this is a rigid API [with][62]
 
 BFE takes the "YOLO" approach by exporting several functions that build on top
 of Black Flag's feature set without worrying too much about maintaining 1:1
-parity with the vanilla yargs's API. This way, one can opt-in to a more
+parity with the vanilla Yargs's API. This way, one can opt-in to a more
 opinionated but (in my opinion) cleaner, more consistent, and more intuitive
 developer experience.
 
