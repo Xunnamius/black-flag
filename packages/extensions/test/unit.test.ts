@@ -6021,6 +6021,44 @@ describe('::getInvocableExtendedHandler', () => {
     ]);
   });
 
+  it('runs safeDeepClone with respect to context.state.extensions', async () => {
+    expect.hasAssertions();
+
+    const mockContext = generateFakeExecutionContext();
+
+    mockContext.fake = { should: 'transfer' };
+    mockContext.state.extensions = { transfer: [mockContext.fake] };
+
+    const handler = await getInvocableExtendedHandler<
+      { 'clickity-clackity'?: boolean; 'rickity-rackity'?: boolean },
+      typeof mockContext
+    >(function command(_: AsStrictExecutionContext<typeof mockContext>) {
+      const [builder, withHandlerExtensions] = withBuilderExtensions({
+        'clickity-clackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'rickity-rackity'
+        },
+        'rickity-rackity': {
+          boolean: true,
+          default: false,
+          demandThisOptionOr: 'clickity-clackity'
+        }
+      });
+
+      return {
+        builder,
+        handler: withHandlerExtensions((argv) => {
+          expect(argv[$executionContext]).not.toBe(mockContext);
+          expect(argv[$executionContext].fake).toBe(mockContext.fake);
+          expect(argv[$executionContext].state).not.toBe(mockContext.state);
+        })
+      };
+    }, mockContext);
+
+    await handler({});
+  });
+
   it('throws a framework error if resolved command is falsy', async () => {
     expect.hasAssertions();
 

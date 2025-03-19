@@ -27,6 +27,8 @@ import {
   $genesis
 } from 'universe+extensions:symbols.ts';
 
+import type { SafeDeepCloneOptions } from '@-xun/js';
+
 import type {
   Arguments,
   Configuration,
@@ -1444,7 +1446,9 @@ export function withUsageExtensions(
  */
 export async function getInvocableExtendedHandler<
   CustomCliArguments extends Record<string, unknown>,
-  CustomExecutionContext extends ExecutionContext
+  CustomExecutionContext extends ExecutionContext & {
+    state: { extensions?: SafeDeepCloneOptions };
+  }
 >(
   maybeCommand: Promisable<
     | ImportedConfigurationModule<CustomCliArguments, CustomExecutionContext>
@@ -1460,7 +1464,7 @@ export async function getInvocableExtendedHandler<
   });
 
   debug('safely deep cloning context argument');
-  context = safeDeepClone(context);
+  context = safeDeepClone(context, context.state.extensions);
 
   debug('resolving maybePromisedCommand');
 
@@ -1569,13 +1573,16 @@ export async function getInvocableExtendedHandler<
     const fakeYargsWarning =
       '<this is a pseudo-yargs instance passed around by getInvocableExtendedHandler>';
 
-    const argv_ = safeDeepClone({
-      [$artificiallyInvoked]: true,
-      $0: config.name || '<unknown name>',
-      _: [],
-      ...argv,
-      [$executionContext]: context
-    } as unknown as Arguments<CustomCliArguments, CustomExecutionContext>);
+    const argv_ = safeDeepClone(
+      {
+        [$artificiallyInvoked]: true,
+        $0: config.name || '<unknown name>',
+        _: [],
+        ...argv,
+        [$executionContext]: context
+      } as unknown as Arguments<CustomCliArguments, CustomExecutionContext>,
+      context.state.extensions
+    );
 
     if (typeof builder === 'function') {
       const dummyYargs = makeVanillaYargs();

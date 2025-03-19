@@ -1463,13 +1463,25 @@ makes bugs more likely and harder to spot.
 `getInvocableExtendedHandler` solves this by returning a version of the extended
 command's [`handler`][9] function that is ready to invoke immediately. Said
 [`handler`][9] expects a single `argv` parameter which is "safely" cloned,
-merged on top of any defaults (see [API reference][50]), and then passed-through
+merged with several defaults (see [API reference][50]), and then passed-through
 to your command's handler as-is.
 
-> [!NOTE]
+One of those defaults is the value of the `context` parameter that was supplied
+to `getInvocableExtendedHandler`. Similar to `argv`, `context` will be "safely"
+cloned.
+
+> [!TIP]
 >
-> A "safe" clone is a [StructuredClone][51]-like operation that passes through
-> as-is any values that cannot be cloned rather than throwing an error.
+> A "safe" clone is a [StructuredClone-like operation][51] that passes through
+> as-is any values that cannot be cloned rather than throwing an error. Since
+> BFE is leveraging [`safeDeepClone`][51] under the hood, all clone operations
+> can be tweaked by configuring [`context.state.extensions.transfer`][72]
+> appropriately (where `context` is the [ExecutionContext][73] instance passed
+> to `getInvocableExtendedHandler`).
+>
+> Setting `context.state.extensions.transfer` is useful when, for instance, you
+> have an object stored in `context` that should not be deep cloned but passed
+> through as-is instead.
 
 > [!TIP]
 >
@@ -1572,8 +1584,8 @@ In this section are two example implementations of a "deploy" command.
 > [!WARNING]
 >
 > Some of the examples in this section are using hyphen characters followed by a
-> [word joiner character][5] to prevent breaking example awkwardly across lines.
-> Be cautious copying and pasting examples.
+> [word joiner character][5] to prevent breaking information awkwardly across
+> lines. Be cautious copying and pasting examples.
 
 ### Example 1
 
@@ -2353,7 +2365,8 @@ See the [table of contributors][x-repo-contributors].
 [48]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
 [49]: ./docs/index/functions/withUsageExtensions.md
 [50]: ./docs/index/functions/getInvocableExtendedHandler.md
-[51]: https://developer.mozilla.org/en-US/docs/Web/API/Window/structuredClone
+[51]:
+  https://github.com/Xunnamius/js-utils/blob/main/docs/src/functions/safeDeepClone.md
 [52]: ./docs/symbols/variables/$artificiallyInvoked.md
 [53]: ./docs/index/type-aliases/BfeStrictArguments.md
 [54]: ../../docs/api/src/exports/functions/runProgram.md
@@ -2374,3 +2387,6 @@ See the [table of contributors][x-repo-contributors].
 [69]: https://github.com/yargs/yargs/issues/1599
 [70]: https://github.com/yargs/yargs/issues/1611
 [71]: ../../docs/api/src/exports/variables/$executionContext.md
+[72]:
+  https://github.com/Xunnamius/js-utils/blob/main/docs/src/type-aliases/SafeDeepCloneOptions.md#transfer
+[73]: ../../docs/api/src/exports/util/type-aliases/ExecutionContext.md
