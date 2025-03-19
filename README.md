@@ -188,9 +188,10 @@ export async function handler(argv) {
 > [!TIP]
 >
 > This example demonstrates a multi-level or "nested" command, i.e. a _root
-> command_ with _subcommands_. If instead we wanted to make our CLI single-level
-> with no subcommands at all, we could merge `./commands/hello.js`'s exports
-> (`handler`, `builder`, etc) into `./commands/index.js` and keep it simple.
+> command_ with a _subcommand_. If instead we wanted to make a simple
+> single-level CLI with no subcommands at all, we could merge
+> `./commands/hello.js`'s exports (`handler`, `builder`, etc) into
+> `./commands/index.js`.
 >
 > How you design your CLI is up to you!
 
