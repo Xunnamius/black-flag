@@ -8,7 +8,7 @@
 
 > **Configuration**\<`CustomCliArguments`, `CustomExecutionContext`\> = `object`
 
-Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L15)
+Defined in: [src/types/module.ts:15](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L15)
 
 A replacement for the `CommandModule` type that comes with yargs.
 Auto-discovered configuration modules must implement this interface or a
@@ -30,7 +30,7 @@ subtype of this interface.
 
 > **aliases**: `string`[]
 
-Defined in: [src/types/module.ts:33](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L33)
+Defined in: [src/types/module.ts:33](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L33)
 
 An array of `command` aliases [as
 interpreted](https://github.com/yargs/yargs/pull/647) by
@@ -55,7 +55,7 @@ Note: when a command file is interpreted as a [RootConfiguration](RootConfigurat
 
 > **builder**: \{\} \| (`blackFlag`, `helpOrVersionSet`, `argv`?) => `undefined` \| [`EffectorProgram`](../util/type-aliases/EffectorProgram.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| \{\} \| `_Program`
 
-Defined in: [src/types/module.ts:56](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L56)
+Defined in: [src/types/module.ts:56](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L56)
 
 An object containing yargs options configuration or a function that will
 receive the current Black Flag program. Unlike with vanilla yargs, you do
@@ -88,7 +88,7 @@ first invoked** and so aren't available until a little later.
 
 > **command**: `"$0"` \| `` `$0 ${string}` ``
 
-Defined in: [src/types/module.ts:86](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L86)
+Defined in: [src/types/module.ts:86](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L86)
 
 The command as interpreted by yargs. Must always begin with `$0`. May
 contain positional arguments declared using the [`yargs::command`
@@ -111,7 +111,7 @@ using positional arguments. If you want to change your command's name, use
 
 > **deprecated**: `string` \| `boolean`
 
-Defined in: [src/types/module.ts:94](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L94)
+Defined in: [src/types/module.ts:94](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L94)
 
 If truthy, the command will be considered "deprecated" by yargs. If
 `deprecated` is a string, it will additionally be treated as a deprecation
@@ -129,7 +129,7 @@ false
 
 > **description**: `string` \| `false`
 
-Defined in: [src/types/module.ts:101](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L101)
+Defined in: [src/types/module.ts:101](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L101)
 
 The description for the command in help text. If `false`, the command will
 be considered "hidden" by yargs.
@@ -146,7 +146,7 @@ be considered "hidden" by yargs.
 
 > **handler**: (`argv`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/module.ts:111](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L111)
+Defined in: [src/types/module.ts:111](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L111)
 
 A function called when this command is invoked. It will receive an object
 of parsed arguments.
@@ -176,7 +176,7 @@ undefined
 
 > **name**: `string`
 
-Defined in: [src/types/module.ts:123](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L123)
+Defined in: [src/types/module.ts:123](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L123)
 
 The name of the command. Any spaces will be replaced with hyphens.
 Including a character that yargs does not consider valid for a
@@ -192,7 +192,7 @@ filename without extension is "index".
 
 > **usage**: `string`
 
-Defined in: [src/types/module.ts:142](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/module.ts#L142)
+Defined in: [src/types/module.ts:142](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L142)
 
 Set a usage message shown at the top of the command's help text.
 

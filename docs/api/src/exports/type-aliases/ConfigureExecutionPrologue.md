@@ -8,14 +8,14 @@
 
 > **ConfigureExecutionPrologue**\<`CustomContext`\> = (`rootPrograms`, `context`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/configure.ts#L44)
+Defined in: [src/types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/configure.ts#L44)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any
 have been executed, and should apply any final configurations to the programs
 that constitute the command line interface.
 
-All commands and sub-commands known to Black Flag are available in the
+All commands and subcommands known to Black Flag are available in the
 [ExecutionContext.commands](../util/type-aliases/ExecutionContext.md#commands) map, which can be accessed from the
 `context` parameter or from the [Arguments](Arguments.md) object returned by
 `Program::parseAsync` etc.

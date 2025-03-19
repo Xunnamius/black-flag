@@ -8,7 +8,7 @@
 
 > **FrameworkArguments**\<`CustomExecutionContext`\> = `object`
 
-Defined in: [src/types/program.ts:271](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/program.ts#L271)
+Defined in: [src/types/program.ts:271](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/program.ts#L271)
 
 Represents the CLI arguments/properties added by Black Flag rather than the
 end developer.
@@ -30,4 +30,4 @@ you.
 
 > **\[$executionContext\]**: `CustomExecutionContext`
 
-Defined in: [src/types/program.ts:274](https://github.com/Xunnamius/black-flag/blob/6975ac4841c42ac3213d392b5cb06d13a72628a4/src/types/program.ts#L274)
+Defined in: [src/types/program.ts:274](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/program.ts#L274)
