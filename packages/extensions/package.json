@@ -72,18 +72,15 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
+    "@-xun/js": "^1.0.0",
     "core-js": "^3.41.0",
     "lodash.camelcase": "^4.3.0",
-    "lodash.clone": "^4.5.0",
-    "lodash.clonedeep": "^4.5.0",
     "rejoinder": "^1.2.5",
     "type-fest": "^4.37.0"
   },
   "devDependencies": {
     "@-xun/fs": "^1.0.0",
     "@types/lodash.camelcase": "^4.3.9",
-    "@types/lodash.clone": "^4.5.9",
-    "@types/lodash.clonedeep": "^4.5.9",
     "@types/lodash.merge": "^4.6.9",
     "lodash.merge": "^4.6.2"
   },
