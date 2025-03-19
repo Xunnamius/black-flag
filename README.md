@@ -136,6 +136,8 @@ Create the file that will run your CLI, perhaps at `./cli.js`:
 >
 > Both CJS and ESM source is acceptable!
 
+<!-- example-region cli.js -->
+
 ```js
 #!/usr/bin/env node
 
@@ -145,12 +147,16 @@ export default runProgram(import.meta.resolve('./commands'));
 
 Then create the root command, perhaps at `./commands/index.js`:
 
+<!-- example-region commands/index.js -->
+
 ```js
 export const name = 'pirate-parser';
 export const usage = 'Usage: $0 <cmd> [args]';
 ```
 
 Finally, create a subcommand, perhaps at `./commands/hello.js`:
+
+<!-- example-region commands/hello.js -->
 
 ```js
 export const command = '$0 [name]';
@@ -170,7 +176,9 @@ export function builder(blackFlag, helpOrVersionSet, argv) {
     return {
       attention: {
         boolean: true,
-        description: 'Alert the watch that the captain is around'
+        description: `Alert the watch${
+          helpOrVersionSet ? ' (only available when greeting captain)' : ''
+        }`
       }
     };
   }
@@ -197,9 +205,13 @@ export async function handler(argv) {
 
 Then run it:
 
+<!-- example-region command-1 -->
+
 ```shell
 node cli.js --help
 ```
+
+<!-- example-region output-1 -->
 
 ```text
 Usage: pirate-parser <cmd> [args]
@@ -214,9 +226,13 @@ Options:
 
 ---
 
+<!-- example-region command-2 -->
+
 ```shell
 node cli.js hello --help
 ```
+
+<!-- example-region output-2 -->
 
 ```text
 Usage: pirate-parser hello [name]
@@ -228,14 +244,18 @@ Positionals:
 
 Options:
   --help       Show help text                                               [boolean]
-  --attention  Alert the watch that the captain is around                   [boolean]
+  --attention  Alert the watch (only available when greeting captain)       [boolean]
 ```
 
 ---
 
+<!-- example-region command-3 -->
+
 ```shell
 node cli.js hello Parrot
 ```
+
+<!-- example-region output-3 -->
 
 ```text
 Hello Parrot, welcome to Black Flag!
@@ -243,9 +263,13 @@ Hello Parrot, welcome to Black Flag!
 
 ---
 
+<!-- example-region command-4 -->
+
 ```shell
 node cli.js hello CAPTAIN
 ```
+
+<!-- example-region output-4 -->
 
 ```text
 Hello CAPTAIN, welcome to Black Flag!
@@ -253,9 +277,13 @@ Hello CAPTAIN, welcome to Black Flag!
 
 ---
 
+<!-- example-region command-5 -->
+
 ```shell
 node cli.js hello Parrot --attention
 ```
+
+<!-- example-region output-5 -->
 
 ```text
 Usage: pirate-parser hello [name]
@@ -271,9 +299,13 @@ Unknown argument: attention
 
 ---
 
+<!-- example-region command-6 -->
+
 ```shell
 node cli.js hello CAPTAIN --attention
 ```
+
+<!-- example-region output-6 -->
 
 ```text
 -!- Captain is on the bridge -!-

@@ -8,11 +8,13 @@
 // * containers, and are built to run in GitHub Actions CI pipelines; some can
 // * also be run locally.
 
+import assert from 'node:assert';
 import { once } from 'node:events';
 import { createWriteStream } from 'node:fs';
 
 import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
 import { readJsonc, readXPackageJsonAtRoot } from '@-xun/project';
+import { extractExamplesFromDocument } from '@-xun/project-fs';
 
 import {
   run as runYesRejectOnBadExit,
@@ -87,9 +89,24 @@ const sharedRunEnv: RunOptions['env'] = {
   DEBUG_COLORS: 'false'
 };
 
-describe('./README', () => {
+function split(str: string | undefined) {
+  assert(str);
+  return str.split(' ').slice(2);
+}
+
+describe('./README.md', () => {
   test('quick start', async () => {
     expect.hasAssertions();
+
+    const examples = await extractExamplesFromDocument(
+      require.resolve('../../README.md'),
+      { useCached: true }
+    );
+
+    const examplesRegExp = await extractExamplesFromDocument(
+      require.resolve('../../README.md'),
+      { useCached: true, asRegExp: true }
+    );
 
     await withMockedFixture(
       async ({ root }) => {
@@ -102,7 +119,8 @@ describe('./README', () => {
         {
           const { stdout, stderr, exitCode } = await run(['--version']);
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 0, stderr, exitCode, stdout }).toStrictEqual({
+            id: 0,
             stderr: '',
             exitCode: 0,
             stdout: '0.0.1'
@@ -110,124 +128,88 @@ describe('./README', () => {
         }
 
         {
-          const { stdout, stderr, exitCode } = await run(['--help']);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-1'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 1, stderr, exitCode, stdout }).toStrictEqual({
+            id: 1,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(
-              /Usage: pirate-parser <cmd> \[args\]\n\nCommands:\n\s+ pirate-parser hello\s+ Welcome ter black flag, a declarative wrapper around yargs!\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\s+ --version\s+ Show version number\s+ \[boolean\]/
-            )
+            stdout: expect.stringMatching(examplesRegExp.get('output-1')!)
           });
         }
 
         {
-          const { stdout, stderr, exitCode } = await run(['hello', '--help']);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-2'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 2, stderr, exitCode, stdout }).toStrictEqual({
+            id: 2,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(
-              /Usage: pirate-parser hello \[name\]\n\nWelcome ter black flag, a declarative wrapper around yargs!\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]/
-            )
+            stdout: expect.stringMatching(examplesRegExp.get('output-2')!)
           });
         }
 
         {
-          const { stdout, stderr, exitCode } = await run(['hello', 'Parrot']);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-3'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 3, stderr, exitCode, stdout }).toStrictEqual({
+            id: 3,
             stderr: '',
             exitCode: 0,
-            stdout: 'Hello Parrot, welcome to Black Flag!'
+            stdout: expect.stringMatching(examplesRegExp.get('output-3')!)
           });
         }
 
         {
-          const { stdout, stderr, exitCode } = await run(['hello', 'CAPTAIN']);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-4'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 4, stderr, exitCode, stdout }).toStrictEqual({
+            id: 4,
             stderr: '',
             exitCode: 0,
-            stdout: 'Hello CAPTAIN, welcome to Black Flag!'
+            stdout: expect.stringMatching(examplesRegExp.get('output-4')!)
           });
         }
 
         {
-          const { stdout, stderr, exitCode } = await run([
-            'hello',
-            'Parrot',
-            '--attention'
-          ]);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-5'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 5, stderr, exitCode, stdout }).toStrictEqual({
+            id: 5,
             stdout: '',
             exitCode: 1,
-            stderr: expect.stringMatching(
-              /Usage: pirate-parser hello \[name\]\n\nWelcome ter black flag, a declarative wrapper around yargs!\n\nPositionals:\n\s+ name\s+ The name to say hello to\s+ \[string\] \[default: "Cambi"\]\n\nOptions:\n\s+ --help\s+ Show help text\s+ \[boolean\]\n\nUnknown argument: attention/
-            )
+            stderr: expect.stringMatching(examplesRegExp.get('output-5')!)
           });
         }
 
         {
-          const { stdout, stderr, exitCode } = await run([
-            'hello',
-            'CAPTAIN',
-            '--attention'
-          ]);
+          const { stdout, stderr, exitCode } = await run(
+            split(examples.get('command-6'))
+          );
 
-          expect({ stderr, exitCode, stdout }).toStrictEqual({
+          expect({ id: 6, stderr, exitCode, stdout }).toStrictEqual({
+            id: 6,
             stderr: '',
             exitCode: 0,
-            stdout:
-              '-!- Captain is on the bridge -!-\nHello CAPTAIN, welcome to Black Flag!'
+            stdout: expect.stringMatching(examplesRegExp.get('output-6')!)
           });
         }
       },
       {
         initialVirtualFiles: {
-          'cli.js': /* js */ `#!/usr/bin/env node
-
-import { runProgram } from '@black-flag/core';
-export default runProgram(import.meta.resolve('./commands'));
-`,
-          'commands/index.js': /* js */ `export const name = 'pirate-parser';
-export const usage = 'Usage: $0 <cmd> [args]';
-`,
-          'commands/hello.js':
-            /* js */ `export const command = '$0 [name]';
-
-export const description =
-  'Welcome ter black flag, a declarative wrapper around yargs!';
-
-export function builder(blackFlag, helpOrVersionSet, argv) {
-  blackFlag.positional('name', {
-    type: 'string',
-    default: 'Cambi',
-    describe: 'The name to say hello to'
-  });
-
-  // A special --attention flag only available when greeting the captain!
-  if (helpOrVersionSet || argv?.name === 'CAPTAIN') {
-    return {
-      attention: {
-        boolean: true,
-        description: 'Alert the watch that the captain is around'
-      }
-    };
-  }
-}
-
-export async function handler(argv) {
-  if (argv.attention) {
-    console.log('-!- Captain is on the bridge -!-');
-  }
-
-  console.log(` +
-            '`Hello ${argv.name}, welcome to Black Flag!`' +
-            `);
-}
-`
+          'cli.js': examples.get('cli.js'),
+          'commands/index.js': examples.get('commands/index.js'),
+          'commands/hello.js': examples.get('commands/hello.js')
         }
       }
     );
