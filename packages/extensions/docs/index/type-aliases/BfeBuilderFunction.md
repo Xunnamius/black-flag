@@ -8,7 +8,7 @@
 
 > **BfeBuilderFunction**\<`CustomCliArguments`, `CustomExecutionContext`\> = (...`args`) => [`BfBuilderObject`](BfBuilderObject.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [packages/extensions/src/index.ts:589](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/index.ts#L589)
+Defined in: [packages/extensions/src/index.ts:596](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L596)
 
 This function implements several additional optionals-related units of
 functionality. This function is meant to take the place of a command's

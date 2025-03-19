@@ -8,7 +8,7 @@
 
 > **getInvocableExtendedHandler**\<`CustomCliArguments`, `CustomExecutionContext`\>(`maybeCommand`, `context`): `Promise`\<(`argv`) => `Promise`\<`void`\>\>
 
-Defined in: [packages/extensions/src/index.ts:1440](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/index.ts#L1440)
+Defined in: [packages/extensions/src/index.ts:1447](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L1447)
 
 This function returns a version of `maybeCommand`'s handler function that is
 ready to invoke immediately. It can be used with both BFE and normal Black
@@ -47,7 +47,7 @@ for more details.
 
 ### CustomExecutionContext
 
-`CustomExecutionContext` *extends* `ExecutionContext`
+`CustomExecutionContext` *extends* `ExecutionContext` & `object`
 
 ## Parameters
 

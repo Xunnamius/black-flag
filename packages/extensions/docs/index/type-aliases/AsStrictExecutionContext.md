@@ -8,7 +8,7 @@
 
 > **AsStrictExecutionContext**\<`CustomExecutionContext`\> = `OmitIndexSignature`\<`Exclude`\<`CustomExecutionContext`, `"state"`\>\> & `OmitIndexSignature`\<`CustomExecutionContext`\[`"state"`\]\>
 
-Defined in: [packages/extensions/src/index.ts:626](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/index.ts#L626)
+Defined in: [packages/extensions/src/index.ts:633](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L633)
 
 A stricter version of Black Flag's
 [ExecutionContext](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md)

@@ -8,7 +8,7 @@
 
 > `const` **BfeErrorMessage**: `object`
 
-Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/fc8d2f90ceaae2703f3b3ef20b36ffbe269cca3b/packages/extensions/src/error.ts#L14)
+Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/error.ts#L14)
 
 A collection of possible error and warning messages.
 
@@ -243,12 +243,6 @@ A collection of possible error and warning messages.
 `string`
 
 ### GracefulEarlyExit()
-
-#### Returns
-
-`string`
-
-### IllegalExplicitlyUndefinedDefault()
 
 #### Returns
 
