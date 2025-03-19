@@ -11,7 +11,7 @@ import {
 import { CommandNotImplementedError } from '@black-flag/core/util';
 import toCamelCase from 'lodash.camelcase';
 import clone from 'lodash.clone';
-import cloneDeepWith from 'lodash.clonedeepwith';
+import cloneDeep from 'lodash.clonedeep';
 import { createDebugLogger } from 'rejoinder';
 // ? Black Flag will always come with its own yargs dependency
 // {@symbiote/notInvalid yargs}
@@ -2082,27 +2082,43 @@ function defaultHandler() {
 
 /**
  * A smarter more useful cloning algorithm based on "structured clone" that
- * passes through that cannot be cloned.
+ * accepts any `value` and clones it, passing through as-is whatever cannot be
+ * cloned (including `value` itself, if it cannot be cloned).
+ *
+ * Unlike `structuredClone` or similar solutions, this function is guaranteed
+ * never to throw nor return a value that cannot stand in for `value`.
+ *
+ * Note that all own enumerable properties (such as string keys) _and
+ * non-enumerable symbols_ will be cloned.
  */
 // TODO: export this from js-utils (@-xun/js) (also in symbiote release config)
-function safeDeepClone<T>(o: T): T {
-  return cloneDeepWith(o, (value) => {
-    const attempt = clone(value);
+function safeDeepClone<T>(value: T): T {
+  const attempt = clone(value);
 
-    if (
-      attempt &&
-      typeof attempt === 'object' &&
-      Object.keys(attempt).length === 0 &&
-      // ? Essentially an "instanceof" that doesn't crawl the prototype chain
-      Object.getPrototypeOf(attempt) === Object.prototype &&
-      // ? Do NOT return the original value if it is itself an empty object
-      Object.getPrototypeOf(value) !== Object.prototype
-    ) {
-      return value;
-    }
+  if (isEmptyObject(attempt) && !isEmptyObject(value)) {
+    return value;
+  }
 
-    return undefined;
-  });
+  // ? cloneDeep already passes through what cannot be cloned so long as it was
+  // ? a property of an object that was passed in, so we only need to account
+  // ? for the clone-ability of `value` itself (which we do above)
+  return cloneDeep(value);
+}
+
+function isEmptyObject(o: unknown) {
+  if (!o || typeof o !== 'object') {
+    return false;
+  }
+
+  // ? Essentially `instanceof Object` that doesn't crawl the prototype chain
+  if (Object.getPrototypeOf(o) !== Object.prototype) {
+    return false;
+  }
+
+  return (
+    Object.getOwnPropertyNames(o).length === 0 &&
+    Object.getOwnPropertySymbols(o).length === 0
+  );
 }
 
 function getFirstValueFromNonEmptySet<T extends Set<unknown>>(
