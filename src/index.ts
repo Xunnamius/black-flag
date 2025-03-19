@@ -1,6 +1,7 @@
 import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
+import { safeShallowClone } from '@-xun/js';
 import { createDebugLogger } from 'rejoinder';
 import { hideBin } from 'yargs/helpers';
 import yargs from 'yargs/yargs';
@@ -218,7 +219,7 @@ export async function configureProgram(
     confDebug('configuration hooks: %O', finalConfigurationHooks);
     confDebug('entering configureExecutionContext');
 
-    const context = asUnenumerable(
+    const context = safeShallowClone(
       await finalConfigurationHooks.configureExecutionContext({
         commands: new Map(),
         debug: coreDebug,
@@ -248,7 +249,7 @@ export async function configureProgram(
     );
 
     confDebug('exited configureExecutionContext');
-    confDebug('configured execution context: %O', asEnumerable(context));
+    confDebug('configured execution context: %O', context);
 
     assert(context, BfErrorMessage.InvalidConfigureExecutionContextReturnType());
 
@@ -264,10 +265,6 @@ export async function configureProgram(
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         context.state.globalVersionOption.name?.length,
       BfErrorMessage.InvalidExecutionContextBadField('state.globalVersionOption')
-    );
-
-    confDebug.message(
-      'to save space, ExecutionContext will be unenumerable from this point on'
     );
 
     await discoverCommands(commandModulesPath, context);
@@ -427,7 +424,7 @@ export async function configureProgram(
           BfErrorMessage.InvalidConfigureExecutionEpilogueReturnType()
         );
 
-        confDebug('final execution context: %O', asEnumerable(context));
+        confDebug('final execution context: %O', context);
         confDebug('execution complete (no errors)');
         confDebug.newline();
 
@@ -475,7 +472,7 @@ export async function configureProgram(
           );
 
           confDebug('exited configureErrorHandlingEpilogue');
-          confDebug('final execution context: %O', asEnumerable(context));
+          confDebug('final execution context: %O', context);
 
           if (!isCliError(error)) {
             confDebug('wrapping error with CliError');
@@ -498,7 +495,7 @@ export async function configureProgram(
       rootPrograms,
       execute: parseAndExecuteWithErrorHandling,
       executionContext: context,
-      ...asEnumerable(context)
+      ...context
     };
 
     function getRootCommand() {
@@ -926,62 +923,6 @@ function makeNullParseResult(context: ExecutionContext): NullArguments {
     _: [],
     [$executionContext]: context
   };
-}
-
-/**
- * Takes an object and rewrites its property descriptors so that its properties
- * are no longer enumerable. This leads to less needlessly-verbose object logs
- * in debug output.
- */
-function asUnenumerable<T extends object | undefined>(context: T): T {
-  if (!context) {
-    return context;
-  }
-
-  const unenumerableContext = {} as T;
-  const allOwnKeys = (Object.getOwnPropertyNames(context) as (string | symbol)[]).concat(
-    ...Object.getOwnPropertySymbols(context)
-  );
-
-  for (const key of allOwnKeys) {
-    Object.defineProperty(unenumerableContext, key, {
-      enumerable: false,
-      configurable: true,
-      // @ts-expect-error: TypeScript isn't smart enough to figure this out yet
-      value: context[key],
-      writable: true
-    });
-  }
-
-  return unenumerableContext;
-}
-
-/**
- * Takes an object and rewrites its property descriptors so that its properties
- * are guaranteed enumerable. This is used when we actually do want to show
- * verbose object logs in debug output.
- */
-function asEnumerable<T extends object | undefined>(context: T): T {
-  if (!context) {
-    return context;
-  }
-
-  const enumerable = {} as T;
-  const allOwnKeys = (Object.getOwnPropertyNames(context) as (string | symbol)[]).concat(
-    ...Object.getOwnPropertySymbols(context)
-  );
-
-  for (const key of allOwnKeys) {
-    Object.defineProperty(enumerable, key, {
-      enumerable: true,
-      configurable: true,
-      // @ts-expect-error: TypeScript isn't smart enough to figure this out yet
-      value: context[key],
-      writable: true
-    });
-  }
-
-  return enumerable;
 }
 
 async function defaultErrorHandlingEpilogueConfigurationHook(
