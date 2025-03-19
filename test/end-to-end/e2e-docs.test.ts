@@ -13,7 +13,12 @@ import { once } from 'node:events';
 import { createWriteStream } from 'node:fs';
 
 import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
-import { readJsonc, readXPackageJsonAtRoot } from '@-xun/project';
+
+import {
+  extractExamplesFromDocument,
+  readJsonc,
+  readXPackageJsonAtRoot
+} from '@-xun/project';
 
 import {
   run as runYesRejectOnBadExit,
@@ -30,7 +35,6 @@ import {
   dummyFilesFixture,
   dummyNpmPackageFixture,
   ensurePackageHasBeenBuilt,
-  extractExamplesFromDocument,
   mockFixturesFactory,
   npmCopyPackageFixture,
   reconfigureJestGlobalsToSkipTestsInThisFileIfRequested
@@ -136,7 +140,7 @@ describe('./README.md', () => {
             id: 1,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(examplesRegExp.get('output-1'))
+            stdout: expect.stringMatching(examplesRegExp.get('output-1')!)
           });
         }
 
@@ -149,7 +153,7 @@ describe('./README.md', () => {
             id: 2,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(examplesRegExp.get('output-2'))
+            stdout: expect.stringMatching(examplesRegExp.get('output-2')!)
           });
         }
 
@@ -162,7 +166,7 @@ describe('./README.md', () => {
             id: 3,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(examplesRegExp.get('output-3'))
+            stdout: expect.stringMatching(examplesRegExp.get('output-3')!)
           });
         }
 
@@ -175,7 +179,7 @@ describe('./README.md', () => {
             id: 4,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(examplesRegExp.get('output-4'))
+            stdout: expect.stringMatching(examplesRegExp.get('output-4')!)
           });
         }
 
@@ -188,7 +192,7 @@ describe('./README.md', () => {
             id: 5,
             stdout: '',
             exitCode: 1,
-            stderr: expect.stringMatching(examplesRegExp.get('output-5'))
+            stderr: expect.stringMatching(examplesRegExp.get('output-5')!)
           });
         }
 
@@ -201,7 +205,7 @@ describe('./README.md', () => {
             id: 6,
             stderr: '',
             exitCode: 0,
-            stdout: expect.stringMatching(examplesRegExp.get('output-6'))
+            stdout: expect.stringMatching(examplesRegExp.get('output-6')!)
           });
         }
       },
