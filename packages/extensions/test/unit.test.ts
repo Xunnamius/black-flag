@@ -4320,6 +4320,188 @@ describe('::withBuilderExtensions', () => {
     }
   });
 
+  test('yargs/BF sees final non-vacuous implication as "default" key when handling help option', async () => {
+    expect.hasAssertions();
+
+    {
+      const runner = makeMockBuilderRunner({
+        context: { state: { isHandlingHelpOption: true } },
+        customBuilder: (_, __, argv) => {
+          return {
+            x: {
+              number: true,
+              default: argv ? 11 : 1,
+              implies: { y: 5 },
+              alias: 'x-alias'
+            },
+            y: { number: true, default: argv ? 22 : 2, alias: 'y-alias' }
+          };
+        }
+      });
+
+      {
+        const { firstPassResult, secondPassResult, handlerResult } = await runner(
+          { x: 1, y: 2, 'x-alias': 1, 'y-alias': 2 },
+          ['y']
+        );
+
+        expect(firstPassResult).toStrictEqual({
+          x: { number: true, default: 1, alias: 'x-alias' },
+          y: { number: true, default: 2, alias: 'y-alias' }
+        });
+
+        expect(secondPassResult).toStrictEqual({
+          x: { number: true, default: 11, alias: 'x-alias' },
+          y: { number: true, default: 5, alias: 'y-alias' }
+        });
+
+        // ? Not called whe help text is generated
+        expect(handlerResult).toBeUndefined();
+      }
+    }
+
+    {
+      const runner = makeMockBuilderRunner({
+        context: { state: { isHandlingHelpOption: true } },
+        customBuilder: (_, __, argv) => {
+          return {
+            x: {
+              number: true,
+              default: argv ? 11 : 1,
+              implies: { y: 5 },
+              alias: 'x-alias'
+            },
+            y: { number: true, default: argv ? 22 : 2, alias: 'y-alias' }
+          };
+        }
+      });
+
+      {
+        const { firstPassResult, secondPassResult, handlerResult } = await runner(
+          { x: 1, y: 2, 'x-alias': 1, 'y-alias': 2 },
+          ['x', 'y']
+        );
+
+        expect(firstPassResult).toStrictEqual({
+          x: { number: true, default: 1, alias: 'x-alias' },
+          y: { number: true, default: 2, alias: 'y-alias' }
+        });
+
+        expect(secondPassResult).toStrictEqual({
+          x: { number: true, default: 11, alias: 'x-alias' },
+          y: { number: true, default: 22, alias: 'y-alias' }
+        });
+
+        // ? Not called whe help text is generated
+        expect(handlerResult).toBeUndefined();
+      }
+    }
+
+    {
+      const runner = makeMockBuilderRunner({
+        context: { state: { isHandlingHelpOption: false } },
+        customBuilder: (_, __, argv) => {
+          return {
+            x: {
+              number: true,
+              default: argv ? 11 : 1,
+              implies: { y: 5 },
+              alias: 'x-alias'
+            },
+            y: { number: true, default: argv ? 22 : 2, alias: 'y-alias' }
+          };
+        }
+      });
+
+      {
+        const { firstPassResult, secondPassResult, handlerResult } = await runner(
+          { x: 1, y: 2, 'x-alias': 1, 'y-alias': 2 },
+          ['y']
+        );
+
+        expect(firstPassResult).toStrictEqual({
+          x: { number: true, default: 1, alias: 'x-alias' },
+          y: { number: true, default: 2, alias: 'y-alias' }
+        });
+
+        expect(secondPassResult).toStrictEqual({
+          x: { number: true, default: 11, alias: 'x-alias' },
+          y: { number: true, default: 22, alias: 'y-alias' }
+        });
+
+        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      }
+    }
+  });
+
+  test('yargs/BF sees final vacuous implication as "default" key when handling help option', async () => {
+    expect.hasAssertions();
+
+    {
+      const runner = makeMockBuilderRunner({
+        context: { state: { isHandlingHelpOption: true } },
+        customBuilder: () => {
+          return {
+            x: { boolean: true, implies: { y: true }, vacuousImplications: true },
+            y: { boolean: true, default: false }
+          };
+        }
+      });
+
+      {
+        const { firstPassResult, secondPassResult, handlerResult } = await runner(
+          { x: false, y: true },
+          ['y']
+        );
+
+        expect(firstPassResult).toStrictEqual({
+          x: { boolean: true },
+          y: { boolean: true, default: false }
+        });
+
+        expect(secondPassResult).toStrictEqual({
+          x: { boolean: true },
+          y: { boolean: true, default: true }
+        });
+
+        // ? Not called whe help text is generated
+        expect(handlerResult).toBeUndefined();
+      }
+    }
+
+    {
+      const runner = makeMockBuilderRunner({
+        context: { state: { isHandlingHelpOption: true } },
+        customBuilder: () => {
+          return {
+            x: { boolean: true, implies: { y: true }, vacuousImplications: false },
+            y: { boolean: true, default: false }
+          };
+        }
+      });
+
+      {
+        const { firstPassResult, secondPassResult, handlerResult } = await runner(
+          { x: false, y: false },
+          ['y']
+        );
+
+        expect(firstPassResult).toStrictEqual({
+          x: { boolean: true },
+          y: { boolean: true, default: false }
+        });
+
+        expect(secondPassResult).toStrictEqual({
+          x: { boolean: true },
+          y: { boolean: true, default: false }
+        });
+
+        // ? Not called whe help text is generated
+        expect(handlerResult).toBeUndefined();
+      }
+    }
+  });
+
   test('checks (except "check") ignore (coexist peacefully with) defaults coming in from yargs-parser', async () => {
     expect.hasAssertions();
 
@@ -7279,37 +7461,82 @@ function makeMockBuilderRunner({
   } as unknown as Parameters<ReturnType<typeof withBuilderExtensions>[0]>[0];
 
   return async function mockRunner(
-    dummyArgv: Record<string, unknown>,
-    defaultedDummyArgs: string[] = []
+    /**
+     * In its tuple-object form, the first and second indices correspond to the
+     * dummy arguments object available to second pass and handler respectively.
+     */
+    dummyArgv:
+      | Record<string, unknown>
+      | [Record<string, unknown>, Record<string, unknown>],
+    /**
+     * In its tuple-array form, the first and second indices correspond to the
+     * default dummy arguments for the second pass and handler respectively.
+     */
+    defaultedDummyArgs: string[] | [string[], string[]] = []
   ) {
-    const blackFlag = {
-      ...blackFlag_,
-      parsed: {
-        defaulted: Object.fromEntries(defaultedDummyArgs.map((name) => [name, true]))
-      }
-    };
+    const firstPassDefaultedDummyArgs = Array.isArray(defaultedDummyArgs[0])
+      ? defaultedDummyArgs[0]
+      : defaultedDummyArgs;
 
-    const argv: Arguments = {
+    const secondPassDefaultedDummyArgs = Array.isArray(defaultedDummyArgs[1])
+      ? defaultedDummyArgs[1]
+      : defaultedDummyArgs;
+
+    const firstPassDummyArgv = {
       _: [],
       $0: 'fake',
-      ...dummyArgv,
+      ...(Array.isArray(dummyArgv) ? dummyArgv[0] : dummyArgv),
       [$executionContext]: deepMerge(generateFakeExecutionContext(), context)
     };
+
+    const secondPassDummyArgv = {
+      _: [],
+      $0: 'fake',
+      ...(Array.isArray(dummyArgv) ? dummyArgv[1] : dummyArgv),
+      [$executionContext]: deepMerge(generateFakeExecutionContext(), context)
+    };
+
+    const dummyHelperProgram = { ...blackFlag_, parsed: undefined as unknown };
+    const dummyEffectorProgram = { ...blackFlag_, parsed: undefined as unknown };
+
+    const helpOrVersionSet = !!(
+      context.state?.isHandlingHelpOption || context.state?.isHandlingVersionOption
+    );
 
     const [builder, withHandlerExtensions] = withBuilderExtensions(
       customBuilder,
       builderExtensionsConfig
     );
 
-    const firstPassResult = await trycatch(() => builder(blackFlag, false, undefined));
-    const secondPassResult = isNativeError(firstPassResult)
-      ? undefined
-      : await trycatch(() => builder(blackFlag, false, argv));
+    const firstPassResult = await trycatch(() =>
+      builder(dummyHelperProgram, helpOrVersionSet, undefined)
+    );
+
+    dummyHelperProgram.parsed = {
+      defaulted: Object.fromEntries(
+        firstPassDefaultedDummyArgs.map((name) => [name, true])
+      )
+    };
+
+    const secondPassResult =
+      isNativeError(firstPassResult) || !!context.state?.isHandlingVersionOption
+        ? undefined
+        : await trycatch(() =>
+            builder(dummyEffectorProgram, helpOrVersionSet, firstPassDummyArgv)
+          );
+
+    dummyEffectorProgram.parsed = {
+      defaulted: Object.fromEntries(
+        secondPassDefaultedDummyArgs.map((name) => [name, true])
+      )
+    };
 
     const handlerResult =
-      !secondPassResult || isNativeError(secondPassResult)
+      !secondPassResult || isNativeError(secondPassResult) || helpOrVersionSet
         ? undefined
-        : await trycatch(() => withHandlerExtensions(customHandler)(argv));
+        : await trycatch(() =>
+            withHandlerExtensions(customHandler)(secondPassDummyArgv)
+          );
 
     return { firstPassResult, secondPassResult, handlerResult };
   };
