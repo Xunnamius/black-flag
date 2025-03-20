@@ -1020,7 +1020,10 @@ export function withBuilderExtensions<
 
       const finalBuilderObject = transmuteBFEBuilderToBFBuilder({
         builderObject,
-        deleteGroupProps: !disableAutomaticGrouping
+        deleteGroupProps: !disableAutomaticGrouping,
+        isGeneratingSecondPassHelpText: helpOrVersionSet && isSecondPass,
+        optionsMetadata,
+        argv
       });
 
       builderDebug('final transmuted builderObject: %O', finalBuilderObject);
@@ -1626,10 +1629,28 @@ function transmuteBFEBuilderToBFBuilder<
   CustomExecutionContext extends ExecutionContext
 >({
   builderObject,
-  deleteGroupProps
+  deleteGroupProps,
+  isGeneratingSecondPassHelpText,
+  optionsMetadata,
+  argv
 }: {
   builderObject: BfeBuilderObject<CustomCliArguments, CustomExecutionContext>;
   deleteGroupProps: boolean;
+  /**
+   * When we're generating help text on the second pass, `handler` is never
+   * going to be called. Instead, the user is going to get some help text. When
+   * transmuting the BFE builder to a BF builder, we should resolve any
+   * implications to make this text more helpful!
+   */
+  isGeneratingSecondPassHelpText: boolean;
+  /**
+   * Only defined/meaningful when `isGeneratingSecondPassHelpText` is `true`.
+   */
+  optionsMetadata: OptionsMetadata | undefined;
+  /**
+   * Only defined/meaningful when `isGeneratingSecondPassHelpText` is `true`.
+   */
+  argv: Arguments<CustomCliArguments, CustomExecutionContext> | undefined;
 }): BfBuilderObject<CustomCliArguments, CustomExecutionContext> {
   const vanillaYargsBuilderObject: BfBuilderObject<
     CustomCliArguments,
@@ -1667,6 +1688,35 @@ function transmuteBFEBuilderToBFBuilder<
     }
 
     vanillaYargsBuilderObject[option] = vanillaYargsBuilderObjectValue;
+  }
+
+  if (isGeneratingSecondPassHelpText) {
+    hardAssert(optionsMetadata && argv, BfeErrorMessage.GuruMeditation());
+
+    const canonicalArgv = deriveCanonicalArgv(optionsMetadata, argv);
+
+    // * Overwrite defaults with resolved implications
+    optionsMetadata.implied.forEach(
+      ({ [$genesis]: implier, [$canonical]: canonicalImplications }) => {
+        hardAssert(
+          implier !== undefined,
+          BfeErrorMessage.MetadataInvariantViolated('implies')
+        );
+
+        if (
+          canonicalArgv.has(implier) &&
+          (optionsMetadata.implyVacuously.includes(implier) ||
+            canonicalArgv.get(implier) !== false)
+        ) {
+          Object.entries(canonicalImplications).forEach(([impliedArg, impliedValue]) => {
+            // ? We know impliedArg is in vanillaYargsBuilderObject because the
+            // ? analysis step that created optionsMetadata will error on
+            // ? implications for non-existent options
+            vanillaYargsBuilderObject[impliedArg]!.default = impliedValue;
+          });
+        }
+      }
+    );
   }
 
   return vanillaYargsBuilderObject;
