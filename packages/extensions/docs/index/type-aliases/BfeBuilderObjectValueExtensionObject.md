@@ -8,7 +8,7 @@
 
 > **BfeBuilderObjectValueExtensionObject** = `Record`\<`string`, `unknown`\>
 
-Defined in: [packages/extensions/src/index.ts:477](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L477)
+Defined in: [packages/extensions/src/index.ts:478](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L478)
 
 The object type of a [BfeBuilderObjectValueExtensions](BfeBuilderObjectValueExtensions.md).
 

@@ -8,4 +8,4 @@
 
 > **KeyValueEntries** = `Entries`\<\{\}\>
 
-Defined in: [packages/extensions/src/error.ts:7](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/error.ts#L7)
+Defined in: [packages/extensions/src/error.ts:7](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/error.ts#L7)

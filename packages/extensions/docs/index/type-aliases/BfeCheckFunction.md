@@ -8,7 +8,7 @@
 
 > **BfeCheckFunction**\<`CustomCliArguments`, `CustomExecutionContext`\> = (`currentArgumentValue`, `argv`) => `Promisable`\<`unknown`\>
 
-Defined in: [packages/extensions/src/index.ts:577](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L577)
+Defined in: [packages/extensions/src/index.ts:578](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L578)
 
 This function is used to validate an argument passed to Black Flag.
 

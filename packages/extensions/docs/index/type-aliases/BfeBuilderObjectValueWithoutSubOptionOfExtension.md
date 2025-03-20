@@ -8,7 +8,7 @@
 
 > **BfeBuilderObjectValueWithoutSubOptionOfExtension**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Omit`\<[`BfeBuilderObjectValue`](BfeBuilderObjectValue.md)\<`CustomCliArguments`, `CustomExecutionContext`\>, `"subOptionOf"`\>
 
-Defined in: [packages/extensions/src/index.ts:506](https://github.com/Xunnamius/black-flag/blob/6ed277e0a55bcec73d66d48954610cdf899ffe68/packages/extensions/src/index.ts#L506)
+Defined in: [packages/extensions/src/index.ts:507](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L507)
 
 A [BfeBuilderObjectValue](BfeBuilderObjectValue.md) instance with the `subOptionOf` BFE key
 omitted.
