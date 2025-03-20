@@ -1064,18 +1064,7 @@ export function withBuilderExtensions<
           deleteDefaultedArguments({ argv: realArgv, defaultedOptions });
           debug('real argv with defaults deleted: %O', realArgv);
 
-          // ? This is a map between canonical names and their value in realArgv
-          const canonicalArgv = new Map<string, unknown>();
-
-          Object.entries(optionsMetadata.optionNamesAsSeenInArgv).forEach(
-            ([maybeNameInRealArgv, canonicalName]) => {
-              const valueInRealArgv = realArgv[maybeNameInRealArgv];
-              if (valueInRealArgv !== undefined) {
-                canonicalArgv.set(canonicalName, valueInRealArgv);
-              }
-            }
-          );
-
+          const canonicalArgv = deriveCanonicalArgv(optionsMetadata, realArgv);
           debug('"canonical argv" used for checks: %O', canonicalArgv);
 
           // * Run requires checks
@@ -2086,6 +2075,24 @@ function validateAndFlattenExtensionValue(
       Object.assign(mergedConfig, option);
     }
   }
+}
+
+/**
+ * Returns a `Map` between canonical names and their value as seen in `argv`.
+ */
+function deriveCanonicalArgv(optionsMetadata: OptionsMetadata, argv: Arguments) {
+  const canonicalArgv = new Map<string, unknown>();
+
+  Object.entries(optionsMetadata.optionNamesAsSeenInArgv).forEach(
+    ([maybeNameInRealArgv, canonicalName]) => {
+      const valueInRealArgv = argv[maybeNameInRealArgv];
+      if (valueInRealArgv !== undefined) {
+        canonicalArgv.set(canonicalName, valueInRealArgv);
+      }
+    }
+  );
+
+  return canonicalArgv;
 }
 
 // ? We use this instead of ES6 Sets since we need a more complex equality check
