@@ -850,6 +850,14 @@ export function withBuilderExtensions<
           : customBuilder) || {}
       );
 
+      // ? We delete undefined default properties since they cause trouble later
+      // TODO: it may be possible to support them; maybe revisit this eventually
+      Object.values(builderObject).forEach((builderObjectValue) => {
+        if (builderObjectValue.default === undefined) {
+          delete builderObjectValue.default;
+        }
+      });
+
       if (enableAutomaticSorting) {
         builderDebug(
           `commencing automatic options sorting (${isFirstPass ? 'first' : 'second'} pass)`
@@ -862,7 +870,10 @@ export function withBuilderExtensions<
         builderObject = Object.fromEntries(keys.map((k) => [k, builderObject[k]!]));
       }
 
-      builderDebug('builderObject: %O', builderObject);
+      builderDebug(
+        'builderObject (maybe auto-sorted; undefined defaults deleted): %O',
+        builderObject
+      );
 
       if (isSecondPass) {
         // * Apply the subOptionOf key per option config and then elide it
@@ -2026,9 +2037,12 @@ function separateExtensionsFromBuilderObjectValue<
     subOptionOf
   };
 
-  if (default_ === undefined) {
-    delete builderObjectValue.default;
-  }
+  // ? Undefined defaults should be deleted in the builder long before this
+  // ? function is ever invoked
+  hardAssert(
+    !('default' in builderObjectValue) || default_ !== undefined,
+    BfeErrorMessage.GuruMeditation()
+  );
 
   return [
     {
