@@ -38,7 +38,8 @@ import type {
 import type {
   EffectorProgram,
   ExecutionContext,
-  FrameworkArguments
+  FrameworkArguments,
+  HelperProgram
 } from '@black-flag/core/util';
 
 import type {
@@ -780,20 +781,23 @@ export function withBuilderExtensions<
   // * Dealing with defaulted keys is a little tricky since we need to pass them
   // * to yargs for proper help text generation while also somehow getting yargs
   // * to ignore them when constructing argv. The solution is to unset defaulted
-  // * arguments that are equal to their defaults at the start of the second
-  // * pass, and then do the same thing again at the start of the handler
-  // * extension's execution, and then manually inserting the defaults into argv
-  // * before doing implications/checks. We need to keep the BF instances around
-  // * to accomplish all of that, along with the previous builder object and
-  // * parser configuration. Yeah, the complexity is a little annoying.
-  let latestBfInstance: EffectorProgram | undefined = undefined;
+  // * arguments (which yargs-parser tracks) at the start of the second pass (so
+  // * userland builders don't see them, subOptionOf doesn't see them, and yargs
+  // * doesn't complain about them), and then do the same thing again at the
+  // * start of the handler extension's execution (so requires/conflicts/implies
+  // * etc do not see them), and then manually insert the defaults (and
+  // * implications) into argv before running userland checks (which SHOULD see
+  // * them). We need to keep the latest Program instance around to accomplish
+  // * all of that, along with the latest builder object and parser
+  // * configuration.
+  let latestProgram: HelperProgram | EffectorProgram | undefined = undefined;
   // * These latter two must also be stored because the second pass might
   // * modify the builder object or even the parser configuration! This is
   // * important because we need to figure out all aliases and name expansions.
-  let previousBfBuilderObject:
+  let latestBfBuilderObject:
     | BfeBuilderObject<CustomCliArguments, CustomExecutionContext>
     | undefined = undefined;
-  let previousBfParserConfiguration: Partial<ParserConfigurationOptions> | undefined =
+  let latestBfParserConfiguration: Partial<ParserConfigurationOptions> | undefined =
     undefined;
 
   xbuilderDebug('exited withBuilderExtensions function');
@@ -814,7 +818,7 @@ export function withBuilderExtensions<
 
       if (isSecondPass) {
         defaultedOptions = (
-          latestBfInstance as unknown as {
+          latestProgram as unknown as {
             parsed?: { defaulted?: Record<string, true> };
           }
         ).parsed?.defaulted;
@@ -829,7 +833,7 @@ export function withBuilderExtensions<
         deleteDefaultedArguments({ argv, defaultedOptions });
       }
 
-      latestBfInstance = blackFlag as unknown as EffectorProgram;
+      latestProgram = blackFlag as unknown as HelperProgram | EffectorProgram;
 
       builderDebug('calling customBuilder (if a function) and returning builder object');
       // ? We make a deep clone of whatever options object we're passed
@@ -1012,10 +1016,10 @@ export function withBuilderExtensions<
         builderDebug('stored option local metadata => option metadata');
       }
 
-      previousBfBuilderObject = builderObject;
-      previousBfParserConfiguration = parserConfiguration;
+      latestBfBuilderObject = builderObject;
+      latestBfParserConfiguration = parserConfiguration;
 
-      builderDebug('stored previousBfBuilderObject and previousBfParserConfiguration');
+      builderDebug('stored latestBfBuilderObject and latestBfParserConfiguration');
       builderDebug('transmuting BFE builder to BF builder');
 
       const finalBuilderObject = transmuteBFEBuilderToBFBuilder({
@@ -1053,7 +1057,7 @@ export function withBuilderExtensions<
           debug.warn('skipped bfe checks due to presence of $artificiallyInvoked');
         } else {
           const defaultedOptions = (
-            latestBfInstance as unknown as {
+            latestProgram as unknown as {
               parsed?: { defaulted?: Record<string, true> };
             }
           ).parsed?.defaulted;
@@ -1351,21 +1355,21 @@ export function withBuilderExtensions<
     argv: Arguments<CustomCliArguments, CustomExecutionContext>;
     defaultedOptions: Record<string, true>;
   }): void {
-    hardAssert(previousBfBuilderObject, BfeErrorMessage.GuruMeditation());
-    hardAssert(previousBfParserConfiguration, BfeErrorMessage.GuruMeditation());
+    hardAssert(latestBfBuilderObject, BfeErrorMessage.GuruMeditation());
+    hardAssert(latestBfParserConfiguration, BfeErrorMessage.GuruMeditation());
 
     Object.keys(defaultedOptions).forEach((defaultedOption) => {
       expandOptionNameAndAliasesWithRespectToParserConfiguration({
         option: defaultedOption,
         // ? We know these are defined due to the hard assert above
-        aliases: previousBfBuilderObject![defaultedOption]!.alias,
-        parserConfiguration: previousBfParserConfiguration!
+        aliases: latestBfBuilderObject![defaultedOption]!.alias,
+        parserConfiguration: latestBfParserConfiguration!
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       }).forEach((expandedName) => delete argv[expandedName]);
     });
 
-    previousBfBuilderObject = undefined;
-    previousBfParserConfiguration = undefined;
+    latestBfBuilderObject = undefined;
+    latestBfParserConfiguration = undefined;
   }
 }
 
@@ -1829,7 +1833,7 @@ function analyzeBuilderObject<
     }
 
     if (default_ !== undefined) {
-      // ? Unlike the others, defaults and implies contain their expansions
+      // ? Unlike the others, defaults and implies contain their expansions too
       allPossibleOptionNamesAndAliasesSet.forEach((expandedName) => {
         metadata.defaults[expandedName] = default_;
       });
@@ -2087,7 +2091,7 @@ function separateExtensionsFromBuilderObjectValue<
     {
       ...bfeConfig,
       default: default_,
-      // ? This is actually ignored by BFE except when transmuting opts back to BF
+      // ? This is actually ignored by BFE except when transmuting back to BF
       coerce: undefined
     },
     vanillaYargsConfig
