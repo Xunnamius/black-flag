@@ -57,6 +57,8 @@ That's it. Easy peasy.
 resolved value of other options. Vanilla Yargs does not support these, but Black
 Flag does:
 
+<!-- example-region dynamic-options-1 -->
+
 ```shell
 # These two lines have identical meanings and outputs
 myctl init --lang node
@@ -65,6 +67,8 @@ myctl init --lang node --version=23.3
 > initializing new node@23.3 project...
 > initializing new node@23.3 project...
 ```
+
+<!-- example-region dynamic-options-2 -->
 
 ```shell
 # And these three lines have identical meanings and outputs
@@ -91,6 +95,8 @@ existing Yargs ecosystem.
 
 For example, Black Flag helps you validate those [dynamic options][4] using the
 same Yargs API you already know and love:
+
+<!-- example-region all-1 -->
 
 ```typescript
 // File: my-cli-project/commands/init.ts
@@ -158,10 +164,14 @@ export function handler(argv) {
 
 > See [the demo repo][5] for the complete implementation of this command.
 
+<!-- example-region all-2 -->
+
 ```text
 myctl init --lang node --version=23.3
 > initializing new node@23.3 project...
 ```
+
+<!-- example-region all-3 -->
 
 ```text
 myctl init --lang python --version=23.3
@@ -176,6 +186,8 @@ Invalid values:
   Argument: version, Given: "23.3", Choices: "3.11", "3.12", "3.13"
 ```
 
+<!-- example-region all-4 -->
+
 ```text
 myctl init --lang fake
 Usage: myctl init
@@ -188,6 +200,8 @@ Options:
 Invalid values:
   Argument: lang, Given: "fake", Choices: "node", "python"
 ```
+
+<!-- example-region all-5 -->
 
 ```text
 myctl init --help
@@ -207,6 +221,8 @@ function: [`aliases`][6], [`builder`][7], [`command`][8], [`deprecated`][9],
 
 A fully-typed version of `my-cli-project/commands/init.ts` could look something
 like this:
+
+<!-- example-region all-6 -->
 
 ```typescript
 // File: my-cli-project/commands/init.ts
@@ -290,6 +306,8 @@ export default configuration;
 Black Flag not only helps you declaratively build your CLI tool, but _run it_
 too.
 
+<!-- example-region run-1 -->
+
 ```typescript
 #!/usr/bin/env node
 // File: my-cli-project/cli.ts
@@ -324,6 +342,8 @@ auto-discovers and collects all the configurations exported from your command
 files, followed by [`PreExecutionContext::execute`][19], which is a wrapper
 around `yargs::parseAsync` and `yargs::hideBin`.
 
+<!-- example-region run-2 -->
+
 ```javascript
 const { join } = require('node:path');
 const { runProgram } = require('@black-flag/core');
@@ -333,6 +353,8 @@ module.exports = runProgram(join(__dirname, 'commands'));
 
 👆🏿 These are essentially equivalent 👇🏿
 
+<!-- example-region run-3 -->
+
 ```javascript
 import { runProgram } from '@black-flag/core';
 
@@ -340,6 +362,8 @@ export default runProgram(import.meta.resolve('./commands'));
 ```
 
 👆🏿 These are essentially equivalent 👇🏿
+
+<!-- example-region run-4 -->
 
 ```javascript
 import { join } from 'node:path';
@@ -372,6 +396,8 @@ most bespoke of command line interfaces.
 
 For instance, suppose we added a `my-cli-project/configure.ts` file to our
 project:
+
+<!-- example-region convention-1 -->
 
 ```typescript
 import type {
@@ -467,6 +493,8 @@ export const configureErrorHandlingEpilogue: ConfigureErrorHandlingEpilogue =
 ```
 
 Then our CLI's entry point might look something like this:
+
+<!-- example-region convention-2 -->
 
 ```typescript
 #!/usr/bin/env node
@@ -812,6 +840,8 @@ Using these types, your command files themselves can be fully typed and you can
 enjoy the improved DX that comes with comprehensive intellisense. And for those
 who do not prefer TypeScript, you can even type your pure JavaScript files
 thanks to JSDoc syntax. No TypeScript required!
+
+<!-- example-region intellisense-1 -->
 
 ```javascript
 // @ts-check

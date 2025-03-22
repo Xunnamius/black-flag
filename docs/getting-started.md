@@ -31,6 +31,8 @@ Let's make a new CLI project!
 > What follows are linux shell commands. The equivalent Windows DOS/PS commands
 > will be different.
 
+<!-- example-region cli-1 -->
+
 ```shell
 mkdir my-cli-project
 cd my-cli-project
@@ -39,21 +41,38 @@ git init
 
 Add a `package.json` file with the bare minimum metadata:
 
+<!-- example-region cli-2-esm -->
+
 ```shell
 echo '{"name":"myctl","version":"1.0.0","type":"module","bin":{"myctl":"./cli.js"}}' > package.json
 npm install @black-flag/core
 ```
 
+<details><summary>CJS example</summary>
+
+<!-- example-region cli-2-cjs -->
+
+```shell
+echo '{"name":"myctl","version":"1.0.0","type":"commonjs","bin":{"myctl":"./cli.js"}}' > package.json
+npm install @black-flag/core
+```
+
+</details>
+
 Let's create the folder that will hold all our commands as well as the entry
 point Node recognizes:
 
-```text
+<!-- example-region cli-3 -->
+
+```shell
 mkdir commands
 touch cli.js
 chmod +x cli.js
 ```
 
 Where `cli.js` has the following content:
+
+<!-- example-region cli-4-esm -->
 
 ```javascript
 #!/usr/bin/env node
@@ -62,22 +81,26 @@ import { runProgram } from '@black-flag/core';
 export default runProgram(import.meta.resolve('./commands'));
 ```
 
-> [!IMPORTANT]
->
-> These examples use ESM syntax. CJS is also supported. For example:
->
-> ```javascript
-> #!/usr/bin/env node
->
-> const bf = require('@black-flag/core');
-> const path = require('node:path');
-> module.exports = bf.runProgram(path.join(__dirname, 'commands'));
-> ```
+<details><summary>CJS example</summary>
+
+<!-- example-region cli-4-cjs -->
+
+```javascript
+#!/usr/bin/env node
+
+const bf = require('@black-flag/core');
+const path = require('node:path');
+module.exports = bf.runProgram(path.join(__dirname, 'commands'));
+```
+
+</details>
 
 Let's create our first command, the _root command_. Every Black Flag project has
 one, it lives at the apex of our commands directory, and it's always named
 `index.js` (or `index.mjs`, `index.cjs`, `index.ts`, `index.mts`, `index.cts`).
 In vanilla Yargs parlance, this would be the highest-level "default command".
+
+<!-- example-region cli-5 -->
 
 ```text
 touch commands/index.js
@@ -101,9 +124,13 @@ directories and empty files accordingly!
 
 With that in mind, let's actually run our skeletal CLI now:
 
+<!-- example-region cli-6 -->
+
 ```shell
 ./cli.js
 ```
+
+<!-- example-region cli-7 -->
 
 ```text
 This command is currently unimplemented
@@ -111,9 +138,13 @@ This command is currently unimplemented
 
 Let's try with a bad positional parameter:
 
+<!-- example-region cli-8 -->
+
 ```shell
 ./cli.js bad
 ```
+
+<!-- example-region cli-9 -->
 
 ```text
 Usage: myctl
@@ -127,9 +158,13 @@ Unknown argument: bad
 
 How about with a bad option:
 
+<!-- example-region cli-10 -->
+
 ```shell
 ./cli.js --bad
 ```
+
+<!-- example-region cli-11 -->
 
 ```text
 Usage: myctl
@@ -190,6 +225,8 @@ Most of these defaults can be tweaked or overridden via each command's
 add one to `commands/index.js` along with a [`handler`][3] function and
 [`usage`][11] string:
 
+<!-- example-region cli-12-esm -->
+
 ```javascript
 /**
  * This little comment gives us intellisense support :)
@@ -222,10 +259,30 @@ export const handler = function (argv) {
 export const usage = 'Usage: $0 command [options]\n\nCustom description here.';
 ```
 
+<details><summary>CJS example</summary>
+
+<!-- example-region cli-12-cjs -->
+
+```javascript
+module.exports = {
+  builder: function (blackFlag) {
+    return blackFlag.strict(false);
+  },
+
+  handler: function (argv) {
+    console.log('ran root command handler');
+  },
+
+  usage: 'Usage: $0 command [options]\n\nCustom description here.'
+};
+```
+
+</details>
+
 > [!TIP]
 >
 > The Yargs DSL for declaring and defining positional parameters is described
-> in-depth [here][12].
+> [here][12].
 
 > [!TIP]
 >
@@ -236,9 +293,13 @@ export const usage = 'Usage: $0 command [options]\n\nCustom description here.';
 
 Now let's run the CLI again:
 
+<!-- example-region cli-13 -->
+
 ```shell
 ./cli.js
 ```
+
+<!-- example-region cli-14 -->
 
 ```text
 ran root command handler
@@ -246,15 +307,21 @@ ran root command handler
 
 And with a "bad" argument (we're no longer in strict mode):
 
+<!-- example-region cli-15 -->
+
 ```shell
 ./cli.js --bad --bad2 --bad3
 ```
+
+<!-- example-region cli-16 -->
 
 ```text
 ran root command handler
 ```
 
 Neat. Let's add some more commands:
+
+<!-- example-region cli-17 -->
 
 ```shell
 touch commands/init.js
@@ -267,9 +334,13 @@ touch commands/remote/show.js
 
 Well, that was easy. Let's run our CLI now:
 
+<!-- example-region cli-18 -->
+
 ```shell
 ./cli.js --help
 ```
+
+<!-- example-region cli-19 -->
 
 ```text
 Usage: myctl command [options]
@@ -287,9 +358,13 @@ Options:
 
 Let's try a child command:
 
+<!-- example-region cli-20 -->
+
 ```shell
 ./cli.js remote --help
 ```
+
+<!-- example-region cli-21 -->
 
 ```text
 Usage: myctl remote
@@ -315,9 +390,13 @@ each command's options are still enumerated in insertion order.
 
 Now let's try a grandchild command:
 
+<!-- example-region cli-22 -->
+
 ```shell
 ./cli.js remote show --help
 ```
+
+<!-- example-region cli-23 -->
 
 ```text
 Usage: myctl remote show
@@ -328,9 +407,13 @@ Options:
 
 Phew. Alright, but what about trying some commands we know _don't_ exist?
 
+<!-- example-region cli-24 -->
+
 ```shell
 ./cli.js remote bad horrible
 ```
+
+<!-- example-region cli-25 -->
 
 ```text
 Usage: myctl remote
@@ -343,7 +426,7 @@ Commands:
 Options:
   --help  Show help text                                               [boolean]
 
-Invalid command: you must call this command with a valid subcommand argument
+Invalid subcommand: you must call this with a valid subcommand argument
 ```
 
 Neat! 📸
@@ -358,6 +441,8 @@ Thankfully, with Black Flag, testing your commands is usually easier than
 writing them.
 
 First, let's install [jest][16]. We'll also create a file to hold our tests.
+
+<!-- example-region cli-26 -->
 
 ```shell
 npm install --save-dev jest @babel/plugin-syntax-import-attributes
@@ -379,6 +464,8 @@ to invoke successively.
 > there is no shared state between invocations unless you explicitly make it so.
 > This makes testing your commands "in isolation" dead simple and avoids a
 > [common Yargs footgun][21].
+
+<!-- example-region cli-27-esm -->
 
 ```javascript
 const { makeRunner } = require('@black-flag/core/util');
@@ -442,6 +529,74 @@ describe('myctl (root)', () => {
 });
 ```
 
+<details><summary>CJS example</summary>
+
+<!-- example-region cli-27-cjs -->
+
+```javascript
+const { makeRunner } = require('@black-flag/core/util');
+
+// makeRunner is a factory function that returns runProgram functions with
+// curried arguments.
+const run = makeRunner({ commandModulesPath: `${__dirname}/commands` });
+
+afterEach(() => {
+  // Since runProgram (i.e. what is returned by makeRunner) sets
+  // process.exitCode before returning, let's unset it after each test
+  process.exitCode = undefined;
+});
+
+describe('myctl (root)', () => {
+  it('emits expected output when called with no arguments', async () => {
+    expect.hasAssertions();
+
+    const logSpy = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => undefined);
+
+    const errorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    await run();
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy.mock.calls).toStrictEqual([['ran root command handler']]);
+  });
+
+  it('emits expected output when called with unknown arguments', async () => {
+    expect.hasAssertions();
+
+    const logSpy = jest
+      .spyOn(console, 'log')
+      .mockImplementation(() => undefined);
+
+    const errorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    await run('--unknown');
+    await run('unknown');
+
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy.mock.calls).toStrictEqual([
+      ['ran root command handler'],
+      ['ran root command handler']
+    ]);
+  });
+
+  it('still terminates with 0 exit code when called with unknown arguments', async () => {
+    expect.hasAssertions();
+
+    await run('--unknown-argument');
+
+    expect(process.exitCode).toBe(0);
+  });
+});
+```
+
+</details>
+
 > [!TIP]
 >
 > In our tests above, we took a [behavior-driven approach][22] and tested for
@@ -464,9 +619,13 @@ describe('myctl (root)', () => {
 
 Finally, let's run our tests:
 
+<!-- example-region cli-28 -->
+
 ```shell
 NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --testMatch '**/test.cjs' --restoreMocks
 ```
+
+<!-- example-region cli-29 -->
 
 ```text
 PASS  ./test.cjs
