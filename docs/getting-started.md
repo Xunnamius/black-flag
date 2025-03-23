@@ -228,26 +228,22 @@ add one to `commands/index.js` along with a [`handler`][3] function and
 <!-- example-region cli-12-esm -->
 
 ```javascript
-/**
- * This little comment gives us intellisense support :)
- *
- * Also note how we're using the `export const X = function(...) { ... }` syntax
- * instead of the streamlined `export function X(...) { ... }` syntax. Both of
- * these syntaxes are correct, however JSDoc does not support using "@type" on
- * the latter form for some reason.
- *
- * @type {import('@black-flag/core').Configuration['builder']}
- */
-export const builder = function (blackFlag) {
-  return blackFlag.strict(false);
-};
+// These @type comments give us intellisense support, but they're optional 🙂
+// See ./commands/remote/add.js for my preferred export syntax/style.
 
 /**
- * @type {import('@black-flag/core').RootConfiguration['handler']}
+ * @type {Extract<import('@black-flag/core').Configuration['builder'], Function>}
  */
-export const handler = function (argv) {
-  console.log('ran root command handler');
-};
+export function builder(blackFlag) {
+  return blackFlag.strict(false);
+}
+
+/**
+ * @type {Extract<import('@black-flag/core').RootConfiguration['handler'], Function>}
+ */
+export function handler(argv) {
+  console.log('Ran root command handler');
+}
 
 /**
  * Note that `usage` is just a freeform string used in help text. The `command`
@@ -270,7 +266,7 @@ module.exports = {
   },
 
   handler: function (argv) {
-    console.log('ran root command handler');
+    console.log('Ran root command handler');
   },
 
   usage: 'Usage: $0 command [options]\n\nCustom description here.'
@@ -302,7 +298,7 @@ Now let's run the CLI again:
 <!-- example-region cli-14 -->
 
 ```text
-ran root command handler
+Ran root command handler
 ```
 
 And with a "bad" argument (we're no longer in strict mode):
@@ -316,7 +312,7 @@ And with a "bad" argument (we're no longer in strict mode):
 <!-- example-region cli-16 -->
 
 ```text
-ran root command handler
+Ran root command handler
 ```
 
 Neat. Let's add some more commands:
@@ -495,7 +491,7 @@ describe('myctl (root)', () => {
     await run();
 
     expect(errorSpy).not.toHaveBeenCalled();
-    expect(logSpy.mock.calls).toStrictEqual([['ran root command handler']]);
+    expect(logSpy.mock.calls).toStrictEqual([['Ran root command handler']]);
   });
 
   it('emits expected output when called with unknown arguments', async () => {
@@ -514,8 +510,8 @@ describe('myctl (root)', () => {
 
     expect(errorSpy).not.toHaveBeenCalled();
     expect(logSpy.mock.calls).toStrictEqual([
-      ['ran root command handler'],
-      ['ran root command handler']
+      ['Ran root command handler'],
+      ['Ran root command handler']
     ]);
   });
 
@@ -561,7 +557,7 @@ describe('myctl (root)', () => {
     await run();
 
     expect(errorSpy).not.toHaveBeenCalled();
-    expect(logSpy.mock.calls).toStrictEqual([['ran root command handler']]);
+    expect(logSpy.mock.calls).toStrictEqual([['Ran root command handler']]);
   });
 
   it('emits expected output when called with unknown arguments', async () => {
@@ -580,8 +576,8 @@ describe('myctl (root)', () => {
 
     expect(errorSpy).not.toHaveBeenCalled();
     expect(logSpy.mock.calls).toStrictEqual([
-      ['ran root command handler'],
-      ['ran root command handler']
+      ['Ran root command handler'],
+      ['Ran root command handler']
     ]);
   });
 
