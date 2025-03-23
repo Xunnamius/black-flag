@@ -760,7 +760,7 @@ export function withBuilderExtensions<
           CustomCliArguments,
           CustomExecutionContext
         >
-        // ? This is a valid use of void here
+        // ? This is a valid use of "void" here
         // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
       ) => BfeBuilderObject<CustomCliArguments, CustomExecutionContext> | void),
   {
