@@ -68,6 +68,9 @@ export type Configuration<
         argv?: Arguments<CustomCliArguments, CustomExecutionContext>
       ) =>
         | undefined
+        // ? This is a valid use of "void" here
+        // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+        | void
         | EffectorProgram<CustomCliArguments, CustomExecutionContext>
         | { [key: string]: _Options }
         | _Program);
