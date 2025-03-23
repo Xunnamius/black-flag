@@ -230,6 +230,17 @@ following:
 > more recent versions of Black Flag, the root command is omitted from the list
 > of subcommands entirely.
 
+## Advanced Testing Utilities
+
+Black Flag ships with several advanced testing utilities, including
+[`makeRunner`][16] and [`expectedHelpTextRegExp`][19].
+
+[`expectedHelpTextRegExp`][19] generates regular expressions that can match with
+high fidelity the result of calling `--help` on a command, including matching
+the help text shown when an error occurs.
+
+See [the tests][20] for examples.
+
 ## Execution Flow Diagram
 
 What follows is a diagram illustrating Black Flag's command execution flow from
@@ -412,3 +423,5 @@ user.<sup>R2🡒R1</sup>
 [16]: ./api/src/exports/util/functions/makeRunner.md
 [17]: ./getting-started.md
 [18]: https://asciiflow.com
+[19]: ./api/src/exports/util/functions/expectedHelpTextRegExp.md
+[20]: ../test/unit.test.ts
