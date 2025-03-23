@@ -158,6 +158,16 @@ Flag, but are noted below nonetheless.
 - Black Flag sets several defaults compared to vanilla Yargs. These defaults are
   detailed [here][26].
 
+- For UX reasons, Black Flag will "unwrap" errors of type [`CliError`][27],
+  sending only [`CliError::message`][28] to the terminal when an error occurs.
+  Black Flag will not unwrap Yargs's native errors (because they're usually
+  simple strings already) nor custom errors thrown by the end-developer that do
+  not extend [`CliError`][27].
+
+- Exporting an "invalid" [`command`][17] string will cause Black Flag to throw
+  (while vanilla Yargs will silently fail). [`command`][17] strings, if given,
+  must be consistent with the Yargs DSL as described [here][29].
+
 [1]:
   https://github.com/jestjs/jest/blob/e7280a2132f454d5939b22c4e9a7a05b30cfcbe6/packages/jest-util/Readme.md#deepcycliccopy
 [2]: ./api/src/exports/functions/runProgram.md
@@ -187,3 +197,7 @@ Flag, but are noted below nonetheless.
 [24]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
 [25]: ./api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail
 [26]: ./getting-started.md#building-and-running-your-cli
+[27]: ./api/src/exports/classes/CliError.md
+[28]: ./api/src/exports/classes/CliError.md#message
+[29]:
+  https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments
