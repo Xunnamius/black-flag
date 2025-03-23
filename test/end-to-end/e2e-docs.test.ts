@@ -499,7 +499,7 @@ describe('./docs/features.md', () => {
             exitCode: 1,
             // ? Our custom error handler doesn't add an extra newline before
             // ? "Invalid..."
-            stderr: expect.stringMatching(collapseDoubleNewlines(output))
+            stderr: expect.stringMatching(collapseNewlines(output))
           });
         }
 
@@ -514,7 +514,7 @@ describe('./docs/features.md', () => {
             exitCode: 1,
             // ? Our custom error handler doesn't add an extra newline before
             // ? "Invalid..."
-            stderr: expect.stringMatching(collapseDoubleNewlines(output))
+            stderr: expect.stringMatching(collapseNewlines(output))
           });
         }
 
@@ -1038,15 +1038,26 @@ function splitByFirstLine(str: RegExp | string | undefined) {
   assert(str);
 
   const isStr = typeof str === 'string';
-  const split = (isStr ? str : str.source).split('\n');
-  const result = [split[0]!, split.slice(1).join('\n')] as const;
+  const split = isStr ? str.split('\n') : str.source.split(String.raw`\n`);
+  const result = [
+    split[0]!,
+    split.slice(1).join(isStr ? '\n' : String.raw`\n`)
+  ] as const;
 
-  return isStr ? result : result.map((resultStr) => new RegExp(resultStr, str.flags));
+  return isStr
+    ? result
+    : result.map((resultStr) => {
+        assert(resultStr);
+        return new RegExp(resultStr, str.flags);
+      });
 }
 
-function collapseDoubleNewlines(regExp: RegExp | undefined) {
+function collapseNewlines(regExp: RegExp | undefined) {
   assert(regExp);
-  return new RegExp(regExp.source.replaceAll(/\n{2,}/g, '\n'), regExp.flags);
+  return new RegExp(
+    regExp.source.replaceAll(/(\\n){2,}/g, String.raw`\n+`),
+    regExp.flags
+  );
 }
 
 function splitLinesSplitSpacesStripQuotes(str: string | undefined) {
