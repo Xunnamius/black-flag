@@ -8,7 +8,7 @@
 
 > `const` **defaultVersionOptionName**: `"version"` = `'version'`
 
-Defined in: [src/constant.ts:41](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/constant.ts#L41)
+Defined in: [src/constant.ts:41](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/constant.ts#L41)
 
 Hard-coded default option name for dumping version text to stdout. For
 example: `--${defaultVersionOptionName}`.

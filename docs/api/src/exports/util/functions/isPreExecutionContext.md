@@ -8,7 +8,7 @@
 
 > **isPreExecutionContext**(`obj`): `obj is PreExecutionContext`
 
-Defined in: [src/util.ts:24](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/util.ts#L24)
+Defined in: [src/util.ts:24](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/util.ts#L24)
 
 Type-guard for [PreExecutionContext](../type-aliases/PreExecutionContext.md).
 

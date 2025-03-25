@@ -8,6 +8,6 @@
 
 > `const` **defaultHelpTextDescription**: `"Show help text"` = `'Show help text'`
 
-Defined in: [src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/constant.ts#L35)
+Defined in: [src/constant.ts:35](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/constant.ts#L35)
 
 Hard-coded default help option description text.

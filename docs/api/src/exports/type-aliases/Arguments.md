@@ -8,7 +8,7 @@
 
 > **Arguments**\<`CustomCliArguments`, `CustomExecutionContext`\> = `_Arguments`\<[`FrameworkArguments`](../util/type-aliases/FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>
 
-Defined in: [src/types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/program.ts#L29)
+Defined in: [src/types/program.ts:29](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/types/program.ts#L29)
 
 Represents the parsed CLI arguments, plus `_` and `$0`, any (hidden)
 arguments/properties specific to Black Flag, and an indexer falling back to

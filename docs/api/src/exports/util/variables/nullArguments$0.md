@@ -8,6 +8,6 @@
 
 > `const` **nullArguments$0**: `"<NullArguments: no parse result available due to exception>"` = `'<NullArguments: no parse result available due to exception>'`
 
-Defined in: [src/constant.ts:9](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/constant.ts#L9)
+Defined in: [src/constant.ts:9](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/constant.ts#L9)
 
 The `NullArguments::$0` constant value.

@@ -8,7 +8,7 @@
 
 > **ImportedConfigurationModule**\<`CustomCliArguments`, `CustomExecutionContext`\> = (`context`) => `Promisable`\<`Partial`\<[`RootConfiguration`](RootConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ParentConfiguration`](ParentConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\>\> \| `Partial`\<[`RootConfiguration`](RootConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`ParentConfiguration`](ParentConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\> & `object`
 
-Defined in: [src/types/module.ts:180](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/types/module.ts#L180)
+Defined in: [src/types/module.ts:183](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/types/module.ts#L183)
 
 Represents a [Configuration](Configuration.md) object imported from a CJS/ESM module
 external to the CLI framework (e.g. importing an auto-discovered config

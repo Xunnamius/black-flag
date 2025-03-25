@@ -8,7 +8,7 @@
 
 > **isCommandNotImplementedError**(`parameter`): `parameter is CommandNotImplementedError`
 
-Defined in: [src/error.ts:61](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L61)
+Defined in: [src/error.ts:61](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L61)
 
 Type guard for [CommandNotImplementedError](../classes/CommandNotImplementedError.md).
 

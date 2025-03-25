@@ -8,7 +8,7 @@
 
 > **RunProgramReturnType**\<`CustomCliArguments`\> = `Promise`\<[`NullArguments`](NullArguments.md) \| [`Arguments`](Arguments.md)\<`CustomCliArguments`\> \| `undefined`\>
 
-Defined in: [src/index.ts:93](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/index.ts#L93)
+Defined in: [src/index.ts:93](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/index.ts#L93)
 
 The return type of the [runProgram](../functions/runProgram.md) function.
 

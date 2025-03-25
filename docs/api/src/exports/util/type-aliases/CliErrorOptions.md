@@ -8,7 +8,7 @@
 
 > **CliErrorOptions** = `object`
 
-Defined in: [src/error.ts:75](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L75)
+Defined in: [src/error.ts:75](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L75)
 
 Options available when constructing a new `CliError` object.
 
@@ -18,7 +18,7 @@ Options available when constructing a new `CliError` object.
 
 > `optional` **cause**: `ErrorOptions`\[`"cause"`\]
 
-Defined in: [src/error.ts:146](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L146)
+Defined in: [src/error.ts:146](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L146)
 
 By default, if an `Error` object is passed to `CliError`, that
 `Error` instance will be passed through as `CliError.cause` and that
@@ -33,7 +33,7 @@ Use this option to override this default behavior and instead set
 
 > `optional` **dangerouslyFatal**: `boolean`
 
-Defined in: [src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L137)
+Defined in: [src/error.ts:137](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L137)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -70,7 +70,7 @@ false
 
 > `optional` **showHelp**: `Extract`\<[`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\], `object`\>\[`"outputStyle"`\] \| `"default"` \| `boolean`
 
-Defined in: [src/error.ts:107](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L107)
+Defined in: [src/error.ts:107](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L107)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -105,7 +105,7 @@ lacks its own handler implementation or implements a handler that throws
 
 > `optional` **suggestedExitCode**: `number`
 
-Defined in: [src/error.ts:82](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/error.ts#L82)
+Defined in: [src/error.ts:82](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L82)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

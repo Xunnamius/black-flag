@@ -8,7 +8,7 @@
 
 > `const` **hideBin**: (`argv`) => `string`[] = `hideBin_`
 
-Defined in: [src/exports/util.ts:54](https://github.com/Xunnamius/black-flag/blob/80aa4a39c172096a78cb27464b3ff055c511121d/src/exports/util.ts#L54)
+Defined in: [src/exports/util.ts:54](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/exports/util.ts#L54)
 
 ## Parameters
 

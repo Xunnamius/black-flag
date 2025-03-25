@@ -96,179 +96,191 @@ this project adheres to [Semantic Versioning][2].
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@2.0.2][32] (2025-03-19)
+### 🏗️ Patch @black-flag/core[@2.0.4][32] (2025-03-25)
 
 #### 🪄 Fixes
 
-- **packages/extensions:** improve `safeDeepClone` to account for own symbol properties ([119919e][33])
-- **readme:** update quick start example ([bdafbf8][34])
-- **readme:** use latest interface to extract positional in quick start example ([33895e7][35])
-- **src:** do not make context descriptors unenumerable ([2e6c05b][36])
+- **src:** allow `Configuration::builder` function value to explicitly accept `void` return type ([2676cbe][33])
 
 #### ⚙️ Build System
 
-- **deps:** bump @-xun/js from 1.0.0 to 1.1.0 ([0adf956][37])
-- **deps:** bump @-xun/js from 1.1.0 to 1.1.1 ([f3f1f74][38])
+- **deps:** bump type-fest from 4.37.0 to 4.38.0 ([9e25b0c][34])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@2.0.1][39] (2025-03-17)
+### 🏗️ Patch @black-flag/core[@2.0.2][35] (2025-03-19)
 
 #### 🪄 Fixes
 
-- Work around yargs-parser bug ([565fbb9][40]) <sup>see [#171][41]</sup>
+- **packages/extensions:** improve `safeDeepClone` to account for own symbol properties ([119919e][36])
+- **readme:** update quick start example ([bdafbf8][37])
+- **readme:** use latest interface to extract positional in quick start example ([33895e7][38])
+- **src:** do not make context descriptors unenumerable ([2e6c05b][39])
 
 #### ⚙️ Build System
 
-- **deps:** bump core-js from 3.40.0 to 3.41.0 ([9371719][42])
+- **deps:** bump @-xun/js from 1.0.0 to 1.1.0 ([0adf956][40])
+- **deps:** bump @-xun/js from 1.1.0 to 1.1.1 ([f3f1f74][41])
 
 <br />
 
-## @black-flag/core[@1.3.0][43] (2024-07-12)
+### 🏗️ Patch @black-flag/core[@2.0.1][42] (2025-03-17)
+
+#### 🪄 Fixes
+
+- Work around yargs-parser bug ([565fbb9][43]) <sup>see [#171][44]</sup>
+
+#### ⚙️ Build System
+
+- **deps:** bump core-js from 3.40.0 to 3.41.0 ([9371719][45])
+
+<br />
+
+## @black-flag/core[@1.3.0][46] (2024-07-12)
 
 ### ✨ Features
 
-- **`clierror`:** add `dangerouslyFatal` option, update `cause` option handling ([1c369fb][44])
+- **`clierror`:** add `dangerouslyFatal` option, update `cause` option handling ([1c369fb][47])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.3.2][45] (2024-07-12)
+### 🏗️ Patch @black-flag/core[@1.3.2][48] (2024-07-12)
 
 #### 🪄 Fixes
 
-- **src:** tweak error handling debug verboseness in certain edge cases ([96ce293][46])
+- **src:** tweak error handling debug verboseness in certain edge cases ([96ce293][49])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.3.1][47] (2024-07-12)
+### 🏗️ Patch @black-flag/core[@1.3.1][50] (2024-07-12)
 
 #### 🪄 Fixes
 
-- **src:** add trap door to alert developer when erroneously re-entering top-level error handler ([99e2b3a][48])
+- **src:** add trap door to alert developer when erroneously re-entering top-level error handler ([99e2b3a][51])
 
 <br />
 
-## @black-flag/core[@1.2.0][49] (2024-03-18)
+## @black-flag/core[@1.2.0][52] (2024-03-18)
 
 ### ✨ Features
 
-- Add `showHelp` option to `CliError` ([b5a1e58][50])
+- Add `showHelp` option to `CliError` ([b5a1e58][53])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.7][51] (2024-06-30)
+### 🏗️ Patch @black-flag/core[@1.2.7][54] (2024-06-30)
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.6][52] (2024-06-02)
+### 🏗️ Patch @black-flag/core[@1.2.6][55] (2024-06-02)
 
 #### 🪄 Fixes
 
-- **src:** ignore --help and --version if they occur after -- in argv ([35f66cc][53])
+- **src:** ignore --help and --version if they occur after -- in argv ([35f66cc][56])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.5][54] (2024-05-30)
+### 🏗️ Patch @black-flag/core[@1.2.5][57] (2024-05-30)
 
 #### 🪄 Fixes
 
-- **src:** permanently fix --version support regression in node\@22 ([c201c2f][55])
+- **src:** permanently fix --version support regression in node\@22 ([c201c2f][58])
 
 #### ⚙️ Build System
 
-- **package:** append node\@22 to supported node versions ([98815d1][56])
+- **package:** append node\@22 to supported node versions ([98815d1][59])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.4][57] (2024-03-27)
+### 🏗️ Patch @black-flag/core[@1.2.4][60] (2024-03-27)
 
 #### 🪄 Fixes
 
-- **src:** explicitly ignore .d.ts files within command dirs ([d6618d3][58])
+- **src:** explicitly ignore .d.ts files within command dirs ([d6618d3][61])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.3][59] (2024-03-27)
+### 🏗️ Patch @black-flag/core[@1.2.3][62] (2024-03-27)
 
 #### 🪄 Fixes
 
-- **package:** bump minimum node support to 20 LTS ([4b8c975][60])
-- **src:** ignore unknown file extension errors when discovering commands ([4babf12][61])
+- **package:** bump minimum node support to 20 LTS ([4b8c975][63])
+- **src:** ignore unknown file extension errors when discovering commands ([4babf12][64])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.2][62] (2024-03-21)
+### 🏗️ Patch @black-flag/core[@1.2.2][65] (2024-03-21)
 
 #### 🪄 Fixes
 
-- No longer include default command when listing subcommands ([be2960a][63])
+- No longer include default command when listing subcommands ([be2960a][66])
 
 #### ⚙️ Build System
 
-- **husky:** update to latest hooks ([75d5c66][64])
-- **src:** do not filter to own methods when proxying and rebinding ([8bb0254][65])
+- **husky:** update to latest hooks ([75d5c66][67])
+- **src:** do not filter to own methods when proxying and rebinding ([8bb0254][68])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.2.1][66] (2024-03-19)
+### 🏗️ Patch @black-flag/core[@1.2.1][69] (2024-03-19)
 
 <br />
 
-## @black-flag/core[@1.1.0][67] (2023-12-31)
+## @black-flag/core[@1.1.0][70] (2023-12-31)
 
 ### ✨ Features
 
-- **src:** support file://-style URLs ([0e5067e][68])
+- **src:** support file://-style URLs ([0e5067e][71])
 
 ### 🪄 Fixes
 
-- **src:** ensure --version is included in help text output when relevant ([4f159dc][69])
+- **src:** ensure --version is included in help text output when relevant ([4f159dc][72])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.1.4][70] (2024-03-16)
+### 🏗️ Patch @black-flag/core[@1.1.4][73] (2024-03-16)
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.1.3][71] (2024-03-15)
+### 🏗️ Patch @black-flag/core[@1.1.3][74] (2024-03-15)
 
 #### 🪄 Fixes
 
-- Add support for `export default X` syntax ([bad391d][72])
-- Ensure `demandOption` is properly supported ([2f205c1][73])
+- Add support for `export default X` syntax ([bad391d][75])
+- Ensure `demandOption` is properly supported ([2f205c1][76])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.1.2][74] (2023-12-31)
+### 🏗️ Patch @black-flag/core[@1.1.2][77] (2023-12-31)
 
 #### 🪄 Fixes
 
-- **readme:** move parserConfiguration call out of dead zone in example ([f79c114][75])
+- **readme:** move parserConfiguration call out of dead zone in example ([f79c114][78])
 
 <br />
 
-### 🏗️ Patch @black-flag/core[@1.1.1][76] (2023-12-31)
+### 🏗️ Patch @black-flag/core[@1.1.1][79] (2023-12-31)
 
 #### 🪄 Fixes
 
-- Fix Node10 type resolution failure ([b6178c9][77])
+- Fix Node10 type resolution failure ([b6178c9][80])
 
 <br />
 
-## @black-flag/core[@1.0.0][78] (2023-12-29)
+## @black-flag/core[@1.0.0][81] (2023-12-29)
 
 ### ✨ Features
 
-- **src:** disallow creating commands with conflicting names/aliases ([78bf8ff][79])
+- **src:** disallow creating commands with conflicting names/aliases ([78bf8ff][82])
 
 ### 🪄 Fixes
 
-- Rename package from "black-flag" to "@black-flag/core" npm typosquat workaround ([292ead5][80])
+- Rename package from "black-flag" to "@black-flag/core" npm typosquat workaround ([292ead5][83])
 
 ### ⚙️ Build System
 
-- **tsconfig:** fix internal path resolution ([fbe3a69][81])
-- **tsconfig:** upgrade to NodeNext ([d3a499e][82])
+- **tsconfig:** fix internal path resolution ([fbe3a69][84])
+- **tsconfig:** upgrade to NodeNext ([d3a499e][85])
 
 [1]: https://conventionalcommits.org
 [2]: https://semver.org
@@ -301,54 +313,57 @@ this project adheres to [Semantic Versioning][2].
 [29]: https://github.com/Xunnamius/black-flag/commit/8303ba7f438ae7f7dedfc2b6f5fd396cab32b252
 [30]: https://github.com/Xunnamius/black-flag/commit/3918a29cc17f8c7e9f1d21c7484b365dde361363
 [31]: https://github.com/Xunnamius/black-flag/commit/488206dd6dae6b658af2691ae0230a76dbb59f50
-[32]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@2.0.1...@black-flag/core@2.0.2
-[33]: https://github.com/Xunnamius/black-flag/commit/119919ef40e6a89644ec3156b9bae57c5e24b459
-[34]: https://github.com/Xunnamius/black-flag/commit/bdafbf8c56ee05fee66fa6bc4e685cc728907ea6
-[35]: https://github.com/Xunnamius/black-flag/commit/33895e79380cae34c53b0d533fbcb6608330ccea
-[36]: https://github.com/Xunnamius/black-flag/commit/2e6c05bfed5ece86f3e3bd538319a11e1675d24b
-[37]: https://github.com/Xunnamius/black-flag/commit/0adf956e204a51d6632e9f2e450e4d5dcd3921e3
-[38]: https://github.com/Xunnamius/black-flag/commit/f3f1f74a1a62a663b0976ab335e03ea7fce50eb8
-[39]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@2.0.0...@black-flag/core@2.0.1
-[40]: https://github.com/Xunnamius/black-flag/commit/565fbb928f3ab96b424ef4932f8833e05bfb0842
-[41]: https://github.com/Xunnamius/black-flag/issues/171
-[42]: https://github.com/Xunnamius/black-flag/commit/937171967cd8887a8aba12cbb23c0adffacc6c78
-[43]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.7...@black-flag/core@1.3.0
-[44]: https://github.com/Xunnamius/black-flag/commit/1c369fb8570c0b42acad78af66168f9b7f688dfc
-[45]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.3.1...@black-flag/core@1.3.2
-[46]: https://github.com/Xunnamius/black-flag/commit/96ce293f8a136c82839c1e658d19dc9a2441c0ab
-[47]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.3.0...@black-flag/core@1.3.1
-[48]: https://github.com/Xunnamius/black-flag/commit/99e2b3aa8ebef83fdf414dda22ad11405c1907df
-[49]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.4...@black-flag/core@1.2.0
-[50]: https://github.com/Xunnamius/black-flag/commit/b5a1e58add31902fd9ec80b93dd37305b8fd0684
-[51]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.6...@black-flag/core@1.2.7
-[52]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.5...@black-flag/core@1.2.6
-[53]: https://github.com/Xunnamius/black-flag/commit/35f66cc9d69f8434d03db49f067b4f7e03d4c58c
-[54]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.4...@black-flag/core@1.2.5
-[55]: https://github.com/Xunnamius/black-flag/commit/c201c2ff87c1119b9678e38acdc12918d2ed7fc2
-[56]: https://github.com/Xunnamius/black-flag/commit/98815d1ef218af56e07493a921c66294f91101cf
-[57]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.3...@black-flag/core@1.2.4
-[58]: https://github.com/Xunnamius/black-flag/commit/d6618d370bd9a7264dad240856dc989a61071986
-[59]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.2...@black-flag/core@1.2.3
-[60]: https://github.com/Xunnamius/black-flag/commit/4b8c9759bc09f9b07593ce89446d4ec0e614db71
-[61]: https://github.com/Xunnamius/black-flag/commit/4babf12308b7aab0ed319077701eb6f3a1fdf1d3
-[62]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.1...@black-flag/core@1.2.2
-[63]: https://github.com/Xunnamius/black-flag/commit/be2960a507c43b3db598157de4dcafe22ee8906e
-[64]: https://github.com/Xunnamius/black-flag/commit/75d5c66bcce8f0c2c139962f7ddd28aa0c9499d7
-[65]: https://github.com/Xunnamius/black-flag/commit/8bb025436d219c024a5d4a4a0ac59999440b7c13
-[66]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.0...@black-flag/core@1.2.1
-[67]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.0.0...@black-flag/core@1.1.0
-[68]: https://github.com/Xunnamius/black-flag/commit/0e5067e2b0913a19bdc6975b50b272bb5872ba98
-[69]: https://github.com/Xunnamius/black-flag/commit/4f159dc4b84223dd6b07456c0b50da16d2816bea
-[70]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.3...@black-flag/core@1.1.4
-[71]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.2...@black-flag/core@1.1.3
-[72]: https://github.com/Xunnamius/black-flag/commit/bad391da3019a5743a76ca2e510903f34c84ca53
-[73]: https://github.com/Xunnamius/black-flag/commit/2f205c1e8c94d3e6683816e5bbc3ae152e3c83e8
-[74]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.1...@black-flag/core@1.1.2
-[75]: https://github.com/Xunnamius/black-flag/commit/f79c11476de47bee3fa01e139269393b604b4271
-[76]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.0...@black-flag/core@1.1.1
-[77]: https://github.com/Xunnamius/black-flag/commit/b6178c9670a95084bca34424e71498f2d29ac48c
-[78]: https://github.com/Xunnamius/black-flag/compare/d3a499e7aeddf23d392479b2cf99cc98bce8226f...@black-flag/core@1.0.0
-[79]: https://github.com/Xunnamius/black-flag/commit/78bf8ffb0a6931fb3b131c42ce4b84146bfec842
-[80]: https://github.com/Xunnamius/black-flag/commit/292ead5aa3f18c556d72d714830dcf07b9253e6d
-[81]: https://github.com/Xunnamius/black-flag/commit/fbe3a699a9063ed7da08311a22fe798672583b0f
-[82]: https://github.com/Xunnamius/black-flag/commit/d3a499e7aeddf23d392479b2cf99cc98bce8226f
+[32]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@2.0.3...@black-flag/core@2.0.4
+[33]: https://github.com/Xunnamius/black-flag/commit/2676cbeab7243857c7004188474b691f8bc866b9
+[34]: https://github.com/Xunnamius/black-flag/commit/9e25b0c4cbef8acacfd59747d18fc6fbea5a1689
+[35]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@2.0.1...@black-flag/core@2.0.2
+[36]: https://github.com/Xunnamius/black-flag/commit/119919ef40e6a89644ec3156b9bae57c5e24b459
+[37]: https://github.com/Xunnamius/black-flag/commit/bdafbf8c56ee05fee66fa6bc4e685cc728907ea6
+[38]: https://github.com/Xunnamius/black-flag/commit/33895e79380cae34c53b0d533fbcb6608330ccea
+[39]: https://github.com/Xunnamius/black-flag/commit/2e6c05bfed5ece86f3e3bd538319a11e1675d24b
+[40]: https://github.com/Xunnamius/black-flag/commit/0adf956e204a51d6632e9f2e450e4d5dcd3921e3
+[41]: https://github.com/Xunnamius/black-flag/commit/f3f1f74a1a62a663b0976ab335e03ea7fce50eb8
+[42]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@2.0.0...@black-flag/core@2.0.1
+[43]: https://github.com/Xunnamius/black-flag/commit/565fbb928f3ab96b424ef4932f8833e05bfb0842
+[44]: https://github.com/Xunnamius/black-flag/issues/171
+[45]: https://github.com/Xunnamius/black-flag/commit/937171967cd8887a8aba12cbb23c0adffacc6c78
+[46]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.7...@black-flag/core@1.3.0
+[47]: https://github.com/Xunnamius/black-flag/commit/1c369fb8570c0b42acad78af66168f9b7f688dfc
+[48]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.3.1...@black-flag/core@1.3.2
+[49]: https://github.com/Xunnamius/black-flag/commit/96ce293f8a136c82839c1e658d19dc9a2441c0ab
+[50]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.3.0...@black-flag/core@1.3.1
+[51]: https://github.com/Xunnamius/black-flag/commit/99e2b3aa8ebef83fdf414dda22ad11405c1907df
+[52]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.4...@black-flag/core@1.2.0
+[53]: https://github.com/Xunnamius/black-flag/commit/b5a1e58add31902fd9ec80b93dd37305b8fd0684
+[54]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.6...@black-flag/core@1.2.7
+[55]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.5...@black-flag/core@1.2.6
+[56]: https://github.com/Xunnamius/black-flag/commit/35f66cc9d69f8434d03db49f067b4f7e03d4c58c
+[57]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.4...@black-flag/core@1.2.5
+[58]: https://github.com/Xunnamius/black-flag/commit/c201c2ff87c1119b9678e38acdc12918d2ed7fc2
+[59]: https://github.com/Xunnamius/black-flag/commit/98815d1ef218af56e07493a921c66294f91101cf
+[60]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.3...@black-flag/core@1.2.4
+[61]: https://github.com/Xunnamius/black-flag/commit/d6618d370bd9a7264dad240856dc989a61071986
+[62]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.2...@black-flag/core@1.2.3
+[63]: https://github.com/Xunnamius/black-flag/commit/4b8c9759bc09f9b07593ce89446d4ec0e614db71
+[64]: https://github.com/Xunnamius/black-flag/commit/4babf12308b7aab0ed319077701eb6f3a1fdf1d3
+[65]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.1...@black-flag/core@1.2.2
+[66]: https://github.com/Xunnamius/black-flag/commit/be2960a507c43b3db598157de4dcafe22ee8906e
+[67]: https://github.com/Xunnamius/black-flag/commit/75d5c66bcce8f0c2c139962f7ddd28aa0c9499d7
+[68]: https://github.com/Xunnamius/black-flag/commit/8bb025436d219c024a5d4a4a0ac59999440b7c13
+[69]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.2.0...@black-flag/core@1.2.1
+[70]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.0.0...@black-flag/core@1.1.0
+[71]: https://github.com/Xunnamius/black-flag/commit/0e5067e2b0913a19bdc6975b50b272bb5872ba98
+[72]: https://github.com/Xunnamius/black-flag/commit/4f159dc4b84223dd6b07456c0b50da16d2816bea
+[73]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.3...@black-flag/core@1.1.4
+[74]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.2...@black-flag/core@1.1.3
+[75]: https://github.com/Xunnamius/black-flag/commit/bad391da3019a5743a76ca2e510903f34c84ca53
+[76]: https://github.com/Xunnamius/black-flag/commit/2f205c1e8c94d3e6683816e5bbc3ae152e3c83e8
+[77]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.1...@black-flag/core@1.1.2
+[78]: https://github.com/Xunnamius/black-flag/commit/f79c11476de47bee3fa01e139269393b604b4271
+[79]: https://github.com/Xunnamius/black-flag/compare/@black-flag/core@1.1.0...@black-flag/core@1.1.1
+[80]: https://github.com/Xunnamius/black-flag/commit/b6178c9670a95084bca34424e71498f2d29ac48c
+[81]: https://github.com/Xunnamius/black-flag/compare/d3a499e7aeddf23d392479b2cf99cc98bce8226f...@black-flag/core@1.0.0
+[82]: https://github.com/Xunnamius/black-flag/commit/78bf8ffb0a6931fb3b131c42ce4b84146bfec842
+[83]: https://github.com/Xunnamius/black-flag/commit/292ead5aa3f18c556d72d714830dcf07b9253e6d
+[84]: https://github.com/Xunnamius/black-flag/commit/fbe3a699a9063ed7da08311a22fe798672583b0f
+[85]: https://github.com/Xunnamius/black-flag/commit/d3a499e7aeddf23d392479b2cf99cc98bce8226f
