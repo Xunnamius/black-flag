@@ -8,7 +8,7 @@
 
 > **BfeSubOptionOfExtensionValue**\<`CustomCliArguments`, `CustomExecutionContext`\> = `object`
 
-Defined in: [packages/extensions/src/index.ts:519](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L519)
+Defined in: [packages/extensions/src/index.ts:519](https://github.com/Xunnamius/black-flag/blob/a49f96af98d9a9d96fd7dc9946a709fd368c04c2/packages/extensions/src/index.ts#L519)
 
 The array element type of
 [BfeBuilderObjectValueExtensions.subOptionOf](BfeBuilderObjectValueExtensions.md#suboptionof).
@@ -29,7 +29,7 @@ The array element type of
 
 > **update**: (`oldOptionConfig`, `argv`) => [`BfeBuilderObjectValueWithoutSubOptionOfExtension`](BfeBuilderObjectValueWithoutSubOptionOfExtension.md)\<`CustomCliArguments`, `CustomExecutionContext`\> \| [`BfeBuilderObjectValueWithoutSubOptionOfExtension`](BfeBuilderObjectValueWithoutSubOptionOfExtension.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [packages/extensions/src/index.ts:556](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L556)
+Defined in: [packages/extensions/src/index.ts:556](https://github.com/Xunnamius/black-flag/blob/a49f96af98d9a9d96fd7dc9946a709fd368c04c2/packages/extensions/src/index.ts#L556)
 
 This function receives the current configuration for this option
 (`oldOptionConfig`) and the fully parsed `argv` (not including any default
@@ -51,7 +51,7 @@ return {
 
 > **when**: (`superOptionValue`, `argv`) => `boolean`
 
-Defined in: [packages/extensions/src/index.ts:536](https://github.com/Xunnamius/black-flag/blob/170aa97d281b546ae8a3014f985324d5c71f08f4/packages/extensions/src/index.ts#L536)
+Defined in: [packages/extensions/src/index.ts:536](https://github.com/Xunnamius/black-flag/blob/a49f96af98d9a9d96fd7dc9946a709fd368c04c2/packages/extensions/src/index.ts#L536)
 
 This function receives the `superOptionValue` of the so-called "super
 option" (i.e. `key` in `{ subOptionOf: { key: { when: ... }}}`), which you
