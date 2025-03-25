@@ -233,19 +233,19 @@ following:
 ## Advanced Testing Utilities
 
 Black Flag ships with several advanced testing utilities, including
-[`makeRunner`][16] and [`expectedHelpTextRegExp`][19].
+[`makeRunner`][16] and [`expectedHelpTextRegExp`][17].
 
-[`expectedHelpTextRegExp`][19] generates regular expressions that can match with
+[`expectedHelpTextRegExp`][17] generates regular expressions that can match with
 high fidelity the result of calling `--help` on a command, including matching
 the help text shown when an error occurs.
 
-See [the tests][20] for examples.
+See [the tests][18] for examples.
 
 ## Execution Flow Diagram
 
 What follows is a diagram illustrating Black Flag's command execution flow from
 start to finish. Three commands are executed from the `myctl` example in
-[`getting-started.md`][17]:
+[`getting-started.md`][19]:
 
 - `myctl --verbose`
 - `myctl remote --help`
@@ -401,7 +401,7 @@ user.<sup>R2🡒R1</sup>
 
 > [!NOTE]
 >
-> The ascii art diagram was generated using [https://asciiflow.com][18]
+> The ascii art diagram was generated using [https://asciiflow.com][20]
 
 [x-repo-choose-new-issue]:
   https://github.com/Xunnamius/black-flag/issues/new/choose
@@ -421,7 +421,7 @@ user.<sup>R2🡒R1</sup>
 [14]: ./images/example-1.png
 [15]: ./images/example-2.png
 [16]: ./api/src/exports/util/functions/makeRunner.md
-[17]: ./getting-started.md
-[18]: https://asciiflow.com
-[19]: ./api/src/exports/util/functions/expectedHelpTextRegExp.md
-[20]: ../test/unit.test.ts
+[17]: ./api/src/exports/util/functions/expectedHelpTextRegExp.md
+[18]: ../test/unit.test.ts
+[19]: ./getting-started.md
+[20]: https://asciiflow.com
