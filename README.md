@@ -45,14 +45,16 @@ for users of the [`yargs::commandDir()`][2] ([which][3] [has][4] [its][5]
 - [Built-in support for dynamic options][10] ✨ ([an][11] [infamous][12]
   [Yargs][13] [white][14] [whale][15])
 - [Consistent and safe CLI execution][16] ✨
-- [Simple comprehensive error handling and reporting][17] ✨
-- [A pleasant unit, integration, and e2e testing experience][18] ✨
-- [Extensive intellisense support via TypeScript][19] ✨
+- [Simple comprehensive error handling][17] ✨
+- [A pleasant testing experience][18] ✨
+- [Builtin TypeScript intellisense][19] ✨
 
 <br />
 
 Black Flag is tested on Ubuntu and Windows 10, and like Yargs tracks Node.js LTS
 versions. Also comes with first-class support for both CJS and ESM source.
+
+<br/>
 
 <!-- prettier-ignore-start -->
 
@@ -62,6 +64,16 @@ versions. Also comes with first-class support for both CJS and ESM source.
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][23] (or `npx -p @black-flag/demo myctl --help`)\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][24]\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag's intro examples][25] (which are just [Yargs's intro examples][26] rewritten with Black Flag)
+
+<br/>
+
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Builder API][28] (essentially `yargs::options`'s `opt` keys)\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Command module API][35]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Configuration hooks API][41]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [All `@black-flag/core` exports][42]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [All `@black-flag/core/util` exports][43]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [All `@black-flag/extensions` exports][44]\
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [All `@black-flag/checks` exports][45]
 
 <!-- prettier-ignore-end -->
 
@@ -582,3 +594,8 @@ specification. Contributions of any kind welcome!
 [38]: https://github.com/yargs/yargs/blob/main/docs/advanced.md#default-commands
 [39]: https://xkcd.com/1205
 [40]: https://i.redd.it/0cm6yx27tez21.jpg
+[41]: ./docs/api/src/exports/type-aliases/ConfigurationHooks.md
+[42]: ./docs/api/src/exports/README.md
+[43]: ./docs/api/src/exports/util/README.md
+[44]: ./packages/extensions/docs/index/README.md
+[45]: ./packages/checks/docs/index/README.md
