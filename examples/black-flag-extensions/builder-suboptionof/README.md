@@ -1,6 +1,10 @@
+[examples][1] / [black-flag-extensions][2] / builder-suboptionof
+
 # Black Flag Extensions: `builder::subOptionOf`
 
 <!-- TODO -->
+
+TODO
 
 For another example, consider a "build" command where we want to ensure
 `-⁠-⁠skip-⁠output-⁠checks` is `true` whenever
@@ -103,3 +107,6 @@ sense (because it mentions `-⁠-⁠generate-⁠types`):
 The following arguments as given conflict with the implications of "generate-types":
    ➜ skip-output-checks == false
 ```
+
+[1]: ../../README.md
+[2]: ../README.md
