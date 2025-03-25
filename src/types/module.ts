@@ -39,17 +39,10 @@ export type Configuration<
    * such as an object of options, it will be passed to `yargs::options` for
    * you.
    *
-   * Note 1: **if `builder` is a function, it cannot be async or return a
+   * Note: **if `builder` is a function, it cannot be async or return a
    * promise** due to a yargs bug present at time of writing. However, a
    * {@link Configuration} module can export an async function, so hoist any
    * async logic out of the builder function to work around this bug for now.
-   *
-   * Note 2: if positional arguments are given and your command accepts them
-   * (i.e. provided via {@link Configuration.command} and configured via
-   * `yargs::positional`), they are only accessible from `argv?._` (`builder`'s
-   * third parameter). This is because positional arguments, while fully
-   * supported by Black Flag, **are parsed and validated _after_ `builder` is
-   * first invoked** and so aren't available until a little later.
    *
    * @default {}
    */
