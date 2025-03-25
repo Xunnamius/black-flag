@@ -91,9 +91,10 @@ npm install @black-flag/extensions
 
 > [!WARNING]
 >
-> Most of the examples in this section are using hyphen characters followed by a
-> [word joiner character][5] to prevent breaking example awkwardly across lines.
-> Be cautious copying and pasting examples.
+> Most of the examples in this section (not including syntax-highlighted code
+> blocks) are using hyphen characters followed by a [word joiner character][5]
+> to prevent breaking examples awkwardly across lines. Be cautious copying and
+> pasting.
 
 ### `withBuilderExtensions`
 
@@ -102,6 +103,8 @@ npm install @black-flag/extensions
 This function enables several additional options-related units of functionality
 via analysis of the returned options configuration object and the parsed command
 line arguments (i.e. `argv`).
+
+<!-- example-region wbe-js -->
 
 ```javascript
 import { withBuilderExtensions } from '@black-flag/extensions';
@@ -236,6 +239,8 @@ Note that the checks enabled by these configuration keys:
 `requires` enables checks to ensure the specified arguments, or argument-value
 pairs, are given conditioned on the existence of another argument. For example:
 
+<!-- example-region requires-1-jsonc -->
+
 ```jsonc
 {
   "x": { "requires": "y" }, // ◄ Disallows x without y
@@ -248,6 +253,8 @@ This configuration will trigger a check to ensure that `-⁠y` is given whenever
 
 `requires` also supports checks against the parsed _values_ of arguments in
 addition to the argument existence checks demonstrated above. For example:
+
+<!-- example-region requires-2-jsonc -->
 
 ```jsonc
 {
@@ -286,6 +293,8 @@ given in `argv` (e.g. via the command line).
 pairs, are _never_ given conditioned on the existence of another argument. For
 example:
 
+<!-- example-region conflicts-1-jsonc -->
+
 ```jsonc
 {
   "x": { "conflicts": "y" }, // ◄ Disallows y if x is given
@@ -298,6 +307,8 @@ whenever `-⁠x` is given.
 
 `conflicts` also supports checks against the parsed _values_ of arguments in
 addition to the argument existence checks demonstrated above. For example:
+
+<!-- example-region conflicts-2-jsonc -->
 
 ```jsonc
 {
@@ -344,6 +355,8 @@ values must match the specified argument-value pairs respectively (similar to
 [`requires`][14]/[`conflicts`][15]). For this reason, `implies` only accepts one
 or more argument-value pairs and not raw strings. For example:
 
+<!-- example-region implies-1-jsonc -->
+
 ```jsonc
 {
   "x": { "implies": { "y": true } }, // ◄ x becomes synonymous with xy
@@ -362,6 +375,8 @@ framework error.
 Additionally, if any of the specified arguments have their own [`default`][12]s
 configured, said defaults will be overridden by the values of `implies`. For
 example:
+
+<!-- example-region implies-2-jsonc -->
 
 ```jsonc
 {
@@ -447,6 +462,8 @@ match the specified argument-value pairs respectively (similar to
 By default, an option's configured implications will only take effect if said
 option is given in `argv` _with a non-`false` value_. For example:
 
+<!-- example-region implies-3-jsonc -->
+
 ```jsonc
 {
   "x": {
@@ -482,6 +499,8 @@ instructs the tool to patch any output before committing it to disk while
 on disk. The command's options configuration could look something like the
 following:
 
+<!-- example-region implies-4-jsonc -->
+
 ```jsonc
 {
   "patch": {
@@ -489,7 +508,7 @@ following:
     "description": "Patch output using the nearest patcher file",
     "default": true
   },
-  "only-⁠patch": {
+  "only-patch": {
     "boolean": true,
     "description": "Instead of building new output, only patch existing output",
     "default": false,
@@ -559,6 +578,8 @@ behavior for a specific option, set `vacuousImplications` to `true` (it is
 one of the specified groups of arguments, or argument-value pairs, is also
 given. For example:
 
+<!-- example-region demandThisOptionIf-1-jsonc -->
+
 ```jsonc
 {
   "x": {},
@@ -573,6 +594,8 @@ This configuration allows the following arguments: no arguments (`∅`), `-⁠y`
 `demandThisOptionIf` also supports checks against the parsed _values_ of
 arguments in addition to the argument existence checks demonstrated above. For
 example:
+
+<!-- example-region demandThisOptionIf-2-jsonc -->
 
 ```jsonc
 {
@@ -608,6 +631,8 @@ achieved via [`subOptionOf`][23].
 `demandThisOption` enables checks to ensure an argument is always given. This is
 equivalent to `demandOption` from vanilla Yargs. For example:
 
+<!-- example-region demandThisOption-1-jsonc -->
+
 ```jsonc
 {
   "x": { "demandThisOption": true }, // ◄ Disallows ∅, y
@@ -637,6 +662,8 @@ This configuration will trigger a check to ensure that `-⁠x` is given.
 group. Put another way, `demandThisOptionOr` enforces a "logical or" relation
 within groups of required options. For example:
 
+<!-- example-region demandThisOptionOr-1-jsonc -->
+
 ```jsonc
 {
   "x": { "demandThisOptionOr": ["y", "z"] }, // ◄ Demands x or y or z
@@ -658,6 +685,8 @@ proper mirroring.
 `demandThisOptionOr` also supports checks against the parsed _values_ of
 arguments in addition to the argument existence checks demonstrated above. For
 example:
+
+<!-- example-region demandThisOptionOr-2-jsonc -->
 
 ```jsonc
 {
@@ -691,6 +720,8 @@ searched for said value. Otherwise, a strict deep equality check is performed.
 exclusivity group. Put another way, `demandThisOptionXor` enforces mutual
 exclusivity within groups of required options. For example:
 
+<!-- example-region demandThisOptionXor-1-jsonc -->
+
 ```jsonc
 {
   "x": { "demandThisOptionXor": ["y"] }, // ◄ Disallows ∅, z, w, xy, xyw, xyz, xyzw
@@ -714,6 +745,8 @@ demonstrates proper mirroring.
 `demandThisOptionXor` also supports checks against the parsed _values_ of
 arguments in addition to the argument existence checks demonstrated above. For
 example:
+
+<!-- example-region demandThisOptionXor-2-jsonc -->
 
 ```jsonc
 {
@@ -762,6 +795,8 @@ When a check fails, execution of its command's [`handler`][9] function will
 cease and [`configureErrorHandlingEpilogue`][41] will be invoked (unless you
 threw/returned a [`GracefulEarlyExitError`][42]). For example:
 
+<!-- example-region check-1-js -->
+
 ```javascript
 export const [builder, withHandlerExtensions] = withBuilderExtensions({
   x: {
@@ -800,6 +835,8 @@ other. This makes it easy to reuse checks between options. For example:
 >
 > Providing an array with one or more _async_ check functions will result in
 > them all being awaited concurrently.
+
+<!-- example-region check-2-js -->
 
 ```javascript
 export const [builder, withHandlerExtensions] = withBuilderExtensions({
@@ -849,71 +886,83 @@ requires a strictly imperative approach.
 
 Take, for example, [the `init` command from @black-flag/demo][45]:
 
-```javascript
-// Taken at 06/04/2024 from @black-flag/demo "myctl" CLI
-// @ts-check
+<!-- example-region subOptionOf-1-js -->
 
-/**
- * @type {import('@black-flag/core').Configuration['builder']}
- */
-export const builder = function (yargs, _, argv) {
+```javascript
+// Taken at 03/23/2025 from @black-flag/demo "myctl" CLI
+
+const PYTHON_DEFAULT_VERSION = '3.13';
+const NODE_DEFAULT_VERSION = '23.3';
+
+export function builder(yargs, _helpOrVersionSet, argv) {
+  // Tell Yargs to leave strings that look like numbers as strings
   yargs.parserConfiguration({ 'parse-numbers': false });
 
-  if (argv && argv.lang) {
-    // This code block implements our dynamic options (depending on --lang)
-    return argv.lang === 'node'
-      ? {
-          lang: { choices: ['node'], demandOption: true },
-          version: { choices: ['19.8', '20.9', '21.1'], default: '21.1' }
-        }
-      : {
-          lang: { choices: ['python'], demandOption: true },
-          version: {
-            choices: ['3.10', '3.11', '3.12'],
-            default: '3.12'
-          }
-        };
-  } else {
-    // This code block represents the fallback
+  // ▼ This imperative logic is a bit of an eyesore...
+  if (argv?.lang === 'node') {
     return {
-      lang: {
-        choices: ['node', 'python'],
-        demandOption: true,
-        default: 'python'
-      },
-      version: { string: true, default: 'latest' }
+      lang: { choices: ['node'], default: 'node' },
+      version: {
+        choices: ['20.18', '22.12', '23.3'],
+        default: NODE_DEFAULT_VERSION
+      }
+    };
+  } else if (argv?.lang === 'python') {
+    return {
+      lang: { choices: ['python'], default: 'python' },
+      version: {
+        choices: ['3.11', '3.12', '3.13'],
+        default: PYTHON_DEFAULT_VERSION
+      }
     };
   }
-};
 
-/**
- * @type {import('@black-flag/core').Configuration<{ lang: string, version: string }>['handler']}
- */
-export const handler = function ({ lang, version }) {
-  console.log(`> Initializing new ${lang}@${version} project...`);
-};
+  return {
+    lang: {
+      choices: ['node', 'python'],
+      // ▼ Having to use a default description is a little suboptimal...
+      defaultDescription: '"python"',
+      // ▼ This imperative logic is a little ugly...
+      default: argv ? 'python' : undefined
+    },
+    version: {
+      string: true,
+      // ▼ Having to use a default description is a little suboptimal...
+      defaultDescription: `"${PYTHON_DEFAULT_VERSION}"`,
+      // ▼ This imperative logic is a little ugly...
+      default: argv ? PYTHON_DEFAULT_VERSION : undefined
+    }
+  };
+}
+
+export function handler(argv) {
+  console.log(`> initializing new ${argv.lang}@${argv.version} project...`);
+  // ...
+}
 ```
 
-Among other freebies, taking advantage of dynamic options support gifts your CLI
-with help text more gorgeous and meaningful than anything you could accomplish
-with vanilla Yargs:
+Taking advantage of dynamic options support like like we did above gifts your
+CLI with help text more meaningful than anything you could accomplish with
+vanilla Yargs.
+
+For example:
 
 ```text
-myctl init --lang 'node' --version=21.1
-> initializing new node@21.1 project...
+myctl init --lang node --version=23.3
+> initializing new node@23.3 project...
 ```
 
 ```text
-myctl init --lang 'python' --version=21.1
+myctl init --lang python --version=23.3
 Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                                     [choices: "python"]
-  --version                                    [choices: "3.10", "3.11", "3.12"]
+  --lang                                 [choices: "python"] [default: "python"]
+  --version                  [choices: "3.11", "3.12", "3.13"] [default: "3.13"]
 
 Invalid values:
-  Argument: version, Given: "21.1", Choices: "3.10", "3.11", "3.12"
+  Argument: version, Given: "23.3", Choices: "3.10", "3.11", "3.12"
 ```
 
 ```text
@@ -922,8 +971,8 @@ Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                             [choices: "node", "python"]
-  --version                                                             [string]
+  --lang                         [choices: "node", "python"] [default: "python"]
+  --version                                           [string] [default: "3.13"]
 
 Invalid values:
   Argument: lang, Given: "fake", Choices: "node", "python"
@@ -935,17 +984,27 @@ Usage: myctl init
 
 Options:
   --help     Show help text                                            [boolean]
-  --lang                                             [choices: "node", "python"]
-  --version                                                             [string]
+  --lang                         [choices: "node", "python"] [default: "python"]
+  --version                                           [string] [default: "3.13"]
+```
+
+```text
+myctl init --lang node --help
+Usage: myctl init
+
+Options:
+  --help     Show help text                                            [boolean]
+  --lang                                     [choices: "node"] [default: "node"]
+  --version                [choices: "20.18", "22.12", "23.3"] [default: "23.3"]
 ```
 
 Ideally, Black Flag would allow us to describe the relationship between
 `-⁠-⁠lang` and its _suboption_ `-⁠-⁠version` declaratively, without having to
 drop down to imperative interactions with the Yargs API like we did above.
 
-This is the goal of the `subOptionOf` configuration key. Using `subOptionOf`,
+This is the goal of the `subOptionOf` configuration key. **Using `subOptionOf`,
 developers can take advantage of dynamic options without sweating the
-implementation details.
+implementation details.**
 
 > [!NOTE]
 >
@@ -953,6 +1012,8 @@ implementation details.
 > pass][11].
 
 For example:
+
+<!-- example-region subOptionOf-2-js -->
 
 ```javascript
 /**
@@ -1041,6 +1102,8 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions({
 Now we're ready to re-implement the `init` command from `myctl` using our new
 declarative superpowers:
 
+<!-- example-region subOptionOf-3-js -->
+
 ```javascript
 export const [builder, withHandlerExtensions] = withBuilderExtensions(
   function (blackFlag) {
@@ -1048,9 +1111,8 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions(
 
     return {
       lang: {
-        // ▼ These two are our fallback or "baseline" configurations for --lang
+        // ▼ These two are fallback or "baseline" configurations for --lang
         choices: ['node', 'python'],
-        demandThisOption: true,
         default: 'python',
 
         subOptionOf: {
@@ -1058,31 +1120,30 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions(
           lang: [
             {
               when: (lang) => lang === 'node',
-              // ▼ Remember: updates overwrite any old config (including baseline)
+              // ▼ Remember: updates completely overwrite baseline config...
               update: {
                 choices: ['node'],
-                demandThisOption: true
+                default: 'node'
               }
             },
             {
               when: (lang) => lang !== 'node',
-              update: {
-                choices: ['python'],
-                demandThisOption: true
+              // ▼ ... though we can still reuse the "old" baseline config
+              update(oldOptionConfig) {
+                return {
+                  ...oldOptionConfig,
+                  choices: ['python']
+                };
               }
             }
           ]
         }
       },
 
-      // Another benefit of subOptionOf: all configuration relevant to a specific
-      // option is co-located within that option and not spread across some
-      // function or file. We don't have to go looking for the logic that's
-      // modifying --version since it's all right here in one code block.
       version: {
-        // ▼ These two are our fallback or "baseline" configurations for --version
+        // ▼ These two are fallback or "baseline" configurations for --version
         string: true,
-        default: 'latest',
+        default: '3.13',
 
         subOptionOf: {
           // ▼ --version is a suboption of --lang
@@ -1090,15 +1151,17 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions(
             {
               when: (lang) => lang === 'node',
               update: {
-                choices: ['19.8', '20.9', '21.1'],
-                default: '21.1'
+                choices: ['20.18', '22.12', '23.3'],
+                default: '23.3'
               }
             },
             {
               when: (lang) => lang !== 'node',
-              update: {
-                choices: ['3.10', '3.11', '3.12'],
-                default: '3.12'
+              update(oldOptionConfig) {
+                return {
+                  ...oldOptionConfig,
+                  choices: ['3.11', '3.12', '3.13']
+                };
               }
             }
           ]
@@ -1111,107 +1174,14 @@ export const [builder, withHandlerExtensions] = withBuilderExtensions(
 
 Easy peasy!
 
-For another example, consider a "build" command where we want to ensure
-`-⁠-⁠skip-⁠output-⁠checks` is `true` whenever
-`-⁠-⁠generate-⁠types=false`/`-⁠-⁠no-⁠generate-⁠types` is given since the output
-checks are only meaningful if type definition files are available:
+Another benefit of `subOptionOf`: all configuration relevant to an option is
+co-located within that option and not spread across some function or file. We
+don't have to go looking for the logic that's modifying `--version` since it's
+all right there in one code block. We also don't have to repeat ourselves or
+pass around `X_DEFAULT_VERSION` variables to hold defaults anymore!
 
-```javascript
-/**
- * @type {import('@black-flag/core').Configuration['builder']}
- */
-export const [builder, withHandlerExtensions] = withBuilderExtensions({
-  'generate-types': {
-    boolean: true,
-    description: 'Output TypeScript declaration files alongside distributables',
-    default: true,
-    subOptionOf: {
-      'generate-types': {
-        // ▼ If --generate-types=false...
-        when: (generateTypes) => !generateTypes,
-        update: (oldConfig) => {
-          return {
-            ...oldConfig,
-            // ▼ ... then --skip-output-checks must be true!
-            implies: { 'skip-output-checks': true },
-            // ▼ Since "false" options cannot imply stuff (see "implies" docs)
-            // by default, we need to tell BFE that a false implication is okay
-            vacuousImplications: true
-          };
-        }
-      }
-    }
-  },
-  'skip-output-checks': {
-    alias: 'skip-output-check',
-    boolean: true,
-    description: 'Do not run consistency and integrity checks on build output',
-    default: false
-  }
-});
-```
-
-This configuration allows the following arguments: no arguments (`∅`),
-`-⁠-⁠generate-⁠types=true`, `-⁠-⁠generate-⁠types=false`,
-`-⁠-⁠generate-⁠types=true -⁠-⁠skip-⁠output-⁠checks=true`,
-`-⁠-⁠generate-⁠types=true -⁠-⁠skip-⁠output-⁠checks=false`,
-`-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=true`; and disallows:
-`-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=false`.
-
-The same could be accomplished by making `-⁠-⁠skip-⁠output-⁠checks` a suboption
-of `-⁠-⁠generate-types` (essentially the reverse of the above):
-
-```javascript
-/**
- * @type {import('@black-flag/core').Configuration['builder']}
- */
-export const [builder, withHandlerExtensions] = withBuilderExtensions({
-  'generate-types': {
-    boolean: true,
-    description: 'Output TypeScript declaration files alongside distributables',
-    default: true
-  },
-  'skip-output-checks': {
-    alias: 'skip-output-check',
-    boolean: true,
-    description: 'Do not run consistency and integrity checks on build output',
-    default: false,
-    subOptionOf: {
-      'generate-types': {
-        when: (generateTypes) => !generateTypes,
-        update: (oldConfig) => {
-          return {
-            ...oldConfig,
-            default: true,
-            // ▼ Similar to using "choices" to limit string-accepting options,
-            // we use one of these kinda wacky-looking self-referential
-            // "implies" to assert --skip-output-checks must be true!
-            implies: { 'skip-output-checks': true },
-            vacuousImplications: true
-          };
-        }
-      }
-    }
-  }
-});
-```
-
-Though, note that the second example, when the user supplies the disallowed
-arguments `-⁠-⁠generate-⁠types=false -⁠-⁠skip-⁠output-⁠checks=false`, they are
-presented with an error message like:
-
-```text
-The following arguments as given conflict with the implications of "skip-output-checks":
-   ➜ skip-output-checks == false
-```
-
-Whereas the first example presents the following error message, which makes more
-sense (because it mentions `-⁠-⁠generate-⁠types`):
-
-```text
-The following arguments as given conflict with the implications of "generate-types":
-   ➜ skip-output-checks == false
-```
+See [the examples directory][46] for more `subOptionOf` demonstrations,
+including a fleshed out version of `myctl` implemented using BFE.
 
 #### Support for `default` with `conflicts`/`requires`/etc
 
@@ -1235,7 +1205,7 @@ Defaults are set _before_ any [`check`][13] functions are run, _before_ any
 [implications][18] are set, and _before_ the relevant command [`handler`][9] is
 invoked, but _after_ all other BFE checks have succeeded. This enables the use
 of keys like [`requires`][14] and [`conflicts`][15] alongside [`default`][12]
-without causing [impossible configurations][46] that throw unresolvable CLI
+without causing [impossible configurations][47] that throw unresolvable CLI
 errors.
 
 This workaround avoids a (in my opinion) rather unintuitive [Yargs footgun][16],
@@ -1285,7 +1255,7 @@ are strange and may not work as expected:
 > To support this functionality, options must be described declaratively.
 > [Defining options imperatively][4] will break this feature.
 
-BFE supports automatic [grouping][47] of related options for improved UX, which
+BFE supports automatic [grouping][48] of related options for improved UX, which
 is enabled by default. These new groups are:
 
 - **"Required Options"**: options configured with [`demandThisOption`][20].
@@ -1299,7 +1269,7 @@ is enabled by default. These new groups are:
 - **"Optional Options"**: remaining options that do not fall into any of the
   above categories.
 
-An example from [xunnctl][48]:
+An example from [xunnctl][49]:
 
 ```text
 $ x f b --help
@@ -1345,7 +1315,7 @@ Common Options:
                                 [string] [default: "/home/freelance/.config/xunnctl-nodejs/state.json"]
 ```
 
-By including an explicit [`group`][47] property in an option's configuration,
+By including an explicit [`group`][48] property in an option's configuration,
 the option will be included in said group _in addition to_ the result of
 automatic grouping, e.g.:
 
@@ -1364,7 +1334,7 @@ const [builder, withHandlerExtensions] = withBuilderExtensions({
 
 > [!NOTE]
 >
-> Options configured with an explicit [`group`][47] property will never be
+> Options configured with an explicit [`group`][48] property will never be
 > automatically included in the "Optional Options" group.
 
 This feature can be disabled entirely by passing
@@ -1405,10 +1375,12 @@ const [builder, withHandlerExtensions] = withBuilderExtensions(
 
 ### `withUsageExtensions`
 
-> ⪢ API reference: [`withUsageExtensions`][49]
+> ⪢ API reference: [`withUsageExtensions`][50]
 
 This thin wrapper function is used for more consistent and opinionated usage
 string generation.
+
+<!-- example-region wue-1-js -->
 
 ```javascript
 // file: xunnctl/commands/firewall/ban.js
@@ -1446,7 +1418,7 @@ Common Options:
 
 ### `getInvocableExtendedHandler`
 
-> ⪢ API reference: [`getInvocableExtendedHandler`][50]
+> ⪢ API reference: [`getInvocableExtendedHandler`][51]
 
 Unlike Black Flag, BFE puts strict constraints on the order in which command
 exports must be invoked and evaluated. Specifically: an extended command's
@@ -1461,7 +1433,7 @@ makes bugs more likely and harder to spot.
 `getInvocableExtendedHandler` solves this by returning a version of the extended
 command's [`handler`][9] function that is ready to invoke immediately. Said
 [`handler`][9] expects a single `argv` parameter which is "safely" cloned,
-merged with several defaults (see [API reference][50]), and then passed-through
+merged with several defaults (see [API reference][51]), and then passed-through
 to your command's handler as-is.
 
 One of those defaults is the value of the `context` parameter that was supplied
@@ -1470,11 +1442,11 @@ cloned.
 
 > [!TIP]
 >
-> A "safe" clone is a [StructuredClone-like operation][51] that passes through
+> A "safe" clone is a [StructuredClone-like operation][52] that passes through
 > as-is any values that cannot be cloned rather than throwing an error. Since
-> BFE is leveraging [`safeDeepClone`][51] under the hood, all clone operations
-> can be tweaked by configuring [`context.state.extensions.transfer`][72]
-> appropriately (where `context` is the [ExecutionContext][73] instance passed
+> BFE is leveraging [`safeDeepClone`][52] under the hood, all clone operations
+> can be tweaked by configuring [`context.state.extensions.transfer`][53]
+> appropriately (where `context` is the [ExecutionContext][54] instance passed
 > to `getInvocableExtendedHandler`).
 >
 > Setting `context.state.extensions.transfer` is useful when, for instance, you
@@ -1484,20 +1456,20 @@ cloned.
 > [!TIP]
 >
 > Command [`handler`][9] exports invoked via `getInvocableExtendedHandler` will
-> receive an `argv` containing the [`$artificiallyInvoked`][52] symbol. This
+> receive an `argv` containing the [`$artificiallyInvoked`][55] symbol. This
 > allows handlers to determine programmatically when the command isn't actually
 > being invoked by Black Flag, which can be useful.
 >
 > However, to get intellisense/TypeScript support for the existence of
-> [`$artificiallyInvoked`][52] in `argv`, you must use
-> [`BfeStrictArguments`][53].
+> [`$artificiallyInvoked`][55] in `argv`, you must use
+> [`BfeStrictArguments`][56].
 
 > [!CAUTION]
 >
 > Command [`handler`][9] exports invoked via `getInvocableExtendedHandler` will
 > _never_ check the given `argv` for correctness or update any of its
-> keys/values (aside from setting [`$artificiallyInvoked`][52],
-> [`$executionContext`][71], and defaults for `$0` and `_` if they are omitted).
+> keys/values (aside from setting [`$artificiallyInvoked`][55],
+> [`$executionContext`][57], and defaults for `$0` and `_` if they are omitted).
 >
 > By invoking a command's handler function outside of Black Flag, you're
 > essentially treating it like a normal function. And all handler functions
@@ -1505,7 +1477,7 @@ cloned.
 > after all BF/BFE checks have passed and all updates to argv have been applied.
 >
 > If you want to invoke a full Black Flag command programmatically, use
-> [`runProgram`][54]. If instead you want to call an individual command's
+> [`runProgram`][58]. If instead you want to call an individual command's
 > (relatively) lightweight handler function directly, use
 > `getInvocableExtendedHandler`.
 
@@ -1513,6 +1485,8 @@ cloned.
 command exports.
 
 For example, in JavaScript:
+
+<!-- example-region gie-1-js -->
 
 ```javascript
 // file: my-cli/commands/command-B.js
@@ -1530,7 +1504,7 @@ export default function command(context) {
         context
       );
 
-      await handler({ ...argv, somethingElse: true });
+      await handler({ somethingElse: true });
 
       // ...
     })
@@ -1539,6 +1513,8 @@ export default function command(context) {
 ```
 
 Or in TypeScript:
+
+<!-- example-region gie-2-js -->
 
 ```typescript
 // file: my-cli/commands/command-B.ts
@@ -1567,7 +1543,7 @@ export default function command(context: CustomExecutionContext) {
         typeof context
       >(commandA, context);
 
-      await handler({ ...argv, somethingElse: true });
+      await handler({ somethingElse: true });
 
       // ...
     })
@@ -1577,7 +1553,7 @@ export default function command(context: CustomExecutionContext) {
 
 ## Examples
 
-See [the examples directory][55].
+See [the examples directory][46].
 
 <!-- symbiote-template-region-start 5 -->
 
@@ -1590,7 +1566,7 @@ Further documentation can be found under [`docs/`][x-repo-docs].
 ### Differences between Black Flag Extensions and Yargs
 
 When using BFE, several options function differently, such as [`implies`][18].
-Other options have their effect deferred, like [`default`][12]. [`coerce`][56]
+Other options have their effect deferred, like [`default`][12]. [`coerce`][59]
 will always receive an array when the same option also has [`array: true`][17].
 See the [configuration keys section][31] for a list of changes and their
 justifications.
@@ -1653,7 +1629,7 @@ export function builder(blackFlag) {
 > The Yargs API can and should still be invoked for purposes other than defining
 > options on a command, e.g. `blackFlag.strict(false)`.
 
-To this end, the following [Yargs API functions][57] are soft-disabled via
+To this end, the following [Yargs API functions][60] are soft-disabled via
 intellisense:
 
 - `option`
@@ -1662,15 +1638,15 @@ intellisense:
 However, no attempt is made by BFE to restrict your use of the Yargs API at
 runtime. Therefore, using Yargs's API to work around these artificial
 limitations, e.g. in your command's [`builder`][8] function or via the
-[`configureExecutionPrologue`][58] hook, will result in **undefined behavior**.
+[`configureExecutionPrologue`][61] hook, will result in **undefined behavior**.
 
 ### Black Flag versus Black Flag Extensions
 
-The goal of [Black Flag (@black-flag/core)][59] is to be as close to a drop-in
+The goal of [Black Flag (@black-flag/core)][62] is to be as close to a drop-in
 replacement as possible for vanilla Yargs, specifically for users of
-[`yargs::commandDir()`][60]. This means Black Flag must go out of its way to
+[`yargs::commandDir()`][63]. This means Black Flag must go out of its way to
 maintain 1:1 parity with the vanilla Yargs API ([with a few minor
-exceptions][61]).
+exceptions][64]).
 
 As a consequence, Yargs's imperative nature tends to leak through Black Flag's
 abstraction at certain points, such as with [the `blackFlag` parameter of the
@@ -1678,10 +1654,10 @@ abstraction at certain points, such as with [the `blackFlag` parameter of the
 Yargs's killer features without Black Flag getting in the way.
 
 However, this comes with costs. For one, the Yargs's API has suffered from a bit
-of feature creep over the years. A result of this is a rigid API [with][62]
-[an][16] [abundance][63] [of][64] [footguns][65] and an [inability][66] to
-[address][67] them without introducing [massively][68] [breaking][69]
-[changes][70].
+of feature creep over the years. A result of this is a rigid API [with][65]
+[an][16] [abundance][66] [of][67] [footguns][68] and an [inability][69] to
+[address][70] them without introducing [massively][71] [breaking][72]
+[changes][73].
 
 BFE takes the "YOLO" approach by exporting several functions that build on top
 of Black Flag's feature set without worrying too much about maintaining 1:1
@@ -1872,33 +1848,33 @@ See the [table of contributors][x-repo-contributors].
 [43]: ./docs/index/type-aliases/BfeBuilderObjectValueExtensions.md#subOptionOf
 [44]: ../../docs/features.md#built-in-support-for-dynamic-options-
 [45]: https://github.com/Xunnamius/black-flag-demo/blob/main/commands/init.js
-[46]: #strange-and-impossible-configurations
-[47]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
-[48]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
-[49]: ./docs/index/functions/withUsageExtensions.md
-[50]: ./docs/index/functions/getInvocableExtendedHandler.md
-[51]:
+[46]: ../../examples/README.md
+[47]: #strange-and-impossible-configurations
+[48]: https://yargs.js.org/docs#api-reference-groupkeys-groupname
+[49]: https://github.com/Xunnamius/xunnctl?tab=readme-ov-file#xunnctl
+[50]: ./docs/index/functions/withUsageExtensions.md
+[51]: ./docs/index/functions/getInvocableExtendedHandler.md
+[52]:
   https://github.com/Xunnamius/js-utils/blob/main/docs/src/functions/safeDeepClone.md
-[52]: ./docs/symbols/variables/$artificiallyInvoked.md
-[53]: ./docs/index/type-aliases/BfeStrictArguments.md
-[54]: ../../docs/api/src/exports/functions/runProgram.md
-[55]: ../../examples/README.md
-[56]: https://yargs.js.org/docs#api-reference-coercekey-fn
-[57]: https://yargs.js.org/docs#api-reference
-[58]: ../../docs/api/src/exports/type-aliases/ConfigureExecutionPrologue.md
-[59]: https://npm.im/@black-flag/core
-[60]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
-[61]: ../../docs/bf-vs-yargs.md
-[62]: https://github.com/yargs/yargs/issues/1323
-[63]: https://github.com/yargs/yargs/issues/2340
-[64]: https://github.com/yargs/yargs/issues/1322
-[65]: https://github.com/yargs/yargs/issues/2089
-[66]: https://github.com/yargs/yargs/issues/1975
-[67]: https://github.com/yargs/yargs-parser/issues/412
-[68]: https://github.com/yargs/yargs/issues/1680
-[69]: https://github.com/yargs/yargs/issues/1599
-[70]: https://github.com/yargs/yargs/issues/1611
-[71]: ../../docs/api/src/exports/variables/$executionContext.md
-[72]:
+[53]:
   https://github.com/Xunnamius/js-utils/blob/main/docs/src/type-aliases/SafeDeepCloneOptions.md#transfer
-[73]: ../../docs/api/src/exports/util/type-aliases/ExecutionContext.md
+[54]: ../../docs/api/src/exports/util/type-aliases/ExecutionContext.md
+[55]: ./docs/symbols/variables/$artificiallyInvoked.md
+[56]: ./docs/index/type-aliases/BfeStrictArguments.md
+[57]: ../../docs/api/src/exports/variables/$executionContext.md
+[58]: ../../docs/api/src/exports/functions/runProgram.md
+[59]: https://yargs.js.org/docs#api-reference-coercekey-fn
+[60]: https://yargs.js.org/docs#api-reference
+[61]: ../../docs/api/src/exports/type-aliases/ConfigureExecutionPrologue.md
+[62]: https://npm.im/@black-flag/core
+[63]: https://yargs.js.org/docs#api-reference-commanddirdirectory-opts
+[64]: ../../docs/bf-vs-yargs.md
+[65]: https://github.com/yargs/yargs/issues/1323
+[66]: https://github.com/yargs/yargs/issues/2340
+[67]: https://github.com/yargs/yargs/issues/1322
+[68]: https://github.com/yargs/yargs/issues/2089
+[69]: https://github.com/yargs/yargs/issues/1975
+[70]: https://github.com/yargs/yargs-parser/issues/412
+[71]: https://github.com/yargs/yargs/issues/1680
+[72]: https://github.com/yargs/yargs/issues/1599
+[73]: https://github.com/yargs/yargs/issues/1611

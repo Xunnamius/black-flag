@@ -61,7 +61,7 @@ versions. Also comes with first-class support for both CJS and ESM source.
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag versus vanilla Yargs][22]\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Simple demo CLI project][23] (or `npx -p @black-flag/demo myctl --help`)\
 ‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag recipes for solving common CLI design problems][24]\
-‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag's intro examples][33] (which are just [Yargs's intro examples][25] rewritten with Black Flag)
+‌ ‌ ‌  ‌‌❖ ‌ ‌ [Black Flag's intro examples][25] (which are just [Yargs's intro examples][26] rewritten with Black Flag)
 
 <!-- prettier-ignore-end -->
 
@@ -70,14 +70,14 @@ versions. Also comes with first-class support for both CJS and ESM source.
 > [!TIP]
 >
 > If you find yourself a fan of Black Flag's more declarative DX and want to go
-> all the way, check out [Black Flag Extensions][26] (BFE). BFE is a collection
+> all the way, check out [Black Flag Extensions][27] (BFE). BFE is a collection
 > of surprisingly simple set-theoretic APIs that build on
-> [`yargs::options()`][27] for a **fully declarative developer experience**. BFE
-> also protects you from [a couple Yargs footguns][28] that Black Flag by itself
+> [`yargs::options()`][28] for a **fully declarative developer experience**. BFE
+> also protects you from [a couple Yargs footguns][29] that Black Flag by itself
 > cannot.
 >
-> You may also be interested in [Black Flag Checks][29] (BFC), which offers
-> several pluggable [`yargs::check`][30] functions—like `checkIsNotNegative` and
+> You may also be interested in [Black Flag Checks][30] (BFC), which offers
+> several pluggable [`yargs::check`][31] functions—like `checkIsNotNegative` and
 > `checkArrayNotEmpty`—built to work with BFE.
 
 <!-- symbiote-template-region-start 3 -->
@@ -116,7 +116,7 @@ npm install @black-flag/core
 ```
 
 And if you're ready to go all in on Black Flag's declarative API, check out
-[Black Flag Extensions][26]:
+[Black Flag Extensions][27]:
 
 ```shell
 npm install @black-flag/extensions
@@ -325,9 +325,9 @@ Next steps:
 - [Play with a simple demo CLI project][23] (or
   `npx -p @black-flag/demo myctl --help`)
 - [Review Black Flag recipes for solving common CLI design problems][24]
-- [Deep dive into Black Flag's internals][31]
-- [Pull up Black Flag's introductory examples][33] (or [Yargs's][25])
-- [Pore over Yargs's parser tricks][32] (which also apply to Black Flag)
+- [Deep dive into Black Flag's internals][32]
+- [Pull up Black Flag's introductory examples][25] (or [Yargs's][26])
+- [Pore over Yargs's parser tricks][33] (which also apply to Black Flag)
 
 ## Appendix 🏴
 
@@ -341,7 +341,7 @@ Further documentation can be found under [`docs/`][x-repo-docs] and
 
 |      Term       | Description                                                                                                                                                                                                                                                                                                   |
 | :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|     command     | A "command" is a functional unit associated with a [configuration][35] file and represented internally as a trio of programs: [effector, helper, and router][31]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
+|     command     | A "command" is a functional unit associated with a [configuration][35] file and represented internally as a trio of programs: [effector, helper, and router][32]. Further, each command is classified as one of: "pure parent" (root and parent), "parent-child" (parent and child), or "pure child" (child). |
 |     program     | A "program" is a Yargs instance wrapped in a [`Proxy`][36] granting the instance an expanded set of features. Programs are represented internally by the [`Program`][37] type.                                                                                                                                |
 |      root       | The tippy top command in your hierarchy of commands and the entry point for any Black Flag application. Also referred to as the "root command".                                                                                                                                                               |
 | default command | A "default command" is [Yargs parlance][38] for the CLI entry point. Technically there is no concept of a "default command" at the Black Flag level, though there is the _root command_.                                                                                                                      |
@@ -565,15 +565,15 @@ specification. Contributions of any kind welcome!
 [22]: ./docs/bf-vs-yargs.md
 [23]: https://github.com/Xunnamius/black-flag-demo
 [24]: ./examples/README.md
-[25]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
-[26]: ./packages/extensions/README.md
-[27]: https://yargs.js.org/docs#api-reference-optionskey-opt
-[28]: ./docs/bf-vs-yargs.md#irrelevant-differences
-[29]: ./packages/checks/README.md
-[30]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
-[31]: ./docs/advanced.md
-[32]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
-[33]: ./examples/yargs-examples/README.md
+[25]: ./examples/yargs-intro/README.md
+[26]: https://github.com/yargs/yargs/blob/HEAD/docs/examples.md
+[27]: ./packages/extensions/README.md
+[28]: https://yargs.js.org/docs#api-reference-optionskey-opt
+[29]: ./docs/bf-vs-yargs.md#irrelevant-differences
+[30]: ./packages/checks/README.md
+[31]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
+[32]: ./docs/advanced.md
+[33]: https://github.com/yargs/yargs/blob/main/docs/tricks.md
 [34]: ./docs/api/README.md
 [35]: ./docs/api/src/exports/type-aliases/Configuration.md
 [36]:
