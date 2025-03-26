@@ -48,7 +48,7 @@ $ ./cli.js plunder --ships 12 --distance 98.7
 Retreat from the xupptumblers!
 ```
 
-## But Don't Walk the Plank Just yet! There Be More!
+## But Don't Walk the Plank Just yet! There Be More
 
 `commands/short.js`:
 
