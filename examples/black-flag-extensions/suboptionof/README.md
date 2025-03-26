@@ -1,4 +1,4 @@
-[examples][1] / [black-flag-extensions][2] / builder-suboptionof
+[examples][1] / [black-flag-extensions][2] / suboptionof
 
 # Black Flag Extensions: `builder::subOptionOf`
 
@@ -106,6 +106,12 @@ sense (because it mentions `-⁠-⁠generate-⁠types`):
 ```text
 The following arguments as given conflict with the implications of "generate-types":
    ➜ skip-output-checks == false
+```
+
+You can also run this example's tests:
+
+```shell
+NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --testMatch '**/test.cjs' --restoreMocks
 ```
 
 [1]: ../../README.md

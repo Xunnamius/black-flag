@@ -1,0 +1,16 @@
+{
+  "name": "typescript",
+  "version": "1.2.3",
+  "private": true,
+  "type": "commonjs",
+  "bin": "./dist/cli.js",
+  "scripts": {
+    "build": ""
+  },
+  "dependencies": {
+    "@black-flag/core": "^2.0.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}

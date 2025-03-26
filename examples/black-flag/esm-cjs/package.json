@@ -1,0 +1,16 @@
+{
+  "name": "esm-cjs",
+  "version": "1.2.3",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "cjs": "./cli.cjs",
+    "esm": "./cli.js"
+  },
+  "dependencies": {
+    "@black-flag/core": "^2.0.4"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

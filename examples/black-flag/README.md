@@ -7,5 +7,5 @@ design problems using [Black Flag][2].
 
 See [here][1] for a table of this directory's contents.
 
-[1]: ../README.md
+[1]: ../README.md#black-flag-recipes
 [2]: ../../README.md

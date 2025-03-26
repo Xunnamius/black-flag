@@ -7,5 +7,5 @@ design problems using [Black Flag Extensions][2].
 
 See [here][1] for a table of this directory's contents.
 
-[1]: ../README.md
+[1]: ../README.md#black-flag-extensions-recipes
 [2]: ../../packages/extensions/README.md

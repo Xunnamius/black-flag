@@ -14,9 +14,27 @@ const config = await moduleExport({
   ...(await assertEnvironment())
 });
 
-config.push({
-  /* Add custom config here, such as disabling certain rules */
-});
+config.push(
+  {
+    name: 'for-examples-only:.mjs',
+    files: ['examples/**/*.js', 'examples/**/*.mjs'],
+    languageOptions: {
+      sourceType: 'module'
+    },
+    rules: {
+      'n/no-restricted-import': 'off',
+      'import/extensions': 'off'
+    }
+  },
+  {
+    name: 'for-examples-only:.ts',
+    files: ['examples/**/*.ts'],
+    rules: {
+      'n/no-restricted-import': 'off',
+      'import/extensions': 'off'
+    }
+  }
+);
 
 export default config;
 

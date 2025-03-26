@@ -24,7 +24,7 @@ The [root command][3] is `index.js`:
 exports.name = 'intro';
 ```
 
-## With Yargs, the Options Be Just a Hash!
+## With Yargs, the Options Be Just a Hash
 
 `commands/plunder.js`:
 
@@ -48,7 +48,7 @@ $ ./cli.js plunder --ships 12 --distance 98.7
 Retreat from the xupptumblers!
 ```
 
-## But Don't Walk the Plank Just yet! There Be More! You Can Do Short Options:
+## But Don't Walk the Plank Just yet! There Be More!
 
 `commands/short.js`:
 
@@ -65,7 +65,7 @@ $ ./cli.js short -x 10 -y 21
 (10,21)
 ```
 
-## And Booleans, Both Long, Short, and Even Grouped:
+## And Booleans, Both Long, Short, and Even Grouped
 
 `commands/bool.js`:
 
@@ -92,7 +92,7 @@ $ ./cli.js bool -sp --fr
 Le perroquet dit: couac!
 ```
 
-## And Non-Hyphenated Options Too! Just Use `argv._`!
+## And Non-Hyphenated Options Too! Just Use `argv._`
 
 `commands/nonopt.js`:
 
@@ -115,7 +115,7 @@ $ ./cli.js nonopt "me hearties" -x 0.54 yo -y 1.12 ho
 [ 'me hearties', 'yo', 'ho' ]
 ```
 
-## Yargs Even Counts Your Booleans!
+## Yargs Even Counts Your Booleans
 
 `commands/count.js`:
 
@@ -164,7 +164,7 @@ Showing semi-important stuff too
 Extra chatty mode
 ```
 
-## Tell Users How to Use Your Options and Make Demands.
+## Tell Users How to Use Your Options and Make Demands
 
 `commands/area.js`:
 
@@ -190,7 +190,7 @@ Options:
 Missing required arguments: h
 ```
 
-## After Your Demands Have Been Met, Demand More! Ask for Non-Hyphenated Arguments!
+## After Your Demands Have Been Met, Demand More
 
 `commands/demand_count.js`:
 
@@ -213,7 +213,7 @@ $ ./cli.js demand_count a b c
 { _: [ 'a', 'b', 'c' ], '$0': 'demand_count.js' }
 ```
 
-## Even More Shiver Me Timbers!
+## Even More Shiver Me Timbers
 
 `commands/default_singles.js`:
 
@@ -243,7 +243,7 @@ $ ./cli.js default_singles -y 7
 17
 ```
 
-## And If You Really Want to Get All Descriptive about It...
+## And If You Really Want to Get All Descriptive
 
 `commands/boolean_single.js`:
 
@@ -287,7 +287,7 @@ $ ./cli.js boolean_double -x -z one two three
 [ 'one', 'two', 'three' ]
 ```
 
-## Yargs Is Here to Help You...
+## Yargs Is Here to Help You
 
 You can describe parameters for help messages and set aliases. Yargs figures out
 how to format a handy help string automatically.
