@@ -43,18 +43,18 @@ Flag, but are noted below nonetheless.
   [`ExecutionContext::state.globalHelpOption`][9]/[`ExecutionContext::state.globalVersionOption`][10]
   directly in [`configureExecutionContext`][11].
 
-  > [!NOTE]
-  >
-  > Black Flag enables built-in help and version _options_, never a help or
-  > version _command_.
+> [!NOTE]
+>
+> Black Flag enables built-in help and version _options_, never a help or
+> version _command_.
 
-  > [!NOTE]
-  >
-  > Only the root command support the built-in `--version` option. Calling
-  > `--version` on a child command will have no effect unless you make it so.
-  > This dodges [another Yargs footgun][12], and setting
-  > [`ExecutionContext::state.globalVersionOption = undefined`][10] will prevent
-  > Yargs from clobbering any custom version arguments on the root command too.
+> [!NOTE]
+>
+> Only the root command support the built-in `--version` option. Calling
+> `--version` on a child command will have no effect unless you make it so. This
+> dodges [another Yargs footgun][12], and setting
+> [`ExecutionContext::state.globalVersionOption = undefined`][10] will prevent
+> Yargs from clobbering any custom version arguments on the root command too.
 
 ## Irrelevant Differences
 
