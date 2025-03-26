@@ -50,7 +50,7 @@ Flag, but are noted below nonetheless.
 
 > [!NOTE]
 >
-> Only the root command support the built-in `--version` option. Calling
+> Only the root command supports the built-in `--version` option. Calling
 > `--version` on a child command will have no effect unless you make it so. This
 > dodges [another Yargs footgun][12], and setting
 > [`ExecutionContext::state.globalVersionOption = undefined`][10] will prevent
