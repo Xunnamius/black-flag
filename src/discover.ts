@@ -17,7 +17,8 @@ import {
   CommandNotImplementedError,
   GracefulEarlyExitError,
   isCliError,
-  isCommandNotImplementedError
+  isCommandNotImplementedError,
+  isYargsError
 } from 'universe:error.ts';
 
 import { capitalize, wrapExecutionContext } from 'universe:util.ts';
@@ -907,11 +908,9 @@ export async function discoverCommands(
         const isErrorCliError = isCliError(error);
         descriptorDebug('error is CliError: %O', isErrorCliError);
 
-        // ? If a failure happened but error is not defined, it was *probably*
+        // ? If a failure happened but error is not defined, it was _probably_
         // ? a yargs-specific error (e.g. argument validation failure).
-        // ! Is there a better way to differentiate between Yargs-specific
-        // ! errors and third-party errors? Or is `!error` the best we can do?
-        const isErrorVanillaYargsError = !error;
+        const isErrorVanillaYargsError = isYargsError(error) || !error;
         descriptorDebug('error is vanilla yargs error: %O', isErrorVanillaYargsError);
 
         const isErrorOtherError = !isErrorCliError && !isErrorVanillaYargsError;
@@ -989,7 +988,11 @@ export async function discoverCommands(
           descriptorDebug(
             `sending %O help text to stderr (triggered by %O)`,
             outputStyle,
-            error ? 'black flag' : 'yargs'
+            isErrorOtherError
+              ? 'external'
+              : isErrorVanillaYargsError
+                ? 'yargs'
+                : 'black flag'
           );
 
           setContextualUsageTextFor(meta.fullUsageText, outputStyle);
@@ -1044,11 +1047,14 @@ export async function discoverCommands(
         if (context.state.finalError === undefined) {
           if (isErrorCliError) {
             descriptorDebug('exited failure handler: set finalError to error as-is');
+            // ! It is important that context.state.finalError === error when
+            // ! error is an instance of CliError
             context.state.finalError = error;
           } else {
             descriptorDebug(
               'exited failure handler: set finalError to error wrapped with CliError'
             );
+
             context.state.finalError = new CliError(
               /* istanbul ignore next */
               error || message || BfErrorMessage.GuruMeditation()

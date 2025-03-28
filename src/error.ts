@@ -16,6 +16,15 @@ import type {
 
 import type { ExecutionContext } from 'universe:types/program.ts';
 
+/**
+ * Type guard for the internal Yargs `YError`.
+ */
+export function isYargsError(
+  parameter: unknown
+): parameter is Error & { name: 'YError' } {
+  return isNativeError(parameter) && parameter.name === 'YError';
+}
+
 // TODO: replace a lot of all that follows with the official package(s),
 // TODO: including the symbol use below
 

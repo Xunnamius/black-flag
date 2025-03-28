@@ -25,7 +25,8 @@ import {
   CliError,
   isCliError,
   isCommandNotImplementedError,
-  isGracefulEarlyExitError
+  isGracefulEarlyExitError,
+  isYargsError
 } from 'universe:error.ts';
 
 import {
@@ -930,10 +931,14 @@ async function defaultErrorHandlingEpilogueConfigurationHook(
     { error },
     _,
     {
+      debug,
       state: { didOutputHelpOrVersionText }
     }
   ]: Parameters<ConfigureErrorHandlingEpilogue>
 ) {
+  const errorDebug = debug.extend('default-error-handler');
+  errorDebug('didOutputHelpOrVersionText: %O', didOutputHelpOrVersionText);
+
   if (didOutputHelpOrVersionText) {
     /* istanbul ignore next */
     if (!isCommandNotImplementedError(error)) {
@@ -945,11 +950,20 @@ async function defaultErrorHandlingEpilogueConfigurationHook(
     outputErrorMessage();
   }
 
+  errorDebug('done');
+
   function outputErrorMessage() {
     const deepestError = getDeepestErrorCause(error);
+
+    errorDebug('error: %O', error);
+    errorDebug('deepestError: %O', deepestError);
+    errorDebug('error === deepestError: %O', error === deepestError);
+    errorDebug('isCliError: %O', isCliError(deepestError));
+    errorDebug('isYargsError: %O', isYargsError(deepestError));
+
     // eslint-disable-next-line no-console
     console.error(
-      error === deepestError && isCliError(deepestError)
+      isYargsError(deepestError) || (error === deepestError && isCliError(deepestError))
         ? // ? Messages coming from yargs are typically already capitalized, but
           // ? not always, and not all "cli" messages come directly from yargs
           capitalize(deepestError.message)
