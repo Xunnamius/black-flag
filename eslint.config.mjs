@@ -16,6 +16,13 @@ const config = await moduleExport({
 
 config.push(
   {
+    name: 'for-examples-only',
+    files: ['examples/**/*'],
+    rules: {
+      'no-console': 'off'
+    }
+  },
+  {
     name: 'for-examples-only:.mjs',
     files: ['examples/**/*.js', 'examples/**/*.mjs'],
     languageOptions: {

@@ -12,11 +12,7 @@ TODO
 2. Run `npm install`
 3. Execute `npx sorting`
 
-You can also run this example's tests:
-
-```shell
-NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --testMatch '**/test.cjs' --restoreMocks
-```
+You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md

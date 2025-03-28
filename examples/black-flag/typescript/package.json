@@ -5,7 +5,8 @@
   "type": "commonjs",
   "bin": "./dist/cli.js",
   "scripts": {
-    "build": ""
+    "build": "",
+    "test": "NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --restoreMocks"
   },
   "dependencies": {
     "@black-flag/core": "^2.0.4"

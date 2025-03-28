@@ -108,3 +108,5 @@ _book
 CertificateAuthorityCertificate.pem
 
 # Custom
+examples/**/package-lock.json
+examples/**/dist
