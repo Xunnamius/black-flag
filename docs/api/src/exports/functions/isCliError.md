@@ -8,7 +8,7 @@
 
 > **isCliError**(`parameter`): `parameter is CliError`
 
-Defined in: [src/error.ts:33](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/error.ts#L33)
+Defined in: [src/error.ts:42](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L42)
 
 Type guard for [CliError](../classes/CliError.md).
 

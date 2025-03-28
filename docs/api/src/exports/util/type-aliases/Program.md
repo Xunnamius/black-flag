@@ -8,7 +8,7 @@
 
 > **Program**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Omit`\<`_Program`\<[`FrameworkArguments`](FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>, `"command"` \| `"onFinishCommand"` \| `"showHelpOnFail"` \| `"version"` \| `"help"` \| `"exitProcess"` \| `"commandDir"` \| `"parse"` \| `"parsed"` \| `"parseSync"` \| `"argv"`\> & `object`
 
-Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/f3086f07a0f4cf661850599e370f220c47febbd1/src/types/program.ts#L55)
+Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L55)
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
