@@ -25,7 +25,7 @@ export default function command() {
           default: ['nothing'],
           defaultDescription: 'the string "nothing"',
           coerce(args) {
-            return args.map((arg) => {
+            return args.map((/** @type {unknown} */ arg) => {
               switch (arg) {
                 case 'one': {
                   return 1;
