@@ -1069,9 +1069,9 @@ export async function discoverCommands(
     }
 
     /**
-     * Accepts an effector or helper `program` and a fully compiled `usage` text
-     * string (i.e. contains no replacer variables like "$0") and resets the
-     * registered usage text on `program` using `usage` with respect to
+     * Accepts a fully compiled `usage` text string (i.e. contains no replacer
+     * variables like "$0") and resets the registered usage text on the helper
+     * and effectors programs in the current scope using `usage` with respect to
      * `fullOrShort`.
      */
     function setContextualUsageTextFor(
