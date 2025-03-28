@@ -85,6 +85,8 @@ Note how the default value of `--version` changes depending on the value of
 `--lang`. Further note that `myctl init` is configured to select the pythonic
 defaults when called without any arguments.
 
+In the next section we show how these dynamic options are implemented.
+
 ## It's Yargs All the Way down ✨
 
 At the end of the day, you're still working with Yargs instances, so there's no
@@ -167,7 +169,11 @@ export function handler(argv) {
 }
 ```
 
+> [!TIP]
+>
 > See [the demo repo][5] for the complete implementation of this command.
+> Consider also checking out the [more optimal implementation of this
+> command][39] that leverages [Black Flag Extensions][40].
 
 <!-- example-region all-2 -->
 
@@ -944,3 +950,5 @@ check out the source code for my "meta" project: [`@-xun/symbiote`][38].
 [36]: ./getting-started.md#building-and-running-your-cli
 [37]: ../examples/README.md
 [38]: https://github.com/Xunnamius/symbiote/blob/main/src
+[39]: ../examples/black-flag-extensions/myctl
+[40]: ../packages/extensions/README.md
