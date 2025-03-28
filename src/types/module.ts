@@ -64,9 +64,8 @@ export type Configuration<
         // ? This is a valid use of "void" here
         // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
         | void
-        | EffectorProgram<CustomCliArguments, CustomExecutionContext>
-        | { [key: string]: _Options }
-        | _Program);
+        | object
+        | { [key: string]: _Options });
   /**
    * The command as interpreted by yargs. Must always begin with `$0`. May
    * contain positional arguments declared using the [`yargs::command`
