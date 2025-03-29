@@ -10,7 +10,7 @@ All examples are easy and simple to run:
 
 1. Clone this repository
 2. Change directory to the example you wish to run
-3. Run `npm install`
+3. Run `npm install` (and then `npm run build` for TypeScript-based examples) 
 4. Execute `npx cli-name` (replace "cli-name" with the name of the example's
    CLI)
 
