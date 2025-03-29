@@ -38,8 +38,8 @@ necessary) in Black Flag:
 <!-- lint ignore -->
 
 - ~~global~~ Doesn't really mean anything in Black Flag ([why?][25])
-- ~~skipValidation~~ `skipValidation` Seems to have no effect when using
-  `yargs@17.7.2`'s commands-based API (possibly a bug in Yargs)
+- ~~skipValidation~~ Seems to have no effect when using
+  `yargs@17.7.2`'s commands-based API (possibly a bug in Yargs) (see [`subOptionOf`](../../../packages/extensions/README.md#suboptionof) instead)
 
 ## Run This Example
 
@@ -73,4 +73,4 @@ You can also run this example's tests by executing `npm test`.
 [22]: https://yargs.js.org/docs#number
 [23]: https://yargs.js.org/docs#string
 [24]: https://yargs.js.org/docs#type
-[25]: ../../../docs/bf-vs-yargs.md#irrelevant-differences
+[25]: ../../../docs/advanced.md
