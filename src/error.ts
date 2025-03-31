@@ -264,15 +264,24 @@ export class GracefulEarlyExitError extends CliError {
    * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
    * ignored.
    */
-  constructor(error?: Error, options?: CliErrorOptions) {
-    super(error ? error.message : BfErrorMessage.GracefulEarlyExit(), {
-      ...(error ? { cause: error } : {}),
-      showHelp: false,
-      ...options,
-      suggestedExitCode: FrameworkExitCode.Ok,
-      // * Is ignored by runProgram anyway
-      dangerouslyFatal: false
-    });
+  constructor(reason?: Error | string, options?: CliErrorOptions) {
+    super(
+      reason
+        ? typeof reason === 'string'
+          ? reason
+          : reason.message
+        : BfErrorMessage.GracefulEarlyExit(),
+      {
+        ...(reason
+          ? { cause: typeof reason === 'string' ? new Error(reason) : reason }
+          : {}),
+        showHelp: false,
+        ...options,
+        suggestedExitCode: FrameworkExitCode.Ok,
+        // * Is ignored by runProgram anyway
+        dangerouslyFatal: false
+      }
+    );
   }
 }
 makeNamedError(GracefulEarlyExitError, 'GracefulEarlyExitError');
