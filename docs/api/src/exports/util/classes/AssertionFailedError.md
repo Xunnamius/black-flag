@@ -6,7 +6,7 @@
 
 # Class: AssertionFailedError
 
-Defined in: [src/error.ts:283](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L283)
+Defined in: [src/error.ts:284](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L284)
 
 Represents a failed sanity check.
 
@@ -20,7 +20,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`error`, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:289](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L289)
+Defined in: [src/error.ts:290](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L290)
 
 Represents a failed sanity check.
 
@@ -46,7 +46,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`message`, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:290](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L290)
+Defined in: [src/error.ts:291](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L291)
 
 Represents a failed sanity check.
 
@@ -72,7 +72,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`errorOrMessage`?, `options`?): `AssertionFailedError`
 
-Defined in: [src/error.ts:291](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L291)
+Defined in: [src/error.ts:292](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L292)
 
 Represents a failed sanity check.
 
@@ -100,7 +100,7 @@ Represents a failed sanity check.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:285](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L285)
+Defined in: [src/error.ts:286](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L286)
 
 #### Overrides
 
@@ -124,7 +124,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L171)
+Defined in: [src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L172)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -189,7 +189,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"short"` \| `"full"` \| `"default"`\>
 
-Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L170)
+Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L171)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -200,12 +200,13 @@ sent to stderr, including the entire `usage` string. If set to `"short"`
 (or `true`), the same help text will be sent to stderr except only the
 first line of usage will be included. In either case, help text will be
 sent to stderr regardless of the value of
-`ExecutionContext::state.showHelpOnFail`.
+[ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail).
 
 Alternatively, if set to `"default"`, the value of
-`ExecutionContext::state.showHelpOnFail` will be used. And if set to
-`false`, no help text will be sent to stderr due to this error regardless
-of the value of `ExecutionContext::state.showHelpOnFail`.
+[ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail)
+will be used. And if set to `false`, no help text will be sent to stderr
+due to this error regardless of the value of
+[ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail).
 
 Note that, regardless of this `showHelp`, help text is always output when a
 parent command is invoked that (1) has one or more child commands and (2)
@@ -240,7 +241,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:169](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/error.ts#L169)
+Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/error.ts#L170)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

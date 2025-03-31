@@ -8,7 +8,7 @@
 
 > **ExecutionContext** = `object`
 
-Defined in: [src/types/program.ts:342](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L342)
+Defined in: [src/types/program.ts:344](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L344)
 
 Represents a globally-accessible shared context object singleton.
 
@@ -22,7 +22,7 @@ Represents a globally-accessible shared context object singleton.
 
 > **commands**: `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](ProgramMetadata.md); `programs`: [`Programs`](Programs.md); \}\>
 
-Defined in: [src/types/program.ts:357](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L357)
+Defined in: [src/types/program.ts:359](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L359)
 
 A Map consisting of auto-discovered [Program](Program.md) instances and their
 associated [ProgramMetadata](ProgramMetadata.md) as singular object values with their
@@ -43,7 +43,7 @@ This property is used internally by Black Flag.
 
 > **debug**: `ExtendedDebugger`
 
-Defined in: [src/types/program.ts:363](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L363)
+Defined in: [src/types/program.ts:365](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L365)
 
 The `ExtendedDebugger` for the current runtime level.
 
@@ -55,7 +55,7 @@ This property is used internally by Black Flag.
 
 > **state**: `object`
 
-Defined in: [src/types/program.ts:369](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L369)
+Defined in: [src/types/program.ts:371](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L371)
 
 The current state of the execution environment.
 

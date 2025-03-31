@@ -8,7 +8,7 @@
 
 > **ConfigureExecutionPrologue**\<`CustomContext`\> = (`rootPrograms`, `context`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/configure.ts#L44)
+Defined in: [src/types/configure.ts:44](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/configure.ts#L44)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any

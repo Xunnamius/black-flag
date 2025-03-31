@@ -8,7 +8,7 @@
 
 > **isNullArguments**(`obj`): `obj is NullArguments`
 
-Defined in: [src/util.ts:40](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/util.ts#L40)
+Defined in: [src/util.ts:40](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/util.ts#L40)
 
 Type-guard for [NullArguments](../../type-aliases/NullArguments.md).
 

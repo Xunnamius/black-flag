@@ -8,7 +8,7 @@
 
 > **ConfigureErrorHandlingEpilogue**\<`CustomContext`\> = (`meta`, `argv`, `context`) => `Promisable`\<`void`\>
 
-Defined in: [src/types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/configure.ts#L96)
+Defined in: [src/types/configure.ts:96](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/configure.ts#L96)
 
 This function is called once at the very end of the error handling process
 after an error has occurred.

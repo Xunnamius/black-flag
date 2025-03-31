@@ -8,7 +8,7 @@
 
 > **Program**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Omit`\<`_Program`\<[`FrameworkArguments`](FrameworkArguments.md)\<`CustomExecutionContext`\> & `CustomCliArguments`\>, `"command"` \| `"onFinishCommand"` \| `"showHelpOnFail"` \| `"version"` \| `"help"` \| `"exitProcess"` \| `"commandDir"` \| `"parse"` \| `"parsed"` \| `"parseSync"` \| `"argv"`\> & `object`
 
-Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/d52d6ef8a8da5a82b265a7ff9d65b74350896d3b/src/types/program.ts#L55)
+Defined in: [src/types/program.ts:55](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L55)
 
 Represents a pre-configured yargs instance ready for argument parsing and
 execution.
@@ -20,32 +20,32 @@ by yargs but with several differences and should be preferred.
 
 ### showHelpOnFail()
 
-> **showHelpOnFail**: (`enabled`) => `Program`\<`CustomCliArguments`, `CustomExecutionContext`\>
+> **showHelpOnFail**: (`configuration`) => `Program`\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Like `yargs::showHelpOnFail` except (1) it determines if the "full" or
-"short" help text is shown by default, (2) it determines if help text is
-shown when executing an unimplemented parent command, and (3) it has no
-second `message` parameter.
+Similar in intent to `yargs::showHelpOnFail` except (1) it has no second
+`message` parameter, (2) it determines if the "full" or "short" help text
+is shown by default, (3) it determines if help text is shown when executing
+an unimplemented parent command, and (4) it determines on which kinds of
+errors help text is output (by default).
 
-If you want to output some specific error message instead, use a
-configuration hook or `yargs::epilogue`.
+If you want to configure how error messages are communicated to the user,
+or otherwise output some specific error message instead, use the
+`configureErrorHandlingEpilogue` configuration hook.
 
-Invoking this method will affect all programs in your command hierarchy,
+As this method is just sugar around manipulating
+[ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail),
+invoking this method will affect _all programs in your command hierarchy_,
 not just the program on which it was invoked.
 
 #### Parameters
 
-##### enabled
+##### configuration
 
 [`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\]
 
 #### Returns
 
 `Program`\<`CustomCliArguments`, `CustomExecutionContext`\>
-
-#### See
-
-https://yargs.js.org/docs/#api-reference-showhelponfailenable-message
 
 ## Type Parameters
 
