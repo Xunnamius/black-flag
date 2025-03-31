@@ -2,9 +2,10 @@
 
 # Black Flag: Error handling and `CliError` Usage
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate using [`configureErrorHandlingEpilogue`][3] and
+[`blackFlag::showHelpOnFail`][4] to handle different kinds of errors
+([graceful][5], [CLI][6], [yargs][7], and custom `Error` classes) using various
+help text output styles.
 
 ## Run This Example
 
@@ -16,3 +17,10 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]:
+  ../../../docs/api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
+[4]: ../../../docs/api/src/exports/util/type-aliases/Program.md#showhelponfail
+[5]: ../../../docs/api/src/exports/classes/GracefulEarlyExitError.md
+[6]: ../../../docs/api/src/exports/classes/CliError.md
+[7]:
+  https://github.com/yargs/yargs/blob/ef28c98ae14621fd484ec80b128b46e85b6bf858/lib/yerror.ts

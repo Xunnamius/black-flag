@@ -2,9 +2,8 @@
 
 # Black Flag Extensions: Command Passthrough
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate using one command as an alias for another, e.g. a
+parent command having the same functionality as one of its child commands.
 
 ## Run This Example
 

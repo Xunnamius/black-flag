@@ -10,7 +10,7 @@ All examples are easy and simple to run:
 
 1. Clone this repository
 2. Change directory to the example you wish to run
-3. Run `npm install` (and then `npm run build` for TypeScript-based examples) 
+3. Run `npm install` (and then `npm run build` for TypeScript-based examples)
 4. Execute `npx cli-name` (replace "cli-name" with the name of the example's
    CLI)
 
@@ -26,9 +26,9 @@ file containing code examples instead of an actual runnable program.
 - [Configuration hooks][10] — fine-tuning the BF runtime
 - [Shared builder and handler][11] — reusing builders/handlers across commands
 - [CLI-wide defaults][12] — reconfiguring yargs/yargs-parser across all commands
-- [Custom context][13] — modifying custom context
+- [Custom context][13] — providing a custom context
 - [Dynamic options][14] — taking advantage of dynamic options
-- [Positional][15] — configuring normal and dynamic conditionals
+- [Positional][15] — configuring normal and dynamic positionals
 - [Error handling][16] — handling graceful, CLI, yargs, and custom errors
 - [Testing][17] — tricks for testing commands, hooks, and CLIs
 - [TypeScript][18] — building a fully-typed CLI in TypeScript

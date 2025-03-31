@@ -1,10 +1,7 @@
 [examples][1] / [black-flag-extensions][2] / sorting
 
-# Black Flag Extensions: Automatic Sorting
-
-<!-- TODO -->
-
-TODO
+In this example we demonstrate configuring [automatic sorting][3] in
+[`withBuilderExtensions`][4].
 
 ## Run This Example
 
@@ -16,3 +13,5 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]: ../../../packages/extensions/README.md#automatic-sorting-of-options
+[4]: ../../../packages/extensions/README.md#withbuilderextensions

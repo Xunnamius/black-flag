@@ -2,8 +2,8 @@
 
 # Black Flag: `builder` options
 
-An example using every relevant [Yargs builder `opt`][3] in Black Flag. They
-are:
+In this example we demonstrate using every relevant [Yargs builder `opt`][3] in
+Black Flag. They are:
 
 - [`alias`][4]: alias(es) for the canonical option key
 - [`array`][5]: interpret option as an array
@@ -38,8 +38,8 @@ necessary) in Black Flag:
 <!-- lint ignore -->
 
 - ~~global~~ Doesn't really mean anything in Black Flag ([why?][25])
-- ~~skipValidation~~ Seems to have no effect when using
-  `yargs@17.7.2`'s commands-based API (possibly a bug in Yargs) (see [`subOptionOf`](../../../packages/extensions/README.md#suboptionof) instead)
+- ~~skipValidation~~ Seems to have no effect when using `yargs@17.7.2`'s
+  commands-based API (possibly a bug in Yargs) (see [`subOptionOf`][26] instead)
 
 ## Run This Example
 
@@ -74,3 +74,4 @@ You can also run this example's tests by executing `npm test`.
 [23]: https://yargs.js.org/docs#string
 [24]: https://yargs.js.org/docs#type
 [25]: ../../../docs/advanced.md
+[26]: ../../../packages/extensions/README.md#suboptionof

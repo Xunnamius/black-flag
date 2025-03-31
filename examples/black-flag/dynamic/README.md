@@ -2,9 +2,8 @@
 
 # Black Flag: Dynamic Options
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate taking advantage of Black Flag's [dynamic options
+support][3].
 
 ## Run This Example
 
@@ -16,3 +15,4 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]: ../../../docs/features.md#built-in-support-for-dynamic-options-

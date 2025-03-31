@@ -2,9 +2,8 @@
 
 # Black Flag: Deeply Nested Command Tree
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate constructing a deeply nested tree of commands
+fashioned after the `git` CLI.
 
 ## Run This Example
 

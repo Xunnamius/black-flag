@@ -63,7 +63,7 @@
     "!packages/*.ignore*"
   ],
   "scripts": {
-    "build": "npm run build:dist --",
+    "build": "npm run build:dist && cd ./examples/black-flag/typescript && npm install && npm run build && cd ../../black-flag-extensions/myctl && npm install && npm run build",
     "build:changelog": "symbiote build changelog --env NODE_NO_WARNINGS=1",
     "build:dist": "symbiote build distributables --env NODE_NO_WARNINGS=1 --not-multiversal --skip-bijective 'test/fixtures/.+$'",
     "build:docs": "symbiote build docs --env NODE_NO_WARNINGS=1 --entries 'src/exports/**/*.ts' 'test/util.ts' --typedoc-options --out docs/api",

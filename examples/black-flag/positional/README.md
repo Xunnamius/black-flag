@@ -2,9 +2,8 @@
 
 # Black Flag: Configuring Positional Options
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate creating and accessing normal and dynamic
+positional options.
 
 ## Run This Example
 

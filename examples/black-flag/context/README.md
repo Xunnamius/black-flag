@@ -2,9 +2,8 @@
 
 # Black Flag: Custom Cli-wide Context
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate creating a custom global context and accessing it
+from each command.
 
 ## Run This Example
 

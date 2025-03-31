@@ -2,9 +2,11 @@
 
 # Black Flag: Various Command Export Styles
 
-<!-- TODO -->
+In this example we demonstrate various different ways to structure a command
+module's exports in both ESM and CJS.
 
-TODO
+The recommended way to write commands can be found under
+[`./commands/recommended`][3].
 
 ## Run This Example
 
@@ -16,3 +18,4 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]: ./commands/recommended

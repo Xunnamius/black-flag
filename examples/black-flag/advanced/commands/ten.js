@@ -2,7 +2,7 @@
 
 /**
  * @type {(context: import('@black-flag/core/util').ExecutionContext) =>
- * import('@black-flag/core').RootConfiguration}
+ * import('@black-flag/core').ChildConfiguration}
  */
 export default function command() {
   return {

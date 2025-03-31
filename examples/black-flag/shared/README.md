@@ -1,10 +1,13 @@
 [examples][1] / [black-flag][2] / shared
 
-# Black Flag: "High-Order" Builders and Handlers
+# Black Flag: Shared "High-Order" Builder and Handler
 
-<!-- TODO -->
+In this example we demonstrate using simple boring old JavaScript to share a
+baseline builder and handler across commands. This allows us to configure common
+behavior across our CLI from a single location.
 
-TODO
+This approach should be preferred over using fancier and more esoteric options
+like [`configureExecutionPrologue`][3].
 
 ## Run This Example
 
@@ -16,3 +19,4 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]: ../../../docs/api/src/exports/type-aliases//ConfigureExecutionPrologue.md

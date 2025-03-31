@@ -2,9 +2,8 @@
 
 # Black Flag Extensions: Automatic Grouping
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate configuring [automatic grouping][3] in
+[`withBuilderExtensions`][4].
 
 ## Run This Example
 
@@ -16,3 +15,6 @@ You can also run this example's tests by executing `npm test`.
 
 [1]: ../../README.md
 [2]: ../README.md
+[3]:
+  ../../../packages/extensions/README.md#automatic-grouping-of-related-options
+[4]: ../../../packages/extensions/README.md#withbuilderextensions

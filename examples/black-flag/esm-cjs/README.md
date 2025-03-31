@@ -2,9 +2,8 @@
 
 # Black Flag: Mixed ESM-CJS CLI
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate writing some components of our CLI in ESM and
+others in CJS and having both systems coexist.
 
 ## Run This Example
 

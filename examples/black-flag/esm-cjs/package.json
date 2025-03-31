@@ -7,6 +7,9 @@
     "cjs": "./cli.cjs",
     "esm": "./cli.js"
   },
+  "scripts": {
+    "test": "NODE_OPTIONS='--no-warnings --experimental-vm-modules' npx jest --testMatch '**/test.cjs' --restoreMocks"
+  },
   "dependencies": {
     "@black-flag/core": "^2.0.4"
   },

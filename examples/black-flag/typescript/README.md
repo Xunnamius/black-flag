@@ -2,9 +2,7 @@
 
 # Black Flag: A TypeScript Implementation
 
-<!-- TODO -->
-
-TODO
+In this example we demonstrate building a CLI using TypeScript.
 
 ## Run This Example
 
