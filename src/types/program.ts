@@ -92,21 +92,23 @@ export type Program<
   ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**
-   * Like `yargs::showHelpOnFail` except (1) it determines if the "full" or
-   * "short" help text is shown by default, (2) it determines if help text is
-   * shown when executing an unimplemented parent command, and (3) it has no
-   * second `message` parameter.
+   * Similar in intent to `yargs::showHelpOnFail` except (1) it has no second
+   * `message` parameter, (2) it determines if the "full" or "short" help text
+   * is shown by default, (3) it determines if help text is shown when executing
+   * an unimplemented parent command, and (4) it determines on which kinds of
+   * errors help text is output (by default).
    *
-   * If you want to output some specific error message instead, use a
-   * configuration hook or `yargs::epilogue`.
+   * If you want to configure how error messages are communicated to the user,
+   * or otherwise output some specific error message instead, use the
+   * `configureErrorHandlingEpilogue` configuration hook.
    *
-   * Invoking this method will affect all programs in your command hierarchy,
+   * As this method is just sugar around manipulating
+   * [ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail),
+   * invoking this method will affect _all programs in your command hierarchy_,
    * not just the program on which it was invoked.
-   *
-   * @see https://yargs.js.org/docs/#api-reference-showhelponfailenable-message
    */
   showHelpOnFail: (
-    enabled: ExecutionContext['state']['showHelpOnFail']
+    configuration: ExecutionContext['state']['showHelpOnFail']
   ) => Program<CustomCliArguments, CustomExecutionContext>;
 
   /**

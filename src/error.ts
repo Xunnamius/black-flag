@@ -99,12 +99,13 @@ export type CliErrorOptions = {
    * (or `true`), the same help text will be sent to stderr except only the
    * first line of usage will be included. In either case, help text will be
    * sent to stderr regardless of the value of
-   * `ExecutionContext::state.showHelpOnFail`.
+   * [ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail).
    *
    * Alternatively, if set to `"default"`, the value of
-   * `ExecutionContext::state.showHelpOnFail` will be used. And if set to
-   * `false`, no help text will be sent to stderr due to this error regardless
-   * of the value of `ExecutionContext::state.showHelpOnFail`.
+   * [ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail)
+   * will be used. And if set to `false`, no help text will be sent to stderr
+   * due to this error regardless of the value of
+   * [ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail).
    *
    * Note that, regardless of this `showHelp`, help text is always output when a
    * parent command is invoked that (1) has one or more child commands and (2)

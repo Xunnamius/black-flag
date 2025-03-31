@@ -119,10 +119,11 @@ export type Configuration<
   /**
    * Set a usage message shown at the top of the command's help text.
    *
-   * Depending on the value of `ExecutionContext::state.showHelpOnFail`, either
-   * the "short" first line of usage text will be output during errors or the
-   * "full" usage string. Either way, whenever help text is explicitly requested
-   * (e.g. `--help` is given), the full usage string will be output.
+   * Depending on the value of
+   * [ExecutionContext.state.showHelpOnFail](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail),
+   * either the "short" first line of usage text will be output during errors or
+   * the "full" usage string. Either way, whenever help text is explicitly
+   * requested (e.g. `--help` is given), the full usage string will be output.
    *
    * Several replacements are made to the `usage` string before it is output. In
    * order:
