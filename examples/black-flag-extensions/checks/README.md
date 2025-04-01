@@ -3,7 +3,8 @@
 # Black Flag Extensions: Custom `check`s
 
 In this example we demonstrate taking full advantage of BFE's declarative
-per-option [check][3] functionality.
+per-option [check][3] functionality, including making use of [Black Flag
+Checks][4].
 
 ## Run This Example
 
@@ -16,3 +17,4 @@ You can also run this example's tests by executing `npm test`.
 [1]: ../../README.md
 [2]: ../README.md
 [3]: ../../../packages/extensions/README.md#check
+[4]: ../../../packages/checks/README.md

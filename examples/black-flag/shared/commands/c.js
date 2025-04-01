@@ -7,15 +7,8 @@ import { sharedBuilder, sharedHandler } from '../shared.js';
  */
 export default function command() {
   return {
-    builder: sharedBuilder((bf) => {
-      bf.group(['version'], 'Global Options:');
-
-      return {
-        'custom-flag': {
-          string: true,
-          description: 'An option specific to this command'
-        }
-      };
+    builder: sharedBuilder({
+      flag: { boolean: true, description: 'An option specific to this command' }
     }),
 
     handler: sharedHandler((argv) => {
