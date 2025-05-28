@@ -102,7 +102,7 @@
     "rejoinder": "^1.2.5",
     "type-fest": "^4.41.0",
     "yargs": "^18.0.0",
-    "yargs-parser": "npm:@-xun/yargs-parser-experimental"
+    "yargs-parser": "npm:@-xun/yargs-parser-experimental@22"
   },
   "devDependencies": {
     "@-xun/project": "^1.0.5",
