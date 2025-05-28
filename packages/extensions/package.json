@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@-xun/js": "^1.1.1",
-    "core-js": "^3.41.0",
+    "core-js": "^3.42.0",
     "lodash.camelcase": "^4.3.0",
     "rejoinder": "^1.2.5",
     "type-fest": "^4.38.0"
