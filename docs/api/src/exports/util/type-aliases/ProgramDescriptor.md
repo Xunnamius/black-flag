@@ -8,6 +8,6 @@
 
 > **ProgramDescriptor** = `"effector"` \| `"helper"` \| `"router"`
 
-Defined in: [src/types/program.ts:165](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/types/program.ts#L165)
+Defined in: [src/types/program.ts:165](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/program.ts#L165)
 
 Represents the three program types that comprise any Black Flag command.

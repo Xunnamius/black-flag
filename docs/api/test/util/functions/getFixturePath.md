@@ -8,7 +8,7 @@
 
 > **getFixturePath**(`fixture`): `Path`
 
-Defined in: [test/util.ts:21](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/test/util.ts#L21)
+Defined in: [test/util.ts:21](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/test/util.ts#L21)
 
 ## Parameters
 

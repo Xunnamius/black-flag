@@ -8,7 +8,7 @@
 
 > `const` **$executionContext**: *typeof* `$executionContext`
 
-Defined in: [src/constant.ts:16](https://github.com/Xunnamius/black-flag/blob/f720a804174f12cc89580da9c1ce4476115249e9/src/constant.ts#L16)
+Defined in: [src/constant.ts:16](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/constant.ts#L16)
 
 A symbol allowing access to the `ExecutionContext` object "hidden" within
 each `Arguments` instance.

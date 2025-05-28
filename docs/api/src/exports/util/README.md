@@ -38,13 +38,13 @@
 - [defaultUsageText](variables/defaultUsageText.md)
 - [defaultVersionOptionName](variables/defaultVersionOptionName.md)
 - [defaultVersionTextDescription](variables/defaultVersionTextDescription.md)
-- [hideBin](variables/hideBin.md)
 - [nullArguments$0](variables/nullArguments$0.md)
 
 ## Functions
 
 - [expectedHelpTextRegExp](functions/expectedHelpTextRegExp.md)
 - [getDeepestErrorCause](functions/getDeepestErrorCause.md)
+- [hideBin](functions/hideBin.md)
 - [isArguments](functions/isArguments.md)
 - [isAssertionSystemError](functions/isAssertionSystemError.md)
 - [isCommandNotImplementedError](functions/isCommandNotImplementedError.md)

@@ -16,6 +16,8 @@ A collection of possible error and warning messages.
 
 ### SuppressedExitAttempt()
 
+> **SuppressedExitAttempt**(`code`): `string`
+
 #### Parameters
 
 ##### code
