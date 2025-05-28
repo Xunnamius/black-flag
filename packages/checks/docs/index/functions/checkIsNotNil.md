@@ -8,7 +8,7 @@
 
 > **checkIsNotNil**(`argName`): (`currentArg`) => `string` \| `true`
 
-Defined in: [index.ts:21](https://github.com/Xunnamius/black-flag/blob/bc64a92f4302e312577a2a00ecb868adb8aa2354/packages/checks/src/index.ts#L21)
+Defined in: [index.ts:21](https://github.com/Xunnamius/black-flag/blob/71fb899c234fc323c29cb18953ef38f3487604b2/packages/checks/src/index.ts#L21)
 
 A Black Flag check that passes when an argument value is not falsy.
 
@@ -20,7 +20,7 @@ A Black Flag check that passes when an argument value is not falsy.
 
 ## Returns
 
-`Function`
+> (`currentArg`): `string` \| `true`
 
 ### Parameters
 

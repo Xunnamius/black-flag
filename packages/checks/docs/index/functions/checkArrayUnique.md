@@ -8,7 +8,7 @@
 
 > **checkArrayUnique**(`argName`): (`currentArg`) => `string` \| `true`
 
-Defined in: [index.ts:86](https://github.com/Xunnamius/black-flag/blob/bc64a92f4302e312577a2a00ecb868adb8aa2354/packages/checks/src/index.ts#L86)
+Defined in: [index.ts:86](https://github.com/Xunnamius/black-flag/blob/71fb899c234fc323c29cb18953ef38f3487604b2/packages/checks/src/index.ts#L86)
 
 A Black Flag check that passes when each element in the array is unique.
 
@@ -20,7 +20,7 @@ A Black Flag check that passes when each element in the array is unique.
 
 ## Returns
 
-`Function`
+> (`currentArg`): `string` \| `true`
 
 ### Parameters
 

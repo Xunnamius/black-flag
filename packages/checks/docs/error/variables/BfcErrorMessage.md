@@ -8,13 +8,15 @@
 
 > `const` **BfcErrorMessage**: `object`
 
-Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/bc64a92f4302e312577a2a00ecb868adb8aa2354/packages/checks/src/error.ts#L5)
+Defined in: [error.ts:5](https://github.com/Xunnamius/black-flag/blob/71fb899c234fc323c29cb18953ef38f3487604b2/packages/checks/src/error.ts#L5)
 
 A collection of possible error and warning messages.
 
 ## Type declaration
 
 ### BadType()
+
+> **BadType**(`name`, `expected`, `actual`): `string`
 
 #### Parameters
 
@@ -36,6 +38,8 @@ A collection of possible error and warning messages.
 
 ### OptionMustBeNonNegative()
 
+> **OptionMustBeNonNegative**(`name`): `string`
+
 #### Parameters
 
 ##### name
@@ -48,6 +52,8 @@ A collection of possible error and warning messages.
 
 ### OptionMustNotBeFalsy()
 
+> **OptionMustNotBeFalsy**(`name`): `string`
+
 #### Parameters
 
 ##### name
@@ -59,6 +65,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### OptionRequiresMinArgs()
+
+> **OptionRequiresMinArgs**(`name`, `adjective?`): `string`
 
 #### Parameters
 
@@ -76,6 +84,8 @@ A collection of possible error and warning messages.
 
 ### OptionRequiresNoConflicts()
 
+> **OptionRequiresNoConflicts**(`name`, `tuple`): `string`
+
 #### Parameters
 
 ##### name
@@ -92,6 +102,8 @@ A collection of possible error and warning messages.
 
 ### OptionRequiresUniqueArgs()
 
+> **OptionRequiresUniqueArgs**(`name`): `string`
+
 #### Parameters
 
 ##### name
@@ -103,6 +115,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### OptionValueMustBeAlone()
+
+> **OptionValueMustBeAlone**(`option`, `noun`): `string`
 
 #### Parameters
 
@@ -119,6 +133,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### OptionValueMustBeAloneWhenBaseline()
+
+> **OptionValueMustBeAloneWhenBaseline**(`option`, `noun`): `string`
 
 #### Parameters
 

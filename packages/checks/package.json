@@ -1,6 +1,6 @@
 {
   "name": "@black-flag/checks",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A collection of general purpose check functions for yargs and Black Flag",
   "keywords": [
     "cli",
