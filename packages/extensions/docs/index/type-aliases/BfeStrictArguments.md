@@ -8,7 +8,7 @@
 
 > **BfeStrictArguments**\<`CustomCliArguments`, `CustomExecutionContext`\> = `OmitIndexSignature`\<`Arguments`\<`CustomCliArguments`, `CustomExecutionContext`\>\> & `FrameworkArguments`\<`CustomExecutionContext`\> & `object`
 
-Defined in: [packages/extensions/src/index.ts:611](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/index.ts#L611)
+Defined in: [packages/extensions/src/index.ts:611](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/index.ts#L611)
 
 A stricter version of Black Flag's
 [Arguments](https://github.com/Xunnamius/black-flag/blob/main/docs/api/src/exports/type-aliases/Arguments.md)

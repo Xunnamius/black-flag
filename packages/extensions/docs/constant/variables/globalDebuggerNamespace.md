@@ -8,6 +8,6 @@
 
 > `const` **globalDebuggerNamespace**: `"bfe"` = `'bfe'`
 
-Defined in: [packages/extensions/src/constant.ts:4](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/constant.ts#L4)
+Defined in: [packages/extensions/src/constant.ts:4](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/constant.ts#L4)
 
 The project-wide namespace that appears in debugger output.
