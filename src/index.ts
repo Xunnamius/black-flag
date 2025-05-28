@@ -3,8 +3,6 @@ import { isNativeError } from 'node:util/types';
 
 import { safeShallowClone } from '@-xun/js';
 import { createDebugLogger } from 'rejoinder';
-import { hideBin } from 'yargs/helpers';
-import yargs from 'yargs/yargs';
 
 import {
   $executionContext,
@@ -203,6 +201,10 @@ export async function configureProgram(
 
     confDebug('configureProgram was invoked');
 
+    // {@symbiote/notExtraneous yargs-parser}
+    const { hideBin } = await import('yargs/helpers');
+    const { default: makeVanillaYargs } = await import('yargs/yargs');
+
     const finalConfigurationHooks: Required<ConfigurationHooks> = {
       configureArguments: (rawArgv) => rawArgv,
       configureExecutionPrologue: noopConfigurationHook,
@@ -226,7 +228,7 @@ export async function configureProgram(
         debug: coreDebug,
         state: {
           rawArgv: [],
-          initialTerminalWidth: yargs().terminalWidth(),
+          initialTerminalWidth: makeVanillaYargs().terminalWidth(),
           showHelpOnFail: {},
           firstPassArgv: undefined,
           deepestParseResult: undefined,

@@ -5,8 +5,6 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { isNativeError, isPromise } from 'node:util/types';
 
 import { toAbsolutePath, toDirname, toPath } from '@-xun/fs';
-// {@symbiote/notExtraneous yargs-parser}
-import makeVanillaYargs from 'yargs/yargs';
 
 import { defaultUsageText } from 'universe:constant.ts';
 
@@ -1122,6 +1120,8 @@ export async function discoverCommands(
       descriptor
     );
 
+    // {@symbiote/notExtraneous yargs-parser}
+    const { default: makeVanillaYargs } = await import('yargs/yargs');
     const vanillaYargs = makeVanillaYargs();
 
     // * Disable built-in help functionality; we only want a --help option, not

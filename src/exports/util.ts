@@ -1,7 +1,3 @@
-/* eslint-disable unicorn/prefer-export-from */
-
-import { hideBin as hideBin_ } from 'yargs/helpers';
-
 export { makeRunner } from 'universe';
 
 export {
@@ -48,7 +44,29 @@ export type {
   RouterProgram
 } from 'universe:types/program.ts';
 
+// * Adapted from Yargs source:
+
 /**
  * @see https://yargs.js.org/docs/#api-reference
  */
-export const hideBin = hideBin_;
+export function hideBin(argv: string[]) {
+  return argv.slice(getProcessArgvBinIndex() + 1);
+}
+
+function getProcessArgvBinIndex() {
+  if (isBundledElectronApp()) {
+    return 0;
+  }
+
+  return 1;
+}
+
+function isBundledElectronApp() {
+  return (
+    isElectronApp() && !(process as typeof process & Record<string, unknown>).defaultApp
+  );
+}
+
+function isElectronApp() {
+  return !!process.versions.electron;
+}

@@ -13,9 +13,6 @@ import {
 import { CommandNotImplementedError } from '@black-flag/core/util';
 import toCamelCase from 'lodash.camelcase';
 import { createDebugLogger } from 'rejoinder';
-// ? Black Flag will always come with its own yargs dependency
-// {@symbiote/notInvalid yargs}
-import makeVanillaYargs from 'yargs/yargs';
 
 import { globalDebuggerNamespace } from 'universe+extensions:constant.ts';
 import { BfeErrorMessage } from 'universe+extensions:error.ts';
@@ -1608,7 +1605,11 @@ export async function getInvocableExtendedHandler<
     );
 
     if (typeof builder === 'function') {
+      // ? Black Flag will always come with its own yargs dependency
+      // {@symbiote/notInvalid yargs}
+      const { default: makeVanillaYargs } = await import('yargs/yargs');
       const dummyYargs = makeVanillaYargs();
+
       const fakeBlackFlag = dummyYargs as unknown as Parameters<typeof builder>[0];
 
       dummyYargs.parsed = {
