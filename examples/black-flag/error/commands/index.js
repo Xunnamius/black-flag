@@ -67,7 +67,7 @@ export default function command() {
     handler(argv) {
       switch (argv.throw) {
         case 'graceful': {
-          throw new GracefulEarlyExitError('thrown GracefulEarlyExit error');
+          throw new GracefulEarlyExitError();
           break;
         }
 

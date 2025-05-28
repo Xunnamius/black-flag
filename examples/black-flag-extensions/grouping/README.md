@@ -1,8 +1,8 @@
 [examples][1] / [black-flag-extensions][2] / grouping
 
-# Black Flag Extensions: Automatic Grouping
+# Black Flag Extensions: Automatic Options Grouping
 
-In this example we demonstrate configuring [automatic grouping][3] in
+In this example we demonstrate configuring [automatic options grouping][3] in
 [`withBuilderExtensions`][4].
 
 ## Run This Example

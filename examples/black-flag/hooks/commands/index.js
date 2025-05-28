@@ -1,5 +1,8 @@
 // @ts-check
 
+/**
+ * @type {Extract<import('@black-flag/core').RootConfiguration['builder'], Function>}
+ */
 export function builder(bf) {
   bf.example('$0', '');
   bf.example('$0 --help', '');

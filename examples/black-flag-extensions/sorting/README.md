@@ -1,6 +1,8 @@
 [examples][1] / [black-flag-extensions][2] / sorting
 
-In this example we demonstrate configuring [automatic sorting][3] in
+# Black Flag Extensions: Automatic Options Sorting
+
+In this example we demonstrate configuring [automatic options sorting][3] in
 [`withBuilderExtensions`][4].
 
 ## Run This Example

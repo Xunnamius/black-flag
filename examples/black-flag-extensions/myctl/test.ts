@@ -1,6 +1,5 @@
 // @ts-check
 
-/* eslint-disable no-undef */
 const path = require('node:path');
 
 const { makeRunner } = require('@black-flag/core/util');
