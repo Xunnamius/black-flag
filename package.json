@@ -96,7 +96,7 @@
     "@-xun/fs": "^1.0.0",
     "@-xun/js": "^1.1.1",
     "@types/yargs": "^17.0.33",
-    "core-js": "^3.41.0",
+    "core-js": "^3.42.0",
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
     "rejoinder": "^1.2.5",
