@@ -1374,53 +1374,58 @@ export function withBuilderExtensions<
  * Generate command usage text consistently yet flexibly.
  *
  * Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
- * `$1.`
+ * `"$1."`.
  */
-export function withUsageExtensions(
+export function withUsageExtensions({
   altDescription = '$1.',
-  {
-    trim = true,
-    appendPeriod = true,
-    prependNewlines = true,
-    includeOptions = prependNewlines,
-    includeSubCommand = false
-  }: {
-    /**
-     * Whether `altDescription` will be `trim()`'d or not.
-     *
-     * @default true
-     */
-    trim?: boolean;
-    /**
-     * Whether a period will be appended to the resultant string or not. A
-     * period is only appended if one is not already appended.
-     *
-     * @default true
-     */
-    appendPeriod?: boolean;
-    /**
-     * Whether newlines will be prepended to `altDescription` or not.
-     *
-     * @default true
-     */
-    prependNewlines?: boolean;
-    /**
-     * Whether the string `' [...options]'` will be appended to the first line
-     * of usage text (after `includeSubCommand`).
-     *
-     * @default options.prependNewlines
-     */
-    includeOptions?: boolean;
-    /**
-     * Whether some variation of the string `' [subcommand]'` will be appended
-     * to the first line of usage text (before `includeOptions`). Set to `true`
-     * or `required` when generating usage for a command with subcommands.
-     *
-     * @default false
-     */
-    includeSubCommand?: boolean | 'required';
-  } = {}
-) {
+  trim = true,
+  appendPeriod = true,
+  prependNewlines = true,
+  includeOptions = prependNewlines,
+  includeSubCommand = false
+}: {
+  /**
+   * The result of calling this function defaults to: `Usage:
+   * $000\n\n${altDescription}`.
+   *
+   * @default "$1."
+   */
+  altDescription?: string;
+  /**
+   * Whether `altDescription` will be `trim()`'d or not.
+   *
+   * @default true
+   */
+  trim?: boolean;
+  /**
+   * Whether a period will be appended to the resultant string or not. A
+   * period is only appended if one is not already appended.
+   *
+   * @default true
+   */
+  appendPeriod?: boolean;
+  /**
+   * Whether newlines will be prepended to `altDescription` or not.
+   *
+   * @default true
+   */
+  prependNewlines?: boolean;
+  /**
+   * Whether the string `' [...options]'` will be appended to the first line
+   * of usage text (after `includeSubCommand`).
+   *
+   * @default options.prependNewlines
+   */
+  includeOptions?: boolean;
+  /**
+   * Whether some variation of the string `' [subcommand]'` will be appended
+   * to the first line of usage text (before `includeOptions`). Set to `true`
+   * or `required` when generating usage for a command with subcommands.
+   *
+   * @default false
+   */
+  includeSubCommand?: boolean | 'required';
+} = {}) {
   return `Usage: $000${
     includeSubCommand === 'required'
       ? ' <subcommand>'
