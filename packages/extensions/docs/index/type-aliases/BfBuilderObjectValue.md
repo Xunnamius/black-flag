@@ -8,7 +8,7 @@
 
 > **BfBuilderObjectValue**\<`CustomCliArguments`, `CustomExecutionContext`\> = [`BfBuilderObject`](BfBuilderObject.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\[`string`\]
 
-Defined in: [packages/extensions/src/index.ts:195](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/index.ts#L195)
+Defined in: [packages/extensions/src/index.ts:195](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/index.ts#L195)
 
 The object value type of a [BfBuilderObject](BfBuilderObject.md).
 

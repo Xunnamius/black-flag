@@ -8,7 +8,7 @@
 
 > `const` **BfeErrorMessage**: `object`
 
-Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/error.ts#L14)
+Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/error.ts#L14)
 
 A collection of possible error and warning messages.
 

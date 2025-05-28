@@ -6,22 +6,31 @@
 
 # Function: withUsageExtensions()
 
-> **withUsageExtensions**(`altDescription`, `__namedParameters`): `string`
+> **withUsageExtensions**(`__namedParameters`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1379](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/index.ts#L1379)
+Defined in: [packages/extensions/src/index.ts:1379](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/index.ts#L1379)
 
 Generate command usage text consistently yet flexibly.
 
 Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
-`$1.`
+`"$1."`.
 
 ## Parameters
 
-### altDescription
+### \_\_namedParameters
+
+#### altDescription?
 
 `string` = `'$1.'`
 
-### \_\_namedParameters
+The result of calling this function defaults to: `Usage:
+$000\n\n${altDescription}`.
+
+**Default**
+
+```ts
+"$1."
+```
 
 #### appendPeriod?
 

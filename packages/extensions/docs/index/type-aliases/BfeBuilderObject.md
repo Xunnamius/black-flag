@@ -8,7 +8,7 @@
 
 > **BfeBuilderObject**\<`CustomCliArguments`, `CustomExecutionContext`\> = `object`
 
-Defined in: [packages/extensions/src/index.ts:212](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/index.ts#L212)
+Defined in: [packages/extensions/src/index.ts:212](https://github.com/Xunnamius/black-flag/blob/65863debdad33d702508c3459cced432c1437abf/packages/extensions/src/index.ts#L212)
 
 A version of the object type of the `builder` export accepted by Black Flag
 that supports BFE's additional functionality.
