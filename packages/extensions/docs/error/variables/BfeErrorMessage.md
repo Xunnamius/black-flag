@@ -8,7 +8,7 @@
 
 > `const` **BfeErrorMessage**: `object`
 
-Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/a49f96af98d9a9d96fd7dc9946a709fd368c04c2/packages/extensions/src/error.ts#L14)
+Defined in: [packages/extensions/src/error.ts:14](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/error.ts#L14)
 
 A collection of possible error and warning messages.
 
@@ -24,6 +24,8 @@ A collection of possible error and warning messages.
 
 ### BadConfigurationPath()
 
+> **BadConfigurationPath**(`path`): `string`
+
 #### Parameters
 
 ##### path
@@ -36,11 +38,15 @@ A collection of possible error and warning messages.
 
 ### BadParameterCombination()
 
+> **BadParameterCombination**(): `string`
+
 #### Returns
 
 `string`
 
 ### BuilderCalledOnInvalidPass()
+
+> **BuilderCalledOnInvalidPass**(`pass`): `string`
 
 #### Parameters
 
@@ -54,6 +60,8 @@ A collection of possible error and warning messages.
 
 ### BuilderCannotBeAsync()
 
+> **BuilderCannotBeAsync**(`commandName`): `string`
+
 #### Parameters
 
 ##### commandName
@@ -66,11 +74,15 @@ A collection of possible error and warning messages.
 
 ### CannotExecuteMultipleTimes()
 
+> **CannotExecuteMultipleTimes**(): `string`
+
 #### Returns
 
 `string`
 
 ### CheckFailed()
+
+> **CheckFailed**(`currentArgument`): `string`
 
 #### Parameters
 
@@ -84,17 +96,23 @@ A collection of possible error and warning messages.
 
 ### CommandHandlerNotAFunction()
 
+> **CommandHandlerNotAFunction**(): `string`
+
 #### Returns
 
 `string`
 
 ### CommandNotImplemented()
 
+> **CommandNotImplemented**(): `string`
+
 #### Returns
 
 `string`
 
 ### ConfigLoadFailure()
+
+> **ConfigLoadFailure**(`path`): `string`
 
 #### Parameters
 
@@ -107,6 +125,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### ConflictsViolation()
+
+> **ConflictsViolation**(`conflicter`, `seenConflictingKeyValues`): `string`
 
 #### Parameters
 
@@ -124,6 +144,8 @@ A collection of possible error and warning messages.
 
 ### DemandGenericXorViolation()
 
+> **DemandGenericXorViolation**(`demanded`): `string`
+
 #### Parameters
 
 ##### demanded
@@ -135,6 +157,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### DemandIfViolation()
+
+> **DemandIfViolation**(`demanded`, `demander`): `string`
 
 #### Parameters
 
@@ -152,6 +176,8 @@ A collection of possible error and warning messages.
 
 ### DemandOrViolation()
 
+> **DemandOrViolation**(`demanded`): `string`
+
 #### Parameters
 
 ##### demanded
@@ -163,6 +189,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### DemandSpecificXorViolation()
+
+> **DemandSpecificXorViolation**(`firstArgument`, `secondArgument`): `string`
 
 #### Parameters
 
@@ -179,6 +207,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### DuplicateCommandName()
+
+> **DuplicateCommandName**(`parentFullName`, `name1`, `type1`, `name2`, `type2`): `string`
 
 #### Parameters
 
@@ -208,6 +238,8 @@ A collection of possible error and warning messages.
 
 ### DuplicateOptionName()
 
+> **DuplicateOptionName**(`name`): `string`
+
 #### Parameters
 
 ##### name
@@ -220,11 +252,15 @@ A collection of possible error and warning messages.
 
 ### FalsyCommandExport()
 
+> **FalsyCommandExport**(): `string`
+
 #### Returns
 
 `string`
 
 ### FrameworkError()
+
+> **FrameworkError**(`error`): `string`
 
 #### Parameters
 
@@ -238,11 +274,15 @@ A collection of possible error and warning messages.
 
 ### Generic()
 
+> **Generic**(): `string`
+
 #### Returns
 
 `string`
 
 ### GracefulEarlyExit()
+
+> **GracefulEarlyExit**(): `string`
 
 #### Returns
 
@@ -250,11 +290,15 @@ A collection of possible error and warning messages.
 
 ### IllegalHandlerInvocation()
 
+> **IllegalHandlerInvocation**(): `string`
+
 #### Returns
 
 `string`
 
 ### ImpliesViolation()
+
+> **ImpliesViolation**(`implier`, `seenConflictingKeyValues`): `string`
 
 #### Parameters
 
@@ -272,6 +316,8 @@ A collection of possible error and warning messages.
 
 ### InvalidCharacters()
 
+> **InvalidCharacters**(`str`, `violation`): `string`
+
 #### Parameters
 
 ##### str
@@ -288,6 +334,8 @@ A collection of possible error and warning messages.
 
 ### InvalidCommandExportBadPositionals()
 
+> **InvalidCommandExportBadPositionals**(`name`): `string`
+
 #### Parameters
 
 ##### name
@@ -299,6 +347,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### InvalidCommandExportBadStart()
+
+> **InvalidCommandExportBadStart**(`name`): `string`
 
 #### Parameters
 
@@ -312,11 +362,15 @@ A collection of possible error and warning messages.
 
 ### InvalidConfigureArgumentsReturnType()
 
+> **InvalidConfigureArgumentsReturnType**(): `string`
+
 #### Returns
 
 `string`
 
 ### InvalidConfigureExecutionContextReturnType()
+
+> **InvalidConfigureExecutionContextReturnType**(): `string`
 
 #### Returns
 
@@ -324,11 +378,15 @@ A collection of possible error and warning messages.
 
 ### InvalidConfigureExecutionEpilogueReturnType()
 
+> **InvalidConfigureExecutionEpilogueReturnType**(): `string`
+
 #### Returns
 
 `string`
 
 ### InvalidExecutionContextBadField()
+
+> **InvalidExecutionContextBadField**(`fieldName`): `string`
 
 #### Parameters
 
@@ -342,11 +400,15 @@ A collection of possible error and warning messages.
 
 ### InvalidSubCommandInvocation()
 
+> **InvalidSubCommandInvocation**(): `string`
+
 #### Returns
 
 `string`
 
 ### InvocationNotAllowed()
+
+> **InvocationNotAllowed**(`name`): `string`
 
 #### Parameters
 
@@ -360,6 +422,8 @@ A collection of possible error and warning messages.
 
 ### MetadataInvariantViolated()
 
+> **MetadataInvariantViolated**(`afflictedKey`): `string`
+
 #### Parameters
 
 ##### afflictedKey
@@ -371,6 +435,8 @@ A collection of possible error and warning messages.
 `string`
 
 ### NoConfigurationLoaded()
+
+> **NoConfigurationLoaded**(`path`): `string`
 
 #### Parameters
 
@@ -384,11 +450,15 @@ A collection of possible error and warning messages.
 
 ### PathIsNotDirectory()
 
+> **PathIsNotDirectory**(): `string`
+
 #### Returns
 
 `string`
 
 ### ReferencedNonExistentOption()
+
+> **ReferencedNonExistentOption**(`referrerName`, `doesNotExistName`): `string`
 
 #### Parameters
 
@@ -406,6 +476,8 @@ A collection of possible error and warning messages.
 
 ### RequiresViolation()
 
+> **RequiresViolation**(`requirer`, `missingRequiredKeyValues`): `string`
+
 #### Parameters
 
 ##### requirer
@@ -422,17 +494,23 @@ A collection of possible error and warning messages.
 
 ### UnexpectedlyFalsyDetailedArguments()
 
+> **UnexpectedlyFalsyDetailedArguments**(): `string`
+
 #### Returns
 
 `string`
 
 ### UnexpectedValueFromInternalYargsMethod()
 
+> **UnexpectedValueFromInternalYargsMethod**(): `string`
+
 #### Returns
 
 `string`
 
 ### UseParseAsyncInstead()
+
+> **UseParseAsyncInstead**(): `string`
 
 #### Returns
 

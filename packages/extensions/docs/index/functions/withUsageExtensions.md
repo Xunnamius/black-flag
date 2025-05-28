@@ -8,7 +8,7 @@
 
 > **withUsageExtensions**(`altDescription`, `__namedParameters`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1382](https://github.com/Xunnamius/black-flag/blob/a49f96af98d9a9d96fd7dc9946a709fd368c04c2/packages/extensions/src/index.ts#L1382)
+Defined in: [packages/extensions/src/index.ts:1379](https://github.com/Xunnamius/black-flag/blob/3764563cebc186c7e5f9e6fd9ad3d54a1192fe57/packages/extensions/src/index.ts#L1379)
 
 Generate command usage text consistently yet flexibly.
 
@@ -40,12 +40,27 @@ true
 
 `boolean` = `prependNewlines`
 
-Whether the string `' [...options]'` will be appended to the first line of usage text
+Whether the string `' [...options]'` will be appended to the first line
+of usage text (after `includeSubCommand`).
 
 **Default**
 
 ```ts
 options.prependNewlines
+```
+
+#### includeSubCommand?
+
+`boolean` \| `"required"` = `false`
+
+Whether some variation of the string `' [subcommand]'` will be appended
+to the first line of usage text (before `includeOptions`). Set to `true`
+or `required` when generating usage for a command with subcommands.
+
+**Default**
+
+```ts
+false
 ```
 
 #### prependNewlines?
