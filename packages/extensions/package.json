@@ -76,7 +76,7 @@
     "core-js": "^3.42.0",
     "lodash.camelcase": "^4.3.0",
     "rejoinder": "^1.2.5",
-    "type-fest": "^4.38.0"
+    "type-fest": "^4.41.0"
   },
   "devDependencies": {
     "@-xun/fs": "^1.0.0",
