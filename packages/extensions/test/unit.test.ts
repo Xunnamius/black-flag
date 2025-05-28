@@ -5866,6 +5866,49 @@ new description
     ).toBe(`Usage: $000\n\n${expected.trim()}.`);
   });
 
+  it('respects "includeSubCommand" option', async () => {
+    expect.hasAssertions();
+
+    const expected = `
+new description
+`;
+
+    expect(withUsageExtensions(expected, { includeSubCommand: true })).toBe(
+      `Usage: $000 [subcommand] [...options]\n${expected.trimEnd()}.`
+    );
+
+    expect(withUsageExtensions(expected, { includeSubCommand: false })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}.`
+    );
+
+    expect(withUsageExtensions(expected, { includeSubCommand: 'required' })).toBe(
+      `Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`
+    );
+  });
+
+  it('respects "includeOptions" + "includeSubCommand" options together', async () => {
+    expect.hasAssertions();
+
+    const expected = `
+new description
+`;
+
+    expect(
+      withUsageExtensions(expected, { includeOptions: true, includeSubCommand: true })
+    ).toBe(`Usage: $000 [subcommand] [...options]\n${expected.trimEnd()}.`);
+
+    expect(
+      withUsageExtensions(expected, { includeOptions: true, includeSubCommand: false })
+    ).toBe(`Usage: $000 [...options]\n${expected.trimEnd()}.`);
+
+    expect(
+      withUsageExtensions(expected, {
+        includeOptions: true,
+        includeSubCommand: 'required'
+      })
+    ).toBe(`Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`);
+  });
+
   describe('readme examples', () => {
     test('withUsageExtensions example functions as expected', async () => {
       expect.hasAssertions();

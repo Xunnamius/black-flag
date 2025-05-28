@@ -1385,7 +1385,8 @@ export function withUsageExtensions(
     trim = true,
     appendPeriod = true,
     prependNewlines = true,
-    includeOptions = prependNewlines
+    includeOptions = prependNewlines,
+    includeSubCommand = false
   }: {
     /**
      * Whether `altDescription` will be `trim()`'d or not.
@@ -1407,14 +1408,29 @@ export function withUsageExtensions(
      */
     prependNewlines?: boolean;
     /**
-     * Whether the string `' [...options]'` will be appended to the first line of usage text
+     * Whether the string `' [...options]'` will be appended to the first line
+     * of usage text (after `includeSubCommand`).
      *
      * @default options.prependNewlines
      */
     includeOptions?: boolean;
+    /**
+     * Whether some variation of the string `' [subcommand]'` will be appended
+     * to the first line of usage text (before `includeOptions`). Set to `true`
+     * or `required` when generating usage for a command with subcommands.
+     *
+     * @default false
+     */
+    includeSubCommand?: boolean | 'required';
   } = {}
 ) {
-  return `Usage: $000${includeOptions ? ' [...options]' : ''}${
+  return `Usage: $000${
+    includeSubCommand === 'required'
+      ? ' <subcommand>'
+      : includeSubCommand
+        ? ' [subcommand]'
+        : ''
+  }${includeOptions ? ' [...options]' : ''}${
     prependNewlines ? '\n\n' : ''
   }${altDescription[trim ? 'trim' : 'toString']()}${
     appendPeriod && !altDescription.endsWith('.') ? '.' : ''
