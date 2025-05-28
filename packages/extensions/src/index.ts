@@ -740,6 +740,54 @@ export type WithBuilderExtensionsConfig<
 };
 
 /**
+ * A configuration object that further configures the behavior of
+ * {@link withUsageExtensions}.
+ */
+export type WithUsageExtensionsConfig = {
+  /**
+   * The result of calling this function defaults to: `Usage:
+   * $000\n\n${altDescription}`.
+   *
+   * @default "$1."
+   */
+  altDescription?: string;
+  /**
+   * Whether `altDescription` will be `trim()`'d or not.
+   *
+   * @default true
+   */
+  trim?: boolean;
+  /**
+   * Whether a period will be appended to the resultant string or not. A
+   * period is only appended if one is not already appended.
+   *
+   * @default true
+   */
+  appendPeriod?: boolean;
+  /**
+   * Whether newlines will be prepended to `altDescription` or not.
+   *
+   * @default true
+   */
+  prependNewlines?: boolean;
+  /**
+   * Whether the string `' [...options]'` will be appended to the first line
+   * of usage text (after `includeSubCommand`).
+   *
+   * @default options.prependNewlines
+   */
+  includeOptions?: boolean;
+  /**
+   * Whether some variation of the string `' [subcommand]'` will be appended
+   * to the first line of usage text (before `includeOptions`). Set to `true`
+   * or `required` when generating usage for a command with subcommands.
+   *
+   * @default false
+   */
+  includeSubCommand?: boolean | 'required';
+};
+
+/**
  * This function enables several additional options-related units of
  * functionality via analysis of the returned options configuration object and
  * the parsed command line arguments (argv).
@@ -1376,56 +1424,31 @@ export function withBuilderExtensions<
  * Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
  * `"$1."`.
  */
-export function withUsageExtensions({
-  altDescription = '$1.',
-  trim = true,
-  appendPeriod = true,
-  prependNewlines = true,
-  includeOptions = prependNewlines,
-  includeSubCommand = false
-}: {
-  /**
-   * The result of calling this function defaults to: `Usage:
-   * $000\n\n${altDescription}`.
-   *
-   * @default "$1."
-   */
-  altDescription?: string;
-  /**
-   * Whether `altDescription` will be `trim()`'d or not.
-   *
-   * @default true
-   */
-  trim?: boolean;
-  /**
-   * Whether a period will be appended to the resultant string or not. A
-   * period is only appended if one is not already appended.
-   *
-   * @default true
-   */
-  appendPeriod?: boolean;
-  /**
-   * Whether newlines will be prepended to `altDescription` or not.
-   *
-   * @default true
-   */
-  prependNewlines?: boolean;
-  /**
-   * Whether the string `' [...options]'` will be appended to the first line
-   * of usage text (after `includeSubCommand`).
-   *
-   * @default options.prependNewlines
-   */
-  includeOptions?: boolean;
-  /**
-   * Whether some variation of the string `' [subcommand]'` will be appended
-   * to the first line of usage text (before `includeOptions`). Set to `true`
-   * or `required` when generating usage for a command with subcommands.
-   *
-   * @default false
-   */
-  includeSubCommand?: boolean | 'required';
-} = {}) {
+export function withUsageExtensions(altDescription?: string): string;
+export function withUsageExtensions(
+  altDescription?: string,
+  config?: Omit<WithUsageExtensionsConfig, 'altDescription'>
+): string;
+export function withUsageExtensions(config?: WithUsageExtensionsConfig): string;
+export function withUsageExtensions(
+  config?: WithUsageExtensionsConfig | string,
+  moreConfig?: Omit<WithUsageExtensionsConfig, 'altDescription'>
+): string;
+export function withUsageExtensions(
+  config?: WithUsageExtensionsConfig | string,
+  moreConfig?: Omit<WithUsageExtensionsConfig, 'altDescription'>
+): string {
+  const {
+    altDescription = '$1.',
+    trim = true,
+    appendPeriod = true,
+    prependNewlines = true,
+    includeOptions = prependNewlines,
+    includeSubCommand = false
+  } = typeof config === 'string'
+    ? { altDescription: config, ...moreConfig }
+    : { ...config, ...moreConfig };
+
   return `Usage: $000${
     includeSubCommand === 'required'
       ? ' <subcommand>'

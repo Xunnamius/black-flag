@@ -5785,11 +5785,17 @@ describe('::withUsageExtensions', () => {
   it('outputs consistent usage string template when called without parameters', async () => {
     expect.hasAssertions();
     expect(withUsageExtensions()).toBe('Usage: $000 [...options]\n\n$1.');
+    expect(withUsageExtensions(undefined)).toBe('Usage: $000 [...options]\n\n$1.');
   });
 
   it('appends passed parameter to consistent usage string template', async () => {
     expect.hasAssertions();
+
     expect(withUsageExtensions({ altDescription: 'new description' })).toBe(
+      'Usage: $000 [...options]\n\nnew description.'
+    );
+
+    expect(withUsageExtensions('new description')).toBe(
       'Usage: $000 [...options]\n\nnew description.'
     );
   });
@@ -5808,6 +5814,14 @@ new description
     expect(withUsageExtensions({ altDescription: expected, trim: false })).toBe(
       `Usage: $000 [...options]\n\n${expected}.`
     );
+
+    expect(withUsageExtensions(expected, { trim: true })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}.`
+    );
+
+    expect(withUsageExtensions(expected, { trim: false })).toBe(
+      `Usage: $000 [...options]\n\n${expected}.`
+    );
   });
 
   it('respects "appendPeriod" option', async () => {
@@ -5822,6 +5836,14 @@ new description
     );
 
     expect(withUsageExtensions({ altDescription: expected, appendPeriod: false })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}`
+    );
+
+    expect(withUsageExtensions(expected, { appendPeriod: true })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}.`
+    );
+
+    expect(withUsageExtensions(expected, { appendPeriod: false })).toBe(
       `Usage: $000 [...options]\n\n${expected.trim()}`
     );
   });
@@ -5844,6 +5866,21 @@ new description
     expect(
       withUsageExtensions({
         altDescription: expected,
+        prependNewlines: false,
+        trim: false
+      })
+    ).toBe(`Usage: $000${expected}.`);
+
+    expect(withUsageExtensions(expected, { prependNewlines: true })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}.`
+    );
+
+    expect(withUsageExtensions(expected, { prependNewlines: false })).toBe(
+      `Usage: $000${expected.trim()}.`
+    );
+
+    expect(
+      withUsageExtensions(expected, {
         prependNewlines: false,
         trim: false
       })
@@ -5876,6 +5913,24 @@ new description
         prependNewlines: true
       })
     ).toBe(`Usage: $000\n\n${expected.trim()}.`);
+
+    expect(
+      withUsageExtensions(expected, {
+        includeOptions: true,
+        prependNewlines: false
+      })
+    ).toBe(`Usage: $000 [...options]${expected.trim()}.`);
+
+    expect(withUsageExtensions(expected, { includeOptions: false })).toBe(
+      `Usage: $000\n\n${expected.trim()}.`
+    );
+
+    expect(
+      withUsageExtensions(expected, {
+        includeOptions: false,
+        prependNewlines: true
+      })
+    ).toBe(`Usage: $000\n\n${expected.trim()}.`);
   });
 
   it('respects "includeSubCommand" option', async () => {
@@ -5896,6 +5951,18 @@ new description
     expect(
       withUsageExtensions({ altDescription: expected, includeSubCommand: 'required' })
     ).toBe(`Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`);
+
+    expect(withUsageExtensions(expected, { includeSubCommand: true })).toBe(
+      `Usage: $000 [subcommand] [...options]\n${expected.trimEnd()}.`
+    );
+
+    expect(withUsageExtensions(expected, { includeSubCommand: false })).toBe(
+      `Usage: $000 [...options]\n\n${expected.trim()}.`
+    );
+
+    expect(withUsageExtensions(expected, { includeSubCommand: 'required' })).toBe(
+      `Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`
+    );
   });
 
   it('respects "includeOptions" + "includeSubCommand" options together', async () => {
@@ -5924,6 +5991,27 @@ new description
     expect(
       withUsageExtensions({
         altDescription: expected,
+        includeOptions: true,
+        includeSubCommand: 'required'
+      })
+    ).toBe(`Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`);
+
+    expect(
+      withUsageExtensions(expected, {
+        includeOptions: true,
+        includeSubCommand: true
+      })
+    ).toBe(`Usage: $000 [subcommand] [...options]\n${expected.trimEnd()}.`);
+
+    expect(
+      withUsageExtensions(expected, {
+        includeOptions: true,
+        includeSubCommand: false
+      })
+    ).toBe(`Usage: $000 [...options]\n${expected.trimEnd()}.`);
+
+    expect(
+      withUsageExtensions(expected, {
         includeOptions: true,
         includeSubCommand: 'required'
       })
