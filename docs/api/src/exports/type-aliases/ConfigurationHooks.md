@@ -4,22 +4,28 @@
 
 [@black-flag/core](../../../README.md) / [src/exports](../README.md) / ConfigurationHooks
 
-# Type Alias: ConfigurationHooks
+# Type Alias: ConfigurationHooks\<CustomContext\>
 
-> **ConfigurationHooks** = `object`
+> **ConfigurationHooks**\<`CustomContext`\> = `object`
 
-Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L111)
+Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L111)
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.
+
+## Type Parameters
+
+### CustomContext
+
+`CustomContext` *extends* [`ExecutionContext`](../util/type-aliases/ExecutionContext.md) = [`ExecutionContext`](../util/type-aliases/ExecutionContext.md)
 
 ## Properties
 
 ### configureArguments?
 
-> `optional` **configureArguments**: [`ConfigureArguments`](ConfigureArguments.md)
+> `optional` **configureArguments**: [`ConfigureArguments`](ConfigureArguments.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:158](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L158)
+Defined in: [src/types/configure.ts:160](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L160)
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like
@@ -36,9 +42,9 @@ text to stderr regardless of error type.
 
 ### configureErrorHandlingEpilogue?
 
-> `optional` **configureErrorHandlingEpilogue**: [`ConfigureErrorHandlingEpilogue`](ConfigureErrorHandlingEpilogue.md)
+> `optional` **configureErrorHandlingEpilogue**: [`ConfigureErrorHandlingEpilogue`](ConfigureErrorHandlingEpilogue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:186](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L186)
+Defined in: [src/types/configure.ts:188](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L188)
 
 This function is called once at the very end of the error handling process
 after an error has occurred.
@@ -56,9 +62,9 @@ reports an argument parsing/validation error.
 
 ### configureExecutionContext?
 
-> `optional` **configureExecutionContext**: [`ConfigureExecutionContext`](ConfigureExecutionContext.md)
+> `optional` **configureExecutionContext**: [`ConfigureExecutionContext`](ConfigureExecutionContext.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:126](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L126)
+Defined in: [src/types/configure.ts:128](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L128)
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return the value that will become the global
@@ -77,9 +83,9 @@ regardless of error type.
 
 ### configureExecutionEpilogue?
 
-> `optional` **configureExecutionEpilogue**: [`ConfigureExecutionEpilogue`](ConfigureExecutionEpilogue.md)
+> `optional` **configureExecutionEpilogue**: [`ConfigureExecutionEpilogue`](ConfigureExecutionEpilogue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:172](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L172)
+Defined in: [src/types/configure.ts:174](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L174)
 
 This function is called once after CLI argument parsing completes and
 either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is
@@ -97,9 +103,9 @@ text to stderr regardless of error type.
 
 ### configureExecutionPrologue?
 
-> `optional` **configureExecutionPrologue**: [`ConfigureExecutionPrologue`](ConfigureExecutionPrologue.md)
+> `optional` **configureExecutionPrologue**: [`ConfigureExecutionPrologue`](ConfigureExecutionPrologue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:145](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/configure.ts#L145)
+Defined in: [src/types/configure.ts:147](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/configure.ts#L147)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any

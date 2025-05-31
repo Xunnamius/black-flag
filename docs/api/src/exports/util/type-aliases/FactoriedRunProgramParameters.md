@@ -6,9 +6,9 @@
 
 # Type Alias: FactoriedRunProgramParameters
 
-> **FactoriedRunProgramParameters** = [`RunProgramParameters`](../../type-aliases/RunProgramParameters.md) *extends* \[infer \_, `...(infer Tail)`\] ? `Tail` : \[\]
+> **FactoriedRunProgramParameters** = `RunProgramParametersWithAny` *extends* \[infer \_, `...(infer Tail)`\] ? `Tail` : \[\]
 
-Defined in: [src/index.ts:102](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L102)
+Defined in: [src/index.ts:116](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L116)
 
 The available call signature parameters of the low-order function returned by
 [makeRunner](../functions/makeRunner.md).

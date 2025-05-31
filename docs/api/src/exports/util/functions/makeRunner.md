@@ -8,7 +8,7 @@
 
 > **makeRunner**\<`CustomCliArguments`\>(`options`): (...`args`) => [`RunProgramReturnType`](../../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:544](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L544)
+Defined in: [src/index.ts:558](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L558)
 
 A "high-order" factory function that returns a "low-order" curried
 [runProgram](../../functions/runProgram.md) function that can be called multiple times while only
@@ -55,7 +55,7 @@ actual thrown error, set `makeRunner`'s `errorHandlingBehavior` option to
 
 #### args
 
-\[\] | \[`Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>\] | \[`Promisable`\<[`PreExecutionContext`](../type-aliases/PreExecutionContext.md)\>\] | \[`string` \| `string`[]\] | \[`string` \| `string`[], `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>\] | \[`string` \| `string`[], `Promisable`\<[`PreExecutionContext`](../type-aliases/PreExecutionContext.md)\>\]
+\[\] | \[`Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\<`any`\>\>\] | \[`Promisable`\<[`PreExecutionContext`](../type-aliases/PreExecutionContext.md)\>\] | \[`string` \| `string`[]\] | \[`string` \| `string`[], `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\<`any`\>\>\] | \[`string` \| `string`[], `Promisable`\<[`PreExecutionContext`](../type-aliases/PreExecutionContext.md)\>\]
 
 ### Returns
 

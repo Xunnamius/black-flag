@@ -6,9 +6,9 @@
 
 # Type Alias: MakeRunnerOptions
 
-> **MakeRunnerOptions** = `object` & \{ `configurationHooks?`: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>; `preExecutionContext?`: `undefined`; \} \| \{ `configurationHooks?`: `undefined`; `preExecutionContext?`: `Promisable`\<[`PreExecutionContext`](PreExecutionContext.md)\>; \}
+> **MakeRunnerOptions** = `object` & \{ `configurationHooks?`: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\<`any`\>\>; `preExecutionContext?`: `undefined`; \} \| \{ `configurationHooks?`: `undefined`; `preExecutionContext?`: `Promisable`\<[`PreExecutionContext`](PreExecutionContext.md)\>; \}
 
-Defined in: [src/index.ts:112](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L112)
+Defined in: [src/index.ts:126](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L126)
 
 The options accepted by the [makeRunner](../functions/makeRunner.md) function.
 
@@ -24,7 +24,7 @@ The options accepted by the [makeRunner](../functions/makeRunner.md) function.
 
 ### configurationHooks?
 
-> `optional` **configurationHooks**: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\>
+> `optional` **configurationHooks**: `Promisable`\<[`ConfigurationHooks`](../../type-aliases/ConfigurationHooks.md)\<`any`\>\>
 
 The [ConfigurationHooks](../../type-aliases/ConfigurationHooks.md) to be used by each low-order
 invocation by default. Each low-order function can provide its own

@@ -8,7 +8,7 @@
 
 > **configureProgram**(`commandModulesPath`, `configurationHooks?`): `Promise`\<[`PreExecutionContext`](../util/type-aliases/PreExecutionContext.md)\>
 
-Defined in: [src/index.ts:188](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L188)
+Defined in: [src/index.ts:202](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L202)
 
 Create and return a [PreExecutionContext](../util/type-aliases/PreExecutionContext.md) containing fully-configured
 [Program](../util/type-aliases/Program.md) instances and an [Executor](../util/type-aliases/Executor.md) entry point function.
@@ -34,7 +34,7 @@ occur if no commands are loadable from the given `commandModulesPath`.
 
 ### configurationHooks?
 
-`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\>
+`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\<`any`\>\>
 
 ## Returns
 

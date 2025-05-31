@@ -6,7 +6,7 @@
 
 # Class: CliError
 
-Defined in: [src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L166)
+Defined in: [src/error.ts:166](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L166)
 
 Represents a CLI-specific error with suggested exit code and other
 properties. As `CliError` has built-in support for cause chaining, this class
@@ -33,7 +33,7 @@ can be used as a simple wrapper around other errors.
 
 > **new CliError**(`reason?`, `options?`): `CliError`
 
-Defined in: [src/error.ts:179](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L179)
+Defined in: [src/error.ts:179](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L179)
 
 Represents a CLI-specific error, optionally with suggested exit code and
 other context.
@@ -60,7 +60,7 @@ other context.
 
 > **new CliError**(`reason`, `options`, `message`, `superOptions`): `CliError`
 
-Defined in: [src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L184)
+Defined in: [src/error.ts:184](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L184)
 
 This constructor syntax is used by subclasses when calling this constructor
 via `super`.
@@ -97,7 +97,7 @@ via `super`.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:174](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L174)
+Defined in: [src/error.ts:174](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L174)
 
 ***
 
@@ -121,7 +121,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L172)
+Defined in: [src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L172)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -186,7 +186,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"short"` \| `"full"` \| `"default"`\>
 
-Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L171)
+Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L171)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -238,7 +238,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L170)
+Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L170)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

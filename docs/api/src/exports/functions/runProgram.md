@@ -10,7 +10,7 @@
 
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:674](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L674)
+Defined in: [src/index.ts:688](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L688)
 
 Invokes the dynamically imported
 `configureProgram(commandModulesPath).execute()` function.
@@ -48,7 +48,7 @@ if any other exception occurs, or `Arguments` otherwise.
 
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:694](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L694)
+Defined in: [src/index.ts:708](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L708)
 
 Invokes the dynamically imported `configureProgram(commandModulesPath,
 configurationHooks).execute()` function.
@@ -88,9 +88,51 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
+> **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+
+Defined in: [src/index.ts:731](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L731)
+
+Invokes the dynamically imported `configureProgram(commandModulesPath,
+configurationHooks).execute()` function.
+
+This function is suitable for a CLI entry point since it will **never throw
+or reject no matter what.** Instead, when an exception occurs,
+`process.exitCode` is set to the appropriate value, the
+[ConfigureErrorHandlingEpilogue](../type-aliases/ConfigureErrorHandlingEpilogue.md) hook is triggered, and either
+`NullArguments` (only if `GracefulEarlyExitError` was thrown) or `undefined`
+is returned.
+
+Note: It is always safe to invoke this form of `runProgram` as many times as
+desired.
+
+### Type Parameters
+
+#### CustomCliArguments
+
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
+
+### Parameters
+
+#### commandModulesPath
+
+`string`
+
+#### configurationHooks
+
+`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\<`any`\>\>
+
+### Returns
+
+[`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other exception occurs, or `Arguments` otherwise.
+
+## Call Signature
+
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `preExecutionContext`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:718](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L718)
+Defined in: [src/index.ts:755](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L755)
 
 Invokes the `preExecutionContext.execute()` function.
 
@@ -133,7 +175,7 @@ if any other exception occurs, or `Arguments` otherwise.
 
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `argv`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:742](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L742)
+Defined in: [src/index.ts:779](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L779)
 
 Invokes the dynamically imported
 `configureProgram(commandModulesPath).execute(argv)` function. If `argv` is a
@@ -176,7 +218,7 @@ if any other exception occurs, or `Arguments` otherwise.
 
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `argv`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:766](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L766)
+Defined in: [src/index.ts:803](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L803)
 
 Invokes the dynamically imported `configureProgram(commandModulesPath,
 configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
@@ -221,9 +263,56 @@ if any other exception occurs, or `Arguments` otherwise.
 
 ## Call Signature
 
+> **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `argv`, `configurationHooks`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+
+Defined in: [src/index.ts:828](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L828)
+
+Invokes the dynamically imported `configureProgram(commandModulesPath,
+configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
+argv.split(' ')` is applied first.
+
+This function is suitable for a CLI entry point since it will **never throw
+or reject no matter what.** Instead, when an exception occurs,
+`process.exitCode` is set to the appropriate value, the
+[ConfigureErrorHandlingEpilogue](../type-aliases/ConfigureErrorHandlingEpilogue.md) hook is triggered, and either
+`NullArguments` (only if `GracefulEarlyExitError` was thrown) or `undefined`
+is returned.
+
+Note: It is always safe to invoke this form of `runProgram` as many times as
+desired.
+
+### Type Parameters
+
+#### CustomCliArguments
+
+`CustomCliArguments` *extends* `Record`\<`string`, `unknown`\> = `Record`\<`string`, `unknown`\>
+
+### Parameters
+
+#### commandModulesPath
+
+`string`
+
+#### argv
+
+`string` | `string`[]
+
+#### configurationHooks
+
+`Promisable`\<[`ConfigurationHooks`](../type-aliases/ConfigurationHooks.md)\<`any`\>\>
+
+### Returns
+
+[`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
+
+`NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+if any other exception occurs, or `Arguments` otherwise.
+
+## Call Signature
+
 > **runProgram**\<`CustomCliArguments`\>(`commandModulesPath`, `argv`, `preExecutionContext`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:792](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L792)
+Defined in: [src/index.ts:854](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L854)
 
 Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
 string, `argv = argv.split(' ')` is applied first.
@@ -271,7 +360,7 @@ if any other exception occurs, or `Arguments` otherwise.
 
 > **runProgram**\<`CustomCliArguments`\>(...`args`): [`RunProgramReturnType`](../type-aliases/RunProgramReturnType.md)\<`CustomCliArguments`\>
 
-Defined in: [src/index.ts:812](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/index.ts#L812)
+Defined in: [src/index.ts:874](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/index.ts#L874)
 
 Run the given program with the configuration given in `args`.
 

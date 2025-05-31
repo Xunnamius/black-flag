@@ -8,7 +8,7 @@
 
 > **isArguments**(`obj`): `obj is Arguments`
 
-Defined in: [src/util.ts:47](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/util.ts#L47)
+Defined in: [src/util.ts:47](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/util.ts#L47)
 
 Type-guard for [Arguments](../../type-aliases/Arguments.md).
 

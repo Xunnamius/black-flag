@@ -8,7 +8,7 @@
 
 > `const` **BfErrorMessage**: `object`
 
-Defined in: [src/error.ts:323](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/error.ts#L323)
+Defined in: [src/error.ts:323](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L323)
 
 A collection of possible error and warning messages emitted by Black Flag.
 

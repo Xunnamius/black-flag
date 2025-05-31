@@ -8,7 +8,7 @@
 
 > **PreExecutionContext**\<`CustomContext`\> = `CustomContext` & `object`
 
-Defined in: [src/types/program.ts:307](https://github.com/Xunnamius/black-flag/blob/7a70c7e44633bf3b15b0662ce212ece66de038c8/src/types/program.ts#L307)
+Defined in: [src/types/program.ts:307](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/types/program.ts#L307)
 
 Represents the pre-execution context that is the result of calling
 `configureProgram`.
