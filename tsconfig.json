@@ -46,9 +46,6 @@
       "multiverse+extensions:*": ["packages/extensions/src/*"],
       "multiverse+checks": ["packages/checks/src/index.ts"],
       "multiverse+extensions": ["packages/extensions/src/index.ts"],
-      "rootverse+checks:*": ["packages/checks/*"],
-      "rootverse+extensions:*": ["packages/extensions/*"],
-      "rootverse:*": ["*"],
       "universe+checks:*": ["packages/checks/src/*"],
       "universe+extensions:*": ["packages/extensions/src/*"],
       "universe+checks": ["packages/checks/src/index.ts"],
@@ -58,7 +55,10 @@
       "testverse+checks:*": ["packages/checks/test/*"],
       "testverse+extensions:*": ["packages/extensions/test/*"],
       "testverse:*": ["test/*"],
-      "typeverse:*": ["types/*"]
+      "typeverse:*": ["types/*"],
+      "rootverse+checks:*": ["packages/checks/*"],
+      "rootverse+extensions:*": ["packages/extensions/*"],
+      "rootverse:*": ["*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,

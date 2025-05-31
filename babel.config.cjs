@@ -33,9 +33,6 @@ function getBabelAliases() {
     '^multiverse\\+extensions:(.+)$': './packages/extensions/src/$1',
     '^multiverse\\+checks$': './packages/checks/src/index.js',
     '^multiverse\\+extensions$': './packages/extensions/src/index.js',
-    '^rootverse\\+checks:(.+)$': './packages/checks/$1',
-    '^rootverse\\+extensions:(.+)$': './packages/extensions/$1',
-    '^rootverse:(.+)$': './$1',
     '^universe\\+checks:(.+)$': './packages/checks/src/$1',
     '^universe\\+extensions:(.+)$': './packages/extensions/src/$1',
     '^universe\\+checks$': './packages/checks/src/index.js',
@@ -45,6 +42,9 @@ function getBabelAliases() {
     '^testverse\\+checks:(.+)$': './packages/checks/test/$1',
     '^testverse\\+extensions:(.+)$': './packages/extensions/test/$1',
     '^testverse:(.+)$': './test/$1',
-    '^typeverse:(.+)$': './types/$1'
+    '^typeverse:(.+)$': './types/$1',
+    '^rootverse\\+checks:(.+)$': './packages/checks/$1',
+    '^rootverse\\+extensions:(.+)$': './packages/extensions/$1',
+    '^rootverse:(.+)$': './$1'
   };
 }
