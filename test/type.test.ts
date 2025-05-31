@@ -5,11 +5,15 @@
 import { createDebugLogger } from 'rejoinder';
 import { expect, test } from 'tstyche';
 
+import { runProgram } from 'universe:exports/index.ts';
+import { makeRunner } from 'universe:exports/util.ts';
+
 import type {
   $executionContext,
   Arguments,
   ChildConfiguration,
   ConfigurationHooks,
+  ConfigureErrorHandlingEpilogue,
   ImportedConfigurationModule,
   ParentConfiguration,
   RootConfiguration
@@ -29,6 +33,8 @@ import type {
   ProgramType,
   RouterProgram
 } from 'universe:exports/util.ts';
+
+type DummyGlobalExecutionContext = ExecutionContext & { something: string };
 
 test('exports/index', async () => {
   expect({
@@ -132,4 +138,107 @@ test('exports/util', async () => {
   }).type.toBeAssignableTo<Programs>();
 
   expect({} as DescriptorToProgram<'router'>).type.toBeAssignableTo<RouterProgram>();
+});
+
+test('runProgram accepts Promisable<ConfigurationHooks> with a custom context', async () => {
+  expect(
+    runProgram(
+      'some/path',
+      Promise.resolve({
+        configureErrorHandlingEpilogue:
+          {} as ConfigureErrorHandlingEpilogue<DummyGlobalExecutionContext>
+      })
+    )
+  ).type.not.toRaiseError();
+
+  expect(
+    runProgram('some/path', '--flag-one --flag-two', {
+      configureErrorHandlingEpilogue({ error }, argv, context) {
+        void error, argv, context;
+        return undefined;
+      },
+      configureArguments(argv: string[]) {
+        return argv;
+      },
+      configureExecutionContext(context: ExecutionContext) {
+        return context as DummyGlobalExecutionContext;
+      },
+      configureExecutionEpilogue(argv: Arguments, context: DummyGlobalExecutionContext) {
+        void context;
+        return argv;
+      },
+      configureExecutionPrologue(
+        rootPrograms: Programs,
+        context: DummyGlobalExecutionContext
+      ) {
+        void rootPrograms, context;
+        return undefined;
+      }
+    })
+  ).type.not.toRaiseError();
+});
+
+test('makeRunner returned function accepts Promisable<ConfigurationHooks> with proper type checking', async () => {
+  const run = makeRunner({
+    commandModulesPath: 'some/path',
+    configurationHooks: {
+      configureErrorHandlingEpilogue({ error }, argv, context) {
+        void error, argv, context;
+        return undefined;
+      },
+      configureArguments(argv: string[]) {
+        return argv;
+      },
+      configureExecutionContext(context: ExecutionContext) {
+        return context as DummyGlobalExecutionContext;
+      },
+      configureExecutionEpilogue(argv: Arguments, context: DummyGlobalExecutionContext) {
+        void context;
+        return argv;
+      },
+      configureExecutionPrologue(
+        rootPrograms: Programs,
+        context: DummyGlobalExecutionContext
+      ) {
+        void rootPrograms, context;
+        return undefined;
+      }
+    }
+  });
+
+  expect(
+    run(
+      'some/path',
+      Promise.resolve({
+        configureErrorHandlingEpilogue:
+          {} as ConfigureErrorHandlingEpilogue<DummyGlobalExecutionContext>
+      })
+    )
+  ).type.not.toRaiseError();
+
+  expect(
+    run('--flag-one --flag-two', {
+      configureErrorHandlingEpilogue({ error }, argv, context) {
+        void error, argv, context;
+        return undefined;
+      },
+      configureArguments(argv: string[]) {
+        return argv;
+      },
+      configureExecutionContext(context: ExecutionContext) {
+        return context as DummyGlobalExecutionContext;
+      },
+      configureExecutionEpilogue(argv: Arguments, context: DummyGlobalExecutionContext) {
+        void context;
+        return argv;
+      },
+      configureExecutionPrologue(
+        rootPrograms: Programs,
+        context: DummyGlobalExecutionContext
+      ) {
+        void rootPrograms, context;
+        return undefined;
+      }
+    })
+  ).type.not.toRaiseError();
 });

@@ -108,7 +108,9 @@ export type ConfigureErrorHandlingEpilogue<
  * An object containing zero or more configuration hooks. See each hook type
  * definition for details.
  */
-export type ConfigurationHooks = {
+export type ConfigurationHooks<
+  CustomContext extends ExecutionContext = ExecutionContext
+> = {
   /**
    * This function is called once towards the beginning of the execution of
    * `configureProgram` and should return the value that will become the global
@@ -123,7 +125,7 @@ export type ConfigurationHooks = {
    * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
    * regardless of error type.
    */
-  configureExecutionContext?: ConfigureExecutionContext;
+  configureExecutionContext?: ConfigureExecutionContext<CustomContext>;
   /**
    * This function is called once towards the end of the execution of
    * `configureProgram`, after all commands have been discovered but before any
@@ -142,7 +144,7 @@ export type ConfigurationHooks = {
    * {@link ConfigureErrorHandlingEpilogue} nor send help text to stderr
    * regardless of error type.
    */
-  configureExecutionPrologue?: ConfigureExecutionPrologue;
+  configureExecutionPrologue?: ConfigureExecutionPrologue<CustomContext>;
   /**
    * This function is called once towards the beginning of the execution of
    * `PreExecutionContext::execute` and should return a `process.argv`-like
@@ -155,7 +157,7 @@ export type ConfigurationHooks = {
    * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
    * text to stderr regardless of error type.
    */
-  configureArguments?: ConfigureArguments;
+  configureArguments?: ConfigureArguments<CustomContext>;
   /**
    * This function is called once after CLI argument parsing completes and
    * either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is
@@ -169,7 +171,7 @@ export type ConfigurationHooks = {
    * handled by {@link ConfigureErrorHandlingEpilogue} but will never send help
    * text to stderr regardless of error type.
    */
-  configureExecutionEpilogue?: ConfigureExecutionEpilogue;
+  configureExecutionEpilogue?: ConfigureExecutionEpilogue<CustomContext>;
   /**
    * This function is called once at the very end of the error handling process
    * after an error has occurred.
@@ -183,5 +185,5 @@ export type ConfigurationHooks = {
    * This function is also called even after yargs internally handles and
    * reports an argument parsing/validation error.
    */
-  configureErrorHandlingEpilogue?: ConfigureErrorHandlingEpilogue;
+  configureErrorHandlingEpilogue?: ConfigureErrorHandlingEpilogue<CustomContext>;
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from 'node:assert';
 import { isNativeError } from 'node:util/types';
 
@@ -57,33 +58,46 @@ import type {
 const coreDebug = createDebugLogger({ namespace: globalDebuggerNamespace });
 
 /**
- * The available call signature parameters of the {@link runProgram} function.
- *
- * The first parameter is always the required `commandModulesPath` string,
- * optionally followed by `argv` string/array, and then either a
- * {@link ConfigurationHooks} or {@link PreExecutionContext} instance (or a
- * promise that returns them).
+ * @internal
  */
-export type RunProgramParameters =
+export type RunProgramParametersWithAny =
   // * Call signature 1
   | [commandModulesPath: string]
-  // * Call signature 2
-  | [commandModulesPath: string, configurationHooks: Promisable<ConfigurationHooks>]
   // * Call signature 3
-  | [commandModulesPath: string, preExecutionContext: Promisable<PreExecutionContext>]
+  | [commandModulesPath: string, configurationHooks: Promisable<ConfigurationHooks<any>>]
   // * Call signature 4
-  | [commandModulesPath: string, argv: string | string[]]
+  | [commandModulesPath: string, preExecutionContext: Promisable<PreExecutionContext>]
   // * Call signature 5
+  | [commandModulesPath: string, argv: string | string[]]
+  // * Call signature 7
   | [
       commandModulesPath: string,
       argv: string | string[],
-      configurationHooks: Promisable<ConfigurationHooks>
+      configurationHooks: Promisable<ConfigurationHooks<any>>
     ]
-  // * Call signature 6
+  // * Call signature 8
   | [
       commandModulesPath: string,
       argv: string | string[],
       preExecutionContext: Promisable<PreExecutionContext>
+    ];
+
+/**
+ * The available call signature parameters of the {@link runProgram} function.
+ *
+ * The first parameter is always the required `commandModulesPath` string,
+ * optionally followed by `argv` string/array, and then either a * {@link ConfigurationHooks} or {@link PreExecutionContext} instance (or a
+ * promise that returns them).
+ */
+export type RunProgramParameters =
+  | RunProgramParametersWithAny
+  // * Call signature 2
+  | [commandModulesPath: string, configurationHooks: Promisable<ConfigurationHooks>]
+  // * Call signature 4
+  | [
+      commandModulesPath: string,
+      argv: string | string[],
+      configurationHooks: Promisable<ConfigurationHooks>
     ];
 
 /**
@@ -99,7 +113,7 @@ export type RunProgramReturnType<CustomCliArguments extends Record<string, unkno
  * This is the same thing as {@link RunProgramParameters} but with the first
  * parameter (i.e. the `commandModulesPath` string) omitted.
  */
-export type FactoriedRunProgramParameters = RunProgramParameters extends [
+export type FactoriedRunProgramParameters = RunProgramParametersWithAny extends [
   infer _,
   ...infer Tail
 ]
@@ -150,7 +164,7 @@ export type MakeRunnerOptions = {
    *
    * @see {@link runProgram}
    */
-  configurationHooks?: Promisable<ConfigurationHooks>;
+  configurationHooks?: Promisable<ConfigurationHooks<any>>;
   /**
    * The {@link PreExecutionContext} to be used by each low-order
    * invocation. Each low-order function can provide its own
@@ -164,7 +178,7 @@ export type MakeRunnerOptions = {
   preExecutionContext?: Promisable<PreExecutionContext>;
 } & (
   | {
-      configurationHooks?: Promisable<ConfigurationHooks>;
+      configurationHooks?: Promisable<ConfigurationHooks<any>>;
       preExecutionContext?: undefined;
     }
   | {
@@ -193,7 +207,7 @@ export async function configureProgram(
    * `'file://...'`-style URLs are also accepted.
    */
   commandModulesPath: string,
-  configurationHooks?: Promisable<ConfigurationHooks>
+  configurationHooks?: Promisable<ConfigurationHooks<any>>
 ): Promise<PreExecutionContext> {
   try {
     // eslint-disable-next-line unicorn/prevent-abbreviations
@@ -698,6 +712,29 @@ export async function runProgram<
   configurationHooks: Promisable<ConfigurationHooks>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
+ * Invokes the dynamically imported `configureProgram(commandModulesPath,
+ * configurationHooks).execute()` function.
+ *
+ * This function is suitable for a CLI entry point since it will **never throw
+ * or reject no matter what.** Instead, when an exception occurs,
+ * `process.exitCode` is set to the appropriate value, the
+ * {@link ConfigureErrorHandlingEpilogue} hook is triggered, and either
+ * `NullArguments` (only if `GracefulEarlyExitError` was thrown) or `undefined`
+ * is returned.
+ *
+ * Note: It is always safe to invoke this form of `runProgram` as many times as
+ * desired.
+ *
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other exception occurs, or `Arguments` otherwise.
+ */
+export async function runProgram<
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+>(
+  commandModulesPath: string,
+  configurationHooks: Promisable<ConfigurationHooks<any>>
+): RunProgramReturnType<CustomCliArguments>;
+/**
  * Invokes the `preExecutionContext.execute()` function.
  *
  * **WARNING: reusing the same `preExecutionContext` with multiple invocations
@@ -769,6 +806,31 @@ export async function runProgram<
   commandModulesPath: string,
   argv: string | string[],
   configurationHooks: Promisable<ConfigurationHooks>
+): RunProgramReturnType<CustomCliArguments>;
+/**
+ * Invokes the dynamically imported `configureProgram(commandModulesPath,
+ * configurationHooks).execute(argv)` function. If `argv` is a string, `argv =
+ * argv.split(' ')` is applied first.
+ *
+ * This function is suitable for a CLI entry point since it will **never throw
+ * or reject no matter what.** Instead, when an exception occurs,
+ * `process.exitCode` is set to the appropriate value, the
+ * {@link ConfigureErrorHandlingEpilogue} hook is triggered, and either
+ * `NullArguments` (only if `GracefulEarlyExitError` was thrown) or `undefined`
+ * is returned.
+ *
+ * Note: It is always safe to invoke this form of `runProgram` as many times as
+ * desired.
+ *
+ * @returns `NullArguments` if `GracefulEarlyExitError` is thrown, `undefined`
+ * if any other exception occurs, or `Arguments` otherwise.
+ */
+export async function runProgram<
+  CustomCliArguments extends Record<string, unknown> = Record<string, unknown>
+>(
+  commandModulesPath: string,
+  argv: string | string[],
+  configurationHooks: Promisable<ConfigurationHooks<any>>
 ): RunProgramReturnType<CustomCliArguments>;
 /**
  * Invokes the `preExecutionContext.execute(argv)` function. If `argv` is a
@@ -1023,39 +1085,40 @@ async function deriveRunProgramParametersFromArgs(
   };
 
   if (typeof args[1] === 'string' || Array.isArray(args[1])) {
-    // * Must be call sig 4, 5, or 6
+    // * Must be call sig 5, 6/7, or 8
     result.argv = args[1];
 
     if (args[2]) {
-      // * Must be call sig 5 or 6
       if (awaitPromisedParameters) {
+        // * Must be call sig 6/7 or 8
         const argument2 = await args[2];
         if (isPreExecutionContext(argument2)) {
-          // * Must be call sig 6
+          // * Must be call sig 8
           result.preExecutionContext = argument2;
         } else {
-          // * Must be call sig 5
+          // * Must be call sig 6/7
           result.configurationHooks = argument2;
         }
       } else {
         result.hooksOrContext = args[2];
       }
-    }
+    } // * else, must be call sig 5
   } else if (args[1]) {
-    // * Must be call sig 2 or 3
+    // * Must be call sig 2/3 or 4
     if (awaitPromisedParameters) {
       const argument1 = await args[1];
       if (isPreExecutionContext(argument1)) {
-        // * Must be call sig 3
+        // * Must be call sig 4
         result.preExecutionContext = argument1;
       } else {
-        // * Must be call sig 2
+        // * Must be call sig 2/3
         result.configurationHooks = argument1;
       }
     } else {
       result.hooksOrContext = args[1];
     }
-  } // * else, must be call sig 1
+  }
+  // * else, must be call sig 1
 
   return result;
 }
