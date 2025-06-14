@@ -105,7 +105,7 @@
     "yargs-parser": "npm:@-xun/yargs-parser-experimental@22"
   },
   "devDependencies": {
-    "@-xun/project": "^2.0.0",
+    "@-xun/project": "^2.0.4",
     "@-xun/run": "^1.1.0",
     "@-xun/symbiote": "^4.1.0"
   },
