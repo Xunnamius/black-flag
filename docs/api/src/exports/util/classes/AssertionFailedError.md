@@ -6,7 +6,7 @@
 
 # Class: AssertionFailedError
 
-Defined in: [src/error.ts:293](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L293)
+Defined in: [src/error.ts:293](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L293)
 
 Represents a failed sanity check.
 
@@ -20,7 +20,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`error`, `options?`): `AssertionFailedError`
 
-Defined in: [src/error.ts:299](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L299)
+Defined in: [src/error.ts:299](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L299)
 
 Represents a failed sanity check.
 
@@ -46,7 +46,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`message`, `options?`): `AssertionFailedError`
 
-Defined in: [src/error.ts:300](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L300)
+Defined in: [src/error.ts:300](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L300)
 
 Represents a failed sanity check.
 
@@ -72,7 +72,7 @@ Represents a failed sanity check.
 
 > **new AssertionFailedError**(`errorOrMessage?`, `options?`): `AssertionFailedError`
 
-Defined in: [src/error.ts:301](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L301)
+Defined in: [src/error.ts:301](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L301)
 
 Represents a failed sanity check.
 
@@ -100,7 +100,7 @@ Represents a failed sanity check.
 
 > **\[$type\]**: `string`[]
 
-Defined in: [src/error.ts:295](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L295)
+Defined in: [src/error.ts:295](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L295)
 
 #### Overrides
 
@@ -124,7 +124,7 @@ Defined in: node\_modules/typescript/lib/lib.es2022.error.d.ts:26
 
 > **dangerouslyFatal**: `boolean` = `false`
 
-Defined in: [src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L172)
+Defined in: [src/error.ts:172](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L172)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -189,7 +189,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **showHelp**: `NonNullable`\<`undefined` \| `false` \| `"short"` \| `"full"` \| `"default"`\>
 
-Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L171)
+Defined in: [src/error.ts:171](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L171)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -241,7 +241,7 @@ Defined in: node\_modules/typescript/lib/lib.es5.d.ts:1078
 
 > **suggestedExitCode**: [`FrameworkExitCode`](../../enumerations/FrameworkExitCode.md) = `FrameworkExitCode.DefaultError`
 
-Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/d6004b46e3ac5a451e4e0f05bf5c8726ce157ac9/src/error.ts#L170)
+Defined in: [src/error.ts:170](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L170)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.
