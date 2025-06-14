@@ -1,4 +1,3 @@
-// @ts-check
 /// <reference path="../../../../index.d.ts"/>
 
 const filename = require('node:path').basename(__filename);
