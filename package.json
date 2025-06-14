@@ -94,7 +94,7 @@
   },
   "dependencies": {
     "@-xun/fs": "^2.0.0",
-    "@-xun/js": "^1.1.1",
+    "@-xun/js": "^2.0.0",
     "@types/yargs": "^17.0.33",
     "core-js": "^3.42.0",
     "named-app-errors": "^4.0.2",
