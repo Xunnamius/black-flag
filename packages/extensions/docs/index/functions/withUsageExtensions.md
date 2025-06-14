@@ -10,7 +10,7 @@
 
 > **withUsageExtensions**(`altDescription?`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1427](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/index.ts#L1427)
+Defined in: [packages/extensions/src/index.ts:1427](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L1427)
 
 Generate command usage text consistently yet flexibly.
 
@@ -31,7 +31,7 @@ Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
 
 > **withUsageExtensions**(`altDescription?`, `config?`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1428](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/index.ts#L1428)
+Defined in: [packages/extensions/src/index.ts:1428](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L1428)
 
 Generate command usage text consistently yet flexibly.
 
@@ -56,7 +56,7 @@ Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
 
 > **withUsageExtensions**(`config?`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1432](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/index.ts#L1432)
+Defined in: [packages/extensions/src/index.ts:1432](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L1432)
 
 Generate command usage text consistently yet flexibly.
 
@@ -77,7 +77,7 @@ Defaults to: `Usage: $000\n\n${altDescription}` where `altDescription` is
 
 > **withUsageExtensions**(`config?`, `moreConfig?`): `string`
 
-Defined in: [packages/extensions/src/index.ts:1433](https://github.com/Xunnamius/black-flag/blob/c5ada654b2eb8206c373e88bdba1d3a12ccec944/packages/extensions/src/index.ts#L1433)
+Defined in: [packages/extensions/src/index.ts:1433](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L1433)
 
 Generate command usage text consistently yet flexibly.
 
