@@ -8,7 +8,7 @@
 
 > **WithBuilderExtensionsConfig**\<`CustomCliArguments`\> = `object`
 
-Defined in: [packages/extensions/src/index.ts:701](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L701)
+Defined in: [packages/extensions/src/index.ts:701](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L701)
 
 A configuration object that further configures the behavior of
 [withBuilderExtensions](../functions/withBuilderExtensions.md).
@@ -25,7 +25,7 @@ A configuration object that further configures the behavior of
 
 > `optional` **commonOptions**: readonly `LiteralUnion`\<keyof `CustomCliArguments` \| `"help"` \| `"version"`, `string`\>[]
 
-Defined in: [packages/extensions/src/index.ts:736](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L736)
+Defined in: [packages/extensions/src/index.ts:736](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L736)
 
 An array of zero or more string keys of `CustomCliArguments`, with the
 optional addition of `'help'` and `'version'`, that should be grouped under
@@ -47,7 +47,7 @@ This setting is ignored if `disableAutomaticGrouping === true`.
 
 > `optional` **disableAutomaticGrouping**: `boolean`
 
-Defined in: [packages/extensions/src/index.ts:714](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L714)
+Defined in: [packages/extensions/src/index.ts:714](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L714)
 
 Set to `true` to disable BFE's support for automatic grouping of related
 options.
@@ -68,7 +68,7 @@ false
 
 > `optional` **enableAutomaticSorting**: `boolean`
 
-Defined in: [packages/extensions/src/index.ts:724](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L724)
+Defined in: [packages/extensions/src/index.ts:724](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L724)
 
 Set to `true` to enable BFE's support for automatic sorting of options.
 

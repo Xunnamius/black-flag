@@ -8,7 +8,7 @@
 
 > **withBuilderExtensions**\<`CustomCliArguments`, `CustomExecutionContext`\>(`customBuilder?`, `__namedParameters?`): [`WithBuilderExtensionsReturnType`](../type-aliases/WithBuilderExtensionsReturnType.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [packages/extensions/src/index.ts:797](https://github.com/Xunnamius/black-flag/blob/55cfbcd0072708351b7f32c809d598866a5f7476/packages/extensions/src/index.ts#L797)
+Defined in: [packages/extensions/src/index.ts:797](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L797)
 
 This function enables several additional options-related units of
 functionality via analysis of the returned options configuration object and
