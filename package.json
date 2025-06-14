@@ -99,7 +99,7 @@
     "core-js": "^3.43.0",
     "named-app-errors": "^4.0.2",
     "package-up": "^5.0.0",
-    "rejoinder": "^1.2.5",
+    "rejoinder": "^2.0.1",
     "type-fest": "^4.41.0",
     "yargs": "^18.0.0",
     "yargs-parser": "npm:@-xun/yargs-parser-experimental@22"
