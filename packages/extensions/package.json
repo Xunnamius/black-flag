@@ -79,7 +79,7 @@
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
-    "@-xun/fs": "^1.0.0",
+    "@-xun/fs": "^2.0.0",
     "@-xun/project": "^2.0.0",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/lodash.merge": "^4.6.9",
