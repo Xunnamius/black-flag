@@ -1602,7 +1602,7 @@ export async function getInvocableExtendedHandler<
          * The script name or node command that, when omitted from the `argv`
          * passed to a handler returned by `getInvocableExtendedHandler`,
          * defaults to the `name` value exported from the command's module file
-         * (or `"<unknown name>"` if no name was exported).
+         * (or `"???"` if no name was exported).
          *
          * **Note that this default value IS LIKELY DIFFERENT THAN the _full
          * name_ to which Black Flag sets `$0`!** If this is an issue, manually
@@ -1624,7 +1624,7 @@ export async function getInvocableExtendedHandler<
     const argv_ = safeDeepClone(
       {
         [$artificiallyInvoked]: true,
-        $0: config.name || '<unknown name>',
+        $0: config.name || '???',
         _: [],
         ...argv,
         [$executionContext]: context

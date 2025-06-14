@@ -6220,7 +6220,7 @@ describe('::getInvocableExtendedHandler', () => {
       await handler(mockArgv);
 
       expect(mockCustomHandler.mock.calls).toStrictEqual([
-        [expect.objectContaining({ $0: '<unknown name>' })]
+        [expect.objectContaining({ $0: '???' })]
       ]);
     }
 
@@ -6238,7 +6238,7 @@ describe('::getInvocableExtendedHandler', () => {
       await handler({ test: true });
 
       expect(mockCustomHandler.mock.calls).toStrictEqual([
-        [expect.objectContaining({ $0: '<unknown name>', test: true })]
+        [expect.objectContaining({ $0: '???', test: true })]
       ]);
     }
   });
@@ -6473,7 +6473,7 @@ describe('::getInvocableExtendedHandler', () => {
     expect(mockCustomHandler.mock.calls).toStrictEqual([
       [
         {
-          $0: '<unknown name>',
+          $0: '???',
           _: [],
           [$artificiallyInvoked]: true,
           [$executionContext]: {
