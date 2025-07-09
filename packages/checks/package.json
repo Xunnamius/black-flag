@@ -72,7 +72,7 @@
     "test:packages:all": "symbiote test --env NODE_NO_WARNINGS=1 --tests all-local --scope unlimited --coverage"
   },
   "dependencies": {
-    "core-js": "^3.43.0"
+    "core-js": "^3.44.0"
   },
   "devDependencies": {
     "@-xun/fs": "^2.0.0",
