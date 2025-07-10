@@ -8,7 +8,7 @@
 
 > **ConfigurationHooks**\<`CustomContext`\> = `object`
 
-Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L111)
+Defined in: [src/types/configure.ts:111](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L111)
 
 An object containing zero or more configuration hooks. See each hook type
 definition for details.
@@ -25,7 +25,7 @@ definition for details.
 
 > `optional` **configureArguments**: [`ConfigureArguments`](ConfigureArguments.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:160](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L160)
+Defined in: [src/types/configure.ts:160](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L160)
 
 This function is called once towards the beginning of the execution of
 `PreExecutionContext::execute` and should return a `process.argv`-like
@@ -44,7 +44,7 @@ text to stderr regardless of error type.
 
 > `optional` **configureErrorHandlingEpilogue**: [`ConfigureErrorHandlingEpilogue`](ConfigureErrorHandlingEpilogue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:188](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L188)
+Defined in: [src/types/configure.ts:188](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L188)
 
 This function is called once at the very end of the error handling process
 after an error has occurred.
@@ -64,7 +64,7 @@ reports an argument parsing/validation error.
 
 > `optional` **configureExecutionContext**: [`ConfigureExecutionContext`](ConfigureExecutionContext.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:128](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L128)
+Defined in: [src/types/configure.ts:128](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L128)
 
 This function is called once towards the beginning of the execution of
 `configureProgram` and should return the value that will become the global
@@ -85,7 +85,7 @@ regardless of error type.
 
 > `optional` **configureExecutionEpilogue**: [`ConfigureExecutionEpilogue`](ConfigureExecutionEpilogue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:174](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L174)
+Defined in: [src/types/configure.ts:174](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L174)
 
 This function is called once after CLI argument parsing completes and
 either (1) handler execution succeeds or (2) a `GracefulEarlyExitError` is
@@ -105,7 +105,7 @@ text to stderr regardless of error type.
 
 > `optional` **configureExecutionPrologue**: [`ConfigureExecutionPrologue`](ConfigureExecutionPrologue.md)\<`CustomContext`\>
 
-Defined in: [src/types/configure.ts:147](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/configure.ts#L147)
+Defined in: [src/types/configure.ts:147](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/configure.ts#L147)
 
 This function is called once towards the end of the execution of
 `configureProgram`, after all commands have been discovered but before any

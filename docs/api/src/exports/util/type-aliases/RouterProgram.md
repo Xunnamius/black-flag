@@ -8,7 +8,7 @@
 
 > **RouterProgram**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Pick`\<[`Program`](Program.md)\<`CustomCliArguments`, `CustomExecutionContext`\>, `"parseAsync"` \| `"command"`\>
 
-Defined in: [src/types/program.ts:152](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L152)
+Defined in: [src/types/program.ts:152](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L152)
 
 Represents an "router" [Program](Program.md) instance.
 

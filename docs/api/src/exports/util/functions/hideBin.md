@@ -8,7 +8,7 @@
 
 > **hideBin**(`argv`): `string`[]
 
-Defined in: [src/exports/util.ts:53](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/exports/util.ts#L53)
+Defined in: [src/exports/util.ts:53](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/exports/util.ts#L53)
 
 ## Parameters
 

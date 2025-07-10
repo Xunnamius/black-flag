@@ -1,6 +1,6 @@
 {
   "name": "@black-flag/core",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A declarative framework for building fluent, deeply hierarchical command line interfaces with yargs",
   "keywords": [
     "cli",

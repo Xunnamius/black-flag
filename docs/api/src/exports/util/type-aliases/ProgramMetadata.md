@@ -8,7 +8,7 @@
 
 > **ProgramMetadata** = `object`
 
-Defined in: [src/types/program.ts:199](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L199)
+Defined in: [src/types/program.ts:199](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L199)
 
 Represents the meta information about a discovered command and its
 corresponding [Configuration](../../type-aliases/Configuration.md) object/file.
@@ -19,7 +19,7 @@ corresponding [Configuration](../../type-aliases/Configuration.md) object/file.
 
 > **filename**: `string`
 
-Defined in: [src/types/program.ts:222](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L222)
+Defined in: [src/types/program.ts:222](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L222)
 
 The basename of `filepath`.
 
@@ -29,7 +29,7 @@ The basename of `filepath`.
 
 > **filenameWithoutExtension**: `string`
 
-Defined in: [src/types/program.ts:226](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L226)
+Defined in: [src/types/program.ts:226](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L226)
 
 The basename of `filepath` with the trailing extension trimmed.
 
@@ -39,7 +39,7 @@ The basename of `filepath` with the trailing extension trimmed.
 
 > **filepath**: `string`
 
-Defined in: [src/types/program.ts:218](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L218)
+Defined in: [src/types/program.ts:218](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L218)
 
 Absolute filesystem path to the loaded configuration file.
 
@@ -49,7 +49,7 @@ Absolute filesystem path to the loaded configuration file.
 
 > **fullUsageText**: `string`
 
-Defined in: [src/types/program.ts:261](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L261)
+Defined in: [src/types/program.ts:261](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L261)
 
 The full usage text computed from the command's `usage` value with all
 special tokens (e.g. "$0") replaced.
@@ -60,7 +60,7 @@ special tokens (e.g. "$0") replaced.
 
 > **hasChildren**: `boolean`
 
-Defined in: [src/types/program.ts:256](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L256)
+Defined in: [src/types/program.ts:256](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L256)
 
 If `true`, this command is a "pure parent" or "parent-child" that has at
 least one child command.
@@ -71,7 +71,7 @@ least one child command.
 
 > **isImplemented**: `boolean`
 
-Defined in: [src/types/program.ts:251](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L251)
+Defined in: [src/types/program.ts:251](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L251)
 
 If `true`, this command exported a `handler` function. Black Flag therefore
 considers this command as "not unimplemented".
@@ -85,7 +85,7 @@ context-specific error.
 
 > **parentDirName**: `string`
 
-Defined in: [src/types/program.ts:230](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L230)
+Defined in: [src/types/program.ts:230](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L230)
 
 The basename of the direct parent directory containing `filepath`.
 
@@ -95,7 +95,7 @@ The basename of the direct parent directory containing `filepath`.
 
 > **reservedCommandNames**: `string`[]
 
-Defined in: [src/types/program.ts:243](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L243)
+Defined in: [src/types/program.ts:243](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L243)
 
 The names "reserved" by this command. When a name is reserved by a command,
 no other sibling command (i.e. a command with the same parent command) can
@@ -114,7 +114,7 @@ discovery.
 
 > **type**: [`ProgramType`](ProgramType.md)
 
-Defined in: [src/types/program.ts:214](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L214)
+Defined in: [src/types/program.ts:214](https://github.com/Xunnamius/black-flag/blob/54f69b5502007e20a8937998cea6e285d5db6d7c/src/types/program.ts#L214)
 
 The "type" of [Configuration](../../type-aliases/Configuration.md) that was loaded, indicating which
 interface to expect when interacting with `configuration`. The
