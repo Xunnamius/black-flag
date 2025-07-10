@@ -8,7 +8,7 @@
 
 > **ExpectExceptionsWithMatchingErrorsFunction**\<`Params`\> = (`params`, `index`) => `Promisable`\<`unknown`\>
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:252
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:253
 
 ## Type Parameters
 

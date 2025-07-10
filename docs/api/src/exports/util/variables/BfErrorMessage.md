@@ -8,19 +8,11 @@
 
 > `const` **BfErrorMessage**: `object`
 
-Defined in: [src/error.ts:323](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L323)
+Defined in: [src/error.ts:270](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L270)
 
 A collection of possible error and warning messages emitted by Black Flag.
 
 ## Type declaration
-
-### GuruMeditation()
-
-> **GuruMeditation**: () => `string` = `NamedErrorMessage.GuruMeditation`
-
-#### Returns
-
-`string`
 
 ### BadConfigurationPath()
 
@@ -157,6 +149,14 @@ A collection of possible error and warning messages emitted by Black Flag.
 ### GracefulEarlyExit()
 
 > **GracefulEarlyExit**(): `string`
+
+#### Returns
+
+`string`
+
+### GuruMeditation()
+
+> **GuruMeditation**(): `string`
 
 #### Returns
 

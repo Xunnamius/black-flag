@@ -10,13 +10,13 @@
 
 > **expectExceptionsWithMatchingErrors**\<`Params`\>(`spec`, `errorFn`, `options`): `Promise`\<`void`\>
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:274
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:291
 
 Maps each element of the `spec` array into a Jest expectation asserting that
 `errorFn` either throws an error or rejects. If an assertion fails, a helpful
 error message is thrown.
 
-Example:
+Example 1:
 
 ```typescript
 await expectExceptionsWithMatchingErrors([
@@ -26,6 +26,22 @@ await expectExceptionsWithMatchingErrors([
 () => {
   // ...
 });
+```
+
+Example 2:
+
+```typescript
+const errors = [
+  [{ something: 1 }, 'expected error #1'],
+  [{ something: 2 }, 'expected error #2'],
+  [{ something: 3 }, 'expected error #3'],
+] as Spec<[{ something: number }], 'single-parameter'>;
+
+await expectExceptionsWithMatchingErrors(
+  errors,
+  (params) => fn(...params),
+  { singleParameter: true }
+);
 ```
 
 Note: if you're getting a type error about no matching overloads and/or an
@@ -60,13 +76,13 @@ accordingly.
 
 > **expectExceptionsWithMatchingErrors**\<`Params`\>(`spec`, `errorFn`, `options?`): `Promise`\<`void`\>
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:277
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:294
 
 Maps each element of the `spec` array into a Jest expectation asserting that
 `errorFn` either throws an error or rejects. If an assertion fails, a helpful
 error message is thrown.
 
-Example:
+Example 1:
 
 ```typescript
 await expectExceptionsWithMatchingErrors([
@@ -76,6 +92,22 @@ await expectExceptionsWithMatchingErrors([
 () => {
   // ...
 });
+```
+
+Example 2:
+
+```typescript
+const errors = [
+  [{ something: 1 }, 'expected error #1'],
+  [{ something: 2 }, 'expected error #2'],
+  [{ something: 3 }, 'expected error #3'],
+] as Spec<[{ something: number }], 'single-parameter'>;
+
+await expectExceptionsWithMatchingErrors(
+  errors,
+  (params) => fn(...params),
+  { singleParameter: true }
+);
 ```
 
 Note: if you're getting a type error about no matching overloads and/or an

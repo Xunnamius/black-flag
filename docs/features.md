@@ -932,7 +932,7 @@ check out the source code for my "meta" project: [`@-xun/symbiote`][38].
 [19]: ./api/src/exports/util/type-aliases/PreExecutionContext.md#execute
 [20]: https://en.wikipedia.org/wiki/Convention_over_configuration
 [21]: ./api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[22]: ./api/src/exports/util/classes/AssertionFailedError.md
+[22]: ./api/src/exports/util/variables/AssertionFailedError.md
 [23]: ./api/src/exports/util/functions/makeRunner.md
 [24]: ./api/src/exports/enumerations/FrameworkExitCode.md
 [25]: #built-in-debug-integration-for-runtime-insights-

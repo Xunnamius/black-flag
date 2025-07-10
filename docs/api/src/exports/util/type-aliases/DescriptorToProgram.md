@@ -8,7 +8,7 @@
 
 > **DescriptorToProgram**\<`Descriptor`, `CustomCliArguments`, `CustomExecutionContext`\> = `"effector"` *extends* `Descriptor` ? [`EffectorProgram`](EffectorProgram.md)\<`CustomCliArguments`, `CustomExecutionContext`\> : `"helper"` *extends* `Descriptor` ? [`HelperProgram`](HelperProgram.md)\<`CustomCliArguments`, `CustomExecutionContext`\> : [`RouterProgram`](RouterProgram.md)\<`CustomCliArguments`, `CustomExecutionContext`\>
 
-Defined in: [src/types/program.ts:170](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/program.ts#L170)
+Defined in: [src/types/program.ts:170](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L170)
 
 Accepts a `Descriptor` type and maps it to one of the `XProgram` types.
 

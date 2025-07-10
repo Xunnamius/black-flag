@@ -20,7 +20,7 @@ You can also run this example's tests by executing `npm test`.
 [3]:
   ../../../docs/api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
 [4]: ../../../docs/api/src/exports/util/type-aliases/Program.md#showhelponfail
-[5]: ../../../docs/api/src/exports/classes/GracefulEarlyExitError.md
-[6]: ../../../docs/api/src/exports/classes/CliError.md
+[5]: ../../../docs/api/src/exports/variables/GracefulEarlyExitError.md
+[6]: ../../../docs/api/src/exports/variables/CliError.md
 [7]:
   https://github.com/yargs/yargs/blob/ef28c98ae14621fd484ec80b128b46e85b6bf858/lib/yerror.ts

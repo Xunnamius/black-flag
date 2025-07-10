@@ -8,7 +8,7 @@
 
 > **ExpectExceptionsWithMatchingErrorsOptions** = `object`
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:229
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:230
 
 ## See
 
@@ -20,7 +20,7 @@ Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/
 
 > `optional` **runOnly**: `number`[]
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:236
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:237
 
 If present, only the given indices (zero-based) will be run. The others
 will be skipped.
@@ -37,7 +37,7 @@ undefined
 
 > `optional` **singleParameter**: `boolean`
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:247
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:248
 
 If `true`, the first element of each `spec` tuple will be considered a
 lone parameter (as if it were wrapped in an array).

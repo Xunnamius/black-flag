@@ -8,7 +8,7 @@
 
 > **ExpectExceptionsWithMatchingErrorsSpec**\<`Params`, `SingleParameter`\> = \[`"single-parameter"` *extends* `SingleParameter` ? `Params`\[`0`\] : `Params`, `string`\][]
 
-Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:225
+Defined in: node\_modules/@-xun/symbiote/node\_modules/@-xun/jest/dist/packages/jest/src/index.d.ts:226
 
 This type can be used to construct the error spec required by
 [expectExceptionsWithMatchingErrors](../functions/expectExceptionsWithMatchingErrors.md) without having to call said

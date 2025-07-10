@@ -8,7 +8,7 @@
 
 > **CliErrorOptions** = `object`
 
-Defined in: [src/error.ts:84](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L84)
+Defined in: [src/error.ts:18](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L18)
 
 Options available when constructing a new `CliError` object.
 
@@ -18,7 +18,7 @@ Options available when constructing a new `CliError` object.
 
 > `optional` **cause**: `ErrorOptions`\[`"cause"`\]
 
-Defined in: [src/error.ts:156](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L156)
+Defined in: [src/error.ts:90](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L90)
 
 By default, if an `Error` object is passed to `CliError`, that
 `Error` instance will be passed through as `CliError.cause` and that
@@ -33,7 +33,7 @@ Use this option to override this default behavior and instead set
 
 > `optional` **dangerouslyFatal**: `boolean`
 
-Defined in: [src/error.ts:147](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L147)
+Defined in: [src/error.ts:81](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L81)
 
 This option is similar in intent to Yargs's `exitProcess()` function,
 except applied more granularly.
@@ -70,7 +70,7 @@ false
 
 > `optional` **showHelp**: `Extract`\<[`ExecutionContext`](ExecutionContext.md)\[`"state"`\]\[`"showHelpOnFail"`\], `object`\>\[`"outputStyle"`\] \| `"default"` \| `boolean`
 
-Defined in: [src/error.ts:117](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L117)
+Defined in: [src/error.ts:51](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L51)
 
 If `showHelp` is set to a string that isn't `"default"`, help text will be
 sent to stderr. Note that help text is always sent _before this exception
@@ -92,7 +92,7 @@ due to this error regardless of the value of
 Note that, regardless of this `showHelp`, help text is always output when a
 parent command is invoked that (1) has one or more child commands and (2)
 lacks its own handler implementation or implements a handler that throws
-[CommandNotImplementedError](../classes/CommandNotImplementedError.md).
+[CommandNotImplementedError](../variables/CommandNotImplementedError.md).
 
 #### Default
 
@@ -106,7 +106,7 @@ lacks its own handler implementation or implements a handler that throws
 
 > `optional` **suggestedExitCode**: `number`
 
-Defined in: [src/error.ts:91](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/error.ts#L91)
+Defined in: [src/error.ts:25](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/error.ts#L25)
 
 The exit code that will be returned when the application exits, given
 nothing else goes wrong in the interim.

@@ -8,7 +8,7 @@
 
 > **ExecutionContext** = `object`
 
-Defined in: [src/types/program.ts:344](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/program.ts#L344)
+Defined in: [src/types/program.ts:344](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L344)
 
 Represents a globally-accessible shared context object singleton.
 
@@ -22,7 +22,7 @@ Represents a globally-accessible shared context object singleton.
 
 > **commands**: `Map`\<`string`, \{ `metadata`: [`ProgramMetadata`](ProgramMetadata.md); `programs`: [`Programs`](Programs.md); \}\>
 
-Defined in: [src/types/program.ts:359](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/program.ts#L359)
+Defined in: [src/types/program.ts:359](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L359)
 
 A Map consisting of auto-discovered [Program](Program.md) instances and their
 associated [ProgramMetadata](ProgramMetadata.md) as singular object values with their
@@ -43,7 +43,7 @@ This property is used internally by Black Flag.
 
 > **debug**: `ExtendedDebugger`
 
-Defined in: [src/types/program.ts:365](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/program.ts#L365)
+Defined in: [src/types/program.ts:365](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L365)
 
 The `ExtendedDebugger` for the current runtime level.
 
@@ -55,7 +55,7 @@ This property is used internally by Black Flag.
 
 > **state**: `object`
 
-Defined in: [src/types/program.ts:371](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/program.ts#L371)
+Defined in: [src/types/program.ts:371](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/program.ts#L371)
 
 The current state of the execution environment.
 
@@ -316,10 +316,10 @@ across all instances.
 
 2. On which errors help text will be displayed. By default, help text is
    only displayed when yargs itself throws (e.g. an "unknown argument"
-   error), but not when a [CliError](../../classes/CliError.md) or other kind of error is
+   error), but not when a [CliError](../../variables/CliError.md) or other kind of error is
    thrown. This can be overridden globally by configuring
-   `showHelpOnFail.showFor`, or locally by individual [CliError](../../classes/CliError.md)
-   instances (via [CliError.showHelp](../../classes/CliError.md#showhelp)).
+   `showHelpOnFail.showFor`, or locally by individual [CliError](../../variables/CliError.md)
+   instances (via CliError.showHelp).
 
 Note that, regardless of this property, the full usage string is always
 output when the `--help` flag (or the equivalent) is explicitly given.
@@ -327,7 +327,7 @@ output when the `--help` flag (or the equivalent) is explicitly given.
 Similarly, help text is always output when a parent command is invoked
 that (1) has one or more child commands and (2) lacks its own handler
 implementation or implements a handler that throws
-[CommandNotImplementedError](../classes/CommandNotImplementedError.md).
+[CommandNotImplementedError](../variables/CommandNotImplementedError.md).
 
 ##### Type declaration
 

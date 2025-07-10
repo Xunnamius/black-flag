@@ -8,7 +8,7 @@
 
 > **RootConfiguration**\<`CustomCliArguments`, `CustomExecutionContext`\> = `Partial`\<[`ParentConfiguration`](ParentConfiguration.md)\<`CustomCliArguments`, `CustomExecutionContext`\>\>
 
-Defined in: [src/types/module.ts:146](https://github.com/Xunnamius/black-flag/blob/b4a32322c214182f04aaa04d9c05f164415f17c8/src/types/module.ts#L146)
+Defined in: [src/types/module.ts:146](https://github.com/Xunnamius/black-flag/blob/8d031666f2b06def50a0b12d4e86a7961a49e69d/src/types/module.ts#L146)
 
 A partial extension to the [Configuration](Configuration.md) interface for root
 configurations. This type was designed for use in external ESM/CJS module

@@ -6,10 +6,6 @@
 
 # test/util
 
-## Classes
-
-- [MockedExitError](classes/MockedExitError.md)
-
 ## Type Aliases
 
 - [AsDefault](type-aliases/AsDefault.md)
@@ -42,6 +38,7 @@
 - [IsolatedImportOptions](type-aliases/IsolatedImportOptions.md)
 - [MockedArgvOptions](type-aliases/MockedArgvOptions.md)
 - [MockedEnvOptions](type-aliases/MockedEnvOptions.md)
+- [MockedExitError](type-aliases/MockedExitError.md)
 - [MockedOutputOptions](type-aliases/MockedOutputOptions.md)
 - [MockedOutputSpies](type-aliases/MockedOutputSpies.md)
 - [MockFixture](type-aliases/MockFixture.md)
@@ -70,7 +67,9 @@
 - [dummyNpmPackageFixtureName](variables/dummyNpmPackageFixtureName.md)
 - [ExitErrorMessage](variables/ExitErrorMessage.md)
 - [gitRepositoryFixtureName](variables/gitRepositoryFixtureName.md)
+- [isMockedExitError](variables/isMockedExitError.md)
 - [mockDateNowMs](variables/mockDateNowMs.md)
+- [MockedExitError](variables/MockedExitError.md)
 - [nodeImportAndRunTestFixtureName](variables/nodeImportAndRunTestFixtureName.md)
 - [npmCopyPackageFixtureName](variables/npmCopyPackageFixtureName.md)
 - [npmLinkPackageFixtureName](variables/npmLinkPackageFixtureName.md)
@@ -89,7 +88,6 @@
 - [expectExceptionsWithMatchingErrors](functions/expectExceptionsWithMatchingErrors.md)
 - [getFixturePath](functions/getFixturePath.md)
 - [gitRepositoryFixture](functions/gitRepositoryFixture.md)
-- [isMockedExitError](functions/isMockedExitError.md)
 - [isolatedImport](functions/isolatedImport.md)
 - [mockArgvFactory](functions/mockArgvFactory.md)
 - [mockEnvFactory](functions/mockEnvFactory.md)

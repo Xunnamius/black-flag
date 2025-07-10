@@ -6,14 +6,11 @@
 
 # src/exports/util
 
-## Classes
-
-- [AssertionFailedError](classes/AssertionFailedError.md)
-- [CommandNotImplementedError](classes/CommandNotImplementedError.md)
-
 ## Type Aliases
 
+- [AssertionFailedError](type-aliases/AssertionFailedError.md)
 - [CliErrorOptions](type-aliases/CliErrorOptions.md)
+- [CommandNotImplementedError](type-aliases/CommandNotImplementedError.md)
 - [DescriptorToProgram](type-aliases/DescriptorToProgram.md)
 - [EffectorProgram](type-aliases/EffectorProgram.md)
 - [ExecutionContext](type-aliases/ExecutionContext.md)
@@ -32,12 +29,15 @@
 
 ## Variables
 
+- [AssertionFailedError](variables/AssertionFailedError.md)
 - [BfErrorMessage](variables/BfErrorMessage.md)
+- [CommandNotImplementedError](variables/CommandNotImplementedError.md)
 - [defaultHelpOptionName](variables/defaultHelpOptionName.md)
 - [defaultHelpTextDescription](variables/defaultHelpTextDescription.md)
 - [defaultUsageText](variables/defaultUsageText.md)
 - [defaultVersionOptionName](variables/defaultVersionOptionName.md)
 - [defaultVersionTextDescription](variables/defaultVersionTextDescription.md)
+- [isCommandNotImplementedError](variables/isCommandNotImplementedError.md)
 - [nullArguments$0](variables/nullArguments$0.md)
 
 ## Functions
@@ -47,7 +47,6 @@
 - [hideBin](functions/hideBin.md)
 - [isArguments](functions/isArguments.md)
 - [isAssertionSystemError](functions/isAssertionSystemError.md)
-- [isCommandNotImplementedError](functions/isCommandNotImplementedError.md)
 - [isNullArguments](functions/isNullArguments.md)
 - [isPreExecutionContext](functions/isPreExecutionContext.md)
 - [makeRunner](functions/makeRunner.md)

@@ -10,15 +10,11 @@
 
 - [FrameworkExitCode](enumerations/FrameworkExitCode.md)
 
-## Classes
-
-- [CliError](classes/CliError.md)
-- [GracefulEarlyExitError](classes/GracefulEarlyExitError.md)
-
 ## Type Aliases
 
 - [Arguments](type-aliases/Arguments.md)
 - [ChildConfiguration](type-aliases/ChildConfiguration.md)
+- [CliError](type-aliases/CliError.md)
 - [Configuration](type-aliases/Configuration.md)
 - [ConfigurationHooks](type-aliases/ConfigurationHooks.md)
 - [ConfigureArguments](type-aliases/ConfigureArguments.md)
@@ -26,6 +22,7 @@
 - [ConfigureExecutionContext](type-aliases/ConfigureExecutionContext.md)
 - [ConfigureExecutionEpilogue](type-aliases/ConfigureExecutionEpilogue.md)
 - [ConfigureExecutionPrologue](type-aliases/ConfigureExecutionPrologue.md)
+- [GracefulEarlyExitError](type-aliases/GracefulEarlyExitError.md)
 - [ImportedConfigurationModule](type-aliases/ImportedConfigurationModule.md)
 - [NullArguments](type-aliases/NullArguments.md)
 - [ParentConfiguration](type-aliases/ParentConfiguration.md)
@@ -36,10 +33,12 @@
 ## Variables
 
 - [$executionContext](variables/$executionContext.md)
+- [CliError](variables/CliError.md)
+- [GracefulEarlyExitError](variables/GracefulEarlyExitError.md)
+- [isCliError](variables/isCliError.md)
+- [isGracefulEarlyExitError](variables/isGracefulEarlyExitError.md)
 
 ## Functions
 
 - [configureProgram](functions/configureProgram.md)
-- [isCliError](functions/isCliError.md)
-- [isGracefulEarlyExitError](functions/isGracefulEarlyExitError.md)
 - [runProgram](functions/runProgram.md)

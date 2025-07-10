@@ -160,7 +160,7 @@ Flag, but are noted below nonetheless.
   you can leverage [`configureExecutionPrologue`][7] ([example][8]).
 
 - For UX reasons, Black Flag will "unwrap" errors of type [`CliError`][30],
-  sending only [`CliError::message`][31] to the terminal when an error occurs.
+  sending only [`CliError::message`][30] to the terminal when an error occurs.
   Black Flag will not unwrap Yargs's native errors (because they're usually
   simple strings already) nor custom errors thrown by the end-developer that do
   not extend [`CliError`][30].
@@ -201,7 +201,6 @@ Flag, but are noted below nonetheless.
 [27]: ./api/src/exports/util/type-aliases/ExecutionContext.md#showhelponfail
 [28]: ../examples/black-flag/shared
 [29]: ./getting-started.md#building-and-running-your-cli
-[30]: ./api/src/exports/classes/CliError.md
-[31]: ./api/src/exports/classes/CliError.md#message
+[30]: ./api/src/exports/variables/CliError.md
 [32]:
   https://github.com/yargs/yargs/blob/main/docs/advanced.md#positional-arguments

@@ -1844,7 +1844,7 @@ See the [table of contributors][x-repo-contributors].
 [39]: ./docs/index/type-aliases/BfeBuilderObjectValueExtensions.md#check
 [40]: https://yargs.js.org/docs#api-reference-checkfn-globaltrue
 [41]: ../../docs/api/src/exports/type-aliases/ConfigureErrorHandlingEpilogue.md
-[42]: ../../docs/api/src/exports/classes/GracefulEarlyExitError.md
+[42]: ../../docs/api/src/exports/variables/GracefulEarlyExitError.md
 [43]: ./docs/index/type-aliases/BfeBuilderObjectValueExtensions.md#subOptionOf
 [44]: ../../docs/features.md#built-in-support-for-dynamic-options-
 [45]: https://github.com/Xunnamius/black-flag-demo/blob/main/commands/init.js
