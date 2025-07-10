@@ -1,10 +1,6 @@
 import { isNativeError } from 'node:util/types';
 
-import {
-  AppError,
-  ErrorMessage as NamedErrorMessage,
-  makeNamedError
-} from 'named-app-errors';
+import { makeNamedError } from '@-xun/error';
 
 import { FrameworkExitCode } from 'universe:constant.ts';
 
@@ -15,68 +11,6 @@ import type {
 } from 'universe';
 
 import type { ExecutionContext } from 'universe:types/program.ts';
-
-/**
- * Type guard for the internal Yargs `YError`.
- */
-export function isYargsError(
-  parameter: unknown
-): parameter is Error & { name: 'YError' } {
-  return isNativeError(parameter) && parameter.name === 'YError';
-}
-
-// TODO: replace a lot of all that follows with the official package(s),
-// TODO: including the symbol use below
-
-// TODO: the [$type] property of these classes should be an array of symbols
-// TODO: instead of an array of strings since two classes could have the same
-// TODO: name!
-
-// TODO: Need to ensure isXError functions deal with inheritance/extends
-export const $type = Symbol.for('object-type-hint');
-
-/**
- * Type guard for {@link CliError}.
- */
-// TODO: make-named-error should create and return this function automatically
-export function isCliError(parameter: unknown): parameter is CliError {
-  return (
-    isNativeError(parameter) &&
-    $type in parameter &&
-    Array.isArray(parameter[$type]) &&
-    parameter[$type].includes(CliError.name)
-  );
-}
-
-/**
- * Type guard for {@link GracefulEarlyExitError}.
- */
-// TODO: make-named-error should create and return this function automatically
-export function isGracefulEarlyExitError(
-  parameter: unknown
-): parameter is GracefulEarlyExitError {
-  return (
-    isNativeError(parameter) &&
-    $type in parameter &&
-    Array.isArray(parameter[$type]) &&
-    parameter[$type].includes(GracefulEarlyExitError.name)
-  );
-}
-
-/**
- * Type guard for {@link CommandNotImplementedError}.
- */
-// TODO: make-named-error should create and return this function automatically
-export function isCommandNotImplementedError(
-  parameter: unknown
-): parameter is CommandNotImplementedError {
-  return (
-    isNativeError(parameter) &&
-    $type in parameter &&
-    Array.isArray(parameter[$type]) &&
-    parameter[$type].includes(CommandNotImplementedError.name)
-  );
-}
 
 /**
  * Options available when constructing a new `CliError` object.
@@ -157,92 +91,162 @@ export type CliErrorOptions = {
 };
 
 /**
+ * Type guard for the internal Yargs `YError`.
+ */
+export function isYargsError(
+  parameter: unknown
+): parameter is Error & { name: 'YError' } {
+  return isNativeError(parameter) && parameter.name === 'YError';
+}
+
+export const { CliError } = makeNamedError(
+  class CliError
+    extends Error
+    implements Required<Omit<CliErrorOptions, 'cause'>>, Pick<CliErrorOptions, 'cause'>
+  {
+    suggestedExitCode = FrameworkExitCode.DefaultError;
+    showHelp = 'default' as NonNullable<Exclude<CliErrorOptions['showHelp'], true>>;
+    dangerouslyFatal = false;
+
+    /**
+     * Represents a CLI-specific error, optionally with suggested exit code and
+     * other context.
+     */
+    constructor(reason?: Error | string, options?: CliErrorOptions);
+    /**
+     * This constructor syntax is used by subclasses when calling this constructor
+     * via `super`.
+     */
+    constructor(
+      reason: Error | string,
+      options: CliErrorOptions,
+      message: string,
+      superOptions: ErrorOptions
+    );
+    constructor(
+      reason: Error | string | undefined,
+      options: CliErrorOptions = {},
+      message: string | undefined = undefined,
+      superOptions: ErrorOptions = {}
+    ) {
+      const { suggestedExitCode, showHelp, dangerouslyFatal } = options;
+      let { cause } = options;
+
+      message =
+        message ??
+        (typeof reason === 'string' ? reason : reason?.message) ??
+        BfErrorMessage.Generic();
+
+      if (!('cause' in options)) {
+        cause = typeof reason === 'string' ? undefined : reason;
+      }
+
+      super(message, { cause, ...superOptions });
+
+      if (suggestedExitCode !== undefined) {
+        this.suggestedExitCode = suggestedExitCode;
+      }
+
+      if (showHelp !== undefined) {
+        this.showHelp = showHelp === true ? 'short' : showHelp;
+      }
+
+      if (dangerouslyFatal !== undefined) {
+        this.dangerouslyFatal = dangerouslyFatal;
+      }
+    }
+  },
+  'CliError'
+);
+
+export const { CommandNotImplementedError } = makeNamedError(
+  class CommandNotImplementedError extends CliError {
+    /**
+     * Represents trying to execute a CLI command that has not yet been
+     * implemented.
+     */
+    constructor(error?: Error, options?: CliErrorOptions) {
+      super(error ? error.message : BfErrorMessage.CommandNotImplemented(), {
+        ...(error ? { cause: error } : {}),
+        showHelp: false,
+        ...options,
+        suggestedExitCode: FrameworkExitCode.NotImplemented
+      });
+    }
+  },
+  'CommandNotImplementedError'
+);
+
+export const { GracefulEarlyExitError } = makeNamedError(
+  class GracefulEarlyExitError extends CliError {
+    /**
+     * Represents an exceptional event that should result in the immediate
+     * termination of the application but with an exit code indicating success
+     * (`0`).
+     *
+     * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
+     * ignored.
+     */
+    constructor(reason?: Error | string, options?: CliErrorOptions) {
+      super(
+        reason
+          ? typeof reason === 'string'
+            ? reason
+            : reason.message
+          : BfErrorMessage.GracefulEarlyExit(),
+        {
+          ...(reason
+            ? { cause: typeof reason === 'string' ? new Error(reason) : reason }
+            : {}),
+          showHelp: false,
+          ...options,
+          suggestedExitCode: FrameworkExitCode.Ok,
+          // * Is ignored by runProgram anyway
+          dangerouslyFatal: false
+        }
+      );
+    }
+  },
+  'GracefulEarlyExitError'
+);
+
+export const { AssertionFailedError } = makeNamedError(
+  class AssertionFailedError extends CliError {
+    /**
+     * Represents a failed sanity check.
+     */
+    constructor(error: Error, options?: CliErrorOptions);
+    constructor(message: string, options?: CliErrorOptions);
+    constructor(errorOrMessage?: Error | string, options?: CliErrorOptions);
+    /**
+     * Represents a failed sanity check.
+     */
+    constructor(errorOrMessage?: Error | string, options?: CliErrorOptions) {
+      super(
+        typeof errorOrMessage === 'string' ? errorOrMessage : errorOrMessage?.message,
+        {
+          showHelp: false,
+          ...options,
+          suggestedExitCode: FrameworkExitCode.AssertionFailed,
+          cause: errorOrMessage
+        }
+      );
+    }
+  },
+  'AssertionFailedError'
+);
+
+/**
  * Represents a CLI-specific error with suggested exit code and other
  * properties. As `CliError` has built-in support for cause chaining, this class
  * can be used as a simple wrapper around other errors.
  */
-// TODO: this should use the new type of more-generic error from the new version
-// TODO: of the X-app-errors pages
-export class CliError
-  extends AppError
-  implements Required<Omit<CliErrorOptions, 'cause'>>, Pick<CliErrorOptions, 'cause'>
-{
-  suggestedExitCode = FrameworkExitCode.DefaultError;
-  showHelp = 'default' as NonNullable<Exclude<CliErrorOptions['showHelp'], true>>;
-  dangerouslyFatal = false;
-  // TODO: this prop should be added by makeNamedError or whatever other fn
-  [$type] = ['CliError'];
-  /**
-   * Represents a CLI-specific error, optionally with suggested exit code and
-   * other context.
-   */
-  constructor(reason?: Error | string, options?: CliErrorOptions);
-  /**
-   * This constructor syntax is used by subclasses when calling this constructor
-   * via `super`.
-   */
-  constructor(
-    reason: Error | string,
-    options: CliErrorOptions,
-    message: string,
-    superOptions: ErrorOptions
-  );
-  constructor(
-    reason: Error | string | undefined,
-    options: CliErrorOptions = {},
-    message: string | undefined = undefined,
-    superOptions: ErrorOptions = {}
-  ) {
-    const { suggestedExitCode, showHelp, dangerouslyFatal } = options;
-    let { cause } = options;
-
-    message =
-      message ??
-      (typeof reason === 'string' ? reason : reason?.message) ??
-      BfErrorMessage.Generic();
-
-    if (!('cause' in options)) {
-      cause = typeof reason === 'string' ? undefined : reason;
-    }
-
-    super(message, { cause, ...superOptions });
-
-    if (suggestedExitCode !== undefined) {
-      this.suggestedExitCode = suggestedExitCode;
-    }
-
-    if (showHelp !== undefined) {
-      this.showHelp = showHelp === true ? 'short' : showHelp;
-    }
-
-    if (dangerouslyFatal !== undefined) {
-      this.dangerouslyFatal = dangerouslyFatal;
-    }
-  }
-}
-makeNamedError(CliError, 'CliError');
+export type CliError = InstanceType<typeof CliError>;
 
 /**
  * Represents trying to execute a CLI command that has not yet been implemented.
  */
-// TODO: replace with named-app-error (or whatever it's called now) class
-export class CommandNotImplementedError extends CliError {
-  // TODO: this prop should be added by makeNamedError or whatever other fn
-  override [$type] = ['CommandNotImplementedError', 'CliError'];
-  /**
-   * Represents trying to execute a CLI command that has not yet been
-   * implemented.
-   */
-  constructor(error?: Error, options?: CliErrorOptions) {
-    super(error ? error.message : BfErrorMessage.CommandNotImplemented(), {
-      ...(error ? { cause: error } : {}),
-      showHelp: false,
-      ...options,
-      suggestedExitCode: FrameworkExitCode.NotImplemented
-    });
-  }
-}
-makeNamedError(CommandNotImplementedError, 'CommandNotImplementedError');
+export type CommandNotImplementedError = InstanceType<typeof CommandNotImplementedError>;
 
 /**
  * Represents an exceptional event that should result in the immediate
@@ -252,76 +256,21 @@ makeNamedError(CommandNotImplementedError, 'CommandNotImplementedError');
  * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
  * ignored.
  */
-// TODO: replace with named-app-error (or whatever it's called now) class
-export class GracefulEarlyExitError extends CliError {
-  // TODO: this prop should be added by makeNamedError or whatever other fn
-  override [$type] = ['GracefulEarlyExitError', 'CliError'];
-  /**
-   * Represents an exceptional event that should result in the immediate
-   * termination of the application but with an exit code indicating success
-   * (`0`).
-   *
-   * Note that {@link CliErrorOptions.dangerouslyFatal}, if given, is always
-   * ignored.
-   */
-  constructor(reason?: Error | string, options?: CliErrorOptions) {
-    super(
-      reason
-        ? typeof reason === 'string'
-          ? reason
-          : reason.message
-        : BfErrorMessage.GracefulEarlyExit(),
-      {
-        ...(reason
-          ? { cause: typeof reason === 'string' ? new Error(reason) : reason }
-          : {}),
-        showHelp: false,
-        ...options,
-        suggestedExitCode: FrameworkExitCode.Ok,
-        // * Is ignored by runProgram anyway
-        dangerouslyFatal: false
-      }
-    );
-  }
-}
-makeNamedError(GracefulEarlyExitError, 'GracefulEarlyExitError');
+export type GracefulEarlyExitError = InstanceType<typeof GracefulEarlyExitError>;
 
 /**
  * Represents a failed sanity check.
  */
-// TODO: replace with named-app-error (or whatever it's called now) class
-export class AssertionFailedError extends CliError {
-  // TODO: this prop should be added by makeNamedError or whatever other fn
-  override [$type] = ['AssertionFailedError', 'CliError'];
-  /**
-   * Represents a failed sanity check.
-   */
-  constructor(error: Error, options?: CliErrorOptions);
-  constructor(message: string, options?: CliErrorOptions);
-  constructor(errorOrMessage?: Error | string, options?: CliErrorOptions);
-  /**
-   * Represents a failed sanity check.
-   */
-  constructor(errorOrMessage?: Error | string, options?: CliErrorOptions) {
-    super(
-      typeof errorOrMessage === 'string' ? errorOrMessage : errorOrMessage?.message,
-      {
-        showHelp: false,
-        ...options,
-        suggestedExitCode: FrameworkExitCode.AssertionFailed,
-        cause: errorOrMessage
-      }
-    );
-  }
-}
-makeNamedError(AssertionFailedError, 'AssertionFailedError');
+export type AssertionFailedError = InstanceType<typeof AssertionFailedError>;
 
 /**
  * A collection of possible error and warning messages emitted by Black Flag.
  */
 /* istanbul ignore next */
 export const BfErrorMessage = {
-  GuruMeditation: NamedErrorMessage.GuruMeditation,
+  GuruMeditation() {
+    return 'sanity check failed';
+  },
   BuilderCalledOnInvalidPass(pass: 'first-pass' | 'second-pass') {
     return `a builder function was invoked during Black Flag's ${pass.replace('-', ' ')} when it expected to be invoked during its ${pass === 'first-pass' ? 'second pass' : 'first pass'} instead`;
   },

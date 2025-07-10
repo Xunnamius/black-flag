@@ -10,8 +10,8 @@ import { isDeepStrictEqual } from 'node:util';
 import { isNativeError } from 'node:util/types';
 
 import { extractExamplesFromDocument, JSONC } from '@-xun/project';
-import { $executionContext, CliError, isCliError } from '@black-flag/core';
-import { isCommandNotImplementedError } from '@black-flag/core/util';
+import { $executionContext, CliError } from '@black-flag/core';
+import { CommandNotImplementedError } from '@black-flag/core/util';
 import deepMerge from 'lodash.merge';
 
 import {
@@ -272,22 +272,22 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({});
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
@@ -313,12 +313,12 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: true, y: [5] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
     });
 
@@ -332,17 +332,17 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -362,32 +362,40 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'string' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'string', z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
-          const { handlerResult } = await runner({ x: true, y: 'one', z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          const { handlerResult } = await runner({
+            x: true,
+            y: 'one',
+            z: true
+          });
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
-          const { handlerResult } = await runner({ x: true, y: 'one', z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          const { handlerResult } = await runner({
+            x: true,
+            y: 'one',
+            z: true
+          });
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -425,7 +433,11 @@ describe('::withBuilderExtensions', () => {
         }
 
         {
-          const { handlerResult } = await runner({ x: true, z: true, y: 'string' });
+          const { handlerResult } = await runner({
+            x: true,
+            z: true,
+            y: 'string'
+          });
           expect(handlerResult).toMatchObject({
             message: BfeErrorMessage.RequiresViolation('x', [['y', 'one']])
           });
@@ -649,37 +661,37 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({});
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
@@ -707,17 +719,17 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -737,27 +749,27 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'string' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -775,7 +787,11 @@ describe('::withBuilderExtensions', () => {
         }
 
         {
-          const { handlerResult } = await runner({ x: true, z: true, y: 'one' });
+          const { handlerResult } = await runner({
+            x: true,
+            z: true,
+            y: 'one'
+          });
           expect(handlerResult).toMatchObject({
             message: BfeErrorMessage.ConflictsViolation('x', [
               ['y', 'one'],
@@ -1536,47 +1552,47 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({});
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [5] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
@@ -1604,27 +1620,27 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -1658,37 +1674,37 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'string' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: 'string' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -1743,7 +1759,7 @@ describe('::withBuilderExtensions', () => {
           y: { demandOption: false }
         });
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       });
     });
   });
@@ -2008,37 +2024,37 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: true, y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [5] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [5] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
     });
 
@@ -2052,37 +2068,37 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2106,42 +2122,46 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'one' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: 'string' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
-          const { handlerResult } = await runner({ x: true, y: 'string', z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          const { handlerResult } = await runner({
+            x: true,
+            y: 'string',
+            z: true
+          });
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2563,17 +2583,17 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: true, y: [] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: true, y: [1, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
@@ -2588,17 +2608,17 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [5] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ y: [1, 5, 2] });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
     });
 
@@ -2612,22 +2632,22 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, w: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true, z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: true, w: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2751,7 +2771,12 @@ describe('::withBuilderExtensions', () => {
         }
 
         {
-          const { handlerResult } = await runner({ x: true, y: true, z: true, w: true });
+          const { handlerResult } = await runner({
+            x: true,
+            y: true,
+            z: true,
+            w: true
+          });
           expect(handlerResult).toMatchObject({
             message: BfeErrorMessage.DemandSpecificXorViolation(
               ['y', $exists],
@@ -2770,27 +2795,27 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'one' });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: true, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ y: 'string', z: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2892,7 +2917,7 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: 5 });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2921,7 +2946,7 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: 5 });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -2952,12 +2977,12 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: 5 });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: -1 });
-        expect(handlerResult).toSatisfy(isCliError);
+        expect(handlerResult).toSatisfy(CliError.isError);
         expect(handlerResult).toMatchObject({
           message: `"x" must be between 0 and 10 (inclusive), saw: -1`
         });
@@ -2983,12 +3008,12 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: 5 });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: -1 });
-        expect(handlerResult).toSatisfy(isCliError);
+        expect(handlerResult).toSatisfy(CliError.isError);
         expect(handlerResult).toMatchObject({
           message: `"x" must be between 0 and 10 (inclusive), saw: -1`
         });
@@ -3014,13 +3039,13 @@ describe('::withBuilderExtensions', () => {
 
       {
         const { handlerResult } = await runner({ x: 5 });
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
 
       {
         const { handlerResult } = await runner({ x: -1 });
-        expect(handlerResult).toSatisfy(isCliError);
-        expect(handlerResult).not.toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CliError.isError);
+        expect(handlerResult).not.toSatisfy(CommandNotImplementedError.isError);
       }
     });
 
@@ -3151,7 +3176,7 @@ describe('::withBuilderExtensions', () => {
         });
 
         expect(firstPassResult).toStrictEqual(secondPassResult);
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
 
         expect(getArgv()).toStrictEqual({
           'x-y': 1,
@@ -3182,7 +3207,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 1,
           x: 1,
@@ -3207,7 +3232,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 1,
           xY: 1,
@@ -3232,7 +3257,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           xY: 1,
           x: 1,
@@ -3256,7 +3281,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           xY: 1,
           z: true
@@ -3281,7 +3306,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 1,
           z: true
@@ -3312,8 +3337,8 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(firstPassResult).toStrictEqual(secondPassResult);
-      expect(handlerResult).toSatisfy(isCliError);
-      expect(handlerResult).not.toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CliError.isError);
+      expect(handlerResult).not.toSatisfy(CommandNotImplementedError.isError);
     });
 
     it('accepts an array of (potentially async) checks', async () => {
@@ -3355,7 +3380,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(firstPassResult).toStrictEqual(secondPassResult);
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       expect(runOrder).toStrictEqual([1, 3, 2]);
     });
 
@@ -3405,7 +3430,7 @@ describe('::withBuilderExtensions', () => {
         });
 
         expect(firstPassResult).toStrictEqual(secondPassResult);
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
 
         expect(getArgv()).toStrictEqual({
           'x-y': 5,
@@ -3442,7 +3467,7 @@ describe('::withBuilderExtensions', () => {
         });
 
         expect(firstPassResult).toStrictEqual(secondPassResult);
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
 
         expect(getArgv()).toStrictEqual({
           'x-y': 5,
@@ -3473,7 +3498,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 5,
           x: 5,
@@ -3498,7 +3523,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 5,
           xY: 5,
@@ -3523,7 +3548,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           xY: 5,
           x: 5,
@@ -3547,7 +3572,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           xY: 5,
           z: true
@@ -3572,7 +3597,7 @@ describe('::withBuilderExtensions', () => {
           ['x-y']
         );
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         expect(getArgv()).toStrictEqual({
           'x-y': 5,
           z: true
@@ -3634,7 +3659,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           expect(firstPassResult).toStrictEqual(secondPassResult);
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -3646,12 +3671,12 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({ x: 2, y: false });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: 6, y: true });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -3708,12 +3733,12 @@ describe('::withBuilderExtensions', () => {
 
         {
           const { handlerResult } = await runner({});
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
           const { handlerResult } = await runner({ x: 6, y: 5, z: 6 });
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -4106,7 +4131,9 @@ describe('::withBuilderExtensions', () => {
                     check: function (currentZArgValue) {
                       return (
                         currentZArgValue.length >= 2 ||
-                        `"z" must be an array of two or more strings, only saw: ${currentZArgValue.length ?? 0}`
+                        `"z" must be an array of two or more strings, only saw: ${
+                          currentZArgValue.length ?? 0
+                        }`
                       );
                     }
                   }
@@ -4218,7 +4245,7 @@ describe('::withBuilderExtensions', () => {
           });
 
           // ? Since z isn't given, z's checks are skipped (otherwise they'd fail)
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
 
         {
@@ -4282,7 +4309,7 @@ describe('::withBuilderExtensions', () => {
             }
           });
 
-          expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+          expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
         }
       });
 
@@ -4375,7 +4402,9 @@ describe('::withBuilderExtensions', () => {
         }
 
         {
-          const { firstPassResult, secondPassResult } = await runner({ lang: 'node' });
+          const { firstPassResult, secondPassResult } = await runner({
+            lang: 'node'
+          });
 
           expect(firstPassResult).toStrictEqual(expectedFirstPass);
           expect(secondPassResult).toStrictEqual({
@@ -4391,7 +4420,9 @@ describe('::withBuilderExtensions', () => {
         }
 
         {
-          const { firstPassResult, secondPassResult } = await runner({ lang: 'python' });
+          const { firstPassResult, secondPassResult } = await runner({
+            lang: 'python'
+          });
 
           expect(firstPassResult).toStrictEqual(expectedFirstPass);
           expect(secondPassResult).toStrictEqual({
@@ -4443,7 +4474,7 @@ describe('::withBuilderExtensions', () => {
       });
 
       expect(secondPassResult).toStrictEqual(firstPassResult);
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
     }
   });
 
@@ -4556,7 +4587,7 @@ describe('::withBuilderExtensions', () => {
           y: { number: true, default: 22, alias: 'y-alias' }
         });
 
-        expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+        expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       }
     }
   });
@@ -4569,7 +4600,11 @@ describe('::withBuilderExtensions', () => {
         context: { state: { isHandlingHelpOption: true } },
         customBuilder: () => {
           return {
-            x: { boolean: true, implies: { y: true }, vacuousImplications: true },
+            x: {
+              boolean: true,
+              implies: { y: true },
+              vacuousImplications: true
+            },
             y: { boolean: true, default: false }
           };
         }
@@ -4601,7 +4636,11 @@ describe('::withBuilderExtensions', () => {
         context: { state: { isHandlingHelpOption: true } },
         customBuilder: () => {
           return {
-            x: { boolean: true, implies: { y: true }, vacuousImplications: false },
+            x: {
+              boolean: true,
+              implies: { y: true },
+              vacuousImplications: false
+            },
             y: { boolean: true, default: false }
           };
         }
@@ -4648,7 +4687,9 @@ describe('::withBuilderExtensions', () => {
           },
           i: {
             default: 9,
-            subOptionOf: { d: { when: (d) => d === -1, update: { default: 10 } } }
+            subOptionOf: {
+              d: { when: (d) => d === -1, update: { default: 10 } }
+            }
           }
         }
       });
@@ -4695,7 +4736,9 @@ describe('::withBuilderExtensions', () => {
           },
           i: {
             default: 9,
-            subOptionOf: { d: { when: (d) => d === -1, update: { default: 10 } } }
+            subOptionOf: {
+              d: { when: (d) => d === -1, update: { default: 10 } }
+            }
           }
         }
       });
@@ -4746,7 +4789,9 @@ describe('::withBuilderExtensions', () => {
           },
           i: {
             default: 9,
-            subOptionOf: { d: { when: (d) => d === -1, update: { default: 10 } } }
+            subOptionOf: {
+              d: { when: (d) => d === -1, update: { default: 10 } }
+            }
           }
         }
       });
@@ -4793,7 +4838,9 @@ describe('::withBuilderExtensions', () => {
           },
           i: {
             default: 9,
-            subOptionOf: { d: { when: (d) => d === -1, update: { default: 10 } } }
+            subOptionOf: {
+              d: { when: (d) => d === -1, update: { default: 10 } }
+            }
           }
         }
       });
@@ -4804,7 +4851,7 @@ describe('::withBuilderExtensions', () => {
       );
 
       expect(firstPassResult).toStrictEqual(secondPassResult);
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
     }
   });
 
@@ -4840,7 +4887,18 @@ describe('::withBuilderExtensions', () => {
 
     {
       const { handlerResult } = await runner(
-        { x: true, w: 10, 'w-w': 10, wW: 10, y: 2, z: 3, 'z-z': 3, zZ: 3, a: 3, b: 100 },
+        {
+          x: true,
+          w: 10,
+          'w-w': 10,
+          wW: 10,
+          y: 2,
+          z: 3,
+          'z-z': 3,
+          zZ: 3,
+          a: 3,
+          b: 100
+        },
         ['y', 'z']
       );
 
@@ -5051,7 +5109,9 @@ describe('::withBuilderExtensions', () => {
       customBuilder: {
         x: {
           alias: 'x-x',
-          subOptionOf: { x: { when: () => true, update: { implies: { a: 1 } } } }
+          subOptionOf: {
+            x: { when: () => true, update: { implies: { a: 1 } } }
+          }
         },
         y: { subOptionOf: { x: { when: () => true, update: { default: 1 } } } },
         z: { default: 1, alias: 'Z-Z' },
@@ -5114,7 +5174,13 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const { handlerResult } = await runner({ f: 3, a: true, b: 3, c: true, d: true });
+      const { handlerResult } = await runner({
+        f: 3,
+        a: true,
+        b: 3,
+        c: true,
+        d: true
+      });
 
       expect(handlerResult).toMatchObject({
         message: BfeErrorMessage.ImpliesViolation('c', [['d', true]])
@@ -5122,7 +5188,13 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const { handlerResult } = await runner({ f: 3, a: true, b: 3, c: true, e: 3 });
+      const { handlerResult } = await runner({
+        f: 3,
+        a: true,
+        b: 3,
+        c: true,
+        e: 3
+      });
 
       expect(handlerResult).toMatchObject({
         message: BfeErrorMessage.DemandIfViolation('d', ['e', 3])
@@ -5156,7 +5228,7 @@ describe('::withBuilderExtensions', () => {
         g: 3
       });
 
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
     }
   });
 
@@ -5177,7 +5249,7 @@ describe('::withBuilderExtensions', () => {
 
     {
       const { handlerResult } = await runner({});
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
     }
 
     {
@@ -5210,7 +5282,7 @@ describe('::withBuilderExtensions', () => {
 
     const runner = makeMockBuilderRunner();
     const { handlerResult } = await runner({});
-    expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+    expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
   });
 
   test('coerce always receives an array when its option is configured as such', async () => {
@@ -5246,7 +5318,7 @@ describe('::withBuilderExtensions', () => {
       c: 'c'
     });
 
-    expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+    expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
 
     const secondPassResult = secondPassResult_ as Exclude<
       typeof secondPassResult_,
@@ -5364,7 +5436,10 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const [builder] = withBuilderExtensions({ c: { alias: 'a' }, b: { alias: 'a' } });
+      const [builder] = withBuilderExtensions({
+        c: { alias: 'a' },
+        b: { alias: 'a' }
+      });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
         BfeErrorMessage.DuplicateOptionName('a')
@@ -5517,7 +5592,9 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const [builder] = withBuilderExtensions({ a: { demandThisOptionIf: 'b' } });
+      const [builder] = withBuilderExtensions({
+        a: { demandThisOptionIf: 'b' }
+      });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
         BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
@@ -5525,7 +5602,9 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const [builder] = withBuilderExtensions({ a: { demandThisOptionOr: 'b' } });
+      const [builder] = withBuilderExtensions({
+        a: { demandThisOptionOr: 'b' }
+      });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
         BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
@@ -5533,7 +5612,9 @@ describe('::withBuilderExtensions', () => {
     }
 
     {
-      const [builder] = withBuilderExtensions({ a: { demandThisOptionXor: 'b' } });
+      const [builder] = withBuilderExtensions({
+        a: { demandThisOptionXor: 'b' }
+      });
 
       expect(() => builder(fakeBlackFlag, false, undefined)).toThrow(
         BfeErrorMessage.ReferencedNonExistentOption('a', 'b')
@@ -5562,19 +5643,29 @@ describe('::withBuilderExtensions', () => {
             subOptionOf: { q: { when: () => true, update: { requires: 'b' } } }
           },
           j: {
-            subOptionOf: { q: { when: () => true, update: { conflicts: 'c' } } }
+            subOptionOf: {
+              q: { when: () => true, update: { conflicts: 'c' } }
+            }
           },
           k: {
-            subOptionOf: { q: { when: () => true, update: { implies: { d: -1 } } } }
+            subOptionOf: {
+              q: { when: () => true, update: { implies: { d: -1 } } }
+            }
           },
           l: {
-            subOptionOf: { q: { when: () => true, update: { demandThisOptionIf: 'b' } } }
+            subOptionOf: {
+              q: { when: () => true, update: { demandThisOptionIf: 'b' } }
+            }
           },
           m: {
-            subOptionOf: { q: { when: () => true, update: { demandThisOption: true } } }
+            subOptionOf: {
+              q: { when: () => true, update: { demandThisOption: true } }
+            }
           },
           n: {
-            subOptionOf: { q: { when: () => true, update: { demandThisOptionOr: 'd' } } }
+            subOptionOf: {
+              q: { when: () => true, update: { demandThisOptionOr: 'd' } }
+            }
           },
           o: {
             subOptionOf: {
@@ -5592,7 +5683,7 @@ describe('::withBuilderExtensions', () => {
 
       const { handlerResult } = await runner({ q: false });
 
-      expect(handlerResult).toSatisfy(isCliError);
+      expect(handlerResult).toSatisfy(CliError.isError);
       expect(mockGroupMethod.mock.calls).toStrictEqual([
         // * First pass
         [['e'], 'Required Options:'],
@@ -5630,7 +5721,7 @@ describe('::withBuilderExtensions', () => {
 
       const { handlerResult } = await runner({});
 
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       expect(mockGroupMethod.mock.calls).toStrictEqual([
         // * First pass
         [['b'], 'Optional Options:'],
@@ -5657,7 +5748,7 @@ describe('::withBuilderExtensions', () => {
 
       const { handlerResult } = await runner({});
 
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       expect(mockGroupMethod.mock.calls).toStrictEqual([
         // * First pass
         [['a', 'b'], 'Optional Options:'],
@@ -5674,7 +5765,11 @@ describe('::withBuilderExtensions', () => {
       const runner = makeMockBuilderRunner({
         group: mockGroupMethod,
         customBuilder: {
-          a: { demandThisOption: true, requires: 'b', group: 'Custom Options:' },
+          a: {
+            demandThisOption: true,
+            requires: 'b',
+            group: 'Custom Options:'
+          },
           b: { group: 'Custom Options:' },
           c: {}
         },
@@ -5683,7 +5778,7 @@ describe('::withBuilderExtensions', () => {
 
       const { handlerResult } = await runner({});
 
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       expect(mockGroupMethod.mock.calls).toStrictEqual([
         // * First pass
         [['a'], 'Required Options:'],
@@ -5717,7 +5812,7 @@ describe('::withBuilderExtensions', () => {
 
       const { handlerResult } = await runner({});
 
-      expect(handlerResult).toSatisfy(isCommandNotImplementedError);
+      expect(handlerResult).toSatisfy(CommandNotImplementedError.isError);
       expect(mockGroupMethod.mock.calls).toStrictEqual([]);
     });
   });
@@ -5755,7 +5850,7 @@ describe('::withBuilderExtensions', () => {
         help: true
       });
 
-      expect(handlerResult).toSatisfy(isCliError);
+      expect(handlerResult).toSatisfy(CliError.isError);
       expect(firstPassResult).toStrictEqual(secondPassResult);
 
       expect(Object.keys(firstPassResult)).toStrictEqual([
@@ -5945,11 +6040,17 @@ new description
     ).toBe(`Usage: $000 [subcommand] [...options]\n${expected.trimEnd()}.`);
 
     expect(
-      withUsageExtensions({ altDescription: expected, includeSubCommand: false })
+      withUsageExtensions({
+        altDescription: expected,
+        includeSubCommand: false
+      })
     ).toBe(`Usage: $000 [...options]\n\n${expected.trim()}.`);
 
     expect(
-      withUsageExtensions({ altDescription: expected, includeSubCommand: 'required' })
+      withUsageExtensions({
+        altDescription: expected,
+        includeSubCommand: 'required'
+      })
     ).toBe(`Usage: $000 <subcommand> [...options]\n${expected.trimEnd()}.`);
 
     expect(withUsageExtensions(expected, { includeSubCommand: true })).toBe(
@@ -6574,8 +6675,11 @@ describe('::getInvocableExtendedHandler', () => {
     });
 
     await expect(
-      // @ts-expect-error: bad parameter
-      getInvocableExtendedHandler({ command: false }, generateFakeExecutionContext())
+      getInvocableExtendedHandler(
+        // @ts-expect-error: bad parameter
+        { command: false },
+        generateFakeExecutionContext()
+      )
     ).rejects.toMatchObject({
       message: expect.stringContaining(
         ': ' + BfeErrorMessage.CommandHandlerNotAFunction()
@@ -6583,8 +6687,11 @@ describe('::getInvocableExtendedHandler', () => {
     });
 
     await expect(
-      // @ts-expect-error: bad parameter
-      getInvocableExtendedHandler({ command: {} }, generateFakeExecutionContext())
+      getInvocableExtendedHandler(
+        // @ts-expect-error: bad parameter
+        { command: {} },
+        generateFakeExecutionContext()
+      )
     ).rejects.toMatchObject({
       message: expect.stringContaining(
         ': ' + BfeErrorMessage.CommandHandlerNotAFunction()
@@ -6666,7 +6773,10 @@ function makeMockBuilderRunner({
     };
 
     const dummyHelperProgram = { ...blackFlag_, parsed: undefined as unknown };
-    const dummyEffectorProgram = { ...blackFlag_, parsed: undefined as unknown };
+    const dummyEffectorProgram = {
+      ...blackFlag_,
+      parsed: undefined as unknown
+    };
 
     const helpOrVersionSet = !!(
       context.state?.isHandlingHelpOption || context.state?.isHandlingVersionOption

@@ -42,7 +42,7 @@ test('exports/index', async () => {
       return argv;
     },
     configureErrorHandlingEpilogue(meta, argv, context) {
-      void meta, argv, context;
+      (void meta, argv, context);
       return undefined;
     },
     configureExecutionContext(context: ExecutionContext) {
@@ -53,7 +53,7 @@ test('exports/index', async () => {
       return argv;
     },
     configureExecutionPrologue(rootPrograms: Programs, context: ExecutionContext) {
-      void rootPrograms, context;
+      (void rootPrograms, context);
       return undefined;
     }
   } satisfies ConfigurationHooks).type.toBeAssignableTo<ConfigurationHooks>();
@@ -154,7 +154,7 @@ test('runProgram accepts Promisable<ConfigurationHooks> with a custom context', 
   expect(
     runProgram('some/path', '--flag-one --flag-two', {
       configureErrorHandlingEpilogue({ error }, argv, context) {
-        void error, argv, context;
+        (void error, argv, context);
         return undefined;
       },
       configureArguments(argv: string[]) {
@@ -171,7 +171,7 @@ test('runProgram accepts Promisable<ConfigurationHooks> with a custom context', 
         rootPrograms: Programs,
         context: DummyGlobalExecutionContext
       ) {
-        void rootPrograms, context;
+        (void rootPrograms, context);
         return undefined;
       }
     })
@@ -183,7 +183,7 @@ test('makeRunner returned function accepts Promisable<ConfigurationHooks> with p
     commandModulesPath: 'some/path',
     configurationHooks: {
       configureErrorHandlingEpilogue({ error }, argv, context) {
-        void error, argv, context;
+        (void error, argv, context);
         return undefined;
       },
       configureArguments(argv: string[]) {
@@ -200,7 +200,7 @@ test('makeRunner returned function accepts Promisable<ConfigurationHooks> with p
         rootPrograms: Programs,
         context: DummyGlobalExecutionContext
       ) {
-        void rootPrograms, context;
+        (void rootPrograms, context);
         return undefined;
       }
     }
@@ -219,7 +219,7 @@ test('makeRunner returned function accepts Promisable<ConfigurationHooks> with p
   expect(
     run('--flag-one --flag-two', {
       configureErrorHandlingEpilogue({ error }, argv, context) {
-        void error, argv, context;
+        (void error, argv, context);
         return undefined;
       },
       configureArguments(argv: string[]) {
@@ -236,7 +236,7 @@ test('makeRunner returned function accepts Promisable<ConfigurationHooks> with p
         rootPrograms: Programs,
         context: DummyGlobalExecutionContext
       ) {
-        void rootPrograms, context;
+        (void rootPrograms, context);
         return undefined;
       }
     })

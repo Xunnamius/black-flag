@@ -14,8 +14,6 @@ import {
   CliError,
   CommandNotImplementedError,
   GracefulEarlyExitError,
-  isCliError,
-  isCommandNotImplementedError,
   isYargsError
 } from 'universe:error.ts';
 
@@ -903,7 +901,7 @@ export async function discoverCommands(
         descriptorDebug('error.message: %O', error?.message);
         descriptorDebug('error is native error: %O', isNativeError(error));
 
-        const isErrorCliError = isCliError(error);
+        const isErrorCliError = CliError.isError(error);
         descriptorDebug('error is CliError: %O', isErrorCliError);
 
         // ? If a failure happened but error is not defined, it was _probably_
@@ -935,7 +933,7 @@ export async function discoverCommands(
         const isParousParentHelperHandlingCommandNotImplementedError =
           meta.hasChildren &&
           descriptor === 'helper' &&
-          isCommandNotImplementedError(error);
+          CommandNotImplementedError.isError(error);
 
         descriptorDebug(
           'is parous parent helper handling CommandNotImplementedError: %O',

@@ -22,9 +22,8 @@ import {
   AssertionFailedError,
   BfErrorMessage,
   CliError,
-  isCliError,
-  isCommandNotImplementedError,
-  isGracefulEarlyExitError,
+  CommandNotImplementedError,
+  GracefulEarlyExitError,
   isYargsError
 } from 'universe:error.ts';
 
@@ -403,7 +402,7 @@ export async function configureProgram(
             );
           }
 
-          if (isGracefulEarlyExitError(error)) {
+          if (GracefulEarlyExitError.isError(error)) {
             confDebug.message(
               'caught graceful early exit "error" in PreExecutionContext::execute'
             );
@@ -454,7 +453,7 @@ export async function configureProgram(
 
         confDebug('final parsed argv: %O', finalArgv);
 
-        if (isGracefulEarlyExitError(error)) {
+        if (GracefulEarlyExitError.isError(error)) {
           confDebug.message(
             'caught (and released) graceful early exit "error" in catch block'
           );
@@ -471,7 +470,7 @@ export async function configureProgram(
             message = error.message;
             exitCode = isAssertionSystemError(error)
               ? FrameworkExitCode.AssertionFailed
-              : isCliError(error)
+              : CliError.isError(error)
                 ? error.suggestedExitCode
                 : FrameworkExitCode.DefaultError;
           } else {
@@ -491,7 +490,7 @@ export async function configureProgram(
           confDebug('exited configureErrorHandlingEpilogue');
           confDebug('final execution context: %O', context);
 
-          if (!isCliError(error)) {
+          if (!CliError.isError(error)) {
             confDebug('wrapping error with CliError');
 
             // eslint-disable-next-line no-ex-assign
@@ -929,7 +928,7 @@ export async function runProgram<
     );
 
     // * Note that framework errors are always considered assertion failures
-    process.exitCode = isCliError(error)
+    process.exitCode = CliError.isError(error)
       ? error.suggestedExitCode
       : /* istanbul ignore next */
         isAssertionSystemError(error)
@@ -947,7 +946,7 @@ export async function runProgram<
       );
     }
 
-    if (isGracefulEarlyExitError(error)) {
+    if (GracefulEarlyExitError.isError(error)) {
       runDebug.message(
         'the exception resulted in a graceful exit (maybe with parse result)'
       );
@@ -966,7 +965,7 @@ export async function runProgram<
 
     runDebug('runProgram invocation "succeeded" (via error handler)');
 
-    if (isCliError(error) && error.dangerouslyFatal) {
+    if (CliError.isError(error) && error.dangerouslyFatal) {
       runDebug.warn(
         'error has dangerouslyFatal flag enabled; process.exit will be called'
       );
@@ -1005,7 +1004,7 @@ async function defaultErrorHandlingEpilogueConfigurationHook(
 
   if (didOutputHelpOrVersionText) {
     /* istanbul ignore next */
-    if (!isCommandNotImplementedError(error)) {
+    if (!CommandNotImplementedError.isError(error)) {
       // eslint-disable-next-line no-console
       console.error();
       outputErrorMessage();
@@ -1022,12 +1021,13 @@ async function defaultErrorHandlingEpilogueConfigurationHook(
     errorDebug('error: %O', error);
     errorDebug('deepestError: %O', deepestError);
     errorDebug('error === deepestError: %O', error === deepestError);
-    errorDebug('isCliError: %O', isCliError(deepestError));
+    errorDebug('CliError.isError: %O', CliError.isError(deepestError));
     errorDebug('isYargsError: %O', isYargsError(deepestError));
 
     // eslint-disable-next-line no-console
     console.error(
-      isYargsError(deepestError) || (error === deepestError && isCliError(deepestError))
+      isYargsError(deepestError) ||
+        (error === deepestError && CliError.isError(deepestError))
         ? // ? Messages coming from yargs are typically already capitalized, but
           // ? not always, and not all "cli" messages come directly from yargs
           capitalize(deepestError.message)

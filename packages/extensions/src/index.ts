@@ -2,14 +2,7 @@ import { isDeepStrictEqual } from 'node:util';
 import { isNativeError } from 'node:util/types';
 
 import { safeDeepClone } from '@-xun/js';
-
-import {
-  $executionContext,
-  CliError,
-  FrameworkExitCode,
-  isCliError
-} from '@black-flag/core';
-
+import { $executionContext, CliError, FrameworkExitCode } from '@black-flag/core';
 import { CommandNotImplementedError } from '@black-flag/core/util';
 import toCamelCase from 'lodash.camelcase';
 import { createDebugLogger } from 'rejoinder';
@@ -1366,7 +1359,7 @@ export function withBuilderExtensions<
                   }
 
                   if (!result || typeof result === 'string' || isNativeError(result)) {
-                    throw isCliError(result)
+                    throw CliError.isError(result)
                       ? result
                       : new CliError(
                           (result as string | Error | false) ||

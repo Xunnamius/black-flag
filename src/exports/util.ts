@@ -1,3 +1,5 @@
+import { CommandNotImplementedError } from 'universe:error.ts';
+
 export { makeRunner } from 'universe';
 
 export {
@@ -18,13 +20,12 @@ export {
   nullArguments$0
 } from 'universe:constant.ts';
 
-export {
-  AssertionFailedError,
-  BfErrorMessage,
-  CommandNotImplementedError,
-  isCommandNotImplementedError,
-  type CliErrorOptions
-} from 'universe:error.ts';
+export { BfErrorMessage } from 'universe:error.ts';
+export const { isError: isCommandNotImplementedError } = CommandNotImplementedError;
+
+export { AssertionFailedError, CommandNotImplementedError } from 'universe:error.ts';
+
+export type { CliErrorOptions } from 'universe:error.ts';
 
 export type { FactoriedRunProgramParameters, MakeRunnerOptions } from 'universe';
 
