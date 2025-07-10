@@ -75,7 +75,7 @@
     "@-xun/js": "^2.0.0",
     "core-js": "^3.44.0",
     "lodash.camelcase": "^4.3.0",
-    "rejoinder": "^2.0.1",
+    "rejoinder": "^2.0.2",
     "type-fest": "^4.41.0"
   },
   "devDependencies": {
