@@ -8,7 +8,7 @@
 
 > **BfeBuilderObjectValueWithoutExtensions** = `Omit`\<[`BfGenericBuilderObjectValue`](BfGenericBuilderObjectValue.md), `"conflicts"` \| `"implies"` \| `"demandOption"` \| `"demand"` \| `"require"` \| `"required"` \| `"default"` \| `"coerce"`\>
 
-Defined in: [packages/extensions/src/index.ts:488](https://github.com/Xunnamius/black-flag/blob/9e502baf0a24d2f38890806199a48bc7a3c83054/packages/extensions/src/index.ts#L488)
+Defined in: [packages/extensions/src/index.ts:481](https://github.com/Xunnamius/black-flag/blob/79ac029630564873580521833d41f0f37fb5eec8/packages/extensions/src/index.ts#L481)
 
 An object containing a subset of only those properties recognized by
 Black Flag (and, consequentially, vanilla yargs). Also excludes
