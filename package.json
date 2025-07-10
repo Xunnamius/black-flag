@@ -93,7 +93,7 @@
     "test:topological": "symbiote project topology --run test --env NODE_NO_WARNINGS=1"
   },
   "dependencies": {
-    "@-xun/error": "^1.1.5",
+    "@-xun/error": "^1.1.6",
     "@-xun/fs": "^2.0.0",
     "@-xun/js": "^2.0.0",
     "@types/yargs": "^17.0.33",
