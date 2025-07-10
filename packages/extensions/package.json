@@ -81,8 +81,10 @@
   "devDependencies": {
     "@-xun/fs": "^2.0.0",
     "@-xun/project": "^2.0.8",
+    "@-xun/project-fs": "^2.0.3",
     "@types/lodash.camelcase": "^4.3.9",
     "@types/lodash.merge": "^4.6.9",
+    "glob": "^11.0.3",
     "lodash.merge": "^4.6.2"
   },
   "peerDependencies": {
