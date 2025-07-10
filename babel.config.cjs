@@ -19,6 +19,14 @@ module.exports = deepMergeConfig(
   }),
   {
     // Any custom configs here will be deep merged with moduleExport's result
+    // You may wish to enable explicit exports references for improved testing
+    // DX, but be aware that it is currently a wee buggy as of 5/2025 (fix it!)
+    //
+    // env: {
+    //   test: {
+    //     plugins: ['babel-plugin-explicit-exports-references']
+    //   }
+    // }
   }
 );
 
